@@ -392,7 +392,6 @@
             try {
                 const response = await fetch(url);
                 if (!response.ok) {
-                    console.warn(`[${label}] HTTP ${response.status}: ${url.split('?')[0]}`);
                     if (response.status === 403 || response.status === 401) {
                         if (url.includes('polygon.io')) apiStatus.polygon = false;
                         if (url.includes('financialmodelingprep')) apiStatus.fmp = false;
@@ -402,8 +401,6 @@
                 }
                 return response;
             } catch (e) {
-                // CORS o error de red
-                console.warn(`[${label}] Network/CORS error: ${url.split('?')[0]}`, e.message);
                 if (url.includes('polygon.io')) apiStatus.polygon = false;
                 if (url.includes('financialmodelingprep')) apiStatus.fmp = false;
                 updateApiStatusBanner();
@@ -475,7 +472,6 @@
                 const upcoming = await fmpFetch('earnings-calendar', { from: todayStr, to: futureTo });
                 if (upcoming.error) { fmpCache.earnings = { data: null, lastFetch: Date.now(), error: upcoming.error }; return null; }
                 let confirmed = [];
-                try { const confResult = await fmpFetch('earnings-calendar-confirmed', { from: pastFrom, to: todayStr }); if (Array.isArray(confResult)) confirmed = confResult; } catch (e) {}
                 const seen = new Set(); const merged = [];
                 confirmed.forEach(e => { const sym = e.symbol||e.ticker||''; const dt = (e.date||e.publicationDate||'').substring(0,10); const key = `${sym}_${dt}`; if (sym && !seen.has(key)) { seen.add(key); e._confirmed = true; merged.push(e); } });
                 (Array.isArray(upcoming)?upcoming:[]).forEach(e => { const sym = e.symbol||e.ticker||''; const dt = (e.date||'').substring(0,10); const key = `${sym}_${dt}`; if (sym && !seen.has(key)) { seen.add(key); merged.push(e); } });
