@@ -364,11 +364,12 @@
 
     <script>
         // ========== VARIABLES GLOBALES ==========
-        // Detectar si estamos en Vercel (usar proxy) o en local (usar APIs directo)
-        const IS_VERCEL = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && window.location.protocol !== 'file:';
+        // Detectar si estamos en Vercel (usar proxy) o en cualquier otro lugar (usar APIs directo)
+        // Solo activa proxy si la URL contiene .vercel.app O si existe una variable custom en el HTML
+        const IS_VERCEL = window.location.hostname.includes('.vercel.app') || document.documentElement.dataset.vercel === 'true';
         
-        // En modo Vercel, las keys NO se exponen al navegador (están en el servidor)
-        // En modo local/dev, se usan directo (solo para testing)
+        // En modo Vercel, las keys NO se exponen al navegador
+        // En cualquier otro entorno (localhost, GitHub Pages), se usan directo
         const POLYGON_API_KEY = IS_VERCEL ? null : 'Q3I6b14c8HL2l_A7faplgnuMTXekxCUU';
         const FMP_API_KEY = IS_VERCEL ? null : 'zD9Lf8LxzvIe8vuQ4fMjEiIZs0uK0FL7';
         
