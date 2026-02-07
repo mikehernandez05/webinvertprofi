@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InvertProfit - Trade Execution</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#f2d00d",
+              "background-light": "#f8f8f5",
+              "background-dark": "#121217", /* Modified slightly to be closer to Midnight Blue/Deep Charcoal while staying dark */
+              "midnight-surface": "#1e2029",
+              "gold-dim": "#b59c2b",
+            },
+            fontFamily: {
+              "display": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+            boxShadow: {
+                'gold-glow': '0 0 20px rgba(242, 208, 13, 0.3)',
+                'gold-glow-lg': '0 0 40px rgba(242, 208, 13, 0.4)',
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        
+        /* Custom scrollbar for a cleaner look */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #121217; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #393728; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #54503b; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-white font-display overflow-hidden h-screen flex flex-col">
+<!-- Top Navigation -->
+<header class="flex-none flex items-center justify-between border-b border-white/10 bg-background-dark px-6 py-3 z-10 relative">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-white">
+<div class="size-8 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-white text-xl font-bold tracking-tight">InvertProfit</h2>
+</div>
+<div class="hidden md:flex flex-1 items-stretch rounded-lg bg-white/5 border border-white/10 w-64 h-10 transition-colors focus-within:border-primary/50">
+<div class="flex items-center justify-center pl-3 text-gray-400">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</div>
+<input class="w-full bg-transparent border-none text-sm text-white placeholder-gray-500 focus:ring-0 h-full" placeholder="Search markets..."/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="hidden lg:flex items-center gap-6">
+<a class="text-gray-400 hover:text-white text-sm font-medium transition-colors" href="#">Dashboard</a>
+<a class="text-white text-sm font-medium transition-colors" href="#">Markets</a>
+<a class="text-gray-400 hover:text-white text-sm font-medium transition-colors" href="#">Portfolio</a>
+<a class="text-gray-400 hover:text-white text-sm font-medium transition-colors" href="#">News</a>
+</div>
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-9 border border-white/10" data-alt="User profile avatar showing a generic silhouette" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCaZlpBRjrdHLAX6qKl1XpvZAU0LNS6-pD5GURnwfp-ZhibCewW6JdUciMKGemSbXNDvbZkDa3oqp0bRTHUyDCGeiSv1-9BCLWtba3le76VkfVEjmllire3-eT1yvv6KOsyQL8DqUm3JYEUfkNpPHpHJdzq2izg1ji_KkyShLa401VQdwJYnzJlyvPoG0dYF7pB4QiKm9J2FyakSpYT7v02nj4uVY8duHwwBMpN98iq2fL3lV9mVhPnaGvve2yuP5YkTsv8ZSaGniA");'></div>
+</div>
+</header>
+<!-- Main Layout -->
+<div class="flex flex-1 overflow-hidden relative">
+<!-- Sidebar -->
+<aside class="w-64 flex-none bg-background-dark border-r border-white/10 hidden md:flex flex-col justify-between p-4 z-0">
+<div class="flex flex-col gap-6">
+<!-- User Profile Summary -->
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition-colors cursor-pointer">
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-10 border border-white/10" data-alt="Trader profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAQan5MB3hBqZdJDJRwkDoz3Z-AjPKAoAyoQHrXSV01Q9JPaW9lCCWLbvZ_XV6b8uLKbb0x5594CZCz88Pcv5hP_pE51aKi25_NIImrtFfnUKmr6jFuKvvUctiqTo3Wa3_jaHyr1Nyc3fPjb3OUnhuPZK3-bVUoJL8QdL7F3FnvsLj_HA8mEw2fIB3m_FZYuusRk94hQQnlwyMUaKGyUtOYaJ-hqdh2xyGjiqC31-8YUCUO0ifK8QwRn_i8zZ2DmU6iwM0Lhd3qiyA");'></div>
+<div class="flex flex-col">
+<h1 class="text-white text-sm font-bold">Trader One</h1>
+<p class="text-gray-500 text-xs">Basic Account</p>
+</div>
+</div>
+<!-- Navigation -->
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary border border-primary/20" href="#">
+<span class="material-symbols-outlined fill">trending_up</span>
+<span class="text-sm font-bold">Trade</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined">visibility</span>
+<span class="text-sm font-medium">Watchlist</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined">notifications</span>
+<span class="text-sm font-medium">Alerts</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined">chat</span>
+<span class="text-sm font-medium">Support</span>
+</a>
+</nav>
+</div>
+<!-- Bottom CTA -->
+<div class="bg-gradient-to-br from-midnight-surface to-background-dark border border-white/10 p-4 rounded-xl">
+<p class="text-xs text-gray-400 mb-2">Need higher leverage?</p>
+<button class="w-full py-2 text-xs font-bold text-white bg-white/10 rounded hover:bg-white/20 transition-colors">Upgrade Pro</button>
+</div>
+</aside>
+<!-- Main Chart Area (Blurred Background Context) -->
+<main class="flex-1 flex flex-col relative bg-background-dark overflow-hidden">
+<!-- Simulated Chart Header -->
+<div class="flex items-center justify-between px-6 py-4 border-b border-white/5 bg-background-dark/50">
+<div>
+<div class="flex items-baseline gap-3">
+<h2 class="text-2xl font-bold text-white">BTC/USD</h2>
+<span class="text-sm text-green-500 font-medium">+2.34%</span>
+</div>
+<p class="text-sm text-gray-500">Bitcoin / US Dollar</p>
+</div>
+<div class="flex gap-2">
+<span class="px-3 py-1 text-xs font-medium text-white bg-white/10 rounded cursor-pointer">1H</span>
+<span class="px-3 py-1 text-xs font-medium text-black bg-primary rounded cursor-pointer">4H</span>
+<span class="px-3 py-1 text-xs font-medium text-white bg-white/10 rounded cursor-pointer">1D</span>
+</div>
+</div>
+<!-- Chart Visualization -->
+<div class="flex-1 p-6 flex flex-col relative">
+<div class="absolute inset-0 z-0 opacity-40 pointer-events-none">
+<!-- Abstract Chart Lines for background context -->
+<svg class="w-full h-full" fill="none" preserveaspectratio="none" viewbox="0 0 1200 600" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 450 C 100 450, 200 300, 300 320 C 400 340, 500 150, 600 200 C 700 250, 800 100, 900 120 C 1000 140, 1100 50, 1200 80" fill="none" stroke="#f2d00d" stroke-opacity="0.3" stroke-width="2"></path>
+<path d="M0 600 L0 450 C 100 450, 200 300, 300 320 C 400 340, 500 150, 600 200 C 700 250, 800 100, 900 120 C 1000 140, 1100 50, 1200 80 L 1200 600 Z" fill="url(#grad1)" fill-opacity="0.1"></path>
+<defs>
+<lineargradient id="grad1" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#f2d00d;stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:#121217;stop-opacity:0"></stop>
+</lineargradient>
+</defs>
+</svg>
+</div>
+<!-- Chart grid lines simulation -->
+<div class="flex-1 border-l border-b border-white/5 grid grid-cols-6 grid-rows-4">
+<div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div>
+<div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div>
+<div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div>
+<div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div><div class="border-r border-t border-white/5"></div>
+</div>
+</div>
+</main>
+<!-- THE CONVERSION WALL OVERLAY -->
+<div class="absolute inset-0 z-50 flex items-center justify-center p-4 bg-background-dark/90 backdrop-blur-sm animate-fade-in">
+<!-- Modal Container -->
+<div class="w-full max-w-lg relative">
+<!-- Glowing effect behind modal -->
+<div class="absolute -inset-1 bg-gradient-to-r from-primary/30 via-primary/10 to-transparent rounded-2xl blur-xl opacity-50"></div>
+<div class="relative bg-[#1a1b23] border border-primary/40 rounded-2xl shadow-2xl overflow-hidden flex flex-col items-center text-center p-8 md:p-12">
+<!-- Decorative Top Shine -->
+<div class="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent"></div>
+<!-- Icon -->
+<div class="mb-6 relative">
+<div class="absolute inset-0 bg-primary/20 rounded-full blur-xl"></div>
+<div class="relative bg-gradient-to-b from-[#2a2c35] to-[#1a1b23] border border-primary/30 p-4 rounded-full shadow-gold-glow">
+<span class="material-symbols-outlined text-5xl text-primary">lock_open</span>
+</div>
+</div>
+<!-- Headline -->
+<h1 class="text-3xl md:text-4xl font-extrabold text-white leading-tight mb-4 tracking-tight">
+                        Has detectado la <span class="text-primary drop-shadow-[0_0_8px_rgba(242,208,13,0.5)]">oportunidad</span>
+</h1>
+<!-- Subheadline -->
+<h2 class="text-xl md:text-2xl font-bold text-white mb-6">
+                        Ahora conéctate para operarla
+                    </h2>
+<!-- Body Text -->
+<p class="text-gray-400 text-sm md:text-base leading-relaxed mb-10 max-w-sm mx-auto">
+                        Connect your broker account securely to execute this trade instantly. Don't let the market move without you.
+                    </p>
+<!-- Primary Action (Epic Button) -->
+<button class="group relative w-full flex items-center justify-center gap-3 bg-primary hover:bg-[#ffe135] text-background-dark font-black text-lg py-4 px-8 rounded-xl shadow-gold-glow transition-all duration-300 transform hover:scale-[1.02] hover:shadow-gold-glow-lg mb-4">
+<span class="material-symbols-outlined font-bold group-hover:animate-pulse">link</span>
+<span>CONECTAR BROKER</span>
+<!-- Shine effect on hover -->
+<div class="absolute inset-0 rounded-xl overflow-hidden">
+<div class="absolute top-0 left-0 h-full w-10 bg-white/30 skew-x-[-20deg] transform -translate-x-20 group-hover:animate-[shimmer_1s_infinite]"></div>
+</div>
+</button>
+<!-- Secondary Action -->
+<button class="text-gray-500 hover:text-white text-sm font-medium transition-colors border-b border-transparent hover:border-gray-500 pb-0.5">
+                        Continuar analizando
+                    </button>
+<!-- Security Badge -->
+<div class="mt-8 flex items-center justify-center gap-2 text-xs text-gray-600">
+<span class="material-symbols-outlined text-[16px]">verified_user</span>
+<span>256-bit SSL Encrypted Connection</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<style>
+        @keyframes shimmer {
+            0% { transform: translateX(-50px) skewX(-20deg); }
+            100% { transform: translateX(400px) skewX(-20deg); }
+        }
+        @keyframes fade-in {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .animate-fade-in {
+            animation: fade-in 0.3s ease-out forwards;
+        }
+    </style>
+</body></html>

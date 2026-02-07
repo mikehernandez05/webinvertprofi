@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InvertProfit Advanced Trading Terminal</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Roboto+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2d00d",
+                        "midnight": "#0B121E",
+                        "midnight-card": "#121b29",
+                        "midnight-light": "#1a2538",
+                        "midnight-border": "#2a364d",
+                        "text-off-white": "#f0f0f0",
+                        "text-muted": "#8d9eb5",
+                        "chart-green": "#00C853",
+                        "chart-red": "#FF3D00",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "mono": ["Roboto Mono", "monospace"],
+                    },
+                    borderRadius: {
+                        "3xl": "1.5rem", // 24px
+                        "4xl": "2rem",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for institutional feel */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B121E; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a364d; 
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #f2d00d; 
+        }
+        
+        .chart-grid {
+            background-image: 
+                linear-gradient(rgba(42, 54, 77, 0.2) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(42, 54, 77, 0.2) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+    </style>
+</head>
+<body class="bg-midnight text-text-off-white font-display h-screen flex flex-col overflow-hidden selection:bg-primary selection:text-midnight">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-midnight-border px-6 py-3 bg-midnight shrink-0 z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 text-white">
+<div class="size-8 text-primary">
+<svg class="w-full h-full" fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M4 42.4379C4 42.4379 14.0962 36.0744 24 41.1692C35.0664 46.8624 44 42.2078 44 42.2078L44 7.01134C44 7.01134 35.068 11.6577 24.0031 5.96913C14.0971 0.876274 4 7.27094 4 7.27094L4 42.4379Z" fill="currentColor"></path>
+</svg>
+</div>
+<h2 class="text-white text-xl font-bold leading-tight tracking-tight">InvertProfit</h2>
+</div>
+<nav class="hidden lg:flex items-center gap-1 bg-midnight-card p-1 rounded-full border border-midnight-border">
+<a class="px-5 py-2 text-sm font-medium text-text-muted hover:text-white rounded-full transition-colors" href="#">Dashboard</a>
+<a class="px-5 py-2 text-sm font-bold text-midnight bg-primary rounded-full shadow-[0_0_15px_rgba(242,208,13,0.3)]" href="#">MERCADOS</a>
+<a class="px-5 py-2 text-sm font-medium text-text-muted hover:text-white rounded-full transition-colors" href="#">Cartera</a>
+<a class="px-5 py-2 text-sm font-medium text-text-muted hover:text-white rounded-full transition-colors" href="#">Noticias</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<!-- Search -->
+<label class="flex items-center h-10 w-64 bg-midnight-card rounded-full border border-midnight-border focus-within:border-primary/50 transition-colors px-4 group cursor-text">
+<span class="material-symbols-outlined text-text-muted group-focus-within:text-primary text-[20px]">search</span>
+<input class="w-full bg-transparent border-none focus:ring-0 text-sm placeholder:text-text-muted text-white ml-2" placeholder="Buscar activo (ej. BTC/USDT)"/>
+</label>
+<div class="h-6 w-px bg-midnight-border mx-1"></div>
+<button class="flex items-center gap-2 h-10 px-4 rounded-full bg-midnight-card border border-midnight-border hover:border-primary text-sm font-bold transition-all hover:shadow-[0_0_10px_rgba(242,208,13,0.1)]">
+<span class="material-symbols-outlined text-primary text-[20px]">account_balance_wallet</span>
+<span>Conectar</span>
+</button>
+<div class="flex gap-2">
+<button class="size-10 flex items-center justify-center rounded-full bg-midnight-card border border-midnight-border text-text-muted hover:text-white hover:bg-midnight-light transition-colors relative">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-2 right-2 size-2 bg-chart-red rounded-full border-2 border-midnight-card"></span>
+</button>
+<div class="size-10 rounded-full bg-cover bg-center border border-midnight-border" data-alt="User profile avatar showing a minimalist abstract face" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAb3ujBFdwW-USWuiXbrrhqZIAT7nTl9Y5Y2JZLs7JENkPQM_PXePM6jwUShPdfmZnJhtdSzjZnCbx5eD0jGeVfeIqJEuh2hO_IUb2bF_gOHaoy8GPDjL26OnRRsZfn__GV8jAO3XmSAfkR3qZKEkV_y-LIfTDpFKxDD4KqpwD5RRHoglTqbWQxk48ns5wXYvyeMdoBVheZvGJGjs8JuNvVg05U-pnSOy-1cCTvChb7SkenxLOmyKQ9Z5jJ3_G-UQvB8TrH5eIx0Fw");'></div>
+</div>
+</div>
+</header>
+<!-- Main Workspace -->
+<main class="flex-1 grid grid-cols-[64px_1fr_360px] gap-4 p-4 overflow-hidden h-[calc(100vh-73px)]">
+<!-- Left Toolbar (Drawing Tools) -->
+<aside class="flex flex-col items-center py-4 gap-4 bg-midnight-card rounded-3xl border border-midnight-border overflow-y-auto scrollbar-hide">
+<button class="size-10 flex items-center justify-center rounded-xl bg-midnight-light text-primary hover:bg-primary hover:text-midnight transition-colors" title="Cursor">
+<span class="material-symbols-outlined">near_me</span>
+</button>
+<div class="w-8 h-px bg-midnight-border"></div>
+<button class="size-10 flex items-center justify-center rounded-xl text-text-muted hover:text-primary hover:bg-midnight-light transition-colors" title="Trendline">
+<span class="material-symbols-outlined">show_chart</span>
+</button>
+<button class="size-10 flex items-center justify-center rounded-xl text-text-muted hover:text-primary hover:bg-midnight-light transition-colors" title="Fibonacci">
+<span class="material-symbols-outlined">waterfall_chart</span>
+</button>
+<button class="size-10 flex items-center justify-center rounded-xl text-text-muted hover:text-primary hover:bg-midnight-light transition-colors" title="Brush">
+<span class="material-symbols-outlined">brush</span>
+</button>
+<button class="size-10 flex items-center justify-center rounded-xl text-text-muted hover:text-primary hover:bg-midnight-light transition-colors" title="Text">
+<span class="material-symbols-outlined">title</span>
+</button>
+<button class="size-10 flex items-center justify-center rounded-xl text-text-muted hover:text-primary hover:bg-midnight-light transition-colors" title="Patterns">
+<span class="material-symbols-outlined">polyline</span>
+</button>
+<button class="size-10 flex items-center justify-center rounded-xl text-text-muted hover:text-primary hover:bg-midnight-light transition-colors" title="Measure">
+<span class="material-symbols-outlined">straighten</span>
+</button>
+<div class="flex-1"></div>
+<button class="size-10 flex items-center justify-center rounded-xl text-text-muted hover:text-chart-red hover:bg-midnight-light transition-colors" title="Delete All">
+<span class="material-symbols-outlined">delete_outline</span>
+</button>
+</aside>
+<!-- Center Column: Chart & Orders -->
+<section class="flex flex-col gap-4 min-w-0">
+<!-- Chart Container -->
+<div class="flex-1 flex flex-col bg-midnight-card rounded-3xl border border-midnight-border overflow-hidden relative group shadow-2xl">
+<!-- Chart Header/Toolbar -->
+<div class="flex items-center justify-between px-4 py-3 border-b border-midnight-border bg-midnight-card/95 backdrop-blur-sm z-10">
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-3">
+<div class="flex -space-x-2">
+<div class="size-6 rounded-full bg-white flex items-center justify-center border-2 border-midnight-card overflow-hidden">
+<span class="text-[8px] text-black font-bold">€</span>
+</div>
+<div class="size-6 rounded-full bg-green-800 flex items-center justify-center border-2 border-midnight-card overflow-hidden">
+<span class="text-[8px] text-white font-bold">$</span>
+</div>
+</div>
+<div>
+<h3 class="text-white font-bold leading-none">EUR/USD</h3>
+<span class="text-xs text-text-muted">Euro vs US Dollar</span>
+</div>
+</div>
+<div class="h-8 w-px bg-midnight-border mx-2"></div>
+<div class="flex items-baseline gap-2">
+<span class="text-2xl font-mono font-medium text-chart-green">1.08456</span>
+<span class="text-xs font-bold text-chart-green bg-chart-green/10 px-1.5 py-0.5 rounded">+0.12%</span>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex bg-midnight border border-midnight-border rounded-lg p-0.5">
+<button class="px-3 py-1 text-xs font-bold text-midnight bg-primary rounded shadow-sm">1H</button>
+<button class="px-3 py-1 text-xs font-medium text-text-muted hover:text-white rounded hover:bg-midnight-light">4H</button>
+<button class="px-3 py-1 text-xs font-medium text-text-muted hover:text-white rounded hover:bg-midnight-light">1D</button>
+<button class="px-3 py-1 text-xs font-medium text-text-muted hover:text-white rounded hover:bg-midnight-light">1W</button>
+</div>
+<div class="h-6 w-px bg-midnight-border"></div>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-midnight-border hover:bg-midnight-light text-xs font-medium text-text-off-white transition-colors">
+<span class="material-symbols-outlined text-[16px] text-primary">ssid_chart</span>
+                            Indicadores
+                        </button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-midnight-border hover:bg-midnight-light text-xs font-medium text-text-off-white transition-colors">
+<span class="material-symbols-outlined text-[16px]">settings</span>
+</button>
+<button class="flex items-center justify-center size-8 rounded-lg bg-primary hover:bg-primary/90 text-midnight transition-colors">
+<span class="material-symbols-outlined text-[20px]">fullscreen</span>
+</button>
+</div>
+</div>
+<!-- Main Chart Area (Simulated) -->
+<div class="flex-1 relative chart-grid cursor-crosshair overflow-hidden">
+<!-- Background Candle Image -->
+<div class="absolute inset-0 opacity-80" data-alt="Stock market candlestick chart for EUR/USD showing an uptrend with green and red candles on a dark background">
+<!-- Simulated chart lines using CSS Gradients/SVG for visual fidelity -->
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 1000 500">
+<!-- Grid -->
+<defs>
+<lineargradient id="gradientArea" x1="0" x2="0" y1="0" y2="1">
+<stop offset="0%" stop-color="rgba(0, 200, 83, 0.1)"></stop>
+<stop offset="100%" stop-color="rgba(0, 200, 83, 0)"></stop>
+</lineargradient>
+</defs>
+<!-- Candles (Simplified SVG representation) -->
+<!-- Green candles -->
+<path d="M50,400 L50,350 M45,380 L55,380 L55,360 L45,360 Z" fill="#00C853" stroke="#00C853"></path>
+<path d="M80,360 L80,300 M75,340 L85,340 L85,310 L75,310 Z" fill="#00C853" stroke="#00C853"></path>
+<!-- Red candle -->
+<path d="M110,310 L110,350 M105,310 L115,310 L115,340 L105,340 Z" fill="#FF3D00" stroke="#FF3D00"></path>
+<!-- More abstract candles -->
+<g transform="translate(130, 0) scale(1.5, 1)">
+<!-- A generated path to simulate market movement -->
+<path d="M10 320 L10 280 M5 300 H15 V290 H5 Z" fill="#00C853" stroke="#00C853"></path>
+<path d="M30 290 L30 340 M25 300 H35 V330 H25 Z" fill="#FF3D00" stroke="#FF3D00"></path>
+<path d="M50 330 L50 250 M45 310 H55 V270 H45 Z" fill="#00C853" stroke="#00C853"></path>
+<path d="M70 270 L70 200 M65 260 H75 V220 H65 Z" fill="#00C853" stroke="#00C853"></path>
+<path d="M90 220 L90 180 M85 210 H95 V190 H85 Z" fill="#00C853" stroke="#00C853"></path>
+<path d="M110 190 L110 230 M105 190 H115 V220 H105 Z" fill="#FF3D00" stroke="#FF3D00"></path>
+<!-- W Pattern formation -->
+<path d="M130 220 L130 350 M125 250 H135 V330 H125 Z" fill="#FF3D00" stroke="#FF3D00"></path>
+<path d="M150 330 L150 380 M145 340 H155 V370 H145 Z" fill="#FF3D00" stroke="#FF3D00"></path> <!-- Bottom 1 -->
+<path d="M170 370 L170 300 M165 360 H175 V310 H165 Z" fill="#00C853" stroke="#00C853"></path>
+<path d="M190 310 L190 360 M185 320 H195 V350 H185 Z" fill="#FF3D00" stroke="#FF3D00"></path>
+<path d="M210 350 L210 400 M205 360 H215 V390 H205 Z" fill="#FF3D00" stroke="#FF3D00"></path> <!-- Bottom 2 -->
+<path d="M230 390 L230 300 M225 380 H235 V320 H225 Z" fill="#00C853" stroke="#00C853"></path>
+<path d="M250 320 L250 240 M245 310 H255 V260 H245 Z" fill="#00C853" stroke="#00C853"></path>
+<path d="M270 260 L270 180 M265 250 H275 V200 H265 Z" fill="#00C853" stroke="#00C853"></path>
+<path d="M290 200 L290 150 M285 190 H295 V160 H285 Z" fill="#00C853" stroke="#00C853"></path>
+</g>
+<!-- EMA 50 Gold Line -->
+<path d="M0,420 C100,400 200,380 300,350 C400,320 500,360 600,280 C700,200 800,220 1000,180" fill="none" stroke="#f2d00d" stroke-opacity="0.8" stroke-width="2"></path>
+<!-- Highlight W Pattern -->
+<circle cx="355" cy="370" fill="none" r="10" stroke="#f2d00d" stroke-dasharray="4 2" stroke-width="2"></circle>
+<circle cx="445" cy="390" fill="none" r="10" stroke="#f2d00d" stroke-dasharray="4 2" stroke-width="2"></circle>
+<text fill="#f2d00d" font-family="Manrope" font-size="12" x="380" y="420">Doble Piso (W)</text>
+</svg>
+</div>
+<!-- Price Axis (Right) -->
+<div class="absolute top-0 right-0 bottom-0 w-14 bg-midnight border-l border-midnight-border flex flex-col justify-between py-2 text-[10px] text-text-muted font-mono text-right pr-1 select-none">
+<span>1.09000</span>
+<span>1.08800</span>
+<span>1.08600</span>
+<span class="bg-chart-green text-black font-bold px-1 rounded-l ml-[-4px]">1.08456</span>
+<span>1.08200</span>
+<span>1.08000</span>
+<span>1.07800</span>
+<span>1.07600</span>
+</div>
+<!-- Date Axis (Bottom) -->
+<div class="absolute bottom-0 left-0 right-14 h-6 bg-midnight border-t border-midnight-border flex justify-between px-4 items-center text-[10px] text-text-muted font-mono select-none">
+<span>10:00</span>
+<span>11:00</span>
+<span>12:00</span>
+<span>13:00</span>
+<span>14:00</span>
+<span>15:00</span>
+<span>16:00</span>
+</div>
+</div>
+<!-- RSI Panel (Bottom of Chart) -->
+<div class="h-32 border-t border-midnight-border bg-midnight relative p-2">
+<div class="absolute top-2 left-2 text-[10px] font-bold text-primary">RSI (14) <span class="text-white">35.42</span></div>
+<svg class="w-full h-full" preserveaspectratio="none" viewbox="0 0 1000 100">
+<!-- Bounds -->
+<line stroke="#ffffff" stroke-dasharray="4 4" stroke-opacity="0.1" x1="0" x2="1000" y1="30" y2="30"></line>
+<line stroke="#ffffff" stroke-dasharray="4 4" stroke-opacity="0.1" x1="0" x2="1000" y1="70" y2="70"></line>
+<!-- RSI Line -->
+<path d="M0,50 L100,60 L200,55 L300,80 L400,85 L500,75 L600,40 L700,35 L800,45 L900,50 L1000,55" fill="none" stroke="#BA68C8" stroke-width="2"></path>
+<!-- Highlight Oversold -->
+<circle cx="700" cy="35" fill="#f2d00d" r="4"></circle>
+</svg>
+</div>
+</div>
+<!-- Bottom Panel: History & Active Orders -->
+<div class="h-[280px] bg-midnight-card rounded-3xl border border-midnight-border flex flex-col overflow-hidden">
+<div class="flex items-center gap-6 px-6 border-b border-midnight-border bg-midnight-light/30">
+<button class="py-3 text-sm font-bold text-primary border-b-2 border-primary">Órdenes Activas (2)</button>
+<button class="py-3 text-sm font-medium text-text-muted hover:text-white transition-colors">Historial</button>
+<button class="py-3 text-sm font-medium text-text-muted hover:text-white transition-colors">Posiciones</button>
+<div class="flex-1"></div>
+<button class="text-xs font-medium text-text-muted flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">filter_list</span> Filtrar
+                    </button>
+</div>
+<div class="flex-1 overflow-auto">
+<table class="w-full text-left border-collapse">
+<thead class="bg-midnight sticky top-0 z-10">
+<tr>
+<th class="py-2 px-6 text-xs font-medium text-text-muted">Par</th>
+<th class="py-2 px-6 text-xs font-medium text-text-muted">Tipo</th>
+<th class="py-2 px-6 text-xs font-medium text-text-muted">Precio Entrada</th>
+<th class="py-2 px-6 text-xs font-medium text-text-muted">Precio Actual</th>
+<th class="py-2 px-6 text-xs font-medium text-text-muted">Cantidad</th>
+<th class="py-2 px-6 text-xs font-medium text-text-muted">TP / SL</th>
+<th class="py-2 px-6 text-xs font-medium text-text-muted text-right">PNL (No Realizado)</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-midnight-border text-sm">
+<tr class="hover:bg-midnight-light/50 transition-colors group">
+<td class="py-3 px-6 font-bold text-white flex items-center gap-2">
+<div class="size-2 rounded-full bg-chart-green"></div> EUR/USD
+                                </td>
+<td class="py-3 px-6 text-chart-green font-medium">Compra (Long)</td>
+<td class="py-3 px-6 font-mono text-text-off-white">1.08200</td>
+<td class="py-3 px-6 font-mono text-text-off-white">1.08456</td>
+<td class="py-3 px-6 font-mono text-text-off-white">0.5 Lot</td>
+<td class="py-3 px-6 font-mono text-xs">
+<span class="text-chart-green">1.0950</span> / <span class="text-chart-red">1.0780</span>
+</td>
+<td class="py-3 px-6 text-right font-mono font-bold text-chart-green text-base">+$128.50</td>
+</tr>
+<tr class="hover:bg-midnight-light/50 transition-colors group">
+<td class="py-3 px-6 font-bold text-white flex items-center gap-2">
+<div class="size-2 rounded-full bg-chart-red"></div> GBP/JPY
+                                </td>
+<td class="py-3 px-6 text-chart-red font-medium">Venta (Short)</td>
+<td class="py-3 px-6 font-mono text-text-off-white">192.450</td>
+<td class="py-3 px-6 font-mono text-text-off-white">192.600</td>
+<td class="py-3 px-6 font-mono text-text-off-white">0.2 Lot</td>
+<td class="py-3 px-6 font-mono text-xs">
+<span class="text-chart-green">190.00</span> / <span class="text-chart-red">193.00</span>
+</td>
+<td class="py-3 px-6 text-right font-mono font-bold text-chart-red text-base">-$30.20</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<!-- Right Sidebar: AI Analysis & Order Book -->
+<aside class="flex flex-col gap-4 min-w-0">
+<!-- AI Analysis Card -->
+<div class="bg-gradient-to-b from-midnight-card to-midnight border border-primary/20 rounded-3xl p-5 shadow-[0_0_20px_rgba(242,208,13,0.05)] relative overflow-hidden">
+<div class="absolute top-0 right-0 p-3 opacity-10">
+<span class="material-symbols-outlined text-[120px] text-primary">psychology</span>
+</div>
+<div class="relative z-10 flex flex-col gap-4">
+<div class="flex items-center gap-2 mb-2">
+<div class="flex items-center justify-center size-8 rounded-full bg-primary/20 text-primary">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+</div>
+<div>
+<h3 class="text-lg font-bold text-white leading-none">AmigoTrade AI</h3>
+<span class="text-xs text-primary font-medium">Análisis en Vivo</span>
+</div>
+</div>
+<div class="bg-midnight-light/50 rounded-2xl p-4 border border-midnight-border backdrop-blur-sm">
+<div class="flex items-start justify-between gap-2 mb-2">
+<span class="text-xs font-bold uppercase tracking-wider text-text-muted">Señal Detectada</span>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-chart-green/20 text-chart-green border border-chart-green/30">ALCISTA</span>
+</div>
+<h4 class="text-xl font-bold text-white mb-1">Patrón W (Doble Piso)</h4>
+<p class="text-sm text-text-muted leading-relaxed">
+                            Formación de reversión confirmada en marco de 4H. Zona de soporte fuerte en 1.08200.
+                        </p>
+</div>
+<div class="bg-midnight-light/50 rounded-2xl p-4 border border-midnight-border backdrop-blur-sm flex items-center justify-between">
+<div>
+<span class="text-xs font-bold uppercase tracking-wider text-text-muted block mb-1">Indicadores</span>
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold text-white">RSI (14)</span>
+<span class="text-sm font-mono text-primary font-bold">35.4</span>
+</div>
+</div>
+<div class="text-right">
+<span class="text-xs font-medium text-chart-green">Sobrevendido</span>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3 mt-2">
+<button class="py-3 rounded-full bg-chart-red/10 border border-chart-red/50 text-chart-red font-bold text-sm hover:bg-chart-red hover:text-white transition-all">
+                            Vender
+                        </button>
+<button class="py-3 rounded-full bg-primary text-midnight font-bold text-sm hover:bg-white hover:shadow-[0_0_15px_rgba(242,208,13,0.4)] transition-all">
+                            Ejecutar Compra
+                        </button>
+</div>
+</div>
+</div>
+<!-- Order Book / Watchlist Compact -->
+<div class="flex-1 bg-midnight-card rounded-3xl border border-midnight-border flex flex-col overflow-hidden">
+<div class="px-5 py-3 border-b border-midnight-border flex items-center justify-between bg-midnight-light/30">
+<h3 class="text-sm font-bold text-white">Lista de Seguimiento</h3>
+<span class="material-symbols-outlined text-text-muted text-[18px] cursor-pointer hover:text-white">more_horiz</span>
+</div>
+<div class="flex-1 overflow-y-auto p-2">
+<div class="space-y-1">
+<div class="flex items-center justify-between p-3 rounded-xl hover:bg-midnight-light cursor-pointer group transition-colors bg-midnight-light/30">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-500 font-bold text-[10px] border border-orange-500/30">BTC</div>
+<div>
+<div class="text-sm font-bold text-white group-hover:text-primary transition-colors">BTC/USDT</div>
+<div class="text-[10px] text-text-muted">Bitcoin</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-sm font-mono font-medium text-white">64,230.50</div>
+<div class="text-[10px] font-medium text-chart-red">-1.24%</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl hover:bg-midnight-light cursor-pointer group transition-colors border border-primary/20 bg-primary/5">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-500 font-bold text-[10px] border border-blue-500/30">EUR</div>
+<div>
+<div class="text-sm font-bold text-white group-hover:text-primary transition-colors">EUR/USD</div>
+<div class="text-[10px] text-text-muted">Euro</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-sm font-mono font-medium text-white">1.08456</div>
+<div class="text-[10px] font-medium text-chart-green">+0.12%</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl hover:bg-midnight-light cursor-pointer group transition-colors">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-yellow-500/20 flex items-center justify-center text-yellow-500 font-bold text-[10px] border border-yellow-500/30">XAU</div>
+<div>
+<div class="text-sm font-bold text-white group-hover:text-primary transition-colors">XAU/USD</div>
+<div class="text-[10px] text-text-muted">Gold</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-sm font-mono font-medium text-white">2,340.10</div>
+<div class="text-[10px] font-medium text-chart-green">+0.45%</div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-xl hover:bg-midnight-light cursor-pointer group transition-colors">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-500 font-bold text-[10px] border border-indigo-500/30">SOL</div>
+<div>
+<div class="text-sm font-bold text-white group-hover:text-primary transition-colors">SOL/USDT</div>
+<div class="text-[10px] text-text-muted">Solana</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-sm font-mono font-medium text-white">145.20</div>
+<div class="text-[10px] font-medium text-chart-green">+3.10%</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+</main>
+</body></html>

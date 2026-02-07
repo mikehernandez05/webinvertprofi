@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InvertProfit Trading Terminal — Live</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "primary": "#f2d00d",
+                    "midnight": "#0B121E",
+                    "midnight-card": "#121b29",
+                    "midnight-light": "#1a2538",
+                    "midnight-border": "#2a364d",
+                    "text-off-white": "#f0f0f0",
+                    "text-muted": "#8d9eb5",
+                    "chart-green": "#00C853",
+                    "chart-red": "#FF3D00",
+                },
+                fontFamily: {
+                    "display": ["Manrope", "sans-serif"],
+                    "mono": ["Roboto Mono", "monospace"],
+                },
+            },
+        },
+    }
+</script>
+<style>
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0B121E; }
+    ::-webkit-scrollbar-thumb { background: #2a364d; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #f2d00d; }
+
+    @keyframes flash-green { 0%{background-color:rgba(0,200,83,0.3)} 100%{background-color:transparent} }
+    @keyframes flash-red { 0%{background-color:rgba(255,61,0,0.3)} 100%{background-color:transparent} }
+    .flash-up { animation: flash-green 0.8s ease-out; }
+    .flash-down { animation: flash-red 0.8s ease-out; }
+
+    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .live-pulse { animation: pulse-dot 1s infinite; }
+
+    @keyframes ticker-slide { 0%{transform:translateY(-100%);opacity:0} 100%{transform:translateY(0);opacity:1} }
+    .price-update { animation: ticker-slide 0.25s ease-out; }
+
+    /* Order table rows */
+    .order-row { transition: all 0.15s ease; cursor: pointer; }
+    .order-row:hover { background: rgba(26,37,56,0.7) !important; }
+    .order-row.selected { background: rgba(242,208,13,0.06) !important; border-left: 3px solid #f2d00d; }
+    .order-row td:first-child { transition: padding-left 0.15s; }
+    .order-row.selected td:first-child { padding-left: 20px; }
+
+    /* Dragging state */
+    .order-row.dragging { opacity: 0.5; background: rgba(242,208,13,0.1) !important; }
+    .order-row.drag-over { border-top: 2px solid #f2d00d !important; }
+    .wl-item.border-primary\/20 { animation: wl-active-pulse 2s ease-in-out infinite; }
+    @keyframes wl-active-pulse {
+        0%, 100% { box-shadow: 0 0 0 0 rgba(242,208,13,0); }
+        50% { box-shadow: 0 0 12px 0 rgba(242,208,13,0.15); }
+    }
+</style>
+</head>
+<body class="bg-midnight text-text-off-white font-display h-screen flex flex-col overflow-hidden selection:bg-primary selection:text-midnight">
+
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-midnight-border px-6 py-3 bg-midnight shrink-0 z-50">
+    <div class="flex items-center gap-8">
+        <div class="flex items-center gap-2 text-white">
+            <img id="header-logo" src="data:image/png;base64,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" alt="InvertProfit" class="h-12 object-contain" />
+        </div>
+        <nav class="hidden lg:flex items-center gap-1 bg-midnight-card p-1 rounded-full border border-midnight-border">
+            <a class="px-5 py-2 text-sm font-medium text-text-muted hover:text-white rounded-full transition-colors" href="#">Dashboard</a>
+            <a class="px-5 py-2 text-sm font-bold text-midnight bg-primary rounded-full shadow-[0_0_15px_rgba(242,208,13,0.3)]" href="#">MERCADOS</a>
+            <a class="px-5 py-2 text-sm font-medium text-text-muted hover:text-white rounded-full transition-colors" href="#">Cartera</a>
+            <a class="px-5 py-2 text-sm font-medium text-text-muted hover:text-white rounded-full transition-colors" href="#">Noticias</a>
+        </nav>
+        <div id="live-status" class="flex items-center gap-2 text-xs font-mono">
+            <span id="status-dot" class="size-2 rounded-full bg-text-muted animate-pulse"></span>
+            <span id="status-text" class="text-text-muted">Iniciando...</span>
+            <span id="status-counter" class="text-text-muted/50 ml-1"></span>
+        </div>
+    </div>
+    <div class="flex items-center gap-4">
+        <label class="flex items-center h-10 w-64 bg-midnight-card rounded-full border border-midnight-border focus-within:border-primary/50 transition-colors px-4 group cursor-text">
+            <span class="material-symbols-outlined text-text-muted group-focus-within:text-primary text-[20px]">search</span>
+            <input class="w-full bg-transparent border-none focus:ring-0 text-sm placeholder:text-text-muted text-white ml-2" placeholder="Buscar activo (ej. BTC/USDT)"/>
+        </label>
+        <div class="h-6 w-px bg-midnight-border mx-1"></div>
+        <button class="flex items-center gap-2 h-10 px-4 rounded-full bg-midnight-card border border-midnight-border hover:border-primary text-sm font-bold transition-all hover:shadow-[0_0_10px_rgba(242,208,13,0.1)]">
+            <span class="material-symbols-outlined text-primary text-[20px]">account_balance_wallet</span>
+            <span>Conectar</span>
+        </button>
+        <div class="flex gap-2">
+            <button class="size-10 flex items-center justify-center rounded-full bg-midnight-card border border-midnight-border text-text-muted hover:text-white hover:bg-midnight-light transition-colors relative">
+                <span class="material-symbols-outlined text-[20px]">notifications</span>
+                <span class="absolute top-2 right-2 size-2 bg-chart-red rounded-full border-2 border-midnight-card"></span>
+            </button>
+            <div class="size-10 rounded-full bg-cover bg-center border border-midnight-border" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAb3ujBFdwW-USWuiXbrrhqZIAT7nTl9Y5Y2JZLs7JENkPQM_PXePM6jwUShPdfmZnJhtdSzjZnCbx5eD0jGeVfeIqJEuh2hO_IUb2bF_gOHaoy8GPDjL26OnRRsZfn__GV8jAO3XmSAfkR3qZKEkV_y-LIfTDpFKxDD4KqpwD5RRHoglTqbWQxk48ns5wXYvyeMdoBVheZvGJGjs8JuNvVg05U-pnSOy-1cCTvChb7SkenxLOmyKQ9Z5jJ3_G-UQvB8TrH5eIx0Fw");'></div>
+        </div>
+    </div>
+</header>
+
+<!-- Main Workspace -->
+<main class="flex-1 grid grid-cols-[64px_1fr_360px] gap-4 p-4 overflow-hidden h-[calc(100vh-73px)]">
+    <!-- Left Toolbar -->
+    <aside class="flex flex-col items-center py-4 gap-4 bg-midnight-card rounded-3xl border border-midnight-border overflow-y-auto">
+        <button class="size-10 flex items-center justify-center rounded-xl bg-midnight-light text-primary hover:bg-primary hover:text-midnight transition-colors" title="Cursor">
+            <span class="material-symbols-outlined">near_me</span>
+        </button>
+        <div class="w-8 h-px bg-midnight-border"></div>
+        <button class="size-10 flex items-center justify-center rounded-xl text-text-muted hover:bg-midnight-light hover:text-white transition-colors" title="Línea">
+            <span class="material-symbols-outlined">show_chart</span>
+        </button>
+        <button class="size-10 flex items-center justify-center rounded-xl text-text-muted hover:bg-midnight-light hover:text-white transition-colors" title="Horizontal">
+            <span class="material-symbols-outlined">horizontal_rule</span>
+        </button>
+        <button class="size-10 flex items-center justify-center rounded-xl text-text-muted hover:bg-midnight-light hover:text-white transition-colors" title="Fibonacci">
+            <span class="material-symbols-outlined">architecture</span>
+        </button>
+        <button class="size-10 flex items-center justify-center rounded-xl text-text-muted hover:bg-midnight-light hover:text-white transition-colors" title="Texto">
+            <span class="material-symbols-outlined">text_fields</span>
+        </button>
+        <div class="flex-1"></div>
+        <button class="size-10 flex items-center justify-center rounded-xl text-text-muted hover:bg-midnight-light hover:text-white transition-colors" title="Borrar">
+            <span class="material-symbols-outlined">delete</span>
+        </button>
+    </aside>
+
+    <!-- Center Column -->
+    <section class="flex flex-col gap-4 min-w-0">
+        <!-- Chart Container -->
+        <div class="flex-1 flex flex-col bg-midnight-card rounded-3xl border border-midnight-border overflow-hidden relative shadow-2xl">
+            <!-- Chart Header -->
+            <div class="flex items-center justify-between px-4 py-3 border-b border-midnight-border bg-midnight-card/95 backdrop-blur-sm z-10">
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-3">
+                        <div id="chart-icon-wrap" class="flex -space-x-2">
+                            <div class="size-6 rounded-full bg-orange-500 flex items-center justify-center border-2 border-midnight-card"><span class="text-[8px] text-white font-bold">₿</span></div>
+                            <div class="size-6 rounded-full bg-green-800 flex items-center justify-center border-2 border-midnight-card"><span class="text-[8px] text-white font-bold">$</span></div>
+                        </div>
+                        <div>
+                            <h3 id="chart-pair-label" class="text-white font-bold leading-none">BTC/USDT</h3>
+                            <span id="chart-pair-sub" class="text-xs text-text-muted">Bitcoin vs US Dollar</span>
+                        </div>
+                    </div>
+                    <div class="h-8 w-px bg-midnight-border mx-2"></div>
+                    <div class="flex items-baseline gap-2">
+                        <span id="main-price" class="text-2xl font-mono font-medium text-chart-green">—</span>
+                        <span id="main-change" class="text-xs font-bold text-text-muted bg-midnight-light px-1.5 py-0.5 rounded">—</span>
+                    </div>
+                    <div class="flex items-center gap-1.5 ml-2">
+                        <span class="size-2 rounded-full bg-chart-green live-pulse"></span>
+                        <span id="chart-update-time" class="text-[10px] font-mono text-text-muted">--:--:--</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div id="timeframe-btns" class="flex bg-midnight border border-midnight-border rounded-lg p-0.5">
+                        <button data-tf="1" data-mul="minute" class="tf-btn px-3 py-1 text-xs font-medium text-text-muted hover:text-white rounded hover:bg-midnight-light">1m</button>
+                        <button data-tf="5" data-mul="minute" class="tf-btn px-3 py-1 text-xs font-medium text-text-muted hover:text-white rounded hover:bg-midnight-light">5m</button>
+                        <button data-tf="15" data-mul="minute" class="tf-btn px-3 py-1 text-xs font-medium text-text-muted hover:text-white rounded hover:bg-midnight-light">15m</button>
+                        <button data-tf="1" data-mul="hour" class="tf-btn px-3 py-1 text-xs font-bold text-midnight bg-primary rounded shadow-sm">1H</button>
+                        <button data-tf="1" data-mul="day" class="tf-btn px-3 py-1 text-xs font-medium text-text-muted hover:text-white rounded hover:bg-midnight-light">1D</button>
+                    </div>
+                    <div class="h-6 w-px bg-midnight-border"></div>
+                    <button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-midnight-border hover:bg-midnight-light text-xs font-medium text-text-off-white transition-colors">
+                        <span class="material-symbols-outlined text-[16px] text-primary">ssid_chart</span>
+                        Indicadores
+                    </button>
+                </div>
+            </div>
+
+            <!-- TradingView Lightweight Chart -->
+            <div id="tv-chart-container" class="flex-1 relative bg-[#0a0f18]">
+                <!-- Loading overlay -->
+                <div id="chart-loading" class="absolute inset-0 flex items-center justify-center bg-[#0a0f18] z-20">
+                    <div class="flex flex-col items-center gap-3">
+                        <div class="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                        <span class="text-sm text-text-muted font-mono">Cargando velas...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Panel: Orders (Interactive) -->
+        <div id="orders-panel" class="h-[200px] bg-midnight-card rounded-3xl border border-midnight-border flex flex-col overflow-hidden">
+            <div class="flex items-center gap-6 px-6 border-b border-midnight-border bg-midnight-light/30">
+                <button class="order-tab py-3 text-sm font-bold text-primary border-b-2 border-primary" data-tab="active">Órdenes Activas (2)</button>
+                <button class="order-tab py-3 text-sm font-medium text-text-muted hover:text-white transition-colors" data-tab="history">Historial</button>
+                <button class="order-tab py-3 text-sm font-medium text-text-muted hover:text-white transition-colors" data-tab="positions">Posiciones</button>
+                <div class="flex-1"></div>
+                <span id="order-selection-info" class="text-[10px] font-mono text-primary hidden">1 seleccionada</span>
+                <button class="text-xs font-medium text-text-muted flex items-center gap-1 hover:text-white transition-colors">
+                    <span class="material-symbols-outlined text-[16px]">filter_list</span> Filtrar
+                </button>
+            </div>
+            <div class="flex-1 overflow-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-midnight sticky top-0 z-10">
+                        <tr>
+                            <th class="py-2 px-6 text-xs font-medium text-text-muted">Par</th>
+                            <th class="py-2 px-6 text-xs font-medium text-text-muted">Tipo</th>
+                            <th class="py-2 px-6 text-xs font-medium text-text-muted">Precio Entrada</th>
+                            <th class="py-2 px-6 text-xs font-medium text-text-muted">Precio Actual</th>
+                            <th class="py-2 px-6 text-xs font-medium text-text-muted">Cantidad</th>
+                            <th class="py-2 px-6 text-xs font-medium text-text-muted">TP / SL</th>
+                            <th class="py-2 px-6 text-xs font-medium text-text-muted text-right">PNL</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orders-tbody" class="divide-y divide-midnight-border text-sm">
+                        <tr class="order-row" draggable="true" data-order-id="1">
+                            <td class="py-3 px-6 font-bold text-white flex items-center gap-2">
+                                <div class="size-2 rounded-full bg-chart-green"></div> EUR/USD
+                            </td>
+                            <td class="py-3 px-6 text-chart-green font-medium">Compra (Long)</td>
+                            <td class="py-3 px-6 font-mono text-text-off-white">1.08200</td>
+                            <td id="order-eurusd-price" class="py-3 px-6 font-mono text-text-off-white">—</td>
+                            <td class="py-3 px-6 font-mono text-text-off-white">0.5 Lot</td>
+                            <td class="py-3 px-6 font-mono text-xs">
+                                <span class="text-chart-green">1.0950</span> / <span class="text-chart-red">1.0780</span>
+                            </td>
+                            <td id="order-eurusd-pnl" class="py-3 px-6 text-right font-mono font-bold text-text-muted text-base">—</td>
+                        </tr>
+                        <tr class="order-row" draggable="true" data-order-id="2">
+                            <td class="py-3 px-6 font-bold text-white flex items-center gap-2">
+                                <div class="size-2 rounded-full bg-chart-red"></div> GBP/JPY
+                            </td>
+                            <td class="py-3 px-6 text-chart-red font-medium">Venta (Short)</td>
+                            <td class="py-3 px-6 font-mono text-text-off-white">192.450</td>
+                            <td class="py-3 px-6 font-mono text-text-off-white">192.600</td>
+                            <td class="py-3 px-6 font-mono text-text-off-white">0.2 Lot</td>
+                            <td class="py-3 px-6 font-mono text-xs">
+                                <span class="text-chart-green">190.00</span> / <span class="text-chart-red">193.00</span>
+                            </td>
+                            <td class="py-3 px-6 text-right font-mono font-bold text-chart-red text-base">-$30.20</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <!-- Right Sidebar -->
+    <aside class="flex flex-col gap-4 min-w-0">
+        <!-- AI Analysis -->
+        <div class="bg-gradient-to-b from-midnight-card to-midnight border border-primary/20 rounded-3xl p-5 shadow-[0_0_20px_rgba(242,208,13,0.05)] relative overflow-hidden">
+            <div class="absolute top-0 right-0 p-3 opacity-10">
+                <span class="material-symbols-outlined text-[120px] text-primary">psychology</span>
+            </div>
+            <div class="relative z-10 flex flex-col gap-4">
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="flex items-center justify-center size-8 rounded-full bg-primary/20 text-primary">
+                        <span class="material-symbols-outlined text-[18px]">smart_toy</span>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-white leading-none">AmigoTrade AI</h3>
+                        <span class="text-xs text-primary font-medium">Análisis en Vivo</span>
+                    </div>
+                </div>
+                <div class="bg-midnight-light/50 rounded-2xl p-4 border border-midnight-border backdrop-blur-sm">
+                    <div class="flex items-start justify-between gap-2 mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider text-text-muted">Señal Detectada</span>
+                        <span id="ai-signal-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-chart-green/20 text-chart-green border border-chart-green/30">ALCISTA</span>
+                    </div>
+                    <h4 id="ai-pattern" class="text-xl font-bold text-white mb-1">Patrón W (Doble Piso)</h4>
+                    <p id="ai-description" class="text-sm text-text-muted leading-relaxed">
+                        Formación de reversión confirmada en marco de 4H. Zona de soporte fuerte en 1.08200.
+                    </p>
+                </div>
+                <div class="bg-midnight-light/50 rounded-2xl p-4 border border-midnight-border backdrop-blur-sm flex items-center justify-between">
+                    <div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-text-muted block mb-1">Indicadores</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm font-bold text-white">RSI (14)</span>
+                            <span id="ai-rsi" class="text-sm font-mono text-primary font-bold">—</span>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span id="ai-rsi-label" class="text-xs font-medium text-text-muted">Calculando...</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 mt-2">
+                    <button class="py-3 rounded-full bg-chart-red/10 border border-chart-red/50 text-chart-red font-bold text-sm hover:bg-chart-red hover:text-white transition-all">Vender</button>
+                    <button class="py-3 rounded-full bg-primary text-midnight font-bold text-sm hover:bg-white hover:shadow-[0_0_15px_rgba(242,208,13,0.4)] transition-all">Ejecutar Compra</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Watchlist -->
+        <div class="flex-1 bg-midnight-card rounded-3xl border border-midnight-border flex flex-col overflow-hidden">
+            <div class="px-5 py-3 border-b border-midnight-border flex items-center justify-between bg-midnight-light/30">
+                <h3 class="text-sm font-bold text-white">Lista de Seguimiento</h3>
+                <div class="flex items-center gap-2">
+                    <span id="wl-update-count" class="text-[10px] font-mono text-text-muted/50"></span>
+                    <span class="material-symbols-outlined text-text-muted text-[18px] cursor-pointer hover:text-white">more_horiz</span>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto p-2">
+                <div id="watchlist" class="space-y-1">
+                    <div data-ticker="X:BTCUSD" class="wl-item flex items-center justify-between p-3 rounded-xl hover:bg-midnight-light cursor-pointer group transition-all border border-primary/20 bg-primary/5">
+                        <div class="flex items-center gap-3">
+                            <div class="size-8 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-500 font-bold text-[10px] border border-orange-500/30">BTC</div>
+                            <div>
+                                <div class="text-sm font-bold text-white group-hover:text-primary transition-colors">BTC/USDT</div>
+                                <div class="text-[10px] text-text-muted">Bitcoin</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="wl-price text-sm font-mono font-medium text-white">—</div>
+                            <div class="wl-change text-[10px] font-medium text-text-muted">—</div>
+                        </div>
+                    </div>
+                    <div data-ticker="C:EURUSD" class="wl-item flex items-center justify-between p-3 rounded-xl hover:bg-midnight-light cursor-pointer group transition-all bg-midnight-light/30">
+                        <div class="flex items-center gap-3">
+                            <div class="size-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-500 font-bold text-[10px] border border-blue-500/30">EUR</div>
+                            <div>
+                                <div class="text-sm font-bold text-white group-hover:text-primary transition-colors">EUR/USD</div>
+                                <div class="text-[10px] text-text-muted">Euro</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="wl-price text-sm font-mono font-medium text-white">—</div>
+                            <div class="wl-change text-[10px] font-medium text-text-muted">—</div>
+                        </div>
+                    </div>
+                    <div data-ticker="C:XAUUSD" class="wl-item flex items-center justify-between p-3 rounded-xl hover:bg-midnight-light cursor-pointer group transition-all">
+                        <div class="flex items-center gap-3">
+                            <div class="size-8 rounded-full bg-yellow-500/20 flex items-center justify-center text-yellow-500 font-bold text-[10px] border border-yellow-500/30">XAU</div>
+                            <div>
+                                <div class="text-sm font-bold text-white group-hover:text-primary transition-colors">XAU/USD</div>
+                                <div class="text-[10px] text-text-muted">Gold</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="wl-price text-sm font-mono font-medium text-white">—</div>
+                            <div class="wl-change text-[10px] font-medium text-text-muted">—</div>
+                        </div>
+                    </div>
+                    <div data-ticker="X:SOLUSD" class="wl-item flex items-center justify-between p-3 rounded-xl hover:bg-midnight-light cursor-pointer group transition-all">
+                        <div class="flex items-center gap-3">
+                            <div class="size-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-500 font-bold text-[10px] border border-indigo-500/30">SOL</div>
+                            <div>
+                                <div class="text-sm font-bold text-white group-hover:text-primary transition-colors">SOL/USDT</div>
+                                <div class="text-[10px] text-text-muted">Solana</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="wl-price text-sm font-mono font-medium text-white">—</div>
+                            <div class="wl-change text-[10px] font-medium text-text-muted">—</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </aside>
+</main>
+
+<script>
+(function(){
+'use strict';
+
+var API_KEY = 'Q3I6b14c8HL2l_A7faplgnuMTXekxCUU';
+var BASE = 'https://api.polygon.io';
+
+var ASSETS = {
+    'X:BTCUSD': {label:'BTC/USDT', sub:'Bitcoin vs US Dollar', decimals:2, type:'crypto'},
+    'C:EURUSD': {label:'EUR/USD', sub:'Euro vs US Dollar', decimals:5, type:'forex'},
+    'C:XAUUSD': {label:'XAU/USD', sub:'Gold vs US Dollar', decimals:2, type:'forex'},
+    'X:SOLUSD': {label:'SOL/USDT', sub:'Solana vs US Dollar', decimals:2, type:'crypto'}
+};
+var TICKERS = Object.keys(ASSETS);
+
+var activeTicker = 'X:BTCUSD';
+var chartTF = {mul:1, span:'hour'};
+var candles = [];
+var updateCount = 0;
+var prices = {};
+var prevPrices = {};
+var prevCloses = {};
+
+// TradingView chart objects
+var tvChart = null;
+var tvCandleSeries = null;
+var tvVolumeSeries = null;
+var tvEmaSeries = null;
+
+var $ = function(id){ return document.getElementById(id); };
+var $$ = function(s){ return document.querySelectorAll(s); };
+
+// ════════════════════════════════════════
+// DATE HELPERS
+// ════════════════════════════════════════
+function yyyymmdd(d){ return d.toISOString().slice(0,10); }
+function ago(days){ var d=new Date(); d.setDate(d.getDate()-days); return yyyymmdd(d); }
+function today(){ return yyyymmdd(new Date()); }
+
+// ════════════════════════════════════════
+// API (aggregates only)
+// ════════════════════════════════════════
+async function api(path){
+    var sep = path.indexOf('?')>=0 ? '&' : '?';
+    try { var r=await fetch(BASE+path+sep+'apiKey='+API_KEY); if(!r.ok)return null; return r.json(); }
+    catch(e){ return null; }
+}
+
+async function getPrice(ticker){
+    var data = await api('/v2/aggs/ticker/'+ticker+'/range/1/minute/'+ago(2)+'/'+today()+'?sort=desc&limit=3&adjusted=true');
+    if(data && data.results && data.results.length){
+        var latest = data.results[0];
+        var pc = prevCloses[ticker] || latest.o;
+        return {price:latest.c, change: pc ? ((latest.c-pc)/pc*100) : 0, ts:latest.t};
+    }
+    var prev = await api('/v2/aggs/ticker/'+ticker+'/prev?adjusted=true');
+    if(prev && prev.results && prev.results.length){
+        var r=prev.results[0];
+        return {price:r.c, change:((r.c-r.o)/r.o*100), ts:r.t};
+    }
+    return null;
+}
+
+async function loadPrevCloses(){
+    for(var i=0;i<TICKERS.length;i++){
+        var data = await api('/v2/aggs/ticker/'+TICKERS[i]+'/prev?adjusted=true');
+        if(data && data.results && data.results.length) prevCloses[TICKERS[i]] = data.results[0].c;
+    }
+}
+
+async function getCandles(ticker, mul, span){
+    var fromDate;
+    if(span==='minute') fromDate = mul<=1?ago(2):mul<=5?ago(7):ago(14);
+    else if(span==='hour') fromDate = ago(60);
+    else if(span==='day') fromDate = ago(365);
+    else fromDate = ago(730);
+
+    var data = await api('/v2/aggs/ticker/'+ticker+'/range/'+mul+'/'+span+'/'+fromDate+'/'+today()+'?adjusted=true&sort=asc&limit=5000');
+    if(data && data.results && data.results.length){
+        console.log('[CHART] ✅ '+data.results.length+' candles — '+ASSETS[ticker].label+' '+mul+span);
+        return data.results;
+    }
+    if(ASSETS[ticker].type==='forex' && span==='minute') return getCandles(ticker,1,'hour');
+    return [];
+}
+
+// ════════════════════════════════════════
+// FORMAT
+// ════════════════════════════════════════
+function fmt(v,t){
+    if(v==null) return '—';
+    var d = ASSETS[t] ? ASSETS[t].decimals : 2;
+    if(d>2) return v.toFixed(d);
+    return v.toLocaleString('en-US',{minimumFractionDigits:d, maximumFractionDigits:d});
+}
+
+// ════════════════════════════════════════
+// TRADINGVIEW LIGHTWEIGHT CHART
+// ════════════════════════════════════════
+function initChart(){
+    var container = $('tv-chart-container');
+
+    tvChart = LightweightCharts.createChart(container, {
+        width: container.clientWidth,
+        height: container.clientHeight,
+        layout: {
+            background: { type: 'solid', color: '#0a0f18' },
+            textColor: '#8d9eb5',
+            fontFamily: 'Roboto Mono, monospace',
+            fontSize: 11,
+        },
+        grid: {
+            vertLines: { color: 'rgba(42,54,77,0.2)' },
+            horzLines: { color: 'rgba(42,54,77,0.2)' },
+        },
+        crosshair: {
+            mode: LightweightCharts.CrosshairMode.Normal,
+            vertLine: { color: 'rgba(242,208,13,0.3)', width: 1, style: 2, labelBackgroundColor: '#f2d00d' },
+            horzLine: { color: 'rgba(242,208,13,0.3)', width: 1, style: 2, labelBackgroundColor: '#f2d00d' },
+        },
+        rightPriceScale: {
+            borderColor: '#2a364d',
+            scaleMargins: { top: 0.05, bottom: 0.15 },
+        },
+        timeScale: {
+            borderColor: '#2a364d',
+            timeVisible: true,
+            secondsVisible: false,
+            rightOffset: 8,
+            barSpacing: 8,
+            minBarSpacing: 4,
+        },
+        handleScroll: { vertTouchDrag: false },
+    });
+
+    // Candlestick series
+    tvCandleSeries = tvChart.addCandlestickSeries({
+        upColor: '#00C853',
+        downColor: '#FF3D00',
+        borderUpColor: '#00C853',
+        borderDownColor: '#FF3D00',
+        wickUpColor: '#00C853',
+        wickDownColor: '#FF3D00',
+    });
+
+    // Volume series
+    tvVolumeSeries = tvChart.addHistogramSeries({
+        priceFormat: { type: 'volume' },
+        priceScaleId: 'volume',
+    });
+    tvChart.priceScale('volume').applyOptions({
+        scaleMargins: { top: 0.85, bottom: 0 },
+    });
+
+    // EMA 20 line
+    tvEmaSeries = tvChart.addLineSeries({
+        color: '#f2d00d',
+        lineWidth: 2,
+        lineStyle: 0,
+        priceLineVisible: false,
+        lastValueVisible: false,
+        crosshairMarkerVisible: false,
+    });
+
+    // Resize
+    new ResizeObserver(function(){
+        tvChart.applyOptions({ width: container.clientWidth, height: container.clientHeight });
+    }).observe(container);
+}
+
+function updateChartData(rawCandles){
+    if(!tvCandleSeries || !rawCandles.length) return;
+
+    // Convert Polygon data to TradingView format
+    var candleData = [];
+    var volumeData = [];
+    var seen = {};
+
+    for(var i=0; i<rawCandles.length; i++){
+        var c = rawCandles[i];
+        var time = Math.floor(c.t / 1000); // Polygon ms → TV seconds
+        if(seen[time]) continue; // skip dupes
+        seen[time] = true;
+
+        candleData.push({ time:time, open:c.o, high:c.h, low:c.l, close:c.c });
+        volumeData.push({
+            time: time,
+            value: c.v || 0,
+            color: c.c >= c.o ? 'rgba(0,200,83,0.15)' : 'rgba(255,61,0,0.15)'
+        });
+    }
+
+    tvCandleSeries.setData(candleData);
+    tvVolumeSeries.setData(volumeData);
+
+    // EMA 20
+    var emaData = calcEMAforTV(candleData, 20);
+    tvEmaSeries.setData(emaData);
+
+    // Scroll to show last ~60 candles (live feel)
+    if(candleData.length > 60){
+        tvChart.timeScale().setVisibleLogicalRange({ from: candleData.length - 60, to: candleData.length + 5 });
+    } else {
+        tvChart.timeScale().fitContent();
+    }
+    tvChart.timeScale().scrollToRealTime();
+}
+
+function calcEMAforTV(data, period){
+    if(data.length < period) return [];
+    var k = 2/(period+1);
+    var result = [];
+    var sum = 0;
+    for(var i=0; i<period; i++) sum += data[i].close;
+    var prev = sum/period;
+    result.push({time:data[period-1].time, value:prev});
+    for(var j=period; j<data.length; j++){
+        var val = data[j].close * k + prev * (1-k);
+        result.push({time:data[j].time, value:val});
+        prev = val;
+    }
+    return result;
+}
+
+// ════════════════════════════════════════
+// UI UPDATES
+// ════════════════════════════════════════
+function onUpdate(ticker){
+    updateCount++;
+    var d = prices[ticker];
+    if(!d) return;
+
+    // Watchlist
+    var el = document.querySelector('[data-ticker="'+ticker+'"]');
+    if(el){
+        var pEl = el.querySelector('.wl-price');
+        var cEl = el.querySelector('.wl-change');
+        if(pEl){
+            var nv = fmt(d.price, ticker);
+            if(pEl.textContent !== nv){
+                var old = prevPrices[ticker];
+                pEl.textContent = nv;
+                if(old != null && old !== d.price){
+                    el.classList.remove('flash-up','flash-down');
+                    void el.offsetWidth;
+                    el.classList.add(d.price > old ? 'flash-up' : 'flash-down');
+                }
+                prevPrices[ticker] = d.price;
+            }
+        }
+        if(cEl){
+            var pos = d.change >= 0;
+            cEl.textContent = (pos?'+':'') + d.change.toFixed(2)+'%';
+            cEl.className = 'wl-change text-[10px] font-medium '+(pos?'text-chart-green':'text-chart-red');
+        }
+    }
+
+    // Chart header
+    if(ticker === activeTicker){
+        var mp=$('main-price'), mc=$('main-change');
+        if(mp){
+            var p2 = d.change >= 0;
+            mp.textContent = fmt(d.price, ticker);
+            mp.className = 'text-2xl font-mono font-medium '+(p2?'text-chart-green':'text-chart-red')+' price-update';
+            if(mc){
+                mc.textContent = (p2?'+':'')+d.change.toFixed(2)+'%';
+                mc.className = 'text-xs font-bold px-1.5 py-0.5 rounded '+(p2?'text-chart-green bg-chart-green/10':'text-chart-red bg-chart-red/10');
+            }
+        }
+    }
+
+    // EUR/USD PNL
+    if(ticker === 'C:EURUSD'){
+        var op=$('order-eurusd-price');
+        if(op) op.textContent = fmt(d.price, ticker);
+        var pnl=$('order-eurusd-pnl');
+        if(pnl){
+            var profit = (d.price - 1.082) * 50000;
+            var pp = profit>=0;
+            pnl.textContent = (pp?'+':'-')+'$'+Math.abs(profit).toFixed(2);
+            pnl.className = 'py-3 px-6 text-right font-mono font-bold text-base '+(pp?'text-chart-green':'text-chart-red');
+        }
+    }
+
+    // RSI
+    if(ticker === activeTicker && candles.length > 14){
+        var closes = candles.map(function(c){return c.c;});
+        var rsi = calcRSI(closes, 14);
+        var rv = rsi[rsi.length-1];
+        if(rv != null){
+            $('ai-rsi').textContent = rv.toFixed(1);
+            $('ai-rsi-label').textContent = rv<30?'Sobrevendido':rv>70?'Sobrecomprado':'Neutral';
+            $('ai-rsi-label').className = 'text-xs font-medium '+(rv<30?'text-chart-green':rv>70?'text-chart-red':'text-text-muted');
+        }
+    }
+
+    // LIVE CHART UPDATE: update last candle in real time
+    if(ticker === activeTicker && tvCandleSeries && candles.length){
+        var lastCandle = candles[candles.length-1];
+        var newPrice = d.price;
+        // Update the last candle's close with new price
+        var time = Math.floor(lastCandle.t / 1000);
+        var updatedCandle = {
+            time: time,
+            open: lastCandle.o,
+            high: Math.max(lastCandle.h, newPrice),
+            low: Math.min(lastCandle.l, newPrice),
+            close: newPrice
+        };
+        tvCandleSeries.update(updatedCandle);
+        // Also update volume bar color
+        if(tvVolumeSeries){
+            tvVolumeSeries.update({
+                time: time,
+                value: lastCandle.v || 0,
+                color: newPrice >= lastCandle.o ? 'rgba(0,200,83,0.15)' : 'rgba(255,61,0,0.15)'
+            });
+        }
+        // Keep chart scrolled to right edge for live feel
+        tvChart.timeScale().scrollToRealTime();
+    }
+
+    $('wl-update-count').textContent = '#'+updateCount;
+}
+
+function setStatus(mode){
+    var dot=$('status-dot'), txt=$('status-text');
+    if(mode==='live'){ dot.className='size-2 rounded-full bg-chart-green live-pulse'; txt.textContent='LIVE · REST'; txt.className='text-chart-green font-bold'; }
+    else if(mode==='error'){ dot.className='size-2 rounded-full bg-chart-red animate-pulse'; txt.textContent='ERROR'; txt.className='text-chart-red'; }
+    else { dot.className='size-2 rounded-full bg-text-muted animate-pulse'; txt.textContent='Cargando...'; txt.className='text-text-muted'; }
+}
+
+function calcRSI(data, per){
+    var r=[]; for(var i=0;i<data.length;i++) r.push(null);
+    if(data.length<per+1) return r;
+    var g=0,l=0;
+    for(i=1;i<=per;i++){var d=data[i]-data[i-1]; if(d>0)g+=d; else l-=d;}
+    var ag=g/per, al=l/per;
+    r[per]=al===0?100:100-(100/(1+ag/al));
+    for(i=per+1;i<data.length;i++){
+        var d2=data[i]-data[i-1];
+        ag=(ag*(per-1)+Math.max(d2,0))/per;
+        al=(al*(per-1)+Math.max(-d2,0))/per;
+        r[i]=al===0?100:100-(100/(1+ag/al));
+    }
+    return r;
+}
+
+// ════════════════════════════════════════
+// SWITCH CHART
+// ════════════════════════════════════════
+async function switchChart(ticker){
+    if(ticker === activeTicker) return;
+    activeTicker = ticker;
+
+    // Update watchlist highlighting
+    $$('.wl-item').forEach(function(el){
+        var on = el.dataset.ticker===ticker;
+        el.classList.toggle('border-primary/20', on);
+        el.classList.toggle('bg-primary/5', on);
+        el.classList.toggle('bg-midnight-light/30', !on);
+    });
+
+    // Update chart header icon
+    var iconColors = {
+        'X:BTCUSD': {bg:'bg-orange-500', symbol:'₿'},
+        'C:EURUSD': {bg:'bg-blue-500', symbol:'€'},
+        'C:XAUUSD': {bg:'bg-yellow-500', symbol:'Au'},
+        'X:SOLUSD': {bg:'bg-indigo-500', symbol:'◎'}
+    };
+    var ic = iconColors[ticker] || iconColors['X:BTCUSD'];
+    $('chart-icon-wrap').innerHTML = '<div class="size-6 rounded-full '+ic.bg+' flex items-center justify-center border-2 border-midnight-card"><span class="text-[8px] text-white font-bold">'+ic.symbol+'</span></div><div class="size-6 rounded-full bg-green-800 flex items-center justify-center border-2 border-midnight-card"><span class="text-[8px] text-white font-bold">$</span></div>';
+
+    $('chart-pair-label').textContent = ASSETS[ticker].label;
+    $('chart-pair-sub').textContent = ASSETS[ticker].sub;
+    if(prices[ticker]) onUpdate(ticker);
+
+    $('chart-loading').classList.remove('hidden');
+    candles = await getCandles(ticker, chartTF.mul, chartTF.span);
+    $('chart-loading').classList.add('hidden');
+    if(candles.length) updateChartData(candles);
+}
+
+// Timeframe buttons
+$$('.tf-btn').forEach(function(btn){
+    btn.addEventListener('click', async function(){
+        $$('.tf-btn').forEach(function(b){ b.className='tf-btn px-3 py-1 text-xs font-medium text-text-muted hover:text-white rounded hover:bg-midnight-light'; });
+        btn.className='tf-btn px-3 py-1 text-xs font-bold text-midnight bg-primary rounded shadow-sm';
+        chartTF = {mul:parseInt(btn.dataset.tf), span:btn.dataset.mul};
+        $('chart-loading').classList.remove('hidden');
+        candles = await getCandles(activeTicker, chartTF.mul, chartTF.span);
+        $('chart-loading').classList.add('hidden');
+        if(candles.length) updateChartData(candles);
+    });
+});
+
+// Watchlist clicks
+$$('.wl-item').forEach(function(el){
+    el.addEventListener('click', function(){ switchChart(el.dataset.ticker); });
+});
+
+// ════════════════════════════════════════
+// INTERACTIVE ORDERS TABLE
+// ════════════════════════════════════════
+(function initOrders(){
+    var tbody = $('orders-tbody');
+    var rows = tbody.querySelectorAll('.order-row');
+    var selectedId = null;
+
+    // Click to select
+    rows.forEach(function(row){
+        row.addEventListener('click', function(e){
+            var id = row.dataset.orderId;
+            if(selectedId === id){
+                row.classList.remove('selected');
+                selectedId = null;
+                $('order-selection-info').classList.add('hidden');
+            } else {
+                rows.forEach(function(r){ r.classList.remove('selected'); });
+                row.classList.add('selected');
+                selectedId = id;
+                $('order-selection-info').textContent = '1 seleccionada';
+                $('order-selection-info').classList.remove('hidden');
+            }
+        });
+    });
+
+    // Drag & drop to reorder
+    var dragRow = null;
+    rows.forEach(function(row){
+        row.addEventListener('dragstart', function(e){
+            dragRow = row;
+            row.classList.add('dragging');
+            e.dataTransfer.effectAllowed = 'move';
+        });
+        row.addEventListener('dragend', function(){
+            row.classList.remove('dragging');
+            rows.forEach(function(r){ r.classList.remove('drag-over'); });
+            dragRow = null;
+        });
+        row.addEventListener('dragover', function(e){
+            e.preventDefault();
+            if(dragRow && dragRow !== row){
+                rows.forEach(function(r){ r.classList.remove('drag-over'); });
+                row.classList.add('drag-over');
+            }
+        });
+        row.addEventListener('drop', function(e){
+            e.preventDefault();
+            if(dragRow && dragRow !== row){
+                var parent = row.parentNode;
+                var next = row.nextElementSibling;
+                if(next === dragRow){ parent.insertBefore(dragRow, row); }
+                else { parent.insertBefore(dragRow, row); }
+                row.classList.remove('drag-over');
+            }
+        });
+    });
+
+    // Tab switching
+    $$('.order-tab').forEach(function(tab){
+        tab.addEventListener('click', function(){
+            $$('.order-tab').forEach(function(t){
+                t.className = 'order-tab py-3 text-sm font-medium text-text-muted hover:text-white transition-colors';
+            });
+            tab.className = 'order-tab py-3 text-sm font-bold text-primary border-b-2 border-primary';
+        });
+    });
+})();
+
+// ════════════════════════════════════════
+// POLLING
+// ════════════════════════════════════════
+var pollIdx = 0;
+var pollTotal = 0;
+
+async function pollOneTicker(){
+    var ticker = TICKERS[pollIdx % TICKERS.length];
+    pollIdx++;
+    var result = await getPrice(ticker);
+    if(result){
+        var changed = !prices[ticker] || prices[ticker].price !== result.price;
+        prices[ticker] = result;
+        if(changed){
+            onUpdate(ticker);
+            pollTotal++;
+            console.log('[POLL #'+pollTotal+'] '+ASSETS[ticker].label+' → '+fmt(result.price, ticker));
+        }
+        $('status-counter').textContent = pollTotal+' updates';
+    }
+}
+
+async function refreshChart(){
+    var fresh = await getCandles(activeTicker, chartTF.mul, chartTF.span);
+    if(fresh.length){
+        var oldLen = candles.length;
+        candles = fresh;
+        if(fresh.length !== oldLen || (candles.length && fresh[fresh.length-1].c !== candles[candles.length-1]?.c)){
+            updateChartData(candles);
+            console.log('[CHART] 🔄 Updated — '+fresh.length+' candles');
+        }
+    }
+}
+
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+async function init(){
+    console.log('%c InvertProfit Terminal v7 — Live Charts ', 'background:#f2d00d;color:#0B121E;font-weight:bold;font-size:16px;padding:8px 16px;border-radius:8px;');
+    setStatus('loading');
+
+    // Clock
+    setInterval(function(){
+        $('chart-update-time').textContent = new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'});
+    }, 1000);
+
+    // Init TradingView chart
+    initChart();
+
+    // Load prev closes
+    await loadPrevCloses();
+
+    // Load prices
+    var ok=0;
+    for(var i=0;i<TICKERS.length;i++){
+        var t=TICKERS[i];
+        var r = await getPrice(t);
+        if(r){ prices[t]=r; onUpdate(t); ok++; console.log('[PRICE] '+ASSETS[t].label+' = '+fmt(r.price,t)); }
+    }
+
+    if(!ok){
+        setStatus('error');
+        $('chart-loading').innerHTML = '<div class="flex flex-col items-center gap-3"><span class="material-symbols-outlined text-[48px] text-chart-red">error</span><span class="text-sm text-chart-red font-bold">Sin datos</span></div>';
+        return;
+    }
+
+    // Load chart candles
+    candles = await getCandles(activeTicker, chartTF.mul, chartTF.span);
+    $('chart-loading').classList.add('hidden');
+    if(candles.length){
+        updateChartData(candles);
+        console.log('[CHART] ✅ '+candles.length+' candles rendered');
+    }
+
+    setStatus('live');
+
+    // Polling
+    setInterval(pollOneTicker, 5000);
+    setInterval(refreshChart, 20000); // faster refresh for live feel
+
+    // LIVE TICK SIMULATOR: micro-movements between real updates
+    setInterval(function(){
+        if(!tvCandleSeries || !candles.length || !prices[activeTicker]) return;
+        var lastCandle = candles[candles.length-1];
+        var currentPrice = prices[activeTicker].price;
+        var time = Math.floor(lastCandle.t / 1000);
+        // Add tiny random noise (±0.01%) for visual movement
+        var noise = currentPrice * (Math.random() - 0.5) * 0.0002;
+        var simPrice = currentPrice + noise;
+        tvCandleSeries.update({
+            time: time,
+            open: lastCandle.o,
+            high: Math.max(lastCandle.h, simPrice),
+            low: Math.min(lastCandle.l, simPrice),
+            close: simPrice
+        });
+    }, 1500); // tick every 1.5s
+
+    console.log('%c ✅ TERMINAL LISTO ', 'background:#00C853;color:#000;font-weight:bold;padding:4px 12px;border-radius:6px;');
+    console.log('📊 Chart: scroll/zoom con mouse · click/drag para navegar');
+    console.log('📋 Órdenes: click para seleccionar · drag para reordenar');
+}
+
+document.addEventListener('DOMContentLoaded', init);
+})();
+</script>
+</body></html>

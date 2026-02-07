@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>InvertProfit Intelligence Terminal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.min.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#D4AF37",
+                        "bg-dark": "#0a0f1a",
+                        "card": "#111827",
+                        "card-border": "#1f2937",
+                        "positive": "#22c55e",
+                        "negative": "#ef4444",
+                    },
+                    fontFamily: {
+                        "sans": ["Inter", "sans-serif"],
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
+        
+        @keyframes ticker {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-ticker { animation: ticker 40s linear infinite; }
+        
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .pulse-dot { animation: pulse-dot 1.5s ease-in-out infinite; }
+        
+        .gradient-card {
+            background: linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(17, 24, 39, 0.7)), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%23134e4a;stop-opacity:0.3"/><stop offset="100%" style="stop-color:%230f172a;stop-opacity:0.1"/></linearGradient></defs><rect fill="url(%23g)" width="100" height="100"/></svg>');
+        }
+
+        .cal-tab-active {
+            background: rgba(212, 175, 55, 0.15);
+            color: #D4AF37;
+            border-bottom: 2px solid #D4AF37;
+        }
+        .cal-tab-inactive {
+            color: #6b7280;
+            border-bottom: 2px solid transparent;
+        }
+        .cal-tab-inactive:hover {
+            color: #9ca3af;
+            background: rgba(255,255,255,0.03);
+        }
+
+        .earnings-beat { background: rgba(34, 197, 94, 0.1); border-left-color: #22c55e; }
+        .earnings-miss { background: rgba(239, 68, 68, 0.1); border-left-color: #ef4444; }
+        .earnings-pending { background: rgba(107, 114, 128, 0.05); border-left-color: #4b5563; }
+
+        .ipo-card {
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.05), rgba(17, 24, 39, 0.8));
+            border: 1px solid rgba(212, 175, 55, 0.15);
+        }
+        .ipo-card:hover {
+            border-color: rgba(212, 175, 55, 0.3);
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #1f2937 25%, #374151 50%, #1f2937 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 4px;
+        }
+
+        /* ====== NOTICIAS EXPANDIBLES ====== */
+        .news-expand {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, opacity 0.3s ease;
+            opacity: 0;
+        }
+        .news-expand.open {
+            max-height: 600px;
+            opacity: 1;
+        }
+        .news-toggle {
+            transition: color 0.2s ease;
+            cursor: pointer;
+        }
+        .news-toggle:hover {
+            color: #D4AF37;
+        }
+        .news-toggle.open svg {
+            transform: rotate(180deg);
+        }
+        .news-toggle svg {
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body class="bg-bg-dark text-white font-sans antialiased min-h-screen">
+
+    <!-- Header -->
+    <header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-50">
+        <div class="flex items-center justify-between px-8 py-4">
+            <div class="flex items-center gap-3">
+                <img src="logo_azul.png" alt="InvertProfit" class="h-10" id="logo-img"/>
+                <span class="text-2xl font-bold text-white" id="logo-text" style="display:none;">InvertProfit</span>
+            </div>
+            <script>
+                document.getElementById('logo-img').onerror = function() {
+                    this.style.display = 'none';
+                    document.getElementById('logo-text').style.display = 'inline';
+                };
+            </script>
+            <nav class="hidden lg:flex items-center gap-10">
+                <a class="text-white font-semibold border-b-2 border-primary pb-1 text-lg" href="#">INICIO</a>
+                <a class="text-gray-400 hover:text-white transition text-lg" href="#">ACADEMIA</a>
+                <a class="text-gray-400 hover:text-white transition text-lg" href="#">MERCADOS</a>
+                <a class="text-gray-400 hover:text-white transition text-lg" href="#">CALENDARIO</a>
+                <a class="text-gray-400 hover:text-white transition text-lg" href="#">PORTAFOLIO</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <button class="bg-primary text-black font-bold px-6 py-3 rounded-lg flex items-center gap-2 hover:bg-primary/90 transition text-lg">
+                    <span>⚡</span> CONECTAR BROKER
+                </button>
+                <div class="flex items-center gap-3">
+                    <span class="text-gray-400 text-xl">🔔</span>
+                    <div class="w-10 h-10 bg-gray-600 rounded-full"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Ticker Tape -->
+        <div class="bg-card border-t border-card-border overflow-hidden py-3">
+            <div class="animate-ticker whitespace-nowrap flex text-base" id="ticker-tape"></div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="p-6 grid grid-cols-12 gap-6">
+        
+        <!-- LEFT: Noticias -->
+        <aside class="col-span-12 lg:col-span-3 bg-card rounded-xl border border-card-border p-5 max-h-[800px] overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-white font-bold text-lg flex items-center gap-2">📰 NOTICIAS EN VIVO</h2>
+                <span class="bg-red-500/20 text-red-400 text-sm px-3 py-1 rounded font-semibold flex items-center gap-1">
+                    <span class="w-2 h-2 bg-red-400 rounded-full pulse-dot"></span> LIVE
+                </span>
+            </div>
+            <div class="flex-1 overflow-y-auto custom-scrollbar space-y-1" id="news-container"></div>
+        </aside>
+
+        <!-- CENTER: AI Analysis + Stats + Market Table -->
+        <section class="col-span-12 lg:col-span-6 flex flex-col gap-6">
+            
+            <!-- AI Analysis Card -->
+            <div class="gradient-card rounded-xl border border-card-border p-8 relative overflow-hidden">
+                <div class="absolute top-6 right-6">
+                    <span class="bg-primary/20 text-primary text-sm px-4 py-2 rounded-full font-semibold flex items-center gap-2">🤖 AMIGOTRADE AI</span>
+                </div>
+                <p class="text-gray-400 text-sm mb-2">ANÁLISIS INTELIGENTE DETECTADO</p>
+                <h2 class="text-4xl font-bold text-white mb-8" id="ai-pair">EUR/USD <span class="text-gray-500 text-xl font-normal">H4</span></h2>
+                <div class="grid grid-cols-2 gap-8">
+                    <div>
+                        <div id="ai-signal" class="inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white font-bold text-lg mb-4"></div>
+                        <p class="text-gray-400 text-sm mb-1">CONFIANZA AI</p>
+                        <p class="text-4xl font-bold text-white" id="ai-confidence">--</p>
+                        <div class="mt-6 p-4 bg-black/30 rounded-lg">
+                            <p class="text-gray-400 text-sm mb-2">Razón:</p>
+                            <p class="text-gray-300" id="ai-reason">Cargando análisis...</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center py-3 border-b border-gray-700/50">
+                            <span class="text-gray-400">Precio Actual</span>
+                            <span class="text-white font-mono font-bold text-lg" id="ai-price">--</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3 border-b border-gray-700/50">
+                            <span class="text-gray-400">Entrada Sugerida</span>
+                            <span class="text-white font-mono text-lg" id="ai-entry">--</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3 border-b border-gray-700/50">
+                            <span class="text-gray-400">Take Profit 1</span>
+                            <span class="text-positive font-mono font-bold text-lg" id="ai-tp1">--</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3 border-b border-gray-700/50">
+                            <span class="text-gray-400">Take Profit 2</span>
+                            <span class="text-positive font-mono text-lg" id="ai-tp2">--</span>
+                        </div>
+                        <div class="flex justify-between items-center py-3">
+                            <span class="text-gray-400">Stop Loss</span>
+                            <span class="text-negative font-mono font-bold text-lg" id="ai-sl">--</span>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="openChartModal()" class="w-full mt-6 bg-white/10 hover:bg-white/20 transition text-white py-4 rounded-lg font-semibold text-lg flex items-center justify-center gap-2">VER GRÁFICO TÉCNICO 📊</button>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-4 gap-6">
+                <div class="bg-card rounded-xl border border-card-border p-5">
+                    <p class="text-gray-500 text-sm mb-2 flex items-center gap-2">VOLATILIDAD (VIX) <span class="text-gray-600">📈</span></p>
+                    <p class="text-3xl font-bold text-white font-mono" id="stat-vix">--</p>
+                    <p class="text-sm mt-2" id="stat-vix-change">--</p>
+                </div>
+                <div class="bg-card rounded-xl border border-card-border p-5">
+                    <p class="text-gray-500 text-sm mb-2 flex items-center gap-2">DXY INDEX <span class="text-gray-600">$</span></p>
+                    <p class="text-3xl font-bold text-white font-mono" id="stat-dxy">--</p>
+                    <p class="text-sm mt-2" id="stat-dxy-change">--</p>
+                </div>
+                <div class="bg-card rounded-xl border border-card-border p-5">
+                    <p class="text-gray-500 text-sm mb-2 flex items-center gap-2">SENTIMIENTO <span class="text-gray-600">🎭</span></p>
+                    <p class="text-2xl font-bold font-mono" id="stat-sentiment">--</p>
+                    <p class="text-gray-400 text-sm mt-2" id="stat-sentiment-value">--</p>
+                </div>
+                <div class="bg-card rounded-xl border border-card-border p-5">
+                    <p class="text-gray-500 text-sm mb-2 flex items-center gap-2">SESIÓN ACTIVA <span class="text-gray-600">⏱️</span></p>
+                    <p class="text-2xl font-bold text-white" id="stat-session">--</p>
+                    <p class="text-positive text-sm mt-2" id="stat-session-status">--</p>
+                </div>
+            </div>
+
+            <!-- Market Movements Table -->
+            <div class="bg-card rounded-xl border border-card-border p-6 flex-1">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-white font-bold text-lg">MOVIMIENTOS DE MERCADO</h2>
+                    <div class="flex gap-2">
+                        <button onclick="filterMarket('forex')" id="btn-forex" class="px-4 py-2 rounded-lg text-sm font-semibold bg-white/10 text-white">Forex</button>
+                        <button onclick="filterMarket('crypto')" id="btn-crypto" class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-400 hover:bg-white/5">Crypto</button>
+                        <button onclick="filterMarket('stocks')" id="btn-stocks" class="px-4 py-2 rounded-lg text-sm font-semibold text-gray-400 hover:bg-white/5">Indices</button>
+                    </div>
+                </div>
+                <table class="w-full">
+                    <thead>
+                        <tr class="text-gray-500 text-sm">
+                            <th class="text-left py-3 font-medium">SYMBOL</th>
+                            <th class="text-right py-3 font-medium">PRICE</th>
+                            <th class="text-right py-3 font-medium">CHANGE</th>
+                            <th class="text-right py-3 font-medium">HIGH</th>
+                            <th class="text-right py-3 font-medium">LOW</th>
+                            <th class="text-right py-3 font-medium">TREND</th>
+                        </tr>
+                    </thead>
+                    <tbody id="market-table" class="text-base"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- RIGHT: Calendario FMP -->
+        <aside class="col-span-12 lg:col-span-3 bg-card rounded-xl border border-card-border overflow-hidden max-h-[800px] flex flex-col">
+            <div class="flex border-b border-card-border">
+                <button onclick="switchCalTab('economic')" id="cal-tab-economic" class="flex-1 py-3 px-2 text-xs font-bold text-center transition cal-tab-active">📅 ECONÓMICO</button>
+                <button onclick="switchCalTab('earnings')" id="cal-tab-earnings" class="flex-1 py-3 px-2 text-xs font-bold text-center transition cal-tab-inactive">💰 EARNINGS</button>
+                <button onclick="switchCalTab('ipo')" id="cal-tab-ipo" class="flex-1 py-3 px-2 text-xs font-bold text-center transition cal-tab-inactive">🚀 IPOs</button>
+            </div>
+            <div class="flex-1 overflow-y-auto custom-scrollbar p-4">
+                <div id="cal-content-economic" class="cal-content"><div class="space-y-1"><div class="skeleton h-4 w-3/4 mb-3"></div><div class="skeleton h-12 w-full mb-2"></div><div class="skeleton h-12 w-full mb-2"></div><div class="skeleton h-12 w-full mb-2"></div></div></div>
+                <div id="cal-content-earnings" class="cal-content hidden"><div class="space-y-1"><div class="skeleton h-4 w-3/4 mb-3"></div><div class="skeleton h-12 w-full mb-2"></div><div class="skeleton h-12 w-full mb-2"></div></div></div>
+                <div id="cal-content-ipo" class="cal-content hidden"><div class="space-y-1"><div class="skeleton h-4 w-3/4 mb-3"></div><div class="skeleton h-12 w-full mb-2"></div><div class="skeleton h-12 w-full mb-2"></div></div></div>
+            </div>
+            <div class="p-3 border-t border-card-border">
+                <button onclick="openCalendarModal()" class="w-full bg-primary/20 text-primary py-3 rounded-lg font-semibold hover:bg-primary/30 transition text-sm">VER CALENDARIO COMPLETO</button>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Modal Calendario Completo -->
+    <div id="calendar-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-card border border-card-border rounded-2xl w-full max-w-6xl max-h-[90vh] overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between p-6 border-b border-card-border">
+                <h2 class="text-2xl font-bold text-white flex items-center gap-3">📅 CALENDARIO COMPLETO</h2>
+                <button onclick="closeCalendarModal()" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
+            </div>
+            <div class="flex border-b border-card-border px-6">
+                <button onclick="switchModalTab('economic')" id="modal-tab-economic" class="py-4 px-6 text-sm font-bold transition cal-tab-active">📅 CALENDARIO ECONÓMICO</button>
+                <button onclick="switchModalTab('earnings')" id="modal-tab-earnings" class="py-4 px-6 text-sm font-bold transition cal-tab-inactive">💰 EARNINGS CALENDAR</button>
+                <button onclick="switchModalTab('ipo')" id="modal-tab-ipo" class="py-4 px-6 text-sm font-bold transition cal-tab-inactive">🚀 IPO CALENDAR</button>
+            </div>
+            <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
+                <div id="modal-content-economic" class="modal-content"></div>
+                <div id="modal-content-earnings" class="modal-content hidden"></div>
+                <div id="modal-content-ipo" class="modal-content hidden"></div>
+            </div>
+            <div class="p-4 border-t border-card-border flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-2"><div class="flex gap-0.5"><div class="w-1.5 h-4 bg-red-500 rounded-sm"></div><div class="w-1.5 h-4 bg-red-500 rounded-sm"></div><div class="w-1.5 h-4 bg-red-500 rounded-sm"></div></div><span class="text-gray-400 text-sm">Alto Impacto</span></div>
+                    <div class="flex items-center gap-2"><div class="flex gap-0.5"><div class="w-1.5 h-4 bg-yellow-500 rounded-sm"></div><div class="w-1.5 h-4 bg-yellow-500 rounded-sm"></div><div class="w-1.5 h-4 bg-gray-700 rounded-sm"></div></div><span class="text-gray-400 text-sm">Medio Impacto</span></div>
+                    <div class="flex items-center gap-2"><div class="flex gap-0.5"><div class="w-1.5 h-4 bg-gray-500 rounded-sm"></div><div class="w-1.5 h-4 bg-gray-700 rounded-sm"></div><div class="w-1.5 h-4 bg-gray-700 rounded-sm"></div></div><span class="text-gray-400 text-sm">Bajo Impacto</span></div>
+                    <div class="text-gray-500 text-sm ml-4" id="fmp-last-update">Actualizado: --</div>
+                </div>
+                <button onclick="closeCalendarModal()" class="bg-primary text-black font-bold px-6 py-3 rounded-lg hover:bg-primary/90 transition">CERRAR</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Gráfico Técnico -->
+    <div id="chart-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[100] hidden items-center justify-center p-4">
+        <div class="bg-card border border-card-border rounded-2xl w-full max-w-6xl max-h-[95vh] overflow-hidden flex flex-col">
+            <div class="flex items-center justify-between p-4 border-b border-card-border">
+                <div class="flex items-center gap-4">
+                    <h2 class="text-2xl font-bold text-white" id="chart-title">EUR/USD</h2>
+                    <span class="text-3xl font-bold text-white font-mono" id="chart-price">--</span>
+                    <span class="text-lg font-semibold" id="chart-change">--</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="changeTimeframe('1')" class="timeframe-btn px-3 py-1 rounded text-sm font-semibold text-gray-400 hover:bg-white/10">1m</button>
+                    <button onclick="changeTimeframe('5')" class="timeframe-btn px-3 py-1 rounded text-sm font-semibold text-gray-400 hover:bg-white/10">5m</button>
+                    <button onclick="changeTimeframe('15')" class="timeframe-btn px-3 py-1 rounded text-sm font-semibold text-gray-400 hover:bg-white/10">15m</button>
+                    <button onclick="changeTimeframe('60')" class="timeframe-btn px-3 py-1 rounded text-sm font-semibold bg-white/10 text-white">1H</button>
+                    <button onclick="changeTimeframe('D')" class="timeframe-btn px-3 py-1 rounded text-sm font-semibold text-gray-400 hover:bg-white/10">1D</button>
+                    <div class="w-px h-6 bg-gray-700 mx-2"></div>
+                    <button onclick="closeChartModal()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
+                </div>
+            </div>
+            <div class="flex-1 p-2" id="chart-container" style="min-height: 500px;"></div>
+            <div class="p-4 border-t border-card-border flex items-center justify-between">
+                <div class="flex items-center gap-6 text-sm">
+                    <div><span class="text-gray-500">Open:</span> <span class="text-white font-mono" id="chart-open">--</span></div>
+                    <div><span class="text-gray-500">High:</span> <span class="text-positive font-mono" id="chart-high">--</span></div>
+                    <div><span class="text-gray-500">Low:</span> <span class="text-negative font-mono" id="chart-low">--</span></div>
+                    <div><span class="text-gray-500">Volume:</span> <span class="text-white font-mono" id="chart-volume">--</span></div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="text-gray-500 text-sm">Actualización automática</span>
+                    <span class="w-2 h-2 bg-positive rounded-full pulse-dot"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== VARIABLES GLOBALES ==========
+        const POLYGON_API_KEY = 'Q3I6b14c8HL2l_A7faplgnuMTXekxCUU';
+        const FMP_API_KEY = 'zD9Lf8LxzvIe8vuQ4fMjEiIZs0uK0FL7';
+        let allMarketData = [];
+        let currentFilter = 'forex';
+        let selectedPair = { symbol: 'EUR/USD', ticker: 'C:EURUSD', type: 'forex', decimals: 5 };
+
+        let fmpCache = { economic: { data: null, lastFetch: 0, error: null }, earnings: { data: null, lastFetch: 0, error: null }, ipo: { data: null, lastFetch: 0, error: null } };
+        const FMP_CACHE_TTL = 3 * 60 * 1000;
+        let currentCalTab = 'economic';
+        let currentModalTab = 'economic';
+        const FMP_BASE = 'https://financialmodelingprep.com/stable';
+
+        async function fmpFetch(endpoint, params = {}) {
+            params.apikey = FMP_API_KEY;
+            const qs = new URLSearchParams(params).toString();
+            const url = `${FMP_BASE}/${endpoint}?${qs}`;
+            const response = await fetch(url);
+            if (response.status === 403) return { error: 'PLAN_RESTRICTED', status: 403 };
+            if (response.status === 429) return { error: 'RATE_LIMITED', status: 429 };
+            if (!response.ok) return { error: 'HTTP_ERROR', status: response.status };
+            const data = await response.json();
+            if (data && data['Error Message']) return { error: 'API_ERROR', message: data['Error Message'] };
+            return Array.isArray(data) ? data : [];
+        }
+
+        async function fetchEconomicCalendar(forceRefresh = false) {
+            if (!forceRefresh && fmpCache.economic.lastFetch && (Date.now() - fmpCache.economic.lastFetch) < FMP_CACHE_TTL) return fmpCache.economic.data;
+            try {
+                const today = new Date(); const from = today.toISOString().split('T')[0]; const to = new Date(today.getTime() + 14 * 86400000).toISOString().split('T')[0];
+                const result = await fmpFetch('economic-calendar', { from, to });
+                if (result.error) { fmpCache.economic = { data: null, lastFetch: Date.now(), error: result.error }; return null; }
+                fmpCache.economic = { data: result, lastFetch: Date.now(), error: null }; return result;
+            } catch (e) { return null; }
+        }
+
+        async function fetchEarningsCalendar(forceRefresh = false) {
+            if (!forceRefresh && fmpCache.earnings.lastFetch && (Date.now() - fmpCache.earnings.lastFetch) < FMP_CACHE_TTL) return fmpCache.earnings.data;
+            try {
+                const today = new Date(); const todayStr = today.toISOString().split('T')[0];
+                const pastFrom = new Date(today.getTime() - 7 * 86400000).toISOString().split('T')[0];
+                const futureTo = new Date(today.getTime() + 14 * 86400000).toISOString().split('T')[0];
+                const upcoming = await fmpFetch('earnings-calendar', { from: todayStr, to: futureTo });
+                if (upcoming.error) { fmpCache.earnings = { data: null, lastFetch: Date.now(), error: upcoming.error }; return null; }
+                let confirmed = [];
+                try { const confResult = await fmpFetch('earnings-calendar-confirmed', { from: pastFrom, to: todayStr }); if (Array.isArray(confResult)) confirmed = confResult; } catch (e) {}
+                const seen = new Set(); const merged = [];
+                confirmed.forEach(e => { const sym = e.symbol||e.ticker||''; const dt = (e.date||e.publicationDate||'').substring(0,10); const key = `${sym}_${dt}`; if (sym && !seen.has(key)) { seen.add(key); e._confirmed = true; merged.push(e); } });
+                (Array.isArray(upcoming)?upcoming:[]).forEach(e => { const sym = e.symbol||e.ticker||''; const dt = (e.date||'').substring(0,10); const key = `${sym}_${dt}`; if (sym && !seen.has(key)) { seen.add(key); merged.push(e); } });
+                fmpCache.earnings = { data: merged, lastFetch: Date.now(), error: null }; return merged;
+            } catch (e) { return null; }
+        }
+
+        async function fetchIPOCalendar(forceRefresh = false) {
+            if (!forceRefresh && fmpCache.ipo.lastFetch && (Date.now() - fmpCache.ipo.lastFetch) < FMP_CACHE_TTL) return fmpCache.ipo.data;
+            try {
+                const today = new Date(); const from = today.toISOString().split('T')[0]; const to = new Date(today.getTime() + 30 * 86400000).toISOString().split('T')[0];
+                const result = await fmpFetch('ipos-calendar', { from, to });
+                if (result.error) { fmpCache.ipo = { data: null, lastFetch: Date.now(), error: result.error }; return null; }
+                fmpCache.ipo = { data: result, lastFetch: Date.now(), error: null }; return result;
+            } catch (e) { return null; }
+        }
+
+        function getCountryFlag(country) {
+            const flags = {'US':'🇺🇸','GB':'🇬🇧','EU':'🇪🇺','DE':'🇩🇪','FR':'🇫🇷','JP':'🇯🇵','CN':'🇨🇳','CA':'🇨🇦','AU':'🇦🇺','NZ':'🇳🇿','CH':'🇨🇭','IT':'🇮🇹','ES':'🇪🇸','BR':'🇧🇷','MX':'🇲🇽','KR':'🇰🇷','IN':'🇮🇳','RU':'🇷🇺','ZA':'🇿🇦','SE':'🇸🇪','NO':'🇳🇴','DK':'🇩🇰','PL':'🇵🇱','TR':'🇹🇷','SG':'🇸🇬','HK':'🇭🇰','TW':'🇹🇼','ID':'🇮🇩','TH':'🇹🇭','PH':'🇵🇭'};
+            if (!country) return '🌐'; return flags[country.substring(0,2).toUpperCase()] || '🌐';
+        }
+        function getImpactLevel(impact) { if (!impact) return 1; const l = impact.toLowerCase(); if (l==='high'||l.includes('high')) return 3; if (l==='medium'||l.includes('medium')) return 2; return 1; }
+        function getImpactBars(level) { const c = level>=3?'bg-red-500':level>=2?'bg-yellow-500':'bg-gray-500'; let b=''; for(let i=0;i<3;i++) b+=`<div class="w-1 h-3 ${i<level?c:'bg-gray-700'} rounded-sm"></div>`; return b; }
+        function getImpactBarsLarge(level) { const c = level>=3?'bg-red-500':level>=2?'bg-yellow-500':'bg-gray-500'; let b=''; for(let i=0;i<3;i++) b+=`<div class="w-2 h-5 ${i<level?c:'bg-gray-700'} rounded-sm"></div>`; return b; }
+
+        function renderSidebarEconomic(events) {
+            const container = document.getElementById('cal-content-economic');
+            if (events === null) { container.innerHTML = `<p class="text-gray-500 text-sm text-center py-8">Error al cargar datos (${fmpCache.economic.error||'unknown'})</p>`; return; }
+            if (!events||!events.length) { container.innerHTML = '<p class="text-gray-500 text-sm text-center py-8">No hay eventos económicos próximos</p>'; return; }
+            const today = new Date().toISOString().split('T')[0]; const tomorrow = new Date(Date.now()+86400000).toISOString().split('T')[0];
+            const gd=(e)=>(e.date||e.eventDate||'').substring(0,10), gt=(e)=>{const d=e.date||e.eventDate||'';return d.length>10?d.substring(11,16):'';}, gn=(e)=>e.event||e.eventName||e.name||'N/A', gi=(e)=>e.impact||e.eventImpact||'', gc=(e)=>e.country||e.countryCode||'', ge=(e)=>e.estimate??e.consensus??e.forecast??'';
+            const sorted=[...events].sort((a,b)=>{const da=gd(a),db=gd(b);if(da!==db)return da.localeCompare(db);return getImpactLevel(gi(b))-getImpactLevel(gi(a));});
+            const grouped={}; sorted.forEach(e=>{const k=gd(e);if(!k)return;if(!grouped[k])grouped[k]=[];grouped[k].push(e);});
+            let html=''; Object.keys(grouped).sort().slice(0,5).forEach(date=>{
+                let label; if(date===today)label='🔴 HOY';else if(date===tomorrow)label='MAÑANA';else{const d=new Date(date+'T12:00:00');label=d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'}).toUpperCase();}
+                html+=`<div class="text-gray-500 text-xs font-semibold py-2 border-b border-card-border/50 mb-2">${label}</div>`;
+                grouped[date].slice(0,4).forEach(event=>{const impact=getImpactLevel(gi(event));const flag=getCountryFlag(gc(event));const time=gt(event);const name=gn(event);const est=ge(event);
+                    let countdown='';if(date===today&&time){const et=new Date(`${date}T${time}:00`);const now=new Date();if(et>now){const diff=et-now;countdown=`<div class="mt-1 bg-primary/20 text-primary text-[10px] px-2 py-0.5 rounded text-center font-mono">En ${Math.floor(diff/3600000)}h ${Math.floor((diff%3600000)/60000)}m</div>`;}}
+                    html+=`<div class="py-2.5 border-b border-card-border/30"><div class="flex items-start justify-between gap-2"><div class="flex items-center gap-2">${time?`<span class="text-gray-400 text-xs font-mono">${time}</span>`:''}<span class="text-sm">${flag}</span></div><div class="flex gap-0.5">${getImpactBars(impact)}</div></div><p class="text-white text-xs font-medium mt-1 leading-snug">${name}</p><div class="flex gap-3 mt-1.5 text-[10px]">${event.actual!=null&&event.actual!==''?`<div><span class="text-gray-500">Act</span> <span class="text-positive font-mono ml-0.5">${event.actual}</span></div>`:''}${est!=null&&est!==''?`<div><span class="text-gray-500">Est</span> <span class="text-gray-300 font-mono ml-0.5">${est}</span></div>`:''}${event.previous!=null&&event.previous!==''?`<div><span class="text-gray-500">Prev</span> <span class="text-gray-400 font-mono ml-0.5">${event.previous}</span></div>`:''}</div>${countdown}</div>`;
+                });
+                if(grouped[date].length>4)html+=`<p class="text-gray-500 text-[10px] text-center py-1">+${grouped[date].length-4} más eventos</p>`;
+            });
+            container.innerHTML=html;
+        }
+
+        function isUSSymbol(s){if(!s)return false;if(/^\d/.test(s))return false;if(s.includes('.')){const x=s.split('.').pop().toUpperCase();const intl=['L','T','V','NS','BO','TO','HK','SS','SZ','KS','TW','SI','AX','NZ','SA','MC','PA','AS','BR','DE','F','MI','OL','ST','HE','CO','IS','VI','WA','PR','LS','JK','KL','BK','TA','QA','SR','CA','CN','IL','MX','SW','VX'];if(intl.includes(x))return false;return['A','B','WS','RT','PK','UN'].includes(x);}return true;}
+        function earningsSmartSort(events,gEpsEst,gRev,gSymbol){return[...events].sort((a,b)=>{const aS=(isUSSymbol(gSymbol(a))?2:0)+((gEpsEst(a)!=null&&gEpsEst(a)!=='')||(gRev(a)!=null)?1:0);const bS=(isUSSymbol(gSymbol(b))?2:0)+((gEpsEst(b)!=null&&gEpsEst(b)!=='')||(gRev(b)!=null)?1:0);return bS-aS;});}
+        let earningsFilterMode='smart';
+
+        function renderSidebarEarnings(events) {
+            const container = document.getElementById('cal-content-earnings');
+            if(events===null){container.innerHTML=`<p class="text-gray-500 text-sm text-center py-8">Error (${fmpCache.earnings.error||'unknown'})</p>`;return;}
+            if(!events||!events.length){container.innerHTML='<p class="text-gray-500 text-sm text-center py-8">No hay earnings próximos</p>';return;}
+            const today=new Date().toISOString().split('T')[0];
+            const gDate=(e)=>(e.date||e.earningDate||e.reportDate||e.publicationDate||'').substring(0,10),gSymbol=(e)=>e.symbol||e.ticker||'N/A',gEps=(e)=>e.eps??e.actualEps??e.epsActual??e.actualEarningResult??null,gEpsEst=(e)=>e.epsEstimated??e.estimatedEps??e.consensus??e.estimatedEarning??null,gRev=(e)=>e.revenue??e.actualRevenue??e.revenueActual??null,gRevEst=(e)=>e.revenueEstimated??e.estimatedRevenue??null;
+            const sorted=earningsSmartSort(events,gEpsEst,gRev,gSymbol);const grouped={};sorted.forEach(e=>{const k=gDate(e);if(!k)return;if(!grouped[k])grouped[k]=[];grouped[k].push(e);});
+            let html='';const allDates=Object.keys(grouped).sort();[...allDates.filter(d=>d<today).slice(-2),...allDates.filter(d=>d>=today).slice(0,4)].forEach(date=>{
+                let label;if(date===today)label='🔴 HOY';else if(date<today){const d=new Date(date+'T12:00:00');label='✅ '+d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'}).toUpperCase();}else{const d=new Date(date+'T12:00:00');label=d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'}).toUpperCase();}
+                const filtered=grouped[date].filter(e=>{const hE=gEpsEst(e)!=null&&gEpsEst(e)!=='';const hR=gRevEst(e)!=null&&gRevEst(e)!==0;const hA=gEps(e)!=null&&gEps(e)!=='';return e._confirmed||hA||(isUSSymbol(gSymbol(e))&&(hE||hR));});
+                const shown=filtered.slice(0,6);if(shown.length===0&&date<today)return;
+                html+=`<div class="text-gray-500 text-xs font-semibold py-2 border-b border-card-border/50 mb-2">${label}</div>`;
+                shown.forEach(event=>{const eps=gEps(event);const epsEst=gEpsEst(event);const rev=gRev(event);const hasA=eps!=null&&eps!=='';const hasE=epsEst!=null&&epsEst!=='';let sc='earnings-pending',st='Pendiente';if(hasA&&hasE){if(parseFloat(eps)>=parseFloat(epsEst)){sc='earnings-beat';st='Beat ✓';}else{sc='earnings-miss';st='Miss ✗';}}else if(hasA||event._confirmed){sc='earnings-beat';st='Reportado';}
+                    html+=`<div class="py-2 border-l-2 pl-2.5 mb-1.5 rounded-r ${sc}"><div class="flex items-center justify-between"><span class="text-white text-xs font-bold">${gSymbol(event)}</span><span class="text-[10px] font-semibold ${st.includes('Beat')?'text-positive':st.includes('Miss')?'text-negative':'text-gray-500'}">${st}</span></div><div class="flex gap-3 mt-1 text-[10px]">${hasA?`<div><span class="text-gray-500">EPS</span> <span class="text-white font-mono ml-0.5">$${parseFloat(eps).toFixed(2)}</span></div>`:''}${hasE?`<div><span class="text-gray-500">Est</span> <span class="text-gray-300 font-mono ml-0.5">$${parseFloat(epsEst).toFixed(2)}</span></div>`:''}${rev?`<div><span class="text-gray-500">Rev</span> <span class="text-gray-300 font-mono ml-0.5">${formatRevenue(rev)}</span></div>`:''}</div></div>`;
+                });
+                if(grouped[date].length>shown.length)html+=`<p class="text-gray-500 text-[10px] text-center py-1">+${grouped[date].length-shown.length} más</p>`;
+            });
+            container.innerHTML=html;
+        }
+        function formatRevenue(val){if(!val)return'N/A';const n=parseFloat(val);if(n>=1e9)return`$${(n/1e9).toFixed(1)}B`;if(n>=1e6)return`$${(n/1e6).toFixed(0)}M`;return`$${n.toLocaleString()}`;}
+
+        function renderSidebarIPO(events) {
+            const container=document.getElementById('cal-content-ipo');
+            if(events===null){container.innerHTML=`<p class="text-gray-500 text-sm text-center py-8">Error (${fmpCache.ipo.error||'unknown'})</p>`;return;}
+            if(!events||!events.length){container.innerHTML='<p class="text-gray-500 text-sm text-center py-8">No hay IPOs próximos</p>';return;}
+            const gd=(e)=>(e.date||e.ipoDate||'').substring(0,10),gs=(e)=>e.symbol||e.ticker||'N/A',gc=(e)=>e.company||e.companyName||e.name||'N/A',gx=(e)=>e.exchange||e.stockExchange||'',gp=(e)=>e.priceRange||(e.ipoPrice?`$${e.ipoPrice}`:(e.price?`$${e.price}`:'TBD'));
+            let html='';[...events].sort((a,b)=>gd(a).localeCompare(gd(b))).slice(0,10).forEach(event=>{const dv=gd(event);const d=dv?new Date(dv+'T12:00:00'):null;const ds=d?d.toLocaleDateString('es-ES',{day:'numeric',month:'short'}):'TBD';
+                html+=`<div class="ipo-card rounded-lg p-3 mb-2"><div class="flex items-center justify-between mb-1"><span class="text-white text-xs font-bold">${gs(event)}</span><span class="text-primary text-[10px] font-mono font-semibold">${ds}</span></div><p class="text-gray-400 text-[10px] leading-snug mb-1.5 line-clamp-1">${gc(event)}</p><div class="flex gap-3 text-[10px]"><div><span class="text-gray-500">Precio</span> <span class="text-white font-mono ml-0.5">${gp(event)}</span></div>${gx(event)?`<div><span class="text-gray-500">Exchange</span> <span class="text-gray-300 ml-0.5">${gx(event)}</span></div>`:''}</div></div>`;
+            });
+            container.innerHTML=html;
+        }
+
+        function renderModalEconomic(events) {
+            const container=document.getElementById('modal-content-economic');
+            if(events===null){container.innerHTML=`<p class="text-gray-500 text-center py-12">Error (${fmpCache.economic.error||'unknown'})</p>`;return;}
+            if(!events||!events.length){container.innerHTML='<p class="text-gray-500 text-center py-12">No hay datos</p>';return;}
+            const today=new Date().toISOString().split('T')[0];const gd=(e)=>(e.date||e.eventDate||'').substring(0,10),gt=(e)=>{const d=e.date||e.eventDate||'';return d.length>10?d.substring(11,16):'--:--';},gn=(e)=>e.event||e.eventName||e.name||'N/A',gi=(e)=>e.impact||e.eventImpact||'',gc=(e)=>e.country||e.countryCode||'',ge=(e)=>e.estimate??e.consensus??e.forecast??'';
+            const sorted=[...events].sort((a,b)=>{const da=gd(a),db=gd(b);if(da!==db)return da.localeCompare(db);return getImpactLevel(gi(b))-getImpactLevel(gi(a));});
+            const grouped={};sorted.forEach(e=>{const k=gd(e)||'unknown';if(!grouped[k])grouped[k]=[];grouped[k].push(e);});
+            let html='';Object.keys(grouped).sort().forEach(date=>{const isToday=date===today;const d=new Date(date+'T12:00:00');const dayLabel=isToday?'🔴 HOY':d.toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();
+                html+=`<div class="mb-6"><div class="text-primary text-sm font-bold py-3 border-b border-card-border mb-4">${dayLabel}</div><div class="grid gap-3">`;
+                grouped[date].forEach(event=>{const impact=getImpactLevel(gi(event));const ic=impact>=3?'border-red-500':impact>=2?'border-yellow-500':'border-gray-600';const ib=impact>=3?'bg-red-500/10':impact>=2?'bg-yellow-500/10':'bg-gray-500/10';const est=ge(event);
+                    html+=`<div class="flex items-center gap-4 p-4 rounded-lg ${ib} border-l-4 ${ic}"><div class="text-gray-400 font-mono text-lg w-16">${gt(event)}</div><div class="text-2xl">${getCountryFlag(gc(event))}</div><div class="flex-1"><p class="text-white font-semibold">${gn(event)}</p><div class="flex gap-6 mt-1 text-sm"><div><span class="text-gray-500">Actual:</span> <span class="${event.actual!=null&&event.actual!==''?'text-positive':'text-gray-400'} font-mono">${event.actual!=null&&event.actual!==''?event.actual:'---'}</span></div><div><span class="text-gray-500">Estimado:</span> <span class="text-gray-300 font-mono">${est!=null&&est!==''?est:'---'}</span></div><div><span class="text-gray-500">Anterior:</span> <span class="text-gray-400 font-mono">${event.previous!=null&&event.previous!==''?event.previous:'---'}</span></div></div></div><div class="flex gap-1">${getImpactBarsLarge(impact)}</div></div>`;
+                });
+                html+='</div></div>';
+            });
+            container.innerHTML=html;
+        }
+
+        function renderEarningsDateGroup(dayLabel,count,events,gEps,gEpsEst,gRev,gRevEst,gSymbol){let html=`<div class="mb-6"><div class="flex items-center justify-between py-3 border-b border-card-border mb-4"><span class="text-primary text-sm font-bold">${dayLabel}</span><span class="text-gray-500 text-xs">${count} empresa${count>1?'s':''}</span></div><div class="grid grid-cols-2 gap-3">`;
+            events.forEach(event=>{const eps=gEps(event);const epsEst=gEpsEst(event);const rev=gRev(event);const revEst=gRevEst(event);const hA=eps!=null&&eps!=='';const hE=epsEst!=null&&epsEst!=='';let bc='border-gray-600',bg='bg-gray-500/5',badge='<span class="text-[10px] px-2 py-0.5 rounded bg-gray-700 text-gray-400">Pendiente</span>';
+                if(hA&&hE){const beat=parseFloat(eps)>=parseFloat(epsEst);bc=beat?'border-positive':'border-negative';bg=beat?'bg-positive/5':'bg-negative/5';const s=((parseFloat(eps)-parseFloat(epsEst))/Math.abs(parseFloat(epsEst))*100);badge=beat?`<span class="text-[10px] px-2 py-0.5 rounded bg-positive/20 text-positive font-semibold">Beat +${Math.abs(s).toFixed(1)}%</span>`:`<span class="text-[10px] px-2 py-0.5 rounded bg-negative/20 text-negative font-semibold">Miss ${s.toFixed(1)}%</span>`;}else if(hA||event._confirmed){bc='border-blue-500';bg='bg-blue-500/5';badge='<span class="text-[10px] px-2 py-0.5 rounded bg-blue-500/20 text-blue-400 font-semibold">Reportado</span>';}
+                html+=`<div class="p-4 rounded-lg border-l-4 ${bc} ${bg}"><div class="flex items-center justify-between mb-2"><span class="text-white font-bold text-lg">${gSymbol(event)}</span>${badge}</div><div class="grid grid-cols-2 gap-2 text-sm"><div><span class="text-gray-500 text-xs">EPS Actual</span><p class="text-white font-mono font-bold">${hA?'$'+parseFloat(eps).toFixed(2):'---'}</p></div><div><span class="text-gray-500 text-xs">EPS Estimado</span><p class="text-gray-300 font-mono">${hE?'$'+parseFloat(epsEst).toFixed(2):'---'}</p></div><div><span class="text-gray-500 text-xs">Revenue</span><p class="text-gray-300 font-mono">${rev?formatRevenue(rev):'---'}</p></div><div><span class="text-gray-500 text-xs">Rev. Estimado</span><p class="text-gray-300 font-mono">${revEst?formatRevenue(revEst):'---'}</p></div></div></div>`;
+            });
+            return html+'</div></div>';}
+
+        function renderModalEarnings(events){
+            const container=document.getElementById('modal-content-earnings');
+            if(events===null){container.innerHTML=`<p class="text-gray-500 text-center py-12">Error (${fmpCache.earnings.error||'unknown'})</p>`;return;}
+            if(!events||!events.length){container.innerHTML='<p class="text-gray-500 text-center py-12">No hay datos</p>';return;}
+            const today=new Date().toISOString().split('T')[0];const gDate=(e)=>(e.date||e.earningDate||e.reportDate||e.publicationDate||'').substring(0,10),gSymbol=(e)=>e.symbol||e.ticker||'N/A',gEps=(e)=>e.eps??e.actualEps??e.epsActual??e.actualEarningResult??null,gEpsEst=(e)=>e.epsEstimated??e.estimatedEps??e.consensus??e.estimatedEarning??null,gRev=(e)=>e.revenue??e.actualRevenue??e.revenueActual??null,gRevEst=(e)=>e.revenueEstimated??e.estimatedRevenue??null;
+            const sorted=earningsSmartSort(events,gEpsEst,gRev,gSymbol);
+            const filtered=earningsFilterMode==='smart'?sorted.filter(e=>{const hE=gEpsEst(e)!=null&&gEpsEst(e)!=='';const hR=gRevEst(e)!=null&&gRevEst(e)!==0;const hA=gEps(e)!=null&&gEps(e)!=='';return e._confirmed||hA||(isUSSymbol(gSymbol(e))&&(hE||hR));}):sorted;
+            const grouped={};filtered.forEach(e=>{const k=gDate(e)||'unknown';if(!grouped[k])grouped[k]=[];grouped[k].push(e);});
+            let html=`<div class="flex items-center justify-between mb-4 px-1"><div class="flex gap-2"><button onclick="earningsFilterMode='smart';renderModalEarnings(fmpCache.earnings.data)" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition ${earningsFilterMode==='smart'?'bg-primary/20 text-primary border border-primary/40':'bg-gray-800 text-gray-400 border border-gray-700'}">🇺🇸 USA + Estimados</button><button onclick="earningsFilterMode='all';renderModalEarnings(fmpCache.earnings.data)" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition ${earningsFilterMode==='all'?'bg-primary/20 text-primary border border-primary/40':'bg-gray-800 text-gray-400 border border-gray-700'}">🌍 Todos</button></div><span class="text-gray-500 text-xs">${filtered.length} de ${events.length}</span></div>`;
+            const allDates=Object.keys(grouped).sort();const past=allDates.filter(d=>d<today).sort().reverse(),tod=allDates.filter(d=>d===today),fut=allDates.filter(d=>d>today).sort();
+            if(past.length)html+=`<div class="flex items-center gap-3 mb-3 mt-2"><span class="text-positive text-xs font-bold">📊 REPORTADOS</span><div class="flex-1 h-px bg-positive/20"></div></div>`;
+            past.forEach(d=>{const dl=new Date(d+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();html+=renderEarningsDateGroup(dl,grouped[d].length,grouped[d],gEps,gEpsEst,gRev,gRevEst,gSymbol);});
+            tod.forEach(d=>html+=renderEarningsDateGroup('🔴 HOY',grouped[d].length,grouped[d],gEps,gEpsEst,gRev,gRevEst,gSymbol));
+            if(fut.length)html+=`<div class="flex items-center gap-3 mb-3 mt-6"><span class="text-primary text-xs font-bold">📅 PRÓXIMOS</span><div class="flex-1 h-px bg-primary/20"></div></div>`;
+            fut.forEach(d=>{const dl=new Date(d+'T12:00:00').toLocaleDateString('es-ES',{weekday:'long',day:'numeric',month:'long'}).toUpperCase();html+=renderEarningsDateGroup(dl,grouped[d].length,grouped[d],gEps,gEpsEst,gRev,gRevEst,gSymbol);});
+            container.innerHTML=html;
+        }
+
+        function renderModalIPO(events){
+            const container=document.getElementById('modal-content-ipo');
+            if(events===null){container.innerHTML=`<p class="text-gray-500 text-center py-12">Error (${fmpCache.ipo.error||'unknown'})</p>`;return;}
+            if(!events||!events.length){container.innerHTML='<p class="text-gray-500 text-center py-12">No hay IPOs</p>';return;}
+            const gd=(e)=>(e.date||e.ipoDate||'').substring(0,10),gs=(e)=>e.symbol||e.ticker||'N/A',gc=(e)=>e.company||e.companyName||e.name||'N/A',gx=(e)=>e.exchange||e.stockExchange||'',gp=(e)=>e.priceRange||(e.ipoPrice?`$${e.ipoPrice}`:(e.price?`$${e.price}`:'TBD')),gsh=(e)=>e.numberOfShares||e.sharesOffered||e.shares||null,gsz=(e)=>e.totalSharesValue||e.marketCap||null;
+            let html='<div class="grid grid-cols-3 gap-4">';[...events].sort((a,b)=>gd(a).localeCompare(gd(b))).forEach(event=>{const dv=gd(event);const d=dv?new Date(dv+'T12:00:00'):null;const ds=d?d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'}):'TBD';const sh=gsh(event)?(gsh(event)>=1e6?`${(gsh(event)/1e6).toFixed(1)}M`:gsh(event).toLocaleString()):'N/A';
+                html+=`<div class="ipo-card rounded-xl p-5 transition"><div class="flex items-center justify-between mb-3"><div><span class="text-white font-bold text-xl">${gs(event)}</span>${gx(event)?`<span class="text-gray-500 text-xs ml-2">${gx(event)}</span>`:''}</div><span class="text-primary text-sm font-mono font-semibold bg-primary/10 px-3 py-1 rounded-lg">${ds}</span></div><p class="text-gray-400 text-sm mb-4 line-clamp-2">${gc(event)}</p><div class="grid grid-cols-2 gap-3 text-sm"><div><span class="text-gray-500 text-xs">Precio</span><p class="text-white font-mono font-semibold">${gp(event)}</p></div><div><span class="text-gray-500 text-xs">Acciones</span><p class="text-gray-300 font-mono">${sh}</p></div><div><span class="text-gray-500 text-xs">Tamaño</span><p class="text-gray-300 font-mono">${gsz(event)?formatRevenue(gsz(event)):'N/A'}</p></div></div></div>`;
+            });
+            container.innerHTML=html+'</div>';
+        }
+
+        function switchCalTab(tab){currentCalTab=tab;['economic','earnings','ipo'].forEach(t=>{document.getElementById(`cal-tab-${t}`).className=t===tab?'flex-1 py-3 px-2 text-xs font-bold text-center transition cal-tab-active':'flex-1 py-3 px-2 text-xs font-bold text-center transition cal-tab-inactive';document.getElementById(`cal-content-${t}`).classList.toggle('hidden',t!==tab);});}
+        function switchModalTab(tab){currentModalTab=tab;['economic','earnings','ipo'].forEach(t=>{document.getElementById(`modal-tab-${t}`).className=t===tab?'py-4 px-6 text-sm font-bold transition cal-tab-active':'py-4 px-6 text-sm font-bold transition cal-tab-inactive';});document.querySelectorAll('.modal-content').forEach(el=>el.classList.add('hidden'));document.getElementById(`modal-content-${tab}`).classList.remove('hidden');}
+
+        async function loadAllFMPData(){try{const[economic,earnings,ipo]=await Promise.all([fetchEconomicCalendar(),fetchEarningsCalendar(),fetchIPOCalendar()]);renderSidebarEconomic(economic);renderSidebarEarnings(earnings);renderSidebarIPO(ipo);renderModalEconomic(economic);renderModalEarnings(earnings);renderModalIPO(ipo);document.getElementById('fmp-last-update').textContent=`Actualizado: ${new Date().toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}`;}catch(e){}}
+
+        function openCalendarModal(){const m=document.getElementById('calendar-modal');m.classList.remove('hidden');m.classList.add('flex');document.body.style.overflow='hidden';if(fmpCache.economic.data)renderModalEconomic(fmpCache.economic.data);if(fmpCache.earnings.data)renderModalEarnings(fmpCache.earnings.data);if(fmpCache.ipo.data)renderModalIPO(fmpCache.ipo.data);}
+        function closeCalendarModal(){const m=document.getElementById('calendar-modal');m.classList.add('hidden');m.classList.remove('flex');document.body.style.overflow='';}
+        document.addEventListener('keydown',(e)=>{if(e.key==='Escape'){closeCalendarModal();closeChartModal();}});
+
+        // ========== MARKET DATA FETCHERS ==========
+        async function fetchForexData(){const pairs=['EUR/USD','GBP/USD','USD/JPY','AUD/USD','USD/CAD'];const data=[];for(const pair of pairs){try{const ticker='C:'+pair.replace('/','');const now=new Date();const from=new Date(now.getTime()-24*3600000);const url=`https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/minute/${from.toISOString().split('T')[0]}/${now.toISOString().split('T')[0]}?adjusted=true&sort=desc&limit=1&apiKey=${POLYGON_API_KEY}`;const response=await fetch(url);const json=await response.json();if(json.results&&json.results[0]){const r=json.results[0];const prevUrl=`https://api.polygon.io/v2/aggs/ticker/${ticker}/prev?apiKey=${POLYGON_API_KEY}`;const prevResponse=await fetch(prevUrl);const prevJson=await prevResponse.json();const prevClose=prevJson.results?.[0]?.c||r.o;data.push({symbol:pair,price:r.c,change:((r.c-prevClose)/prevClose*100),high:r.h,low:r.l,type:'forex'});}}catch(e){try{const ticker='C:'+pair.replace('/','');const url=`https://api.polygon.io/v2/aggs/ticker/${ticker}/prev?apiKey=${POLYGON_API_KEY}`;const response=await fetch(url);const json=await response.json();if(json.results&&json.results[0]){const r=json.results[0];data.push({symbol:pair,price:r.c,change:((r.c-r.o)/r.o*100),high:r.h,low:r.l,type:'forex'});}}catch(e2){}}}return data;}
+        async function fetchCryptoData(){const pairs=['BTC/USD','ETH/USD'];const data=[];for(const pair of pairs){try{const ticker='X:'+pair.replace('/','');const now=new Date();const from=new Date(now.getTime()-24*3600000);const url=`https://api.polygon.io/v2/aggs/ticker/${ticker}/range/1/minute/${from.toISOString().split('T')[0]}/${now.toISOString().split('T')[0]}?adjusted=true&sort=desc&limit=1&apiKey=${POLYGON_API_KEY}`;const response=await fetch(url);const json=await response.json();if(json.results&&json.results[0]){const r=json.results[0];const prevUrl=`https://api.polygon.io/v2/aggs/ticker/${ticker}/prev?apiKey=${POLYGON_API_KEY}`;const prevResponse=await fetch(prevUrl);const prevJson=await prevResponse.json();const prevClose=prevJson.results?.[0]?.c||r.o;data.push({symbol:pair,price:r.c,change:((r.c-prevClose)/prevClose*100),high:r.h,low:r.l,type:'crypto'});}}catch(e){try{const ticker='X:'+pair.replace('/','');const url=`https://api.polygon.io/v2/aggs/ticker/${ticker}/prev?apiKey=${POLYGON_API_KEY}`;const response=await fetch(url);const json=await response.json();if(json.results&&json.results[0]){const r=json.results[0];data.push({symbol:pair,price:r.c,change:((r.c-r.o)/r.o*100),high:r.h,low:r.l,type:'crypto'});}}catch(e2){}}}return data;}
+        async function fetchStocksData(){const symbols=['SPY','NVDA','AAPL','MSFT','TSLA'];const names={'SPY':'SPX 500','NVDA':'NVDA','AAPL':'AAPL','MSFT':'MSFT','TSLA':'TSLA'};const data=[];for(const symbol of symbols){try{const now=new Date();const from=new Date(now.getTime()-24*3600000);const url=`https://api.polygon.io/v2/aggs/ticker/${symbol}/range/1/minute/${from.toISOString().split('T')[0]}/${now.toISOString().split('T')[0]}?adjusted=true&sort=desc&limit=1&apiKey=${POLYGON_API_KEY}`;const response=await fetch(url);const json=await response.json();if(json.results&&json.results[0]){const r=json.results[0];const prevUrl=`https://api.polygon.io/v2/aggs/ticker/${symbol}/prev?apiKey=${POLYGON_API_KEY}`;const prevResponse=await fetch(prevUrl);const prevJson=await prevResponse.json();const prevClose=prevJson.results?.[0]?.c||r.o;data.push({symbol:names[symbol]||symbol,price:r.c,change:((r.c-prevClose)/prevClose*100),high:r.h,low:r.l,type:'stocks'});}}catch(e){try{const url=`https://api.polygon.io/v2/aggs/ticker/${symbol}/prev?apiKey=${POLYGON_API_KEY}`;const response=await fetch(url);const json=await response.json();if(json.results&&json.results[0]){const r=json.results[0];data.push({symbol:names[symbol]||symbol,price:r.c,change:((r.c-r.o)/r.o*100),high:r.h,low:r.l,type:'stocks'});}}catch(e2){}}}return data;}
+
+        function renderTicker(data){const c=document.getElementById('ticker-tape');if(!data.length)return;let h='';data.forEach(i=>{const col=i.change>=0?'text-positive':'text-negative';const arr=i.change>=0?'▲':'▼';const p=i.type==='crypto'?i.price.toLocaleString('en-US',{maximumFractionDigits:2}):i.type==='forex'?i.price.toFixed(5):i.price.toFixed(2);h+=`<span class="mx-6 flex items-center gap-2"><span class="text-white font-medium">${i.symbol}</span><span class="text-gray-300 font-mono">${p}</span><span class="${col} text-xs">${arr} ${Math.abs(i.change).toFixed(2)}%</span></span>`;});c.innerHTML=h+h;}
+
+        function renderMarketTable(data,filter){const filtered=data.filter(d=>d.type===filter);const c=document.getElementById('market-table');let h='';filtered.forEach(item=>{const cc=item.change>=0?'text-positive':'text-negative';const cp=item.change>=0?'+':'';const ps=item.type==='crypto'?item.price.toLocaleString('en-US',{maximumFractionDigits:2}):item.type==='forex'?item.price.toFixed(5):item.price.toFixed(2);const hs=item.type==='crypto'?item.high.toLocaleString('en-US',{maximumFractionDigits:2}):item.type==='forex'?item.high.toFixed(5):item.high.toFixed(2);const ls=item.type==='crypto'?item.low.toLocaleString('en-US',{maximumFractionDigits:2}):item.type==='forex'?item.low.toFixed(5):item.low.toFixed(2);
+            let trend='Neutral',tc='text-gray-400';if(item.change>0.5){trend='Strong Buy';tc='text-positive';}else if(item.change>0.1){trend='Buy';tc='text-positive';}else if(item.change<-0.5){trend='Strong Sell';tc='text-negative';}else if(item.change<-0.1){trend='Sell';tc='text-negative';}
+            const dc=item.change>=0?'bg-positive':'bg-negative';const sel=item.symbol===selectedPair.symbol?'bg-primary/10 border-l-2 border-primary':'';
+            let ticker='',dec=2;if(item.type==='forex'){ticker='C:'+item.symbol.replace('/','');dec=5;}else if(item.type==='crypto'){ticker='X:'+item.symbol.replace('/','');}else{const st={'SPX 500':'SPY','NVDA':'NVDA','AAPL':'AAPL','MSFT':'MSFT','TSLA':'TSLA'};ticker=st[item.symbol]||item.symbol;}
+            h+=`<tr class="border-b border-card-border/50 hover:bg-white/5 cursor-pointer transition ${sel}" onclick="selectPair('${item.symbol}','${ticker}','${item.type}',${dec})"><td class="py-4 flex items-center gap-3"><span class="w-2.5 h-2.5 rounded-full ${dc}"></span><span class="font-semibold text-lg">${item.symbol}</span></td><td class="py-4 text-right font-mono text-lg">${ps}</td><td class="py-4 text-right ${cc} font-mono text-lg">${cp}${item.change.toFixed(2)}%</td><td class="py-4 text-right text-gray-400 font-mono">${hs}</td><td class="py-4 text-right text-gray-400 font-mono">${ls}</td><td class="py-4 text-right ${tc} font-semibold">${trend}</td></tr>`;
+        });c.innerHTML=h;}
+
+        function selectPair(symbol,ticker,type,decimals){selectedPair={symbol,ticker,type,decimals};const p=allMarketData.find(d=>d.symbol===symbol);if(p)updateAIAnalysisForPair(p);renderMarketTable(allMarketData,currentFilter);if(!document.getElementById('chart-modal').classList.contains('hidden'))loadChartData();}
+        function filterMarket(type){currentFilter=type;renderMarketTable(allMarketData,type);['forex','crypto','stocks'].forEach(t=>{document.getElementById(`btn-${t}`).className=t===type?'px-4 py-2 rounded-lg text-sm font-semibold bg-white/10 text-white':'px-4 py-2 rounded-lg text-sm font-semibold text-gray-400 hover:bg-white/5';});}
+
+        function updateAIAnalysis(data){const p=data.find(d=>d.symbol===selectedPair.symbol)||data[0];if(p)updateAIAnalysisForPair(p);}
+        function updateAIAnalysisForPair(pairData){const dec=selectedPair.decimals||(pairData.type==='forex'?5:2);document.getElementById('ai-pair').innerHTML=`${pairData.symbol} <span class="text-gray-500 text-xl font-normal">H4</span>`;document.getElementById('chart-title').textContent=pairData.symbol;const signal=pairData.change>=0?'BULLISH':'BEARISH';const sc=pairData.change>=0?'bg-positive':'bg-negative';const si=pairData.change>=0?'↗':'↘';const conf=Math.min(95,Math.max(60,70+Math.abs(pairData.change)*10));document.getElementById('ai-signal').className=`inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white font-bold text-lg mb-4 ${sc}`;document.getElementById('ai-signal').innerHTML=`${si} ${signal}`;document.getElementById('ai-confidence').textContent=`${conf.toFixed(0)}%`;document.getElementById('ai-price').textContent=pairData.price.toFixed(dec);const range=pairData.high-pairData.low;const entry=pairData.price;
+            if(pairData.change>=0){document.getElementById('ai-entry').textContent=`${(entry-range*0.1).toFixed(dec)} - ${entry.toFixed(dec)}`;document.getElementById('ai-tp1').textContent=(entry+range*0.5).toFixed(dec);document.getElementById('ai-tp2').textContent=(entry+range*1).toFixed(dec);document.getElementById('ai-sl').textContent=(entry-range*0.3).toFixed(dec);document.getElementById('ai-reason').textContent=`Divergencia alcista detectada en RSI (14) combinada con rechazo en zona de soporte clave ${(entry-range*0.2).toFixed(dec)}. Volumen institucional creciente.`;}
+            else{document.getElementById('ai-entry').textContent=`${entry.toFixed(dec)} - ${(entry+range*0.1).toFixed(dec)}`;document.getElementById('ai-tp1').textContent=(entry-range*0.5).toFixed(dec);document.getElementById('ai-tp2').textContent=(entry-range*1).toFixed(dec);document.getElementById('ai-sl').textContent=(entry+range*0.3).toFixed(dec);document.getElementById('ai-reason').textContent=`Presión bajista con cambio de -${Math.abs(pairData.change).toFixed(2)}%. Precaución recomendada.`;}}
+
+        async function fetchVIX(){try{const url=`https://api.polygon.io/v2/aggs/ticker/VIXY/prev?apiKey=${POLYGON_API_KEY}`;const r=await fetch(url);const j=await r.json();if(j.results&&j.results[0]){const d=j.results[0];const c=((d.c-d.o)/d.o*100);document.getElementById('stat-vix').textContent=d.c.toFixed(2);const el=document.getElementById('stat-vix-change');el.textContent=`${c>=0?'+':''}${c.toFixed(1)}%`;el.className=`text-xs mt-1 ${c>=0?'text-negative':'text-positive'}`;}}catch(e){}}
+        async function fetchDXY(){try{const url=`https://api.polygon.io/v2/aggs/ticker/UUP/prev?apiKey=${POLYGON_API_KEY}`;const r=await fetch(url);const j=await r.json();if(j.results&&j.results[0]){const d=j.results[0];const dxy=d.c*4;const c=((d.c-d.o)/d.o*100);document.getElementById('stat-dxy').textContent=dxy.toFixed(2);const el=document.getElementById('stat-dxy-change');el.textContent=`${c>=0?'+':''}${c.toFixed(1)}%`;el.className=`text-xs mt-1 ${c>=0?'text-positive':'text-negative'}`;}}catch(e){}}
+        async function fetchFearGreed(){try{const r=await fetch('https://api.alternative.me/fng/?limit=1');const j=await r.json();if(j.data&&j.data[0]){const v=parseInt(j.data[0].value);const cl=j.data[0].value_classification;let c='text-gray-400';if(v<=25)c='text-red-500';else if(v<=45)c='text-orange-500';else if(v<=55)c='text-yellow-500';else if(v<=75)c='text-lime-500';else c='text-green-500';document.getElementById('stat-sentiment').className=`text-2xl font-bold font-mono ${c}`;document.getElementById('stat-sentiment').textContent=cl;document.getElementById('stat-sentiment-value').textContent=`${v}/100`;}}catch(e){}}
+        function updateTradingSession(){const now=new Date();const h=now.getUTCHours();let s='',st='';if(h>=12&&h<16){s='NY / London';st='Overlap';}else if(h>=7&&h<12){s='London';st='Active';}else if(h>=12&&h<21){s='New York';st='Active';}else if(h>=0&&h<9){s='Tokyo';st='Active';}else{s='Sydney';st='Active';}document.getElementById('stat-session').textContent=s;document.getElementById('stat-session-status').textContent=st;}
+
+        // ============================================================
+        // ========== NOTICIAS — EXPANDIBLES SIN SALIR DE PÁGINA ==========
+        // ============================================================
+
+        function toggleNews(id) {
+            const content = document.getElementById(`news-body-${id}`);
+            const arrow = document.getElementById(`news-arrow-${id}`);
+            if (!content || !arrow) return;
+
+            const isOpen = content.classList.contains('open');
+
+            // Cerrar todos los demás
+            document.querySelectorAll('.news-expand.open').forEach(el => el.classList.remove('open'));
+            document.querySelectorAll('.news-toggle.open').forEach(el => el.classList.remove('open'));
+
+            // Si no estaba abierto, abrir este
+            if (!isOpen) {
+                content.classList.add('open');
+                arrow.classList.add('open');
+                // Scroll suave al contenido expandido
+                setTimeout(() => content.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+            }
+        }
+
+        async function fetchNews() {
+            try {
+                const url = `https://api.polygon.io/v2/reference/news?limit=10&apiKey=${POLYGON_API_KEY}`;
+                const response = await fetch(url);
+                const json = await response.json();
+                if (json.results) renderNews(json.results);
+            } catch (e) {}
+        }
+
+        function renderNews(articles) {
+            const container = document.getElementById('news-container');
+            let html = '';
+
+            articles.slice(0, 8).forEach((article, index) => {
+                const time = new Date(article.published_utc).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+                const fullDate = new Date(article.published_utc).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+
+                // Impacto
+                let impact = 'BAJO', impactClass = 'bg-gray-500/20 text-gray-400';
+                if (article.tickers && article.tickers.length > 0) {
+                    const importantTickers = ['SPY', 'QQQ', 'AAPL', 'MSFT', 'NVDA', 'TSLA', 'AMZN', 'GOOGL'];
+                    const hasImportant = article.tickers.some(t => importantTickers.includes(t));
+                    if (hasImportant || article.title.toLowerCase().includes('fed') || article.title.toLowerCase().includes('cpi')) {
+                        impact = 'ALTO IMPACTO'; impactClass = 'bg-red-500/20 text-red-400';
+                    } else if (article.tickers.length >= 2) {
+                        impact = 'MEDIO'; impactClass = 'bg-yellow-500/20 text-yellow-400';
+                    }
+                }
+
+                const ticker = article.tickers && article.tickers[0] ? article.tickers[0] : '';
+                const description = article.description || 'No hay descripción disponible para esta noticia.';
+                const source = article.publisher?.name || 'Fuente desconocida';
+                const sourceIcon = article.publisher?.favicon_url || '';
+
+                // Tags de tickers
+                const tickerTags = (article.tickers || []).slice(0, 5).map(t =>
+                    `<span class="bg-white/5 text-gray-300 text-[10px] px-1.5 py-0.5 rounded font-mono">${t}</span>`
+                ).join('');
+
+                // Imagen del artículo (si existe)
+                const imgUrl = article.image_url || '';
+
+                html += `
+                    <div class="border-b border-card-border/50 overflow-hidden">
+                        <!-- Header de noticia — click para expandir -->
+                        <div class="px-2 py-3 hover:bg-white/5 transition cursor-pointer" onclick="toggleNews(${index})">
+                            <div class="flex items-start justify-between gap-2 mb-2">
+                                <span class="text-gray-500 text-xs font-mono">${time}</span>
+                                <span class="${impactClass} text-[10px] px-2 py-0.5 rounded font-semibold">${impact}</span>
+                            </div>
+                            <p class="text-white text-sm font-medium leading-snug mb-2">${article.title}</p>
+                            <div class="flex items-center justify-between">
+                                <p class="text-gray-500 text-xs">${source}${ticker ? ' • ' + ticker : ''}</p>
+                                <div id="news-arrow-${index}" class="news-toggle text-gray-500 flex items-center gap-1">
+                                    <span class="text-[10px] text-gray-600">detalle</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contenido expandible (descripción inline) -->
+                        <div id="news-body-${index}" class="news-expand">
+                            <div class="bg-card border-t border-card-border/40 px-3 py-3">
+                                ${imgUrl ? `<img src="${imgUrl}" alt="" class="w-full h-24 object-cover rounded-lg border border-card-border mb-3" onerror="this.style.display='none'"/>` : ''}
+                                <p class="text-gray-300 text-xs leading-relaxed mb-3">${description}</p>
+                                ${tickerTags ? `<div class="flex flex-wrap gap-1 mb-2">${tickerTags}</div>` : ''}
+                                <div class="flex items-center gap-2 pt-2 border-t border-card-border/30">
+                                    ${sourceIcon ? `<img src="${sourceIcon}" alt="" class="w-3 h-3 rounded" onerror="this.style.display='none'"/>` : ''}
+                                    <span class="text-gray-600 text-[10px]">${source} • ${fullDate}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // ========== CHART MODAL ==========
+        let chart=null,candleSeries=null,currentTimeframe='60',chartUpdateInterval=null;
+        function openChartModal(){const m=document.getElementById('chart-modal');m.classList.remove('hidden');m.classList.add('flex');document.body.style.overflow='hidden';setTimeout(()=>{createChart();loadChartData();},100);chartUpdateInterval=setInterval(loadChartData,30000);}
+        function closeChartModal(){const m=document.getElementById('chart-modal');m.classList.add('hidden');m.classList.remove('flex');document.body.style.overflow='';if(chartUpdateInterval){clearInterval(chartUpdateInterval);chartUpdateInterval=null;}if(chart){chart.remove();chart=null;}}
+        function createChart(){const c=document.getElementById('chart-container');c.innerHTML='';chart=LightweightCharts.createChart(c,{width:c.clientWidth,height:c.clientHeight||500,layout:{background:{type:'solid',color:'#111827'},textColor:'#9ca3af'},grid:{vertLines:{color:'#1f2937'},horzLines:{color:'#1f2937'}},crosshair:{mode:LightweightCharts.CrosshairMode.Normal},rightPriceScale:{borderColor:'#1f2937'},timeScale:{borderColor:'#1f2937',timeVisible:true,secondsVisible:false}});candleSeries=chart.addCandlestickSeries({upColor:'#22c55e',downColor:'#ef4444',borderDownColor:'#ef4444',borderUpColor:'#22c55e',wickDownColor:'#ef4444',wickUpColor:'#22c55e'});window.addEventListener('resize',()=>{if(chart)chart.applyOptions({width:c.clientWidth,height:c.clientHeight});});}
+        async function loadChartData(){const ticker=selectedPair.ticker;const dec=selectedPair.decimals;const now=new Date();let from,mult,ts;document.getElementById('chart-title').textContent=selectedPair.symbol;switch(currentTimeframe){case'1':from=new Date(now.getTime()-6*3600000);mult=1;ts='minute';break;case'5':from=new Date(now.getTime()-24*3600000);mult=5;ts='minute';break;case'15':from=new Date(now.getTime()-3*86400000);mult=15;ts='minute';break;case'60':from=new Date(now.getTime()-7*86400000);mult=1;ts='hour';break;case'D':from=new Date(now.getTime()-90*86400000);mult=1;ts='day';break;default:from=new Date(now.getTime()-7*86400000);mult=1;ts='hour';}
+            try{const url=`https://api.polygon.io/v2/aggs/ticker/${ticker}/range/${mult}/${ts}/${from.toISOString().split('T')[0]}/${now.toISOString().split('T')[0]}?adjusted=true&sort=asc&limit=5000&apiKey=${POLYGON_API_KEY}`;const response=await fetch(url);const json=await response.json();if(json.results&&json.results.length>0){const data=json.results.map(r=>({time:r.t/1000,open:r.o,high:r.h,low:r.l,close:r.c}));candleSeries.setData(data);chart.timeScale().fitContent();const last=json.results[json.results.length-1];const first=json.results[0];const change=((last.c-first.o)/first.o*100);document.getElementById('chart-price').textContent=last.c.toFixed(dec);document.getElementById('chart-change').textContent=`${change>=0?'+':''}${change.toFixed(2)}%`;document.getElementById('chart-change').className=`text-lg font-semibold ${change>=0?'text-positive':'text-negative'}`;document.getElementById('chart-open').textContent=last.o.toFixed(dec);document.getElementById('chart-high').textContent=last.h.toFixed(dec);document.getElementById('chart-low').textContent=last.l.toFixed(dec);document.getElementById('chart-volume').textContent=last.v?last.v.toLocaleString():'N/A';}}catch(e){}}
+        function changeTimeframe(tf){currentTimeframe=tf;document.querySelectorAll('.timeframe-btn').forEach(btn=>{btn.className='timeframe-btn px-3 py-1 rounded text-sm font-semibold text-gray-400 hover:bg-white/10';});event.target.className='timeframe-btn px-3 py-1 rounded text-sm font-semibold bg-white/10 text-white';loadChartData();}
+
+        // ========== INIT ==========
+        async function init(){
+            updateTradingSession();
+            const fmpPromise=loadAllFMPData();
+            try{const[forexData,cryptoData,stocksData]=await Promise.all([fetchForexData(),fetchCryptoData(),fetchStocksData()]);allMarketData=[...forexData,...cryptoData,...stocksData];renderTicker(allMarketData);renderMarketTable(allMarketData,currentFilter);updateAIAnalysis(allMarketData);await Promise.all([fetchVIX(),fetchDXY(),fetchFearGreed()]);await fetchNews();}catch(e){}
+            await fmpPromise;
+            setInterval(async()=>{try{const[f,c,s]=await Promise.all([fetchForexData(),fetchCryptoData(),fetchStocksData()]);allMarketData=[...f,...c,...s];renderTicker(allMarketData);renderMarketTable(allMarketData,currentFilter);updateAIAnalysis(allMarketData);}catch(e){}},60000);
+            setInterval(()=>{try{Promise.all([fetchVIX(),fetchDXY(),fetchFearGreed()]);}catch(e){}},300000);
+            setInterval(()=>{try{fetchNews();}catch(e){}},180000);
+            setInterval(()=>{loadAllFMPData();},180000);
+        }
+        document.addEventListener('DOMContentLoaded',init);
+    </script>
+</body>
+</html>

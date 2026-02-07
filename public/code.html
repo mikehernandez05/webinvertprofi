@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Academy Lock &amp; Conversion Filter</title>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f2d00d",
+                        "background-light": "#f8f8f5",
+                        "background-dark": "#221f10",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "Noto Sans", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-[#181711] dark:text-white overflow-hidden min-h-screen flex flex-col">
+<!-- Top Navigation (Dimmed visually to focus on modal) -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e5e5e5] dark:border-b-[#393728] px-10 py-3 bg-background-light dark:bg-[#181711] opacity-50 pointer-events-none select-none">
+<div class="flex items-center gap-4">
+<div class="size-6 text-primary">
+<svg fill="currentColor" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M24 4C25.7818 14.2173 33.7827 22.2182 44 24C33.7827 25.7818 25.7818 33.7827 24 44C22.2182 33.7827 14.2173 25.7818 4 24C14.2173 22.2182 22.2182 14.2173 24 4Z"></path>
+</svg>
+</div>
+<h2 class="text-lg font-bold leading-tight tracking-[-0.015em]">InvertProfit Academy</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<div class="flex items-center gap-9">
+<span class="text-sm font-medium leading-normal">Dashboard</span>
+<span class="text-sm font-medium leading-normal text-primary">Academy</span>
+<span class="text-sm font-medium leading-normal">Analysis</span>
+<span class="text-sm font-medium leading-normal">Settings</span>
+</div>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10 bg-gray-300" data-alt="User profile avatar placeholder"></div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="relative flex-1 flex flex-col">
+<!-- Underlying Blurred Content Grid -->
+<div class="absolute inset-0 overflow-y-auto pb-20 filter blur-[6px] select-none pointer-events-none z-0">
+<div class="px-40 flex flex-1 justify-center py-5">
+<div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+<h1 class="tracking-light text-[32px] font-bold leading-tight px-4 text-center pb-3 pt-6">Academy Modules</h1>
+<div class="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6 p-4">
+<!-- Module Card Template -->
+<div class="group relative overflow-hidden rounded-lg bg-[#302d22] border border-[#393728]">
+<div class="aspect-video w-full bg-cover bg-center" data-alt="Abstract financial chart background" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCsgdy0frKP5VFpSZubsGC4u0o8_od2VjfXbgiX9GxBJdY-1d5lke2iTrIdQZIlYK99RPsh4Y8ZBvXBv8XnUK71ojoXLEsBMwamM1Om0dDItCbk-nWetyJU_93BfLHY8GXfVXxKl899iXU8L__lIfpzZioJ6_w2oyYC9mfnxCQyD9D6zoKcmyLi6-whteumbHC0_O8EaMKLYXH5wZQxNvQuBvwKjdvzAyRIl3w393eUEIPKujDtIPsgPImF_T7G4u2ZtY15PWfZnAg");'></div>
+<div class="p-4 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<h3 class="text-base font-bold text-white">Module 6: Order Flow</h3>
+<span class="material-symbols-outlined text-primary/70 text-sm">lock</span>
+</div>
+<p class="text-xs text-gray-400">Intermediate • 45m</p>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-lg bg-[#302d22] border border-[#393728]">
+<div class="aspect-video w-full bg-cover bg-center" data-alt="Abstract liquidity pool visualization" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuAvkcgCIMyRAVdJur-dsCR4F_mNMdbzLwVK0mPDAyCpWm-LzP1NkC61U6Ehyf9zyT-ElPg93SWA5UgnoCL5sFYxdZaahJkoDK7_gwAKTuHBkJtouB7bEccJKrtwEGns6pYh5cw842w-nk_cE9VVaXiVCy-eT6SoUQcATU7K0dppJh50P2n3a-ZCJupDRJ0-8NAiwIIDG85AqtrUgVT3FBZex2F26M2ANMeSdo1rTWImvaqgR9GO0cHW9H5J10wE-V0upjnUzl90lmY");'></div>
+<div class="p-4 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<h3 class="text-base font-bold text-white">Module 7: Liquidity</h3>
+<span class="material-symbols-outlined text-primary/70 text-sm">lock</span>
+</div>
+<p class="text-xs text-gray-400">Advanced • 60m</p>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-lg bg-[#302d22] border border-[#393728]">
+<div class="aspect-video w-full bg-cover bg-center" data-alt="Market structure graph" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuCubhgpbdoDWtTDi0I5qqO6-rQlAkqeyI6ZUrm_inzfC76JIPbredWTbvLV4TU3n3v2p7qtW9qkHwK1SpA3CsWq9oj6zBtCLhSA2dwFrKc_5nCG_IS-9EUWFMso-XtTYMt4WDEdzZUibcO3BluBp3dZXtEPLVgYYpL6Br-mW78C-XWunevOq66uFB8dCa2Z31LmMCn1Q8nr2tbthbn-xPueRJn9iLVdHJ9VEJGj6TA5VdD8iIORczYuKYTRTcfAJeOH6qppC58hy_0");'></div>
+<div class="p-4 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<h3 class="text-base font-bold text-white">Module 8: Market Structure</h3>
+<span class="material-symbols-outlined text-primary/70 text-sm">lock</span>
+</div>
+<p class="text-xs text-gray-400">Core Concepts • 55m</p>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-lg bg-[#302d22] border border-[#393728]">
+<div class="aspect-video w-full bg-cover bg-center" data-alt="Psychology of trading abstract art" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDjEM7A-0hE-F0t4Fzo_a6rnSHTEgeXI4EXyKz6RLDh1Ev_wgJoIsRETi6wq6MDdlfxg3lKg2F-i_sfeNIi1-B5bbbBkLq_pohHbR1T5q2qcnMJ_bZIDAQDWO__68ZXEu8Hx0dGo1CKvkcb_trYfIAHc37VrSaXYg6fY7rj5uI2UOjJ5H_FWOooR_pWK427bnQhqy01RsCoAeDjrpImvqRo1Z2Y50ZPXTUsdd3INtl9D8heMczWxermuJu-dXUkDAiM0t5UISkc2nQ");'></div>
+<div class="p-4 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<h3 class="text-base font-bold text-white">Module 9: Psychology</h3>
+<span class="material-symbols-outlined text-primary/70 text-sm">lock</span>
+</div>
+<p class="text-xs text-gray-400">Mindset • 30m</p>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-lg bg-[#302d22] border border-[#393728]">
+<div class="aspect-video w-full bg-cover bg-center" data-alt="Risk management calculator background" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuABLzoimUFVGJRvPc0LaM2dOnBZaJtev0QB_2UDBzjlDM51je8OqB8zUsl1uP0hUAixdY2dYBNAob_vTG_n8BjWuPWWEBOmL3BN3aV0m3UHzzP-LvdMEilZ6cIkKjZkqsmHnUTY7YpExPHjO4f73rcGjCAac5SuMRP5hSZcyEEgdmGxRyLA1z2v2mKpPQ3BpZ1Kga98yco_-EawtBSjnymDoEk2vrHvqj81_uTsMzZQ1O7LVROEfBa8SbS0lNSuRydGm4rSGveUpFY");'></div>
+<div class="p-4 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<h3 class="text-base font-bold text-white">Module 10: Risk Mgmt</h3>
+<span class="material-symbols-outlined text-primary/70 text-sm">lock</span>
+</div>
+<p class="text-xs text-gray-400">Essential • 40m</p>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-lg bg-[#302d22] border border-[#393728]">
+<div class="aspect-video w-full bg-cover bg-center" data-alt="Advanced entry techniques chart" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuAMrFKlN2a5btsvOyPi_DMcqCVH6rdaYnO9sCxiqXhPaO0FgNV4OKt1Fm4IZA9bFPemD-7tf-Dutem4is85xsgp2bUOB41tCunA-5027mIO_JuKTkSEjNMGxfbM_G7rSxn_MvmRHUYkmOxwg_4uMR4O56vCS_nMU_oEKhpi_PpScj4AuiKGbAxBTwB0Hh0AcpAmuC8JQxSuj9Q6Dqtxc7DsgFS81Vqtq7AmTxq1IOiho0G1KY3osIz0tYzp1sBfuQycJQxwC8q3jtA");'></div>
+<div class="p-4 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<h3 class="text-base font-bold text-white">Module 11: Advanced Entries</h3>
+<span class="material-symbols-outlined text-primary/70 text-sm">lock</span>
+</div>
+<p class="text-xs text-gray-400">Expert • 75m</p>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-lg bg-[#302d22] border border-[#393728]">
+<div class="aspect-video w-full bg-cover bg-center" data-alt="Institutional data flow" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuC1vlNNQNgOikEN6_7IHRx0Sq6aiVBj__Ke7KeKEFI03Sq_-tFnsxgc2FngM0rommgTCFrB4HJ2EoD4iaKPYsZDJoEEzZKUQPH4i8-nNF0CU3NdCDrFKoKxlcoG4uaM9kVJuHRWmXsyJJraJwt3hz8KjixPs_LUQz-M7TohIS1N8JCt-7FlEhQVmkWivDPX9-ihOGA-Ayb9jwomcJiU2sSVGNcE_SaNXQvmtnMk0CPhJANXvMTAYEPbFefoGzfqNJj0k4cur4amunE");'></div>
+<div class="p-4 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<h3 class="text-base font-bold text-white">Module 12: Institutionals</h3>
+<span class="material-symbols-outlined text-primary/70 text-sm">lock</span>
+</div>
+<p class="text-xs text-gray-400">Expert • 90m</p>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-lg bg-[#302d22] border border-[#393728]">
+<div class="aspect-video w-full bg-cover bg-center" data-alt="Forex trading heatmap" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDK32JwEl9Ae20VCWJtQA25XiDN7ZLWAU9WL7etv4Mv0T25G9K1cWBgbriq5UObzV1d37nNB114zALkZvjuoDdzk5Y014JEbSEF40vGM_lvTStqZ9xOI2GrwcTW_WFyvhIudVlp-qxwrTl2WOmmAMT0z_PtLl_AVmWnuqSLVyqwicLTdzRCCL7p8A0qoF05wDM2_M_8AcO0AVp9S6MWgY5NPVNubBptz_HbYcFCXDfdMTZ58qvlFad_m7At4hlK1nRQPUOyn_LqRb0");'></div>
+<div class="p-4 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<h3 class="text-base font-bold text-white">Module 13: Order Blocks</h3>
+<span class="material-symbols-outlined text-primary/70 text-sm">lock</span>
+</div>
+<p class="text-xs text-gray-400">Expert • 45m</p>
+</div>
+</div>
+<div class="group relative overflow-hidden rounded-lg bg-[#302d22] border border-[#393728]">
+<div class="aspect-video w-full bg-cover bg-center" data-alt="Fibonacci retracement tools" style='background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDLEk6Xm47d8W6dIe0C2JrI9JfDEMTFDdYPTvBEmwtQsJeGUT1q2phebDA7DKYCJkoSbK_4PCh2_FNtglCKzdH6cUBtCAZ8qG_PkxuZmxZq9FmCM3xJynd-KVkBy-zbteGJWlX-k5-tXnMNs3iRnemSd6yOMHspCq8n9agN8h3P3eMq53Dp_IoQe1B29Enrvy18pv4vtICgyD5dZOs3Vg1gxTP20B8_uRJeo6SNVvXxC70HU2gOS4Ov-mNuUuWIx0-qQtWXP9noUW8");'></div>
+<div class="p-4 flex flex-col gap-2">
+<div class="flex justify-between items-start">
+<h3 class="text-base font-bold text-white">Module 14: Fibonacci</h3>
+<span class="material-symbols-outlined text-primary/70 text-sm">lock</span>
+</div>
+<p class="text-xs text-gray-400">Intermediate • 35m</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- The "Filtro Dorado" Overlay -->
+<div class="absolute inset-0 z-10 pointer-events-none" style="background: linear-gradient(135deg, rgba(34, 31, 16, 0.85) 0%, rgba(242, 208, 13, 0.08) 50%, rgba(34, 31, 16, 0.85) 100%);"></div>
+<!-- Central Conversion Modal -->
+<div class="relative z-20 flex flex-1 items-center justify-center p-4">
+<div class="relative w-full max-w-[520px] overflow-hidden rounded-xl bg-[#1e1e1e] border border-[#393728] shadow-[0_0_50px_rgba(242,208,13,0.15)] flex flex-col items-center p-8 md:p-12 text-center">
+<!-- Glowing Top Border Accent -->
+<div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-80"></div>
+<!-- Icon -->
+<div class="mb-6 flex items-center justify-center rounded-full bg-[#2a271d] p-5 shadow-inner">
+<span class="material-symbols-outlined text-primary text-[48px]">lock</span>
+</div>
+<!-- Content -->
+<h2 class="mb-3 text-2xl md:text-3xl font-extrabold text-white tracking-tight">
+                    Desbloquea el <span class="text-primary">Nivel Institucional</span>
+</h2>
+<p class="mb-8 text-[#bab59c] text-sm md:text-base leading-relaxed max-w-[400px]">
+                    Conecta tu cuenta para desbloquear el análisis institucional y acceder a la ruta completa (Módulos 6-30).
+                </p>
+<!-- Features/Checklist -->
+<div class="mb-8 flex flex-col gap-3 w-full max-w-[360px]">
+<div class="flex items-center gap-3 text-sm text-[#e5e5e5]">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span>Acceso ilimitado a Módulos 6-30</span>
+</div>
+<div class="flex items-center gap-3 text-sm text-[#e5e5e5]">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span>Datos de mercado en tiempo real</span>
+</div>
+<div class="flex items-center gap-3 text-sm text-[#e5e5e5]">
+<span class="material-symbols-outlined text-primary text-lg">check_circle</span>
+<span>Mentoria grupal semanal</span>
+</div>
+</div>
+<!-- Action Button -->
+<button class="w-full max-w-[360px] bg-primary hover:bg-[#d9bb0b] transition-colors text-black font-bold py-4 px-6 rounded-lg shadow-lg flex items-center justify-center gap-2 group/btn">
+<span>CONECTAR BROKER</span>
+<span class="material-symbols-outlined text-xl transition-transform group-hover/btn:translate-x-1">arrow_forward</span>
+</button>
+<p class="mt-6 text-xs text-[#6b6653]">
+                    Conexión segura vía API. No compartimos tus datos.
+                </p>
+</div>
+</div>
+</main>
+<!-- Footer (Standard) -->
+<footer class="relative z-20 flex flex-col gap-6 px-5 py-6 text-center border-t border-[#393728] bg-background-light dark:bg-[#181711]">
+<p class="text-[#bab59c] text-sm font-normal leading-normal">© 2024 InvertProfit. All rights reserved.</p>
+</footer>
+</body></html>

@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Intermedio Enhancement Center</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;family=Noto+Sans:ital,wght@0,100..900;1,100..900&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f9d406",
+                        "background-light": "#f8f8f5",
+                        // User requested Midnight Blue theme, modifying dark background to match
+                        "background-dark": "#0B1120", 
+                        "midnight-card": "#151e32",
+                        "midnight-lighter": "#1e293b"
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"],
+                        "body": ["Noto Sans", "sans-serif"],
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem",
+                        "lg": "1.5rem", /* 24px as requested */
+                        "xl": "2rem",
+                        "full": "9999px"
+                    },
+                    backgroundImage: {
+                        'gradient-gold': 'linear-gradient(135deg, #f9d406 0%, #dcb505 100%)',
+                        'gradient-midnight': 'linear-gradient(to bottom, #0B1120 0%, #0f172a 100%)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for terminal feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B1120;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+        .text-glow {
+            text-shadow: 0 0 20px rgba(249, 212, 6, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-white antialiased h-screen flex flex-col overflow-hidden selection:bg-primary selection:text-black">
+<!-- Top Navigation -->
+<header class="flex-none h-20 border-b border-white/5 bg-background-dark/95 backdrop-blur-md z-50">
+<div class="h-full px-6 lg:px-10 flex items-center justify-between">
+<!-- Brand -->
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined" style="font-size: 20px;">candlestick_chart</span>
+</div>
+<h2 class="text-white text-lg font-bold tracking-tight">InvertProfit <span class="text-white/30 font-medium mx-1">|</span> <span class="text-primary/90">Intermedio</span></h2>
+</div>
+<!-- Navigation Links -->
+<nav class="hidden md:flex items-center gap-10">
+<a class="text-white/60 text-sm font-medium hover:text-primary transition-colors" href="#">Inicio</a>
+<a class="text-white/60 text-sm font-medium hover:text-primary transition-colors" href="#">Academia</a>
+<a class="text-white/60 text-sm font-medium hover:text-primary transition-colors" href="#">Mercados</a>
+</nav>
+<!-- User/Settings -->
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4">
+<button class="text-white/40 hover:text-white transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-8 w-px bg-white/10"></div>
+<div class="bg-center bg-no-repeat bg-cover rounded-full size-9 border-2 border-primary/20" data-alt="User profile picture" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuDwrTGmq-NcT3V1kMjjQDq5DysNxQGt6iCjgStfuBfEa_AjpF_l86ROhFsMNm-qghahdecqCgM4LHO7Qm9E3IF1qwDznBiO6T2KFNT1Ko50d8iYaZIj6cPHMwX-ZJ4inzbrTaWbmvfw93T0qdyOFZDkRiwWQ7SlFBqvQrbIvjVxTMwWziaCsu2zeo_wnPDUfjepwTZuqAiKldEONs7d8ialrDRCZM2dywq6bniA7XbvnfK4ucS_B-KsA_iU-YhFy0_6mre6fsqAxAw");'>
+</div>
+</div>
+</div>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<!-- Sidebar -->
+<aside class="w-80 bg-background-dark border-r border-white/5 hidden lg:flex flex-col p-6 gap-8 overflow-y-auto">
+<!-- User Status Card -->
+<div class="bg-midnight-card p-6 rounded-lg border border-white/5 shadow-xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full blur-3xl -mr-10 -mt-10 transition-all group-hover:bg-primary/10"></div>
+<div class="relative z-10 flex flex-col items-center text-center gap-4">
+<div class="relative">
+<div class="size-20 rounded-full bg-cover bg-center border-4 border-midnight-lighter" data-alt="Trader user avatar large" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuCG2-rdMFzKUlP4cW8FJ3ukuyOzc3FTshiG7S7COI1XAE28adpZFwltZ_aUG_gP7TiTecwog-PyCkU054BgcoPJHuxxCpvrIMXAbRfomuQfuPnErMNMPtLx0vc4svI7nFHKIVii97EkNILpp2SRGaauxDn4A-qgAKvRmf8ZNA4-siIofR7UAj3zRsW4GQGNx_D3bH_csktTeMKhyRTJd5ZBCHdGi8oX97SAyEpO7fCTUw2R1SpSSVaqVoFG523MAmEJJHW7yY-X_8k");'></div>
+<div class="absolute bottom-0 right-0 bg-primary text-black rounded-full p-1 border-4 border-midnight-card flex items-center justify-center">
+<span class="material-symbols-outlined text-sm font-bold">check</span>
+</div>
+</div>
+<div>
+<h1 class="text-white text-lg font-bold">Trader User</h1>
+<p class="text-white/40 text-sm mt-1">Nivel 2/5</p>
+</div>
+<!-- Verified Badge -->
+<div class="w-full bg-primary/10 rounded-full py-2 px-4 flex items-center justify-center gap-2 border border-primary/20 mt-2">
+<span class="material-symbols-outlined text-primary text-[18px] fill-current" data-weight="fill">verified</span>
+<p class="text-primary text-xs font-bold uppercase tracking-wider">Intermedio Verificado</p>
+</div>
+</div>
+<!-- Progress -->
+<div class="mt-6">
+<div class="flex justify-between text-xs text-white/40 mb-2 font-medium">
+<span>Progreso de Nivel</span>
+<span>40%</span>
+</div>
+<div class="w-full bg-white/5 rounded-full h-1.5">
+<div class="bg-primary h-1.5 rounded-full" style="width: 40%"></div>
+</div>
+</div>
+</div>
+<!-- Side Menu -->
+<div class="flex flex-col gap-2">
+<p class="text-xs font-bold text-white/30 uppercase tracking-widest px-3 mb-2">Terminal</p>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-midnight-card text-white border border-white/5 shadow-sm" href="#">
+<span class="material-symbols-outlined text-primary">upgrade</span>
+<span class="text-sm font-medium">Centro de Mejoras</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/50 hover:bg-white/5 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-sm font-medium">Cartera</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/50 hover:bg-white/5 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="text-sm font-medium">Historial</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-white/50 hover:bg-white/5 hover:text-white transition-all" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-sm font-medium">Configuración</span>
+</a>
+</div>
+<!-- Help Box -->
+<div class="mt-auto bg-midnight-lighter/50 rounded-lg p-4 border border-white/5">
+<div class="flex gap-3">
+<span class="material-symbols-outlined text-white/40">headset_mic</span>
+<div>
+<p class="text-sm font-medium text-white">Soporte 24/7</p>
+<p class="text-xs text-white/40 mt-0.5">Contactar ayuda</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto relative scroll-smooth">
+<!-- Decorative background elements -->
+<div class="absolute top-0 left-0 w-full h-[500px] bg-gradient-to-b from-midnight-card/50 to-transparent pointer-events-none"></div>
+<div class="px-6 py-8 md:px-10 md:py-12 max-w-7xl mx-auto flex flex-col h-full min-h-min">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 relative z-10">
+<div class="flex flex-col gap-3 max-w-2xl">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined">lock_open</span>
+<span class="text-xs font-bold uppercase tracking-[0.2em]">Acceso Premium</span>
+</div>
+<h1 class="text-4xl md:text-5xl font-black text-white leading-tight tracking-tight">
+                            Centro de Mejoras
+                        </h1>
+<p class="text-lg text-white/60 font-light leading-relaxed">
+                            Desbloquea herramientas institucionales y datos en tiempo real vinculando tu cuenta de broker verificado.
+                        </p>
+</div>
+<div class="hidden md:block">
+<div class="bg-midnight-card border border-white/10 px-4 py-2 rounded-full flex items-center gap-2">
+<div class="size-2 rounded-full bg-green-500 animate-pulse"></div>
+<span class="text-xs font-medium text-white/60">Mercado Abierto</span>
+</div>
+</div>
+</div>
+<!-- Tools Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-12 relative z-10">
+<!-- Card 1 -->
+<div class="group bg-midnight-card hover:bg-midnight-lighter border border-white/5 hover:border-primary/30 p-8 rounded-lg transition-all duration-300 flex flex-col h-full relative overflow-hidden">
+<div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-8xl text-white rotate-12">ssid_chart</span>
+</div>
+<div class="size-14 rounded-2xl bg-gradient-to-br from-white/5 to-white/0 border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined text-primary text-3xl">ssid_chart</span>
+</div>
+<h3 class="text-xl font-bold text-white mb-2">Alertas de Momentum RSI</h3>
+<p class="text-white/50 text-sm leading-relaxed mb-6">
+                            Detecta zonas de sobrecompra y sobreventa en tiempo real con notificaciones push instantáneas directamente en tu terminal.
+                        </p>
+<div class="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
+<span class="text-xs font-bold text-white/30 uppercase tracking-wider group-hover:text-primary/70 transition-colors">Indicador Técnico</span>
+<span class="material-symbols-outlined text-white/20 text-lg">lock</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="group bg-midnight-card hover:bg-midnight-lighter border border-white/5 hover:border-primary/30 p-8 rounded-lg transition-all duration-300 flex flex-col h-full relative overflow-hidden">
+<div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-8xl text-white rotate-12">candlestick_chart</span>
+</div>
+<div class="size-14 rounded-2xl bg-gradient-to-br from-white/5 to-white/0 border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined text-primary text-3xl">candlestick_chart</span>
+</div>
+<h3 class="text-xl font-bold text-white mb-2">Medias Móviles Institucionales</h3>
+<p class="text-white/50 text-sm leading-relaxed mb-6">
+                            Visualiza automáticamente las zonas de soporte y resistencia dinámicas utilizadas por los grandes bancos de inversión.
+                        </p>
+<div class="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
+<span class="text-xs font-bold text-white/30 uppercase tracking-wider group-hover:text-primary/70 transition-colors">Análisis Gráfico</span>
+<span class="material-symbols-outlined text-white/20 text-lg">lock</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="group bg-midnight-card hover:bg-midnight-lighter border border-white/5 hover:border-primary/30 p-8 rounded-lg transition-all duration-300 flex flex-col h-full relative overflow-hidden">
+<div class="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-symbols-outlined text-8xl text-white rotate-12">smart_toy</span>
+</div>
+<div class="size-14 rounded-2xl bg-gradient-to-br from-white/5 to-white/0 border border-white/10 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+<span class="material-symbols-outlined text-primary text-3xl">smart_toy</span>
+</div>
+<h3 class="text-xl font-bold text-white mb-2">Señales AmigoTrade AI</h3>
+<p class="text-white/50 text-sm leading-relaxed mb-6">
+                            Accede a predicciones de mercado con un 85% de precisión histórica basadas en modelos avanzados de Inteligencia Artificial.
+                        </p>
+<div class="mt-auto pt-6 border-t border-white/5 flex items-center justify-between">
+<span class="text-xs font-bold text-white/30 uppercase tracking-wider group-hover:text-primary/70 transition-colors">Predicción AI</span>
+<span class="material-symbols-outlined text-white/20 text-lg">lock</span>
+</div>
+</div>
+</div>
+<!-- CTA Section -->
+<div class="mt-auto relative z-10">
+<div class="bg-gradient-to-r from-midnight-card to-midnight-lighter border border-white/10 rounded-lg p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-8 shadow-2xl relative overflow-hidden">
+<!-- Glow effect behind button -->
+<div class="absolute right-0 top-1/2 -translate-y-1/2 w-64 h-64 bg-primary/10 rounded-full blur-[80px] pointer-events-none"></div>
+<div class="flex flex-col gap-3 relative z-10 text-center md:text-left">
+<h2 class="text-2xl md:text-3xl font-bold text-white">Activa tu ventaja competitiva</h2>
+<p class="text-white/60 text-base max-w-xl">Para acceder a estas herramientas exclusivas de forma inmediata, conecta tu cuenta de broker verificada ahora mismo.</p>
+</div>
+<button class="relative group cursor-pointer">
+<div class="absolute -inset-0.5 bg-gradient-to-r from-yellow-300 to-primary rounded-full blur opacity-60 group-hover:opacity-100 transition duration-200"></div>
+<div class="relative flex items-center gap-3 bg-gradient-gold px-8 py-4 rounded-full shadow-lg shadow-black/20">
+<span class="material-symbols-outlined text-black font-bold">link</span>
+<span class="text-black text-sm md:text-base font-extrabold tracking-wide uppercase">VINCULAR CUENTA PARA ACTIVAR HERRAMIENTAS</span>
+</div>
+</button>
+</div>
+</div>
+<footer class="mt-12 text-center md:text-left text-white/20 text-xs">
+<p>© 2024 InvertProfit Technologies. Todos los derechos reservados. El trading conlleva riesgos.</p>
+</footer>
+</div>
+</main>
+</div>
+</body></html>

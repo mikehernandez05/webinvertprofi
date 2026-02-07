@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Experto Institutional Terminal Sync</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config -->
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#f9d406",
+              "background-light": "#f8f8f5",
+              "background-dark": "#23200f",
+              "terminal-bg": "#0f172a", // Added for Midnight Blue terminal feel
+              "terminal-card": "#1e293b", // Lighter blue for cards
+            },
+            fontFamily: {
+              "display": ["Manrope", "sans-serif"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+            animation: {
+                'pulse-glow': 'pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+            },
+            keyframes: {
+                'pulse-glow': {
+                    '0%, 100%': { opacity: 1, boxShadow: '0 0 0 0px rgba(249, 212, 6, 0.7)' },
+                    '50%': { opacity: .9, boxShadow: '0 0 0 10px rgba(249, 212, 6, 0)' },
+                }
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for terminal feel */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #334155; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569; 
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-[#181711] dark:text-white font-display overflow-x-hidden min-h-screen flex flex-col">
+<!-- Main Wrapper with "Midnight Blue" overrides for the specific terminal feel -->
+<div class="flex-1 flex flex-col w-full max-w-[1440px] mx-auto p-4 md:p-6 lg:p-8">
+<!-- Terminal Container -->
+<div class="flex-1 rounded-2xl bg-terminal-bg border border-slate-700 shadow-2xl overflow-hidden flex flex-col relative">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-slate-700/50 bg-terminal-bg px-6 py-4 sticky top-0 z-20">
+<div class="flex items-center gap-3">
+<div class="flex items-center justify-center size-8 rounded-lg bg-primary/10 text-primary">
+<span class="material-symbols-outlined">terminal</span>
+</div>
+<h2 class="text-white text-lg font-bold tracking-tight">InvertProfit <span class="text-slate-400 font-normal">| Terminal Sync</span></h2>
+</div>
+<div class="flex items-center gap-4">
+<div class="hidden md:flex items-center gap-2 px-3 py-1 rounded-full bg-slate-800 border border-slate-700">
+<span class="material-symbols-outlined text-[18px] text-emerald-400">encrypted</span>
+<span class="text-xs font-medium text-slate-300">SSL Encrypted</span>
+</div>
+<div class="flex items-center gap-2 text-primary bg-primary/10 px-4 py-2 rounded-lg border border-primary/20">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+<span class="text-xs font-bold uppercase tracking-wider">System Operational</span>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="flex-1 overflow-y-auto p-6 md:p-10 relative">
+<!-- Background decorative elements -->
+<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-blue-600/5 rounded-full blur-3xl pointer-events-none"></div>
+<div class="absolute bottom-0 left-0 w-[300px] h-[300px] bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
+<div class="max-w-6xl mx-auto flex flex-col gap-8 relative z-10">
+<!-- Page Heading & Badge -->
+<div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 border-b border-slate-700/50 pb-8">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-2 mb-2">
+<span class="bg-gradient-to-r from-blue-600 to-blue-400 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-widest">Experto Tier</span>
+<span class="text-slate-400 text-xs font-medium tracking-wide uppercase">v.4.2.0 Build</span>
+</div>
+<h1 class="text-4xl md:text-5xl font-black leading-tight tracking-tight text-white">
+                                Terminal de Inteligencia <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-yellow-200">Desbloqueada</span>
+</h1>
+<p class="text-slate-400 text-lg font-medium max-w-2xl mt-2">
+                                Sincronización de broker institucional para acceso exclusivo a herramientas de liquidez y cobertura avanzada.
+                            </p>
+</div>
+<!-- Trust Badge -->
+<div class="flex items-center gap-3 bg-slate-800/50 backdrop-blur-sm p-4 rounded-xl border border-slate-700/50">
+<div class="size-10 rounded-full bg-primary flex items-center justify-center text-terminal-bg shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined">verified</span>
+</div>
+<div class="flex flex-col">
+<span class="text-white font-bold text-sm">Institutional Trader</span>
+<span class="text-slate-400 text-xs">Verified Access</span>
+</div>
+</div>
+</div>
+<!-- Split Layout: API Module & Value Props -->
+<div class="grid lg:grid-cols-12 gap-6">
+<!-- Left: API Sync Module -->
+<div class="lg:col-span-7 flex flex-col gap-6">
+<div class="bg-terminal-card/80 backdrop-blur border border-slate-700 rounded-2xl p-6 md:p-8 shadow-xl">
+<div class="flex items-center justify-between mb-6">
+<div class="flex items-center gap-3">
+<div class="size-10 rounded-lg bg-white p-1.5 flex items-center justify-center">
+<!-- Placeholder for Pepperstone Logo - using text for generic representation -->
+<span class="font-bold text-black text-xs leading-none">P</span>
+</div>
+<div>
+<h3 class="text-white font-bold text-lg">Pepperstone API Sync</h3>
+<p class="text-slate-400 text-sm">Secure oAuth 2.0 Connection</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-slate-500">sync_lock</span>
+</div>
+<div class="space-y-5">
+<div class="grid md:grid-cols-2 gap-5">
+<label class="flex flex-col gap-2 group">
+<span class="text-slate-300 text-sm font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">key</span> API Key
+                                            </span>
+<div class="relative">
+<input class="w-full bg-slate-900/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-mono text-sm" placeholder="pk_live_..." type="password" value="*****************"/>
+<span class="absolute right-3 top-3 text-slate-500 material-symbols-outlined text-[18px]">visibility_off</span>
+</div>
+</label>
+<label class="flex flex-col gap-2 group">
+<span class="text-slate-300 text-sm font-medium flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px]">lock</span> Client Secret
+                                            </span>
+<div class="relative">
+<input class="w-full bg-slate-900/50 border border-slate-600 rounded-xl px-4 py-3 text-white placeholder:text-slate-600 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-mono text-sm" placeholder="sk_live_..." type="password" value="*****************"/>
+<span class="absolute right-3 top-3 text-slate-500 material-symbols-outlined text-[18px]">visibility_off</span>
+</div>
+</label>
+</div>
+<!-- Progress Bar Component -->
+<div class="flex flex-col gap-3 pt-2">
+<div class="flex justify-between items-end">
+<p class="text-slate-300 text-sm font-medium">Estado de Conexión</p>
+<span class="text-primary text-xs font-bold uppercase tracking-wider">Esperando Capital</span>
+</div>
+<div class="h-2 w-full bg-slate-800 rounded-full overflow-hidden border border-slate-700/50">
+<div class="h-full bg-primary w-[0%] shadow-[0_0_10px_rgba(249,212,6,0.5)] transition-all duration-1000"></div>
+</div>
+<p class="text-slate-500 text-xs font-mono">Server Status: Idle • Waiting for user credentials</p>
+</div>
+</div>
+</div>
+<!-- Massive CTA Button -->
+<button class="group relative w-full overflow-hidden rounded-2xl bg-primary px-8 py-6 text-background-dark shadow-[0_0_40px_-10px_rgba(249,212,6,0.4)] hover:shadow-[0_0_60px_-10px_rgba(249,212,6,0.6)] transition-all duration-300 transform hover:-translate-y-1">
+<div class="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+<div class="relative flex items-center justify-center gap-4">
+<span class="text-2xl">🚀</span>
+<span class="text-xl md:text-2xl font-black tracking-tight uppercase">Conectar y Operar Mercados</span>
+</div>
+</button>
+</div>
+<!-- Right: Value Proposition Card -->
+<div class="lg:col-span-5 flex flex-col h-full">
+<div class="flex-1 bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 rounded-2xl p-6 md:p-8 flex flex-col relative overflow-hidden group">
+<!-- Abstract decorative background for card -->
+<div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10 mix-blend-overlay"></div>
+<div class="absolute top-0 right-0 p-3 opacity-20 group-hover:opacity-40 transition-opacity">
+<span class="material-symbols-outlined text-[120px]">lock_open</span>
+</div>
+<h3 class="text-white text-xl font-bold mb-1 relative z-10">Acceso Total Desbloqueado</h3>
+<p class="text-slate-400 text-sm mb-6 relative z-10">Tu cuenta institucional habilita las siguientes capacidades:</p>
+<div class="space-y-4 relative z-10 flex-1">
+<div class="flex items-start gap-4 p-3 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-primary/30 transition-colors">
+<div class="bg-blue-500/20 text-blue-400 p-2 rounded-lg">
+<span class="material-symbols-outlined text-xl">water_drop</span>
+</div>
+<div>
+<h4 class="text-white font-bold text-sm">Estrategias de Liquidez</h4>
+<p class="text-slate-400 text-xs mt-1">Detecta zonas de alta liquidez institucional en tiempo real.</p>
+</div>
+</div>
+<div class="flex items-start gap-4 p-3 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-primary/30 transition-colors">
+<div class="bg-purple-500/20 text-purple-400 p-2 rounded-lg">
+<span class="material-symbols-outlined text-xl">candlestick_chart</span>
+</div>
+<div>
+<h4 class="text-white font-bold text-sm">Operativa de Gaps</h4>
+<p class="text-slate-400 text-xs mt-1">Algoritmos predictivos para cierre de gaps de mercado.</p>
+</div>
+</div>
+<div class="flex items-start gap-4 p-3 rounded-xl bg-slate-800/50 border border-slate-700/50 hover:border-primary/30 transition-colors">
+<div class="bg-emerald-500/20 text-emerald-400 p-2 rounded-lg">
+<span class="material-symbols-outlined text-xl">shield</span>
+</div>
+<div>
+<h4 class="text-white font-bold text-sm">Advanced Hedging</h4>
+<p class="text-slate-400 text-xs mt-1">Protección de capital automatizada con cobertura dinámica.</p>
+</div>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-slate-700 flex justify-between items-center relative z-10">
+<span class="text-xs text-slate-500 font-mono">LICENSE: PRO_INST_0092</span>
+<span class="text-xs text-primary font-bold bg-primary/10 px-2 py-1 rounded border border-primary/20">ACTIVE</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Data Ticker -->
+<div class="mt-4 border-t border-slate-800 pt-4 pb-2">
+<div class="overflow-hidden whitespace-nowrap mask-linear-fade">
+<div class="inline-block animate-[scroll_20s_linear_infinite] w-full">
+<div class="flex gap-8 items-center text-sm font-mono text-slate-400">
+<span class="flex items-center gap-1"><span class="text-green-400 font-bold">SPX</span> 4,783.45 <span class="material-symbols-outlined text-xs text-green-400">arrow_upward</span></span>
+<span class="text-slate-700">|</span>
+<span class="flex items-center gap-1"><span class="text-red-400 font-bold">NDX</span> 16,567.92 <span class="material-symbols-outlined text-xs text-red-400">arrow_downward</span></span>
+<span class="text-slate-700">|</span>
+<span class="flex items-center gap-1"><span class="text-primary font-bold">XAUUSD</span> 2,045.30 <span class="material-symbols-outlined text-xs text-primary">arrow_upward</span></span>
+<span class="text-slate-700">|</span>
+<span class="flex items-center gap-1"><span class="text-green-400 font-bold">EURUSD</span> 1.0945 <span class="material-symbols-outlined text-xs text-green-400">arrow_upward</span></span>
+<span class="text-slate-700">|</span>
+<span class="flex items-center gap-1"><span class="text-blue-400 font-bold">BTC</span> 45,230.00 <span class="material-symbols-outlined text-xs text-blue-400">arrow_upward</span></span>
+<span class="text-slate-700">|</span>
+<span class="text-xs text-slate-600">MARKET DATA DELAYED 15MIN</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+<p class="text-center text-slate-500 text-xs mt-4">
+            © 2024 InvertProfit Technologies. Institutional trading involves significant risk.
+        </p>
+</div>
+<!-- Ticker Animation -->
+<style>
+        @keyframes scroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+    </style>
+</body></html>

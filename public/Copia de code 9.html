@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>InvertProfit - Graduación Novato</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#f9d406", // Epic Gold
+                        "midnight": "#0B121E", // Midnight Blue
+                        "midnight-light": "#151e2e",
+                        "off-white": "#F0F0F0",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "1rem", 
+                        "lg": "1.5rem", 
+                        "xl": "2rem", // Approx 32px
+                        "sq": "24px", // Custom squircle
+                        "full": "9999px"
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(249, 212, 6, 0.3)',
+                        'glow-lg': '0 0 40px rgba(249, 212, 6, 0.4)',
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .gold-text-gradient {
+            background: linear-gradient(to right, #f9d406, #FFF, #f9d406);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 3s linear infinite;
+        }
+
+        .certificate-3d {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform: perspective(1000px) rotateX(2deg) rotateY(-2deg);
+        }
+        
+        .certificate-3d:hover {
+            transform: perspective(1000px) rotateX(0deg) rotateY(0deg) scale(1.02);
+            box-shadow: 0 20px 50px rgba(249, 212, 6, 0.15);
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+    </style>
+</head>
+<body class="bg-midnight text-off-white font-display overflow-hidden selection:bg-primary selection:text-midnight">
+<div class="flex h-screen w-full overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="hidden lg:flex w-80 flex-col bg-midnight-light border-r border-white/5 h-full relative z-20">
+<div class="p-8 pb-4">
+<div class="flex items-center gap-3 text-white mb-8">
+<div class="size-8 bg-primary rounded-full flex items-center justify-center text-midnight font-bold">
+<span class="material-symbols-outlined text-[20px]">trending_up</span>
+</div>
+<h2 class="text-xl font-bold tracking-tight">InvertProfit</h2>
+</div>
+<div class="mb-8">
+<h1 class="text-white text-lg font-bold leading-normal mb-1">Mi Progreso</h1>
+<div class="flex items-center gap-2">
+<span class="inline-block w-2 h-2 rounded-full bg-green-500"></span>
+<p class="text-[#bbb69b] text-sm font-normal">Nivel: <span class="text-white font-medium">Novato</span></p>
+</div>
+</div>
+<div class="flex flex-col gap-3 overflow-y-auto pr-2 custom-scrollbar" style="max-height: calc(100vh - 200px);">
+<!-- Completed Section -->
+<div class="flex items-center gap-3 px-4 py-3 rounded-[24px] bg-[#3a3727]/30 border border-white/5">
+<span class="material-symbols-outlined text-green-400">check_circle</span>
+<div>
+<p class="text-white text-sm font-bold">Módulos 1-6</p>
+<p class="text-xs text-gray-400">Completado</p>
+</div>
+</div>
+<!-- Locked Section -->
+<div class="flex flex-col gap-2 mt-4">
+<p class="text-xs uppercase tracking-wider text-gray-500 font-bold px-2">Siguiente Nivel</p>
+<div class="flex items-center gap-3 px-4 py-3 rounded-[24px] border border-primary/20 bg-primary/5 opacity-80 hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary">lock</span>
+<div class="flex flex-col">
+<p class="text-primary text-sm font-bold">Módulos 7-10</p>
+<p class="text-xs text-primary/70">Análisis Técnico I</p>
+</div>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-[24px] border border-white/5 opacity-50">
+<span class="material-symbols-outlined text-[#bbb69b]">lock</span>
+<div class="flex flex-col">
+<p class="text-white text-sm font-medium">Módulos 11-20</p>
+<p class="text-xs text-gray-400">Psicotrading</p>
+</div>
+</div>
+<div class="flex items-center gap-3 px-4 py-3 rounded-[24px] border border-white/5 opacity-50">
+<span class="material-symbols-outlined text-[#bbb69b]">lock</span>
+<div class="flex flex-col">
+<p class="text-white text-sm font-medium">Módulos 21-30</p>
+<p class="text-xs text-gray-400">Estrategias Avanzadas</p>
+</div>
+</div>
+</div>
+<div class="mt-4 p-4 rounded-[24px] bg-primary/10 border border-primary/20 text-center">
+<p class="text-xs text-primary font-medium mb-1">Contenido Premium</p>
+<p class="text-xs text-white">Bloqueados hasta fondear</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col h-full overflow-y-auto relative">
+<!-- Background Glow Effect -->
+<div class="absolute top-[-20%] left-[20%] w-[600px] h-[600px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+<!-- Header Mobile/Desktop -->
+<header class="flex items-center justify-between px-8 py-6 z-10 w-full max-w-7xl mx-auto">
+<div class="lg:hidden flex items-center gap-2 text-white">
+<span class="material-symbols-outlined">menu</span>
+<span class="font-bold">InvertProfit</span>
+</div>
+<div class="hidden lg:block"></div> <!-- Spacer -->
+<div class="flex items-center gap-4">
+<div class="text-right hidden sm:block">
+<p class="text-sm font-bold text-white">Alex Trader</p>
+<p class="text-xs text-primary">Analista Básico</p>
+</div>
+<div class="size-10 rounded-full border-2 border-primary/30 bg-center bg-cover" data-alt="User profile picture showing a young professional smiling" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDzFp8QU3g0-2gDtMvOmqwbTEVnBpmdQddQnnOm9t54c5VH_GxcE0p4wNr-03_-CsjIZcC6OR10GIu17muntUSwU4H5h56BNdYMQOOC8dOyZxUhNB3x8faqymtyNk6hLhdq4xynej86EAWFSSmTHZt3IVczL3sVAyCD8oG0CRaQTxwoWqmbMOo3PP_E7_pdYvjsXowPrxpZvgcYie-bR7qvrS0emgqDVJPag44R_DjNynqTgVJBvZoepXisij8rbr2Rq_OnqwAULho');">
+</div>
+</div>
+</header>
+<div class="flex-1 flex flex-col items-center justify-center p-4 lg:p-10 max-w-5xl mx-auto w-full z-10">
+<!-- Hero Text -->
+<div class="text-center mb-12 animate-fade-in-up">
+<div class="inline-flex items-center justify-center p-2 bg-green-500/10 rounded-full mb-4 border border-green-500/20">
+<span class="material-symbols-outlined text-green-400 text-lg mx-1">verified</span>
+<span class="text-green-400 text-xs font-bold uppercase tracking-wider pr-2">Certificación Completada</span>
+</div>
+<h1 class="text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight mb-4 tracking-tight">
+                        ¡Misión Cumplida, <br class="hidden md:block"/> <span class="gold-text-gradient">Explorador!</span>
+</h1>
+<p class="text-gray-400 text-lg md:text-xl font-medium max-w-2xl mx-auto">
+                        Has dominado los conceptos básicos. Es hora del siguiente nivel.
+                    </p>
+</div>
+<!-- 3D Certificate -->
+<div class="relative w-full max-w-3xl mb-16 perspective-container group">
+<!-- Glow behind certificate -->
+<div class="absolute inset-0 bg-primary/20 blur-[60px] rounded-full transform scale-75 group-hover:bg-primary/30 transition-all duration-500"></div>
+<div class="certificate-3d relative bg-gradient-to-br from-[#1c2636] to-[#0d1420] border border-primary/40 rounded-[24px] overflow-hidden shadow-2xl p-1">
+<!-- Inner Border -->
+<div class="border border-white/5 rounded-[20px] p-6 md:p-10 h-full relative overflow-hidden flex flex-col md:flex-row items-center gap-8">
+<!-- Decorative background pattern -->
+<div class="absolute inset-0 opacity-10 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-primary via-transparent to-transparent"></div>
+<div class="absolute bottom-0 left-0 w-full h-1/2 bg-gradient-to-t from-black/40 to-transparent"></div>
+<!-- Left: Badge Image -->
+<div class="relative z-10 shrink-0">
+<div class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gradient-to-b from-primary/20 to-transparent flex items-center justify-center border border-primary/30 shadow-[0_0_30px_rgba(249,212,6,0.15)]">
+<span class="material-symbols-outlined text-6xl md:text-7xl text-primary drop-shadow-lg">military_tech</span>
+</div>
+</div>
+<!-- Right: Text Content -->
+<div class="relative z-10 flex-1 text-center md:text-left">
+<p class="text-primary text-sm font-bold uppercase tracking-[0.2em] mb-2">Certificado de Finalización</p>
+<h3 class="text-3xl md:text-4xl font-display font-bold text-white mb-2">Analista Básico</h3>
+<p class="text-gray-400 mb-6">Otorgado a <span class="text-white font-bold border-b border-primary/30 pb-0.5">Alex Trader</span> por completar satisfactoriamente los módulos de iniciación.</p>
+<div class="flex flex-wrap gap-4 justify-center md:justify-start">
+<div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10">
+<span class="material-symbols-outlined text-gray-400 text-sm">calendar_month</span>
+<span class="text-xs text-gray-300">Oct 2023</span>
+</div>
+<div class="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-lg border border-white/10">
+<span class="material-symbols-outlined text-gray-400 text-sm">fingerprint</span>
+<span class="text-xs text-gray-300">ID: 99420-NOV</span>
+</div>
+</div>
+</div>
+<!-- Watermark -->
+<div class="absolute -right-10 -bottom-10 opacity-5 pointer-events-none">
+<span class="material-symbols-outlined text-[200px] text-white">workspace_premium</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Action Card Panel -->
+<div class="w-full max-w-4xl relative">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary/0 via-primary/40 to-primary/0 rounded-[28px] blur opacity-30"></div>
+<div class="relative bg-midnight-light border border-primary/30 rounded-[24px] p-6 md:p-10 flex flex-col md:flex-row items-center justify-between gap-8 shadow-glow-lg">
+<div class="flex-1 text-center md:text-left">
+<h2 class="text-2xl font-bold text-white mb-2">Tu cuenta Pepperstone está lista</h2>
+<p class="text-gray-400">Recibe tu primer bono exclusivo y desbloquea los siguientes 24 módulos de aprendizaje avanzado.</p>
+</div>
+<div class="shrink-0 w-full md:w-auto">
+<button class="group relative w-full md:w-auto flex items-center justify-center gap-3 bg-primary hover:bg-[#ffe033] text-midnight font-black text-sm md:text-base py-4 px-8 rounded-full shadow-[0_0_20px_rgba(249,212,6,0.5)] hover:shadow-[0_0_35px_rgba(249,212,6,0.7)] transition-all duration-300 transform hover:-translate-y-1">
+<span class="material-symbols-outlined group-hover:animate-bounce">rocket_launch</span>
+<span>ACTIVAR MI CUENTA Y SEGUIR APRENDIENDO</span>
+</button>
+<div class="mt-3 flex items-center justify-center gap-2 opacity-60">
+<span class="material-symbols-outlined text-xs text-gray-400">lock</span>
+<p class="text-[10px] uppercase tracking-wide text-gray-400 font-medium">Conexión Segura SSL</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
