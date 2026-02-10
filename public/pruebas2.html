@@ -134,7 +134,7 @@
                 <a class="text-gray-400 hover:text-white transition text-lg" href="#">PORTAFOLIO</a>
             </nav>
             <div class="flex items-center gap-2 md:gap-4">
-                <button class="bg-primary text-black font-semibold px-3 md:px-4 py-1.5 md:py-2 rounded-lg flex items-center gap-1.5 hover:bg-primary/90 transition text-sm">
+                <button class="bg-primary text-black font-bold px-3 md:px-6 py-2 md:py-3 rounded-lg flex items-center gap-2 hover:bg-primary/90 transition text-sm md:text-lg">
                     <span>⚡</span> <span class="hidden sm:inline">CONECTAR BROKER</span>
                 </button>
                 <div class="hidden md:flex items-center gap-3">
@@ -170,7 +170,7 @@
     <main class="p-3 md:p-6 grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6">
         
         <!-- LEFT: Noticias — order 3 on mobile, 1 on desktop -->
-        <aside class="order-3 lg:order-1 lg:col-span-3 bg-card rounded-xl border border-card-border p-4 md:p-5 min-h-[400px] lg:sticky lg:top-[140px] lg:self-start lg:max-h-[calc(100vh-160px)] lg:min-h-[600px] overflow-hidden flex flex-col">
+        <aside class="order-3 lg:order-1 lg:col-span-3 bg-card rounded-xl border border-card-border p-4 md:p-5 max-h-[500px] lg:max-h-[800px] overflow-hidden flex flex-col">
             <div class="flex items-center justify-between mb-4">
                 <h2 class="text-white font-bold text-lg flex items-center gap-2">📰 NOTICIAS EN VIVO</h2>
                 <span class="bg-red-500/20 text-red-400 text-sm px-3 py-1 rounded font-semibold flex items-center gap-1">
@@ -226,6 +226,30 @@
                 <button onclick="openChartModal()" class="w-full mt-4 md:mt-6 bg-white/10 hover:bg-white/20 transition text-white py-3 md:py-4 rounded-lg font-semibold text-sm md:text-lg flex items-center justify-center gap-2">VER GRÁFICO TÉCNICO 📊</button>
             </div>
 
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
+                <div class="bg-card rounded-xl border border-card-border p-3 md:p-5">
+                    <p class="text-gray-500 text-[10px] md:text-sm mb-1 md:mb-2 flex items-center gap-1 md:gap-2">VOLATILIDAD (VIX) <span class="text-gray-600">📈</span></p>
+                    <p class="text-xl md:text-3xl font-bold text-white font-mono" id="stat-vix">--</p>
+                    <p class="text-xs md:text-sm mt-1 md:mt-2" id="stat-vix-change">--</p>
+                </div>
+                <div class="bg-card rounded-xl border border-card-border p-3 md:p-5">
+                    <p class="text-gray-500 text-[10px] md:text-sm mb-1 md:mb-2 flex items-center gap-1 md:gap-2">DXY INDEX <span class="text-gray-600">$</span></p>
+                    <p class="text-xl md:text-3xl font-bold text-white font-mono" id="stat-dxy">--</p>
+                    <p class="text-xs md:text-sm mt-1 md:mt-2" id="stat-dxy-change">--</p>
+                </div>
+                <div class="bg-card rounded-xl border border-card-border p-3 md:p-5">
+                    <p class="text-gray-500 text-[10px] md:text-sm mb-1 md:mb-2 flex items-center gap-1 md:gap-2">SENTIMIENTO <span class="text-gray-600">🎭</span></p>
+                    <p class="text-lg md:text-2xl font-bold font-mono" id="stat-sentiment">--</p>
+                    <p class="text-gray-400 text-xs md:text-sm mt-1 md:mt-2" id="stat-sentiment-value">--</p>
+                </div>
+                <div class="bg-card rounded-xl border border-card-border p-3 md:p-5">
+                    <p class="text-gray-500 text-[10px] md:text-sm mb-1 md:mb-2 flex items-center gap-1 md:gap-2">SESIÓN ACTIVA <span class="text-gray-600">⏱️</span></p>
+                    <p class="text-lg md:text-2xl font-bold text-white" id="stat-session">--</p>
+                    <p class="text-positive text-xs md:text-sm mt-1 md:mt-2" id="stat-session-status">--</p>
+                </div>
+            </div>
+
             <!-- Market Movements Table -->
             <div class="bg-card rounded-xl border border-card-border p-4 md:p-6 flex-1 overflow-x-auto">
                 <div class="flex items-center justify-between mb-4 md:mb-6">
@@ -253,7 +277,7 @@
         </section>
 
         <!-- RIGHT: Calendario FMP — order 4 on mobile -->
-        <aside class="order-4 lg:order-3 lg:col-span-3 bg-card rounded-xl border border-card-border overflow-hidden min-h-[400px] lg:sticky lg:top-[140px] lg:self-start lg:max-h-[calc(100vh-160px)] lg:min-h-[600px] flex flex-col">
+        <aside class="order-4 lg:order-3 lg:col-span-3 bg-card rounded-xl border border-card-border overflow-hidden max-h-[500px] lg:max-h-[800px] flex flex-col">
             <div class="flex border-b border-card-border">
                 <button onclick="switchCalTab('economic')" id="cal-tab-economic" class="flex-1 py-3 px-2 text-xs font-bold text-center transition cal-tab-active">📅 ECONÓMICO</button>
                 <button onclick="switchCalTab('earnings')" id="cal-tab-earnings" class="flex-1 py-3 px-2 text-xs font-bold text-center transition cal-tab-inactive">💰 EARNINGS</button>
@@ -574,97 +598,13 @@
             container.innerHTML=html;
         }
 
-        function toggleIPOCard(id) {
-            const detail = document.getElementById('ipo-detail-'+id);
-            const arrow = document.getElementById('ipo-arrow-'+id);
-            const card = detail?.closest('.ipo-card');
-            if (!detail) return;
-            const isOpen = detail.style.maxHeight && detail.style.maxHeight !== '0px';
-            // Close all others
-            document.querySelectorAll('.ipo-detail-expand').forEach(el => { el.style.maxHeight = '0px'; el.style.opacity = '0'; });
-            document.querySelectorAll('.ipo-arrow').forEach(el => { el.style.transform = 'rotate(0deg)'; });
-            document.querySelectorAll('.ipo-card').forEach(el => { el.classList.remove('ring-1','ring-primary/40'); });
-            if (!isOpen) {
-                detail.style.maxHeight = detail.scrollHeight + 'px';
-                detail.style.opacity = '1';
-                if (arrow) arrow.style.transform = 'rotate(180deg)';
-                if (card) card.classList.add('ring-1','ring-primary/40');
-                setTimeout(() => detail.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 150);
-            }
-        }
-
         function renderModalIPO(events){
             const container=document.getElementById('modal-content-ipo');
             if(events===null){container.innerHTML=`<p class="text-gray-500 text-center py-12">Error (${fmpCache.ipo.error||'unknown'})</p>`;return;}
             if(!events||!events.length){container.innerHTML='<p class="text-gray-500 text-center py-12">No hay IPOs</p>';return;}
             const gd=(e)=>(e.date||e.ipoDate||'').substring(0,10),gs=(e)=>e.symbol||e.ticker||'N/A',gc=(e)=>e.company||e.companyName||e.name||'N/A',gx=(e)=>e.exchange||e.stockExchange||'',gp=(e)=>e.priceRange||(e.ipoPrice?`$${e.ipoPrice}`:(e.price?`$${e.price}`:'TBD')),gsh=(e)=>e.numberOfShares||e.sharesOffered||e.shares||null,gsz=(e)=>e.totalSharesValue||e.marketCap||null;
-            const gDesc=(e)=>e.description||e.businessDescription||'';
-            const gCik=(e)=>e.cik||'';
-            const gUrl=(e)=>e.url||e.filingUrl||e.secUrl||'';
-            const gUnder=(e)=>e.underwriters||e.leadUnderwriter||'';
-            const gMkt=(e)=>e.marketCap||e.totalSharesValue||null;
-            const gStatus=(e)=>e.status||e.ipoStatus||'';
-            const gSector=(e)=>e.sector||e.industry||'';
-
-            let html='<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">';
-            [...events].sort((a,b)=>gd(a).localeCompare(gd(b))).forEach((event,idx)=>{
-                const dv=gd(event);const d=dv?new Date(dv+'T12:00:00'):null;
-                const ds=d?d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'}):'TBD';
-                const sh=gsh(event)?(gsh(event)>=1e6?`${(gsh(event)/1e6).toFixed(1)}M`:gsh(event).toLocaleString()):'N/A';
-                const desc=gDesc(event);
-                const cik=gCik(event);
-                const url=gUrl(event);
-                const under=gUnder(event);
-                const sector=gSector(event);
-                const status=gStatus(event);
-
-                // Build detail rows from ALL available fields
-                let detailRows = '';
-                const allKeys = Object.keys(event);
-                const skipKeys = new Set(['symbol','ticker','date','ipoDate','company','companyName','name','exchange','stockExchange','priceRange','ipoPrice','price','numberOfShares','sharesOffered','shares','totalSharesValue','marketCap']);
-                
-                // Curated detail fields first
-                if (sector) detailRows += `<div class="col-span-2 md:col-span-1"><span class="text-gray-500 text-[10px] uppercase">Sector</span><p class="text-gray-300 text-sm">${sector}</p></div>`;
-                if (under) detailRows += `<div class="col-span-2"><span class="text-gray-500 text-[10px] uppercase">Underwriters</span><p class="text-gray-300 text-sm">${typeof under === 'object' ? JSON.stringify(under) : under}</p></div>`;
-                if (cik) detailRows += `<div><span class="text-gray-500 text-[10px] uppercase">CIK</span><p class="text-gray-300 text-sm font-mono">${cik}</p></div>`;
-                if (status) detailRows += `<div><span class="text-gray-500 text-[10px] uppercase">Estado</span><p class="text-gray-300 text-sm">${status}</p></div>`;
-                
-                // Show any extra fields from API
-                allKeys.forEach(k => {
-                    if (skipKeys.has(k) || ['description','businessDescription','url','filingUrl','secUrl','underwriters','leadUnderwriter','sector','industry','status','ipoStatus','cik'].includes(k)) return;
-                    const v = event[k];
-                    if (v == null || v === '' || typeof v === 'object') return;
-                    const label = k.replace(/([A-Z])/g,' $1').replace(/^./,s=>s.toUpperCase()).trim();
-                    detailRows += `<div><span class="text-gray-500 text-[10px] uppercase">${label}</span><p class="text-gray-300 text-sm font-mono">${v}</p></div>`;
-                });
-
-                html+=`<div class="ipo-card rounded-xl transition cursor-pointer" onclick="toggleIPOCard(${idx})">
-                    <div class="p-5">
-                        <div class="flex items-center justify-between mb-3">
-                            <div><span class="text-white font-bold text-xl">${gs(event)}</span>${gx(event)?`<span class="text-gray-500 text-xs ml-2">${gx(event)}</span>`:''}</div>
-                            <div class="flex items-center gap-2">
-                                <span class="text-primary text-sm font-mono font-semibold bg-primary/10 px-3 py-1 rounded-lg">${ds}</span>
-                                <svg id="ipo-arrow-${idx}" class="ipo-arrow text-gray-500 transition-transform duration-300" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                            </div>
-                        </div>
-                        <p class="text-gray-400 text-sm mb-4 line-clamp-2">${gc(event)}</p>
-                        <div class="grid grid-cols-3 gap-3 text-sm">
-                            <div><span class="text-gray-500 text-xs">Precio</span><p class="text-white font-mono font-semibold">${gp(event)}</p></div>
-                            <div><span class="text-gray-500 text-xs">Acciones</span><p class="text-gray-300 font-mono">${sh}</p></div>
-                            <div><span class="text-gray-500 text-xs">Tamaño</span><p class="text-gray-300 font-mono">${gsz(event)?formatRevenue(gsz(event)):'N/A'}</p></div>
-                        </div>
-                    </div>
-                    <div id="ipo-detail-${idx}" class="ipo-detail-expand overflow-hidden transition-all duration-300" style="max-height:0;opacity:0;">
-                        <div class="border-t border-primary/20 px-5 pb-5 pt-4">
-                            ${desc ? `<p class="text-gray-300 text-xs leading-relaxed mb-4">${desc.length > 300 ? desc.substring(0,300)+'...' : desc}</p>` : ''}
-                            ${detailRows ? `<div class="grid grid-cols-2 md:grid-cols-3 gap-3 mb-3">${detailRows}</div>` : ''}
-                            ${url ? `<a href="${url}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-primary text-xs hover:underline mt-2" onclick="event.stopPropagation()">
-                                <span class="material-symbols-outlined text-[14px]">open_in_new</span> Ver Filing SEC
-                            </a>` : ''}
-                            ${!desc && !detailRows && !url ? '<p class="text-gray-600 text-xs italic">No hay información adicional disponible para este IPO.</p>' : ''}
-                        </div>
-                    </div>
-                </div>`;
+            let html='<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">';[...events].sort((a,b)=>gd(a).localeCompare(gd(b))).forEach(event=>{const dv=gd(event);const d=dv?new Date(dv+'T12:00:00'):null;const ds=d?d.toLocaleDateString('es-ES',{weekday:'short',day:'numeric',month:'short'}):'TBD';const sh=gsh(event)?(gsh(event)>=1e6?`${(gsh(event)/1e6).toFixed(1)}M`:gsh(event).toLocaleString()):'N/A';
+                html+=`<div class="ipo-card rounded-xl p-5 transition"><div class="flex items-center justify-between mb-3"><div><span class="text-white font-bold text-xl">${gs(event)}</span>${gx(event)?`<span class="text-gray-500 text-xs ml-2">${gx(event)}</span>`:''}</div><span class="text-primary text-sm font-mono font-semibold bg-primary/10 px-3 py-1 rounded-lg">${ds}</span></div><p class="text-gray-400 text-sm mb-4 line-clamp-2">${gc(event)}</p><div class="grid grid-cols-2 gap-3 text-sm"><div><span class="text-gray-500 text-xs">Precio</span><p class="text-white font-mono font-semibold">${gp(event)}</p></div><div><span class="text-gray-500 text-xs">Acciones</span><p class="text-gray-300 font-mono">${sh}</p></div><div><span class="text-gray-500 text-xs">Tamaño</span><p class="text-gray-300 font-mono">${gsz(event)?formatRevenue(gsz(event)):'N/A'}</p></div></div></div>`;
             });
             container.innerHTML=html+'</div>';
         }
@@ -700,10 +640,10 @@
             if(pairData.change>=0){document.getElementById('ai-entry').textContent=`${(entry-range*0.1).toFixed(dec)} - ${entry.toFixed(dec)}`;document.getElementById('ai-tp1').textContent=(entry+range*0.5).toFixed(dec);document.getElementById('ai-tp2').textContent=(entry+range*1).toFixed(dec);document.getElementById('ai-sl').textContent=(entry-range*0.3).toFixed(dec);document.getElementById('ai-reason').textContent=`Divergencia alcista detectada en RSI (14) combinada con rechazo en zona de soporte clave ${(entry-range*0.2).toFixed(dec)}. Volumen institucional creciente.`;}
             else{document.getElementById('ai-entry').textContent=`${entry.toFixed(dec)} - ${(entry+range*0.1).toFixed(dec)}`;document.getElementById('ai-tp1').textContent=(entry-range*0.5).toFixed(dec);document.getElementById('ai-tp2').textContent=(entry-range*1).toFixed(dec);document.getElementById('ai-sl').textContent=(entry+range*0.3).toFixed(dec);document.getElementById('ai-reason').textContent=`Presión bajista con cambio de -${Math.abs(pairData.change).toFixed(2)}%. Precaución recomendada.`;}}
 
-        async function fetchVIX(){try{const url=polygonUrl(`/v2/aggs/ticker/VIXY/prev`);const r=await safeFetch(url,'Polygon:VIX');if(!r)return;const j=await r.json();if(j.results&&j.results[0]){const d=j.results[0];const c=((d.c-d.o)/d.o*100);const el1=document.getElementById('stat-vix');const el2=document.getElementById('stat-vix-change');if(el1)el1.textContent=d.c.toFixed(2);if(el2){el2.textContent=`${c>=0?'+':''}${c.toFixed(1)}%`;el2.className=`text-xs mt-1 ${c>=0?'text-negative':'text-positive'}`;}}}catch(e){}}
-        async function fetchDXY(){try{const url=polygonUrl(`/v2/aggs/ticker/UUP/prev`);const r=await safeFetch(url,'Polygon:DXY');if(!r)return;const j=await r.json();if(j.results&&j.results[0]){const d=j.results[0];const dxy=d.c*4;const c=((d.c-d.o)/d.o*100);const el1=document.getElementById('stat-dxy');const el2=document.getElementById('stat-dxy-change');if(el1)el1.textContent=dxy.toFixed(2);if(el2){el2.textContent=`${c>=0?'+':''}${c.toFixed(1)}%`;el2.className=`text-xs mt-1 ${c>=0?'text-positive':'text-negative'}`;}}}catch(e){}}
-        async function fetchFearGreed(){try{const fgUrl=IS_VERCEL?'/api/feargreed':'https://api.alternative.me/fng/?limit=1';const r=await safeFetch(fgUrl,'FearGreed');if(!r)return;const j=await r.json();if(j.data&&j.data[0]){const v=parseInt(j.data[0].value);const cl=j.data[0].value_classification;let c='text-gray-400';if(v<=25)c='text-red-500';else if(v<=45)c='text-orange-500';else if(v<=55)c='text-yellow-500';else if(v<=75)c='text-lime-500';else c='text-green-500';const el1=document.getElementById('stat-sentiment');const el2=document.getElementById('stat-sentiment-value');if(el1){el1.className=`text-2xl font-bold font-mono ${c}`;el1.textContent=cl;}if(el2)el2.textContent=`${v}/100`;}}catch(e){}}
-        function updateTradingSession(){const now=new Date();const h=now.getUTCHours();let s='',st='';if(h>=12&&h<16){s='NY / London';st='Overlap';}else if(h>=7&&h<12){s='London';st='Active';}else if(h>=12&&h<21){s='New York';st='Active';}else if(h>=0&&h<9){s='Tokyo';st='Active';}else{s='Sydney';st='Active';}const el1=document.getElementById('stat-session');const el2=document.getElementById('stat-session-status');if(el1)el1.textContent=s;if(el2)el2.textContent=st;}
+        async function fetchVIX(){try{const url=polygonUrl(`/v2/aggs/ticker/VIXY/prev`);const r=await safeFetch(url,'Polygon:VIX');if(!r)return;const j=await r.json();if(j.results&&j.results[0]){const d=j.results[0];const c=((d.c-d.o)/d.o*100);document.getElementById('stat-vix').textContent=d.c.toFixed(2);const el=document.getElementById('stat-vix-change');el.textContent=`${c>=0?'+':''}${c.toFixed(1)}%`;el.className=`text-xs mt-1 ${c>=0?'text-negative':'text-positive'}`;}}catch(e){}}
+        async function fetchDXY(){try{const url=polygonUrl(`/v2/aggs/ticker/UUP/prev`);const r=await safeFetch(url,'Polygon:DXY');if(!r)return;const j=await r.json();if(j.results&&j.results[0]){const d=j.results[0];const dxy=d.c*4;const c=((d.c-d.o)/d.o*100);document.getElementById('stat-dxy').textContent=dxy.toFixed(2);const el=document.getElementById('stat-dxy-change');el.textContent=`${c>=0?'+':''}${c.toFixed(1)}%`;el.className=`text-xs mt-1 ${c>=0?'text-positive':'text-negative'}`;}}catch(e){}}
+        async function fetchFearGreed(){try{const fgUrl=IS_VERCEL?'/api/feargreed':'https://api.alternative.me/fng/?limit=1';const r=await safeFetch(fgUrl,'FearGreed');if(!r)return;const j=await r.json();if(j.data&&j.data[0]){const v=parseInt(j.data[0].value);const cl=j.data[0].value_classification;let c='text-gray-400';if(v<=25)c='text-red-500';else if(v<=45)c='text-orange-500';else if(v<=55)c='text-yellow-500';else if(v<=75)c='text-lime-500';else c='text-green-500';document.getElementById('stat-sentiment').className=`text-2xl font-bold font-mono ${c}`;document.getElementById('stat-sentiment').textContent=cl;document.getElementById('stat-sentiment-value').textContent=`${v}/100`;}}catch(e){}}
+        function updateTradingSession(){const now=new Date();const h=now.getUTCHours();let s='',st='';if(h>=12&&h<16){s='NY / London';st='Overlap';}else if(h>=7&&h<12){s='London';st='Active';}else if(h>=12&&h<21){s='New York';st='Active';}else if(h>=0&&h<9){s='Tokyo';st='Active';}else{s='Sydney';st='Active';}document.getElementById('stat-session').textContent=s;document.getElementById('stat-session-status').textContent=st;}
 
         // ========== NOTICIAS EXPANDIBLES ==========
         function toggleNews(id) {
