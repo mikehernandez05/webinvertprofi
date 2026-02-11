@@ -2,650 +2,541 @@
 <html class="dark" lang="en"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>InvertProfit Trading Terminal — Mercados</title>
+<title>InvertProfit — Terminal de Trading</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <script src="https://unpkg.com/lightweight-charts@4.1.3/dist/lightweight-charts.standalone.production.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
 <script>
-    tailwind.config = {
-        darkMode: "class",
-        theme: {
-            extend: {
-                colors: {
-                    "primary": "#D4AF37",
-                    "midnight": "#0a0f1a",
-                    "midnight-card": "#111827",
-                    "midnight-light": "#1a2538",
-                    "midnight-border": "#1f2937",
-                    "text-off-white": "#f0f0f0",
-                    "text-muted": "#8d9eb5",
-                    "chart-green": "#00C853",
-                    "chart-red": "#FF3D00",
-                },
-                fontFamily: {
-                    "display": ["Inter", "Manrope", "sans-serif"],
-                    "mono": ["Roboto Mono", "monospace"],
-                },
-            },
-        },
-    }
+tailwind.config={darkMode:"class",theme:{extend:{colors:{"primary":"#D4AF37","bg-main":"#0b1018","bg-card":"#111827","bg-panel":"#0f1520","bg-hover":"#182030","border-main":"#1c2536","text-w":"#e8edf5","text-m":"#7a8ba5","green":"#00C853","red":"#FF3D00"},fontFamily:{"ui":["Inter","sans-serif"],"mono":["Roboto Mono","monospace"]}}}}
 </script>
 <style>
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #0a0f1a; }
-    ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+*{box-sizing:border-box;margin:0;padding:0}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:#0b1018}::-webkit-scrollbar-thumb{background:#1c2536;border-radius:3px}::-webkit-scrollbar-thumb:hover{background:#D4AF37}
+@keyframes flash-g{0%{background:rgba(0,200,83,.2)}100%{background:transparent}}
+@keyframes flash-r{0%{background:rgba(255,61,0,.2)}100%{background:transparent}}
+.fl-up{animation:flash-g .6s ease-out}.fl-dn{animation:flash-r .6s ease-out}
+@keyframes pdot{0%,100%{opacity:1}50%{opacity:.3}}.live-p{animation:pdot 1s infinite}
 
-    @keyframes flash-green { 0%{background-color:rgba(0,200,83,0.3)} 100%{background-color:transparent} }
-    @keyframes flash-red { 0%{background-color:rgba(255,61,0,0.3)} 100%{background-color:transparent} }
-    .flash-up { animation: flash-green 0.8s ease-out; }
-    .flash-down { animation: flash-red 0.8s ease-out; }
+/* Market Watch row */
+.mw-row{cursor:pointer;transition:background .12s}
+.mw-row:hover{background:#182030}
+.mw-row.sel{background:rgba(212,175,55,.06);border-left:2px solid #D4AF37}
 
-    @keyframes pulse-dot { 0%,100%{opacity:1} 50%{opacity:0.3} }
-    .live-pulse { animation: pulse-dot 1s infinite; }
+/* Chart slot */
+.chart-slot{position:relative;border:1px solid #1c2536;transition:border-color .15s;overflow:hidden;display:flex;flex-direction:column}
+.chart-slot:hover{border-color:#2a3548}
+.chart-slot.focused{border-color:rgba(212,175,55,.4);z-index:2}
+.chart-slot .slot-close{position:absolute;top:6px;right:6px;z-index:20;opacity:0;transition:opacity .15s}
+.chart-slot:hover .slot-close{opacity:1}
 
-    @keyframes ticker-slide { 0%{transform:translateY(-100%);opacity:0} 100%{transform:translateY(0);opacity:1} }
-    .price-update { animation: ticker-slide 0.25s ease-out; }
+/* Bottom tabs */
+.chart-tab{cursor:pointer;transition:all .12s;border-bottom:2px solid transparent}
+.chart-tab:hover{background:#182030}
+.chart-tab.active{border-bottom-color:#D4AF37;background:rgba(212,175,55,.05)}
 
-    .order-row { transition: all 0.15s ease; cursor: pointer; }
-    .order-row:hover { background: rgba(26,37,56,0.7) !important; }
-    .order-row.selected { background: rgba(212,175,55,0.06) !important; border-left: 3px solid #D4AF37; }
-    .order-row td:first-child { transition: padding-left 0.15s; }
-    .order-row.selected td:first-child { padding-left: 20px; }
-    .order-row.dragging { opacity: 0.5; background: rgba(212,175,55,0.1) !important; }
-    .order-row.drag-over { border-top: 2px solid #D4AF37 !important; }
-    .wl-item.border-primary\/20 { animation: wl-active-pulse 2s ease-in-out infinite; }
-    @keyframes wl-active-pulse {
-        0%, 100% { box-shadow: 0 0 0 0 rgba(212,175,55,0); }
-        50% { box-shadow: 0 0 12px 0 rgba(212,175,55,0.15); }
-    }
+/* Category tabs */
+.cat-btn.act{color:#D4AF37;font-weight:700;background:rgba(212,175,55,.1)}
 </style>
 </head>
-<body class="bg-midnight text-text-off-white font-display h-screen flex flex-col overflow-hidden selection:bg-primary selection:text-midnight">
+<body class="bg-bg-main text-text-w font-ui h-screen flex flex-col overflow-hidden">
 
-<!-- Top Navigation Bar (matching index.html) -->
-<header class="border-b border-midnight-border bg-midnight/95 backdrop-blur sticky top-0 z-50 shrink-0">
-    <div class="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
-        <div class="flex items-center gap-2 md:gap-3">
-            <img src="images/logo_azul.png" alt="InvertProfit" class="h-8 md:h-10" id="logo-img"/>
-            <span class="text-xl md:text-2xl font-bold text-white" id="logo-text" style="display:none;">InvertProfit</span>
-        </div>
-        <script>
-            document.getElementById('logo-img').onerror = function() {
-                this.style.display = 'none';
-                document.getElementById('logo-text').style.display = 'inline';
-            };
-        </script>
-        <nav class="hidden lg:flex items-center gap-10">
-            <a class="text-gray-400 hover:text-white transition text-lg" href="index.html">INICIO</a>
-            <a class="text-gray-400 hover:text-white transition text-lg" href="portadanivelesacademia.html">ACADEMIA</a>
-            <a class="text-white font-semibold border-b-2 border-primary pb-1 text-lg" href="mercado.html">MERCADOS</a>
-            <a class="text-gray-400 hover:text-white transition text-lg" href="#">PORTAFOLIO</a>
-        </nav>
-        <div class="flex items-center gap-2 md:gap-4">
-            <button
-         class="shrink-0 bg-primary text-midnight font-bold h-10 px-6 rounded-full
-         inline-flex items-center gap-2 whitespace-nowrap
-         hover:bg-primary/90 transition text-xs sm:text-sm tracking-wide leading-none">
-         <span class="leading-none">⚡</span>
-        <span class="leading-none">CONECTAR BROKER</span>
-        </button>
-            <div class="hidden md:flex items-center gap-3">
-                <span class="text-gray-400 text-xl">🔔</span>
-                <div class="w-10 h-10 bg-gray-600 rounded-full"></div>
-            </div>
-            <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="lg:hidden text-gray-400 hover:text-white p-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-            </button>
-        </div>
+<!-- ═══ HEADER ═══ -->
+<header class="border-b border-border-main bg-bg-panel flex items-center justify-between px-4 py-2 shrink-0 z-50">
+    <div class="flex items-center gap-3">
+        <img src="images/logo_azul.png" alt="IP" class="h-8" id="logo-img"/>
+        <span class="text-lg font-bold text-white" id="logo-text" style="display:none;">InvertProfit</span>
+        <script>document.getElementById('logo-img').onerror=function(){this.style.display='none';document.getElementById('logo-text').style.display='inline'};</script>
     </div>
-    <nav id="mobile-menu" class="hidden lg:hidden border-t border-midnight-border bg-midnight-card px-4 py-3 space-y-2">
-        <a class="block text-gray-400 hover:text-white py-2 pl-3" href="index.html">INICIO</a>
-        <a class="block text-gray-400 hover:text-white py-2 pl-3" href="portadanivelesacademia.html">ACADEMIA</a>
-        <a class="block text-white font-semibold py-2 border-l-2 border-primary pl-3" href="mercado.html">MERCADOS</a>
-        <a class="block text-gray-400 hover:text-white py-2 pl-3" href="#">PORTAFOLIO</a>
-        <div class="flex items-center gap-3 pt-2 border-t border-midnight-border mt-2">
-            <span class="text-gray-400 text-xl">🔔</span>
-            <div class="w-8 h-8 bg-gray-600 rounded-full"></div>
-        </div>
+    <nav class="hidden md:flex items-center gap-8">
+        <a class="text-text-m hover:text-white transition text-sm" href="index.html">INICIO</a>
+        <a class="text-text-m hover:text-white transition text-sm" href="portadanivelesacademia.html">ACADEMIA</a>
+        <a class="text-white font-semibold border-b-2 border-primary pb-0.5 text-sm" href="mercado.html">MERCADOS</a>
+        <a class="text-text-m hover:text-white transition text-sm" href="#">PORTAFOLIO</a>
     </nav>
+    <div class="flex items-center gap-3">
+        <div class="flex items-center gap-1.5 mr-2">
+            <span id="ws-dot" class="size-2 rounded-full bg-text-m"></span>
+            <span id="ws-lbl" class="text-[9px] font-mono text-text-m">Conectando...</span>
+        </div>
+        <button class="bg-primary text-bg-main font-bold h-9 px-5 rounded-full text-xs tracking-wide hover:bg-primary/90 transition">⚡ CONECTAR BROKER</button>
+        <div class="hidden md:flex items-center gap-2"><span class="text-text-m text-lg">🔔</span><div class="w-8 h-8 bg-gray-600 rounded-full"></div></div>
+    </div>
 </header>
 
-<!-- Main Workspace -->
-<main class="flex-1 grid grid-cols-1 lg:grid-cols-[64px_1fr_360px] gap-4 p-4 overflow-hidden h-[calc(100vh-73px)]">
-    <!-- Left Toolbar -->
-    <aside class="hidden lg:flex flex-col items-center py-4 gap-4 bg-midnight-card rounded-3xl border border-midnight-border overflow-y-auto">
-        <button class="size-10 flex items-center justify-center rounded-xl bg-midnight-light text-primary hover:bg-primary hover:text-midnight transition-colors" title="Cursor">
-            <span class="material-symbols-outlined">near_me</span>
-        </button>
-        <div class="w-8 h-px bg-midnight-border"></div>
-        <button class="size-10 flex items-center justify-center rounded-xl text-text-muted hover:bg-midnight-light hover:text-white transition-colors" title="Línea">
-            <span class="material-symbols-outlined">show_chart</span>
-        </button>
-        <button class="size-10 flex items-center justify-center rounded-xl text-text-muted hover:bg-midnight-light hover:text-white transition-colors" title="Horizontal">
-            <span class="material-symbols-outlined">horizontal_rule</span>
-        </button>
-        <button class="size-10 flex items-center justify-center rounded-xl text-text-muted hover:bg-midnight-light hover:text-white transition-colors" title="Fibonacci">
-            <span class="material-symbols-outlined">architecture</span>
-        </button>
-        <button class="size-10 flex items-center justify-center rounded-xl text-text-muted hover:bg-midnight-light hover:text-white transition-colors" title="Texto">
-            <span class="material-symbols-outlined">text_fields</span>
-        </button>
-        <div class="flex-1"></div>
-        <button class="size-10 flex items-center justify-center rounded-xl text-text-muted hover:bg-midnight-light hover:text-white transition-colors" title="Borrar">
-            <span class="material-symbols-outlined">delete</span>
-        </button>
-    </aside>
+<!-- ═══ MAIN: [Chart Grid CENTER] [Market Watch RIGHT 260px] ═══ -->
+<div class="flex-1 flex overflow-hidden">
 
-    <!-- Center Column -->
-    <section class="flex flex-col gap-4 min-w-0">
-        <!-- Chart Container -->
-        <div class="flex-1 flex flex-col bg-midnight-card rounded-3xl border border-midnight-border overflow-hidden relative shadow-2xl">
-            <!-- Chart Header -->
-            <div class="flex flex-col md:flex-row items-start md:items-center justify-between px-4 py-3 border-b border-midnight-border bg-midnight-card/95 backdrop-blur-sm z-10 gap-3 md:gap-0">
-                <div class="flex items-center gap-4">
-                    <div class="flex items-center gap-3">
-                        <div id="chart-icon-wrap" class="flex -space-x-2">
-                            <div class="size-6 rounded-full bg-orange-500 flex items-center justify-center border-2 border-midnight-card"><span class="text-[8px] text-white font-bold">₿</span></div>
-                            <div class="size-6 rounded-full bg-green-800 flex items-center justify-center border-2 border-midnight-card"><span class="text-[8px] text-white font-bold">$</span></div>
-                        </div>
-                        <div>
-                            <h3 id="chart-pair-label" class="text-white font-bold leading-none">BTC/USDT</h3>
-                            <span id="chart-pair-sub" class="text-xs text-text-muted">Bitcoin vs US Dollar</span>
-                        </div>
-                    </div>
-                    <div class="h-8 w-px bg-midnight-border mx-2 hidden md:block"></div>
-                    <div class="flex items-baseline gap-2">
-                        <span id="main-price" class="text-xl md:text-2xl font-mono font-medium text-chart-green">—</span>
-                        <span id="main-change" class="text-xs font-bold text-text-muted bg-midnight-light px-1.5 py-0.5 rounded">—</span>
-                    </div>
-                    <div class="flex items-center gap-1.5 ml-2">
-                        <span class="size-2 rounded-full bg-chart-green live-pulse"></span>
-                        <span id="chart-update-time" class="text-[10px] font-mono text-text-muted">--:--:--</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    <div id="timeframe-btns" class="flex bg-midnight border border-midnight-border rounded-lg p-0.5">
-                        <button data-tf="1" data-mul="minute" class="tf-btn px-2 md:px-3 py-1 text-xs font-medium text-text-muted hover:text-white rounded hover:bg-midnight-light">1m</button>
-                        <button data-tf="5" data-mul="minute" class="tf-btn px-2 md:px-3 py-1 text-xs font-medium text-text-muted hover:text-white rounded hover:bg-midnight-light">5m</button>
-                        <button data-tf="15" data-mul="minute" class="tf-btn px-2 md:px-3 py-1 text-xs font-medium text-text-muted hover:text-white rounded hover:bg-midnight-light">15m</button>
-                        <button data-tf="1" data-mul="hour" class="tf-btn px-2 md:px-3 py-1 text-xs font-bold text-midnight bg-primary rounded shadow-sm">1H</button>
-                        <button data-tf="1" data-mul="day" class="tf-btn px-2 md:px-3 py-1 text-xs font-medium text-text-muted hover:text-white rounded hover:bg-midnight-light">1D</button>
-                    </div>
-                    <div class="h-6 w-px bg-midnight-border hidden md:block"></div>
-                    <button class="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-midnight-border hover:bg-midnight-light text-xs font-medium text-text-off-white transition-colors">
-                        <span class="material-symbols-outlined text-[16px] text-primary">ssid_chart</span>
-                        Indicadores
-                    </button>
-                </div>
-            </div>
-
-            <!-- TradingView Lightweight Chart -->
-            <div id="tv-chart-container" class="flex-1 relative bg-[#0a0f18]" style="min-height:300px;">
-                <div id="chart-loading" class="absolute inset-0 flex items-center justify-center bg-[#0a0f18] z-20">
-                    <div class="flex flex-col items-center gap-3">
-                        <div class="size-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                        <span class="text-sm text-text-muted font-mono">Cargando velas...</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Bottom Panel: Orders -->
-        <div id="orders-panel" class="h-[200px] bg-midnight-card rounded-3xl border border-midnight-border flex flex-col overflow-hidden">
-            <div class="flex items-center gap-6 px-4 md:px-6 border-b border-midnight-border bg-midnight-light/30 overflow-x-auto">
-                <button class="order-tab py-3 text-sm font-bold text-primary border-b-2 border-primary whitespace-nowrap" data-tab="active">Órdenes Activas (2)</button>
-                <button class="order-tab py-3 text-sm font-medium text-text-muted hover:text-white transition-colors whitespace-nowrap" data-tab="history">Historial</button>
-                <button class="order-tab py-3 text-sm font-medium text-text-muted hover:text-white transition-colors whitespace-nowrap" data-tab="positions">Posiciones</button>
-                <div class="flex-1"></div>
-                <span id="order-selection-info" class="text-[10px] font-mono text-primary hidden">1 seleccionada</span>
-                <button class="text-xs font-medium text-text-muted flex items-center gap-1 hover:text-white transition-colors whitespace-nowrap">
-                    <span class="material-symbols-outlined text-[16px]">filter_list</span> Filtrar
-                </button>
-            </div>
-            <div class="flex-1 overflow-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-midnight sticky top-0 z-10">
-                        <tr>
-                            <th class="py-2 px-4 md:px-6 text-xs font-medium text-text-muted">Par</th>
-                            <th class="py-2 px-4 md:px-6 text-xs font-medium text-text-muted">Tipo</th>
-                            <th class="py-2 px-4 md:px-6 text-xs font-medium text-text-muted hidden md:table-cell">Precio Entrada</th>
-                            <th class="py-2 px-4 md:px-6 text-xs font-medium text-text-muted">Precio Actual</th>
-                            <th class="py-2 px-4 md:px-6 text-xs font-medium text-text-muted hidden md:table-cell">Cantidad</th>
-                            <th class="py-2 px-4 md:px-6 text-xs font-medium text-text-muted hidden lg:table-cell">TP / SL</th>
-                            <th class="py-2 px-4 md:px-6 text-xs font-medium text-text-muted text-right">PNL</th>
-                        </tr>
-                    </thead>
-                    <tbody id="orders-tbody" class="divide-y divide-midnight-border text-sm">
-                        <tr class="order-row" draggable="true" data-order-id="1">
-                            <td class="py-3 px-4 md:px-6 font-bold text-white flex items-center gap-2">
-                                <div class="size-2 rounded-full bg-chart-green"></div> EUR/USD
-                            </td>
-                            <td class="py-3 px-4 md:px-6 text-chart-green font-medium">Compra</td>
-                            <td class="py-3 px-4 md:px-6 font-mono text-text-off-white hidden md:table-cell">1.08200</td>
-                            <td id="order-eurusd-price" class="py-3 px-4 md:px-6 font-mono text-text-off-white">—</td>
-                            <td class="py-3 px-4 md:px-6 font-mono text-text-off-white hidden md:table-cell">0.5 Lot</td>
-                            <td class="py-3 px-4 md:px-6 font-mono text-xs hidden lg:table-cell">
-                                <span class="text-chart-green">1.0950</span> / <span class="text-chart-red">1.0780</span>
-                            </td>
-                            <td id="order-eurusd-pnl" class="py-3 px-4 md:px-6 text-right font-mono font-bold text-text-muted text-base">—</td>
-                        </tr>
-                        <tr class="order-row" draggable="true" data-order-id="2">
-                            <td class="py-3 px-4 md:px-6 font-bold text-white flex items-center gap-2">
-                                <div class="size-2 rounded-full bg-chart-red"></div> GBP/JPY
-                            </td>
-                            <td class="py-3 px-4 md:px-6 text-chart-red font-medium">Venta</td>
-                            <td class="py-3 px-4 md:px-6 font-mono text-text-off-white hidden md:table-cell">192.450</td>
-                            <td class="py-3 px-4 md:px-6 font-mono text-text-off-white">192.600</td>
-                            <td class="py-3 px-4 md:px-6 font-mono text-text-off-white hidden md:table-cell">0.2 Lot</td>
-                            <td class="py-3 px-4 md:px-6 font-mono text-xs hidden lg:table-cell">
-                                <span class="text-chart-green">190.00</span> / <span class="text-chart-red">193.00</span>
-                            </td>
-                            <td class="py-3 px-4 md:px-6 text-right font-mono font-bold text-chart-red text-base">-$30.20</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
-
-    <!-- Right Sidebar -->
-    <aside class="hidden lg:flex flex-col gap-4 min-w-0">
-        <!-- AI Analysis -->
-        <div class="bg-gradient-to-b from-midnight-card to-midnight border border-primary/20 rounded-3xl p-5 shadow-[0_0_20px_rgba(212,175,55,0.05)] relative overflow-hidden">
-            <div class="absolute top-0 right-0 p-3 opacity-10">
-                <span class="material-symbols-outlined text-[120px] text-primary">psychology</span>
-            </div>
-            <div class="relative z-10 flex flex-col gap-4">
-                <div class="flex items-center gap-2 mb-2">
-                    <div class="flex items-center justify-center size-8 rounded-full bg-primary/20 text-primary">
-                        <span class="material-symbols-outlined text-[18px]">smart_toy</span>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-bold text-white leading-none">AmigoTrade AI</h3>
-                        <span class="text-xs text-primary font-medium">Análisis en Vivo</span>
-                    </div>
-                </div>
-                <div class="bg-midnight-light/50 rounded-2xl p-4 border border-midnight-border backdrop-blur-sm">
-                    <div class="flex items-start justify-between gap-2 mb-2">
-                        <span class="text-xs font-bold uppercase tracking-wider text-text-muted">Señal Detectada</span>
-                        <span id="ai-signal-badge" class="px-2 py-0.5 rounded text-[10px] font-bold bg-chart-green/20 text-chart-green border border-chart-green/30">ALCISTA</span>
-                    </div>
-                    <h4 id="ai-pattern" class="text-xl font-bold text-white mb-1">Patrón W (Doble Piso)</h4>
-                    <p id="ai-description" class="text-sm text-text-muted leading-relaxed">
-                        Formación de reversión confirmada en marco de 4H. Zona de soporte fuerte en 1.08200.
-                    </p>
-                </div>
-                <div class="bg-midnight-light/50 rounded-2xl p-4 border border-midnight-border backdrop-blur-sm flex items-center justify-between">
-                    <div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-text-muted block mb-1">Indicadores</span>
-                        <div class="flex items-center gap-2">
-                            <span class="text-sm font-bold text-white">RSI (14)</span>
-                            <span id="ai-rsi" class="text-sm font-mono text-primary font-bold">—</span>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <span id="ai-rsi-label" class="text-xs font-medium text-text-muted">Calculando...</span>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-3 mt-2">
-                    <button class="py-3 rounded-full bg-chart-red/10 border border-chart-red/50 text-chart-red font-bold text-sm hover:bg-chart-red hover:text-white transition-all">Vender</button>
-                    <button class="py-3 rounded-full bg-primary text-midnight font-bold text-sm hover:bg-white hover:shadow-[0_0_15px_rgba(212,175,55,0.4)] transition-all">Ejecutar Compra</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Watchlist -->
-        <div class="flex-1 bg-midnight-card rounded-3xl border border-midnight-border flex flex-col overflow-hidden">
-            <div class="px-5 py-3 border-b border-midnight-border flex items-center justify-between bg-midnight-light/30">
-                <h3 class="text-sm font-bold text-white">Lista de Seguimiento</h3>
+<!-- ═══ CENTER: CHART GRID + BOTTOM TABS ═══ -->
+<div class="flex-1 flex flex-col min-w-0">
+    <!-- Chart Grid (2x2) -->
+    <div id="chart-grid" class="flex-1 grid grid-cols-2 grid-rows-2 gap-0 min-h-0">
+        <!-- Slot 0 -->
+        <div class="chart-slot bg-bg-main" id="slot-0" data-idx="0">
+            <div class="slot-header flex items-center justify-between px-3 py-1.5 bg-bg-card border-b border-border-main shrink-0">
                 <div class="flex items-center gap-2">
-                    <span id="wl-update-count" class="text-[10px] font-mono text-text-muted/50"></span>
-                    <span class="material-symbols-outlined text-text-muted text-[18px] cursor-pointer hover:text-white">more_horiz</span>
+                    <div class="slot-icon size-5 rounded-full flex items-center justify-center text-[7px] font-bold bg-gray-700 text-gray-400">—</div>
+                    <span class="slot-label text-[11px] font-bold text-text-m">Vacío</span>
+                    <span class="slot-tf text-[9px] font-mono text-text-m ml-1">H1</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <span class="slot-price text-[11px] font-mono text-text-m">—</span>
+                    <span class="slot-change text-[9px] font-bold text-text-m">—</span>
                 </div>
             </div>
-            <div class="flex-1 overflow-y-auto p-2">
-                <div id="watchlist" class="space-y-1">
-                    <div data-ticker="X:BTCUSD" class="wl-item flex items-center justify-between p-3 rounded-xl hover:bg-midnight-light cursor-pointer group transition-all border border-primary/20 bg-primary/5">
-                        <div class="flex items-center gap-3">
-                            <div class="size-8 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-500 font-bold text-[10px] border border-orange-500/30">BTC</div>
-                            <div>
-                                <div class="text-sm font-bold text-white group-hover:text-primary transition-colors">BTC/USDT</div>
-                                <div class="text-[10px] text-text-muted">Bitcoin</div>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="wl-price text-sm font-mono font-medium text-white">—</div>
-                            <div class="wl-change text-[10px] font-medium text-text-muted">—</div>
-                        </div>
-                    </div>
-                    <div data-ticker="C:EURUSD" class="wl-item flex items-center justify-between p-3 rounded-xl hover:bg-midnight-light cursor-pointer group transition-all bg-midnight-light/30">
-                        <div class="flex items-center gap-3">
-                            <div class="size-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-500 font-bold text-[10px] border border-blue-500/30">EUR</div>
-                            <div>
-                                <div class="text-sm font-bold text-white group-hover:text-primary transition-colors">EUR/USD</div>
-                                <div class="text-[10px] text-text-muted">Euro</div>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="wl-price text-sm font-mono font-medium text-white">—</div>
-                            <div class="wl-change text-[10px] font-medium text-text-muted">—</div>
-                        </div>
-                    </div>
-                    <div data-ticker="C:XAUUSD" class="wl-item flex items-center justify-between p-3 rounded-xl hover:bg-midnight-light cursor-pointer group transition-all">
-                        <div class="flex items-center gap-3">
-                            <div class="size-8 rounded-full bg-yellow-500/20 flex items-center justify-center text-yellow-500 font-bold text-[10px] border border-yellow-500/30">XAU</div>
-                            <div>
-                                <div class="text-sm font-bold text-white group-hover:text-primary transition-colors">XAU/USD</div>
-                                <div class="text-[10px] text-text-muted">Gold</div>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="wl-price text-sm font-mono font-medium text-white">—</div>
-                            <div class="wl-change text-[10px] font-medium text-text-muted">—</div>
-                        </div>
-                    </div>
-                    <div data-ticker="X:SOLUSD" class="wl-item flex items-center justify-between p-3 rounded-xl hover:bg-midnight-light cursor-pointer group transition-all">
-                        <div class="flex items-center gap-3">
-                            <div class="size-8 rounded-full bg-indigo-500/20 flex items-center justify-center text-indigo-500 font-bold text-[10px] border border-indigo-500/30">SOL</div>
-                            <div>
-                                <div class="text-sm font-bold text-white group-hover:text-primary transition-colors">SOL/USDT</div>
-                                <div class="text-[10px] text-text-muted">Solana</div>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <div class="wl-price text-sm font-mono font-medium text-white">—</div>
-                            <div class="wl-change text-[10px] font-medium text-text-muted">—</div>
-                        </div>
-                    </div>
+            <button class="slot-close size-5 flex items-center justify-center rounded bg-bg-card/90 text-text-m hover:text-red hover:bg-bg-card transition" title="Cerrar"><span class="material-symbols-outlined text-[13px]">close</span></button>
+            <div class="slot-chart flex-1 bg-bg-main"></div>
+            <div class="slot-empty absolute inset-0 flex items-center justify-center">
+                <div class="text-center">
+                    <span class="material-symbols-outlined text-[40px] text-border-main">candlestick_chart</span>
+                    <p class="text-[10px] text-text-m mt-1">Click en Market Watch<br/>para abrir gráfico</p>
                 </div>
             </div>
         </div>
-    </aside>
-</main>
+        <!-- Slot 1 -->
+        <div class="chart-slot bg-bg-main" id="slot-1" data-idx="1">
+            <div class="slot-header flex items-center justify-between px-3 py-1.5 bg-bg-card border-b border-border-main shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="slot-icon size-5 rounded-full flex items-center justify-center text-[7px] font-bold bg-gray-700 text-gray-400">—</div>
+                    <span class="slot-label text-[11px] font-bold text-text-m">Vacío</span>
+                    <span class="slot-tf text-[9px] font-mono text-text-m ml-1">H1</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <span class="slot-price text-[11px] font-mono text-text-m">—</span>
+                    <span class="slot-change text-[9px] font-bold text-text-m">—</span>
+                </div>
+            </div>
+            <button class="slot-close size-5 flex items-center justify-center rounded bg-bg-card/90 text-text-m hover:text-red hover:bg-bg-card transition" title="Cerrar"><span class="material-symbols-outlined text-[13px]">close</span></button>
+            <div class="slot-chart flex-1 bg-bg-main"></div>
+            <div class="slot-empty absolute inset-0 flex items-center justify-center">
+                <div class="text-center"><span class="material-symbols-outlined text-[40px] text-border-main">candlestick_chart</span><p class="text-[10px] text-text-m mt-1">Slot disponible</p></div>
+            </div>
+        </div>
+        <!-- Slot 2 -->
+        <div class="chart-slot bg-bg-main" id="slot-2" data-idx="2">
+            <div class="slot-header flex items-center justify-between px-3 py-1.5 bg-bg-card border-b border-border-main shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="slot-icon size-5 rounded-full flex items-center justify-center text-[7px] font-bold bg-gray-700 text-gray-400">—</div>
+                    <span class="slot-label text-[11px] font-bold text-text-m">Vacío</span>
+                    <span class="slot-tf text-[9px] font-mono text-text-m ml-1">H1</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <span class="slot-price text-[11px] font-mono text-text-m">—</span>
+                    <span class="slot-change text-[9px] font-bold text-text-m">—</span>
+                </div>
+            </div>
+            <button class="slot-close size-5 flex items-center justify-center rounded bg-bg-card/90 text-text-m hover:text-red hover:bg-bg-card transition" title="Cerrar"><span class="material-symbols-outlined text-[13px]">close</span></button>
+            <div class="slot-chart flex-1 bg-bg-main"></div>
+            <div class="slot-empty absolute inset-0 flex items-center justify-center">
+                <div class="text-center"><span class="material-symbols-outlined text-[40px] text-border-main">candlestick_chart</span><p class="text-[10px] text-text-m mt-1">Slot disponible</p></div>
+            </div>
+        </div>
+        <!-- Slot 3 -->
+        <div class="chart-slot bg-bg-main" id="slot-3" data-idx="3">
+            <div class="slot-header flex items-center justify-between px-3 py-1.5 bg-bg-card border-b border-border-main shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="slot-icon size-5 rounded-full flex items-center justify-center text-[7px] font-bold bg-gray-700 text-gray-400">—</div>
+                    <span class="slot-label text-[11px] font-bold text-text-m">Vacío</span>
+                    <span class="slot-tf text-[9px] font-mono text-text-m ml-1">H1</span>
+                </div>
+                <div class="flex items-center gap-1">
+                    <span class="slot-price text-[11px] font-mono text-text-m">—</span>
+                    <span class="slot-change text-[9px] font-bold text-text-m">—</span>
+                </div>
+            </div>
+            <button class="slot-close size-5 flex items-center justify-center rounded bg-bg-card/90 text-text-m hover:text-red hover:bg-bg-card transition" title="Cerrar"><span class="material-symbols-outlined text-[13px]">close</span></button>
+            <div class="slot-chart flex-1 bg-bg-main"></div>
+            <div class="slot-empty absolute inset-0 flex items-center justify-center">
+                <div class="text-center"><span class="material-symbols-outlined text-[40px] text-border-main">candlestick_chart</span><p class="text-[10px] text-text-m mt-1">Slot disponible</p></div>
+            </div>
+        </div>
+    </div>
+    <!-- Bottom Tabs -->
+    <div class="h-[28px] shrink-0 border-t border-border-main bg-bg-card flex items-center overflow-x-auto px-1 gap-0.5" id="bottom-tabs">
+        <span class="text-[8px] text-text-m font-mono px-2 opacity-50">Gráficos abiertos:</span>
+    </div>
+</div>
 
+<!-- ═══ RIGHT: MARKET WATCH ═══ -->
+<aside class="w-[260px] shrink-0 border-l border-border-main bg-bg-panel flex flex-col">
+    <div class="px-3 py-2 border-b border-border-main flex items-center justify-between bg-bg-card/50">
+        <div class="flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-primary text-[16px]">monitoring</span>
+            <span class="text-[11px] font-bold text-white tracking-wide">Market Watch</span>
+        </div>
+        <span class="text-[8px] font-mono text-text-m" id="clock">--:--:--</span>
+    </div>
+    <div class="flex border-b border-border-main shrink-0">
+        <button class="cat-btn act flex-1 py-1.5 text-[9px] text-text-m rounded-none transition" data-cat="all">Todo</button>
+        <button class="cat-btn flex-1 py-1.5 text-[9px] text-text-m rounded-none transition" data-cat="indices">IDX</button>
+        <button class="cat-btn flex-1 py-1.5 text-[9px] text-text-m rounded-none transition" data-cat="forex">FX</button>
+        <button class="cat-btn flex-1 py-1.5 text-[9px] text-text-m rounded-none transition" data-cat="commodities">COM</button>
+        <button class="cat-btn flex-1 py-1.5 text-[9px] text-text-m rounded-none transition" data-cat="crypto">CRY</button>
+    </div>
+    <div class="flex items-center px-3 py-1 border-b border-border-main bg-bg-main/50 text-[8px] font-bold text-text-m uppercase tracking-wider">
+        <span class="flex-1">Símbolo</span>
+        <span class="w-[72px] text-right">Precio</span>
+        <span class="w-[58px] text-right">Cambio</span>
+    </div>
+    <div class="flex-1 overflow-y-auto" id="mw-list"></div>
+</aside>
+
+</div>
 <script>
 (function(){
 'use strict';
 
-var API_KEY = 'Q3I6b14c8HL2l_A7faplgnuMTXekxCUU';
-var BASE = 'https://api.polygon.io';
+/* ─── CONFIG ─── */
+var API_KEY='Q3I6b14c8HL2l_A7faplgnuMTXekxCUU';
+var BASE='https://api.polygon.io';
+var WS_URLS={crypto:'wss://socket.polygon.io/crypto',forex:'wss://socket.polygon.io/forex',stocks:'wss://socket.polygon.io/stocks'};
 
-var ASSETS = {
-    'X:BTCUSD': {label:'BTC/USDT', sub:'Bitcoin vs US Dollar', decimals:2, type:'crypto'},
-    'C:EURUSD': {label:'EUR/USD', sub:'Euro vs US Dollar', decimals:5, type:'forex'},
-    'C:XAUUSD': {label:'XAU/USD', sub:'Gold vs US Dollar', decimals:2, type:'forex'},
-    'X:SOLUSD': {label:'SOL/USDT', sub:'Solana vs US Dollar', decimals:2, type:'crypto'}
+var ASSETS={
+    'SPY':       {label:'S&P 500', sub:'SPY',    d:2,ws:'stocks',cat:'indices',color:'#10b981',abbr:'SPX'},
+    'QQQ':       {label:'NASDAQ',  sub:'QQQ',    d:2,ws:'stocks',cat:'indices',color:'#6366f1',abbr:'NDQ'},
+    'DIA':       {label:'DOW 30',  sub:'DIA',    d:2,ws:'stocks',cat:'indices',color:'#3b82f6',abbr:'DOW'},
+    'C:EURUSD':  {label:'EUR/USD', sub:'Euro',   d:5,ws:'forex',cat:'forex',color:'#3b82f6',abbr:'EUR'},
+    'C:GBPUSD':  {label:'GBP/USD', sub:'Libra',  d:5,ws:'forex',cat:'forex',color:'#ef4444',abbr:'GBP'},
+    'C:USDJPY':  {label:'USD/JPY', sub:'Yen',    d:3,ws:'forex',cat:'forex',color:'#f43f5e',abbr:'JPY'},
+    'C:AUDUSD':  {label:'AUD/USD', sub:'AUD',    d:5,ws:'forex',cat:'forex',color:'#22c55e',abbr:'AUD'},
+    'C:USDCAD':  {label:'USD/CAD', sub:'CAD',    d:5,ws:'forex',cat:'forex',color:'#dc2626',abbr:'CAD'},
+    'C:USDCHF':  {label:'USD/CHF', sub:'CHF',    d:5,ws:'forex',cat:'forex',color:'#ef4444',abbr:'CHF'},
+    'C:NZDUSD':  {label:'NZD/USD', sub:'NZD',    d:5,ws:'forex',cat:'forex',color:'#14b8a6',abbr:'NZD'},
+    'C:EURGBP':  {label:'EUR/GBP', sub:'E/G',    d:5,ws:'forex',cat:'forex',color:'#8b5cf6',abbr:'E/G'},
+    'C:XAUUSD':  {label:'XAU/USD', sub:'Oro',    d:2,ws:'forex',cat:'commodities',color:'#eab308',abbr:'XAU'},
+    'C:XAGUSD':  {label:'XAG/USD', sub:'Plata',  d:3,ws:'forex',cat:'commodities',color:'#9ca3af',abbr:'XAG'},
+    'X:BTCUSD':  {label:'BTC/USD', sub:'BTC',    d:2,ws:'crypto',cat:'crypto',color:'#f97316',abbr:'BTC'},
+    'X:ETHUSD':  {label:'ETH/USD', sub:'ETH',    d:2,ws:'crypto',cat:'crypto',color:'#60a5fa',abbr:'ETH'},
+    'X:SOLUSD':  {label:'SOL/USD', sub:'SOL',    d:2,ws:'crypto',cat:'crypto',color:'#818cf8',abbr:'SOL'},
+    'X:XRPUSD':  {label:'XRP/USD', sub:'XRP',    d:4,ws:'crypto',cat:'crypto',color:'#94a3b8',abbr:'XRP'},
+    'X:ADAUSD':  {label:'ADA/USD', sub:'ADA',    d:4,ws:'crypto',cat:'crypto',color:'#38bdf8',abbr:'ADA'},
+    'X:DOGEUSD': {label:'DOGE/USD',sub:'DOGE',   d:5,ws:'crypto',cat:'crypto',color:'#facc15',abbr:'DOGE'},
+    'X:AVAXUSD': {label:'AVAX/USD',sub:'AVAX',   d:2,ws:'crypto',cat:'crypto',color:'#ef4444',abbr:'AVAX'},
+    'X:LINKUSD': {label:'LINK/USD',sub:'LINK',   d:3,ws:'crypto',cat:'crypto',color:'#2563eb',abbr:'LINK'},
+    'X:DOTUSD':  {label:'DOT/USD', sub:'DOT',    d:3,ws:'crypto',cat:'crypto',color:'#ec4899',abbr:'DOT'},
+    'X:MATICUSD':{label:'POL/USD', sub:'POL',    d:4,ws:'crypto',cat:'crypto',color:'#a855f7',abbr:'POL'}
 };
-var TICKERS = Object.keys(ASSETS);
+var TICKERS=Object.keys(ASSETS);
 
-var activeTicker = 'X:BTCUSD';
-var chartTF = {mul:1, span:'hour'};
-var candles = [];
-var updateCount = 0;
-var prices = {};
-var prevPrices = {};
-var prevCloses = {};
+/* ─── STATE ─── */
+var prices={},prevPrices={},prevCloses={};
+var wsConns={},wsAlive={crypto:false,forex:false,stocks:false},wsThrottle={};
+// Slots: [{ticker,chart,candleSeries,volumeSeries,emaSeries,candles,tf:{mul,span}}] or null
+var slots=[null,null,null,null];
+var focusedSlot=0;
 
-var tvChart = null;
-var tvCandleSeries = null;
-var tvVolumeSeries = null;
-var tvEmaSeries = null;
+var $=function(id){return document.getElementById(id)};
+var $$=function(s){return document.querySelectorAll(s)};
 
-var $ = function(id){ return document.getElementById(id); };
-var $$ = function(s){ return document.querySelectorAll(s); };
+/* ─── UTILS ─── */
+function yyyymmdd(d){return d.toISOString().slice(0,10)}
+function ago(n){var d=new Date();d.setDate(d.getDate()-n);return yyyymmdd(d)}
+function today(){return yyyymmdd(new Date())}
+function fmt(v,t){if(v==null)return'—';var dd=ASSETS[t]?ASSETS[t].d:2;return dd>2?v.toFixed(dd):v.toLocaleString('en-US',{minimumFractionDigits:dd,maximumFractionDigits:dd})}
 
-function yyyymmdd(d){ return d.toISOString().slice(0,10); }
-function ago(days){ var d=new Date(); d.setDate(d.getDate()-days); return yyyymmdd(d); }
-function today(){ return yyyymmdd(new Date()); }
-
+/* ═══════════════════════════════════════
+   REST — /v2/aggs only (Pro plan)
+   ═══════════════════════════════════════ */
 async function api(path){
-    var sep = path.indexOf('?')>=0 ? '&' : '?';
-    try { var r=await fetch(BASE+path+sep+'apiKey='+API_KEY); if(!r.ok)return null; return r.json(); }
-    catch(e){ return null; }
+    var sep=path.indexOf('?')>=0?'&':'?';
+    try{var r=await fetch(BASE+path+sep+'apiKey='+API_KEY);if(!r.ok)return null;return r.json();}catch(e){return null;}
 }
-
 async function getPrice(ticker){
-    var data = await api('/v2/aggs/ticker/'+ticker+'/range/1/minute/'+ago(2)+'/'+today()+'?sort=desc&limit=3&adjusted=true');
-    if(data && data.results && data.results.length){
-        var latest = data.results[0];
-        var pc = prevCloses[ticker] || latest.o;
-        return {price:latest.c, change: pc ? ((latest.c-pc)/pc*100) : 0, ts:latest.t};
-    }
-    var prev = await api('/v2/aggs/ticker/'+ticker+'/prev?adjusted=true');
-    if(prev && prev.results && prev.results.length){
-        var r=prev.results[0];
-        return {price:r.c, change:((r.c-r.o)/r.o*100), ts:r.t};
-    }
+    var d=await api('/v2/aggs/ticker/'+ticker+'/range/1/minute/'+ago(2)+'/'+today()+'?sort=desc&limit=5&adjusted=true');
+    if(d&&d.results&&d.results.length){var l=d.results[0],pc=prevCloses[ticker]||l.o;return{price:l.c,change:pc?((l.c-pc)/pc*100):0,ts:l.t};}
+    var pv=await api('/v2/aggs/ticker/'+ticker+'/prev?adjusted=true');
+    if(pv&&pv.results&&pv.results.length){var r=pv.results[0];return{price:r.c,change:((r.c-r.o)/r.o*100),ts:r.t};}
     return null;
 }
-
+async function getCandles(ticker,mul,span){
+    var from;
+    if(span==='minute') from=mul<=1?ago(2):mul<=5?ago(7):ago(14);
+    else if(span==='hour') from=ago(90);
+    else if(span==='day') from=ago(365);
+    else from=ago(730);
+    var d=await api('/v2/aggs/ticker/'+ticker+'/range/'+mul+'/'+span+'/'+from+'/'+today()+'?adjusted=true&sort=asc&limit=5000');
+    if(d&&d.results&&d.results.length) return d.results;
+    return[];
+}
 async function loadPrevCloses(){
-    for(var i=0;i<TICKERS.length;i++){
-        var data = await api('/v2/aggs/ticker/'+TICKERS[i]+'/prev?adjusted=true');
-        if(data && data.results && data.results.length) prevCloses[TICKERS[i]] = data.results[0].c;
-    }
+    await Promise.allSettled(TICKERS.map(function(t){return api('/v2/aggs/ticker/'+t+'/prev?adjusted=true').then(function(d){if(d&&d.results&&d.results.length)prevCloses[t]=d.results[0].c;});}));
+}
+async function loadAllPrices(){
+    var results=await Promise.allSettled(TICKERS.map(function(t){return getPrice(t).then(function(r){return{ticker:t,data:r};});}));
+    var ok=0;results.forEach(function(r){if(r.status==='fulfilled'&&r.value&&r.value.data){prices[r.value.ticker]=r.value.data;updateMW(r.value.ticker);ok++;}});return ok;
+}
+var pollIdx=0;
+function pollREST(){var ms=['crypto','forex','stocks'],m=ms[pollIdx%3];pollIdx++;if(wsAlive[m])return;TICKERS.filter(function(t){return ASSETS[t].ws===m;}).forEach(function(t){getPrice(t).then(function(r){if(r){prices[t]=r;updateMW(t);updateSlots(t);}});});}
+
+/* ═══════════════════════════════════════
+   WEBSOCKET
+   ═══════════════════════════════════════ */
+function connectAllWS(){['crypto','forex','stocks'].forEach(connectWS);}
+function connectWS(market){
+    if(wsConns[market])try{wsConns[market].close();}catch(e){}
+    var ws;try{ws=new WebSocket(WS_URLS[market]);}catch(e){return;}wsConns[market]=ws;
+    ws.onopen=function(){ws.send(JSON.stringify({action:'auth',params:API_KEY}));};
+    ws.onmessage=function(e){var msgs;try{msgs=JSON.parse(e.data);}catch(err){return;}if(!Array.isArray(msgs))msgs=[msgs];msgs.forEach(function(msg){if(msg.ev==='status'&&msg.status==='auth_success'){wsAlive[market]=true;updWS();subMkt(ws,market);return;}if(msg.ev==='status')return;handleWS(msg);});};
+    ws.onclose=function(){wsAlive[market]=false;updWS();setTimeout(function(){connectWS(market);},5000);};
+    ws.onerror=function(){wsAlive[market]=false;updWS();};
+}
+function subMkt(ws,m){
+    var tks=TICKERS.filter(function(t){return ASSETS[t].ws===m;}),ch;
+    if(m==='crypto')ch=tks.map(function(t){return'XT.'+t+',XA.'+t;}).join(',');
+    else if(m==='forex')ch=tks.map(function(t){return'C.'+t+',CA.'+t;}).join(',');
+    else ch=tks.map(function(t){return'AM.'+t+',T.'+t;}).join(',');
+    if(ch)ws.send(JSON.stringify({action:'subscribe',params:ch}));
+}
+function handleWS(msg){
+    var tk=null,p=null;
+    if(msg.ev==='XT'){tk=msg.pair;p=msg.p;}else if(msg.ev==='XA'){tk=msg.pair;p=msg.c;}
+    else if(msg.ev==='C'){tk=msg.p;p=(msg.a+msg.b)/2;}else if(msg.ev==='CA'){tk=msg.pair;p=msg.c;}
+    else if(msg.ev==='AM'){tk=msg.sym;p=msg.c;}else if(msg.ev==='T'){tk=msg.sym;p=msg.p;}
+    if(!tk||!p||!ASSETS[tk])return;
+    var now=Date.now();if(wsThrottle[tk]&&now-wsThrottle[tk]<300)return;wsThrottle[tk]=now;
+    var pc=prevCloses[tk]||(prices[tk]?prices[tk].price:p);
+    prices[tk]={price:p,change:pc?((p-pc)/pc*100):0,ts:now};
+    updateMW(tk);updateSlots(tk);
+}
+function updWS(){
+    var alive=0;['crypto','forex','stocks'].forEach(function(m){if(wsAlive[m])alive++;});
+    var d=$('ws-dot'),l=$('ws-lbl');
+    if(alive===3){d.className='size-2 rounded-full bg-green live-p';l.textContent='LIVE · WS';l.className='text-[9px] font-mono text-green font-bold';}
+    else if(alive>0){d.className='size-2 rounded-full bg-yellow-400 live-p';l.textContent='WS '+alive+'/3';l.className='text-[9px] font-mono text-yellow-400';}
+    else{d.className='size-2 rounded-full bg-text-m animate-pulse';l.textContent='REST';l.className='text-[9px] font-mono text-text-m';}
 }
 
-async function getCandles(ticker, mul, span){
-    var fromDate;
-    if(span==='minute') fromDate = mul<=1?ago(2):mul<=5?ago(7):ago(14);
-    else if(span==='hour') fromDate = ago(60);
-    else if(span==='day') fromDate = ago(365);
-    else fromDate = ago(730);
-    var data = await api('/v2/aggs/ticker/'+ticker+'/range/'+mul+'/'+span+'/'+fromDate+'/'+today()+'?adjusted=true&sort=asc&limit=5000');
-    if(data && data.results && data.results.length) return data.results;
-    if(ASSETS[ticker].type==='forex' && span==='minute') return getCandles(ticker,1,'hour');
-    return [];
-}
-
-function fmt(v,t){
-    if(v==null) return '—';
-    var d = ASSETS[t] ? ASSETS[t].decimals : 2;
-    if(d>2) return v.toFixed(d);
-    return v.toLocaleString('en-US',{minimumFractionDigits:d, maximumFractionDigits:d});
-}
-
-function initChart(){
-    var container = $('tv-chart-container');
-    tvChart = LightweightCharts.createChart(container, {
-        width: container.clientWidth, height: container.clientHeight,
-        layout: { background:{type:'solid',color:'#0a0f18'}, textColor:'#8d9eb5', fontFamily:'Roboto Mono, monospace', fontSize:11 },
-        grid: { vertLines:{color:'rgba(42,54,77,0.2)'}, horzLines:{color:'rgba(42,54,77,0.2)'} },
-        crosshair: { mode:LightweightCharts.CrosshairMode.Normal, vertLine:{color:'rgba(212,175,55,0.3)',width:1,style:2,labelBackgroundColor:'#D4AF37'}, horzLine:{color:'rgba(212,175,55,0.3)',width:1,style:2,labelBackgroundColor:'#D4AF37'} },
-        rightPriceScale: { borderColor:'#1f2937', scaleMargins:{top:0.05,bottom:0.15} },
-        timeScale: { borderColor:'#1f2937', timeVisible:true, secondsVisible:false, rightOffset:8, barSpacing:8, minBarSpacing:4 },
-        handleScroll: { vertTouchDrag:false },
+/* ═══════════════════════════════════════
+   MARKET WATCH (Left Panel)
+   ═══════════════════════════════════════ */
+function buildMW(){
+    var box=$('mw-list');box.innerHTML='';
+    TICKERS.forEach(function(tk){
+        var a=ASSETS[tk];
+        var row=document.createElement('div');
+        row.className='mw-row flex items-center px-3 py-[6px] border-b border-border-main/50';
+        row.dataset.ticker=tk;row.dataset.cat=a.cat;
+        row.innerHTML=
+            '<div class="flex items-center gap-1.5 flex-1 min-w-0">'+
+                '<div class="size-5 rounded-full flex items-center justify-center text-[7px] font-bold shrink-0" style="background:'+a.color+'20;color:'+a.color+'">'+a.abbr+'</div>'+
+                '<span class="text-[11px] font-bold text-white truncate">'+a.label+'</span>'+
+            '</div>'+
+            '<span class="mw-price w-[72px] text-right text-[10px] font-mono text-text-w">—</span>'+
+            '<span class="mw-chg w-[58px] text-right text-[9px] font-bold text-text-m">—</span>';
+        row.addEventListener('click',function(){openChart(tk);});
+        box.appendChild(row);
     });
-    tvCandleSeries = tvChart.addCandlestickSeries({ upColor:'#00C853', downColor:'#FF3D00', borderUpColor:'#00C853', borderDownColor:'#FF3D00', wickUpColor:'#00C853', wickDownColor:'#FF3D00' });
-    tvVolumeSeries = tvChart.addHistogramSeries({ priceFormat:{type:'volume'}, priceScaleId:'volume' });
-    tvChart.priceScale('volume').applyOptions({ scaleMargins:{top:0.85,bottom:0} });
-    tvEmaSeries = tvChart.addLineSeries({ color:'#D4AF37', lineWidth:2, lineStyle:0, priceLineVisible:false, lastValueVisible:false, crosshairMarkerVisible:false });
-    new ResizeObserver(function(){ tvChart.applyOptions({width:container.clientWidth,height:container.clientHeight}); }).observe(container);
 }
-
-function updateChartData(rawCandles){
-    if(!tvCandleSeries || !rawCandles.length) return;
-    var candleData=[], volumeData=[], seen={};
-    for(var i=0;i<rawCandles.length;i++){
-        var c=rawCandles[i]; var time=Math.floor(c.t/1000);
-        if(seen[time]) continue; seen[time]=true;
-        candleData.push({time:time,open:c.o,high:c.h,low:c.l,close:c.c});
-        volumeData.push({time:time,value:c.v||0,color:c.c>=c.o?'rgba(0,200,83,0.15)':'rgba(255,61,0,0.15)'});
-    }
-    tvCandleSeries.setData(candleData);
-    tvVolumeSeries.setData(volumeData);
-    tvEmaSeries.setData(calcEMAforTV(candleData,20));
-    if(candleData.length>60) tvChart.timeScale().setVisibleLogicalRange({from:candleData.length-60,to:candleData.length+5});
-    else tvChart.timeScale().fitContent();
-    tvChart.timeScale().scrollToRealTime();
-}
-
-function calcEMAforTV(data,period){
-    if(data.length<period) return [];
-    var k=2/(period+1), result=[], sum=0;
-    for(var i=0;i<period;i++) sum+=data[i].close;
-    var prev=sum/period;
-    result.push({time:data[period-1].time,value:prev});
-    for(var j=period;j<data.length;j++){
-        var val=data[j].close*k+prev*(1-k);
-        result.push({time:data[j].time,value:val}); prev=val;
-    }
-    return result;
-}
-
-function onUpdate(ticker){
-    updateCount++;
-    var d=prices[ticker]; if(!d) return;
-    var el=document.querySelector('[data-ticker="'+ticker+'"]');
-    if(el){
-        var pEl=el.querySelector('.wl-price'), cEl=el.querySelector('.wl-change');
-        if(pEl){
-            var nv=fmt(d.price,ticker);
-            if(pEl.textContent!==nv){
-                var old=prevPrices[ticker]; pEl.textContent=nv;
-                if(old!=null&&old!==d.price){ el.classList.remove('flash-up','flash-down'); void el.offsetWidth; el.classList.add(d.price>old?'flash-up':'flash-down'); }
-                prevPrices[ticker]=d.price;
-            }
-        }
-        if(cEl){ var pos=d.change>=0; cEl.textContent=(pos?'+':'')+d.change.toFixed(2)+'%'; cEl.className='wl-change text-[10px] font-medium '+(pos?'text-chart-green':'text-chart-red'); }
-    }
-    if(ticker===activeTicker){
-        var mp=$('main-price'),mc=$('main-change');
-        if(mp){ var p2=d.change>=0; mp.textContent=fmt(d.price,ticker); mp.className='text-xl md:text-2xl font-mono font-medium '+(p2?'text-chart-green':'text-chart-red')+' price-update';
-            if(mc){ mc.textContent=(p2?'+':'')+d.change.toFixed(2)+'%'; mc.className='text-xs font-bold px-1.5 py-0.5 rounded '+(p2?'text-chart-green bg-chart-green/10':'text-chart-red bg-chart-red/10'); }
+function updateMW(tk){
+    var d=prices[tk];if(!d)return;
+    var row=document.querySelector('.mw-row[data-ticker="'+tk+'"]');if(!row)return;
+    var pEl=row.querySelector('.mw-price'),cEl=row.querySelector('.mw-chg');
+    if(pEl){
+        var nv=fmt(d.price,tk);
+        if(pEl.textContent!==nv){
+            var old=prevPrices[tk];pEl.textContent=nv;
+            if(old!=null&&old!==d.price){row.classList.remove('fl-up','fl-dn');void row.offsetWidth;row.classList.add(d.price>old?'fl-up':'fl-dn');}
+            prevPrices[tk]=d.price;
         }
     }
-    if(ticker==='C:EURUSD'){
-        var op=$('order-eurusd-price'); if(op) op.textContent=fmt(d.price,ticker);
-        var pnl=$('order-eurusd-pnl');
-        if(pnl){ var profit=(d.price-1.082)*50000; var pp=profit>=0; pnl.textContent=(pp?'+':'-')+'$'+Math.abs(profit).toFixed(2); pnl.className='py-3 px-4 md:px-6 text-right font-mono font-bold text-base '+(pp?'text-chart-green':'text-chart-red'); }
-    }
-    if(ticker===activeTicker&&candles.length>14){
-        var closes=candles.map(function(c){return c.c;}); var rsi=calcRSI(closes,14); var rv=rsi[rsi.length-1];
-        if(rv!=null){ $('ai-rsi').textContent=rv.toFixed(1); $('ai-rsi-label').textContent=rv<30?'Sobrevendido':rv>70?'Sobrecomprado':'Neutral'; $('ai-rsi-label').className='text-xs font-medium '+(rv<30?'text-chart-green':rv>70?'text-chart-red':'text-text-muted'); }
-    }
-    if(ticker===activeTicker&&tvCandleSeries&&candles.length){
-        var lastCandle=candles[candles.length-1]; var newPrice=d.price; var time=Math.floor(lastCandle.t/1000);
-        tvCandleSeries.update({time:time,open:lastCandle.o,high:Math.max(lastCandle.h,newPrice),low:Math.min(lastCandle.l,newPrice),close:newPrice});
-        if(tvVolumeSeries) tvVolumeSeries.update({time:time,value:lastCandle.v||0,color:newPrice>=lastCandle.o?'rgba(0,200,83,0.15)':'rgba(255,61,0,0.15)'});
-        tvChart.timeScale().scrollToRealTime();
-    }
-    $('wl-update-count').textContent='#'+updateCount;
+    if(cEl){var pos=d.change>=0;cEl.textContent=(pos?'+':'')+d.change.toFixed(2)+'%';cEl.className='mw-chg w-[58px] text-right text-[9px] font-bold '+(pos?'text-green':'text-red');}
+}
+function filterMW(cat){
+    $$('.cat-btn').forEach(function(b){b.className='cat-btn flex-1 py-1.5 text-[9px] text-text-m rounded-none transition'+(b.dataset.cat===cat?' act':'');});
+    $$('.mw-row').forEach(function(r){r.style.display=(cat==='all'||r.dataset.cat===cat)?'':'none';});
 }
 
-function setStatus(mode){
-    var dot=$('status-dot'),txt=$('status-text');
-    if(!dot||!txt) return;
-    if(mode==='live'){dot.className='size-2 rounded-full bg-chart-green live-pulse';txt.textContent='LIVE · REST';txt.className='text-chart-green font-bold';}
-    else if(mode==='error'){dot.className='size-2 rounded-full bg-chart-red animate-pulse';txt.textContent='ERROR';txt.className='text-chart-red';}
-    else{dot.className='size-2 rounded-full bg-text-muted animate-pulse';txt.textContent='Cargando...';txt.className='text-text-muted';}
-}
-
-function calcRSI(data,per){
-    var r=[]; for(var i=0;i<data.length;i++) r.push(null);
-    if(data.length<per+1) return r;
-    var g=0,l=0;
-    for(i=1;i<=per;i++){var d=data[i]-data[i-1];if(d>0)g+=d;else l-=d;}
-    var ag=g/per,al=l/per;
-    r[per]=al===0?100:100-(100/(1+ag/al));
-    for(i=per+1;i<data.length;i++){var d2=data[i]-data[i-1];ag=(ag*(per-1)+Math.max(d2,0))/per;al=(al*(per-1)+Math.max(-d2,0))/per;r[i]=al===0?100:100-(100/(1+ag/al));}
-    return r;
-}
-
-async function switchChart(ticker){
-    if(ticker===activeTicker) return;
-    activeTicker=ticker;
-    $$('.wl-item').forEach(function(el){ var on=el.dataset.ticker===ticker; el.classList.toggle('border-primary/20',on); el.classList.toggle('bg-primary/5',on); el.classList.toggle('bg-midnight-light/30',!on); });
-    var iconColors={'X:BTCUSD':{bg:'bg-orange-500',symbol:'₿'},'C:EURUSD':{bg:'bg-blue-500',symbol:'€'},'C:XAUUSD':{bg:'bg-yellow-500',symbol:'Au'},'X:SOLUSD':{bg:'bg-indigo-500',symbol:'◎'}};
-    var ic=iconColors[ticker]||iconColors['X:BTCUSD'];
-    $('chart-icon-wrap').innerHTML='<div class="size-6 rounded-full '+ic.bg+' flex items-center justify-center border-2 border-midnight-card"><span class="text-[8px] text-white font-bold">'+ic.symbol+'</span></div><div class="size-6 rounded-full bg-green-800 flex items-center justify-center border-2 border-midnight-card"><span class="text-[8px] text-white font-bold">$</span></div>';
-    $('chart-pair-label').textContent=ASSETS[ticker].label;
-    $('chart-pair-sub').textContent=ASSETS[ticker].sub;
-    if(prices[ticker]) onUpdate(ticker);
-    $('chart-loading').classList.remove('hidden');
-    candles=await getCandles(ticker,chartTF.mul,chartTF.span);
-    $('chart-loading').classList.add('hidden');
-    if(candles.length) updateChartData(candles);
-}
-
-$$('.tf-btn').forEach(function(btn){
-    btn.addEventListener('click',async function(){
-        $$('.tf-btn').forEach(function(b){b.className='tf-btn px-2 md:px-3 py-1 text-xs font-medium text-text-muted hover:text-white rounded hover:bg-midnight-light';});
-        btn.className='tf-btn px-2 md:px-3 py-1 text-xs font-bold text-midnight bg-primary rounded shadow-sm';
-        chartTF={mul:parseInt(btn.dataset.tf),span:btn.dataset.mul};
-        $('chart-loading').classList.remove('hidden');
-        candles=await getCandles(activeTicker,chartTF.mul,chartTF.span);
-        $('chart-loading').classList.add('hidden');
-        if(candles.length) updateChartData(candles);
+/* ═══════════════════════════════════════
+   CHART SLOTS (2x2 Grid)
+   ═══════════════════════════════════════ */
+function createLWChart(container){
+    return LightweightCharts.createChart(container,{
+        width:container.clientWidth,height:container.clientHeight,
+        layout:{background:{type:'solid',color:'#0b1018'},textColor:'#7a8ba5',fontFamily:'Roboto Mono, monospace',fontSize:9},
+        grid:{vertLines:{color:'rgba(42,54,77,0.10)'},horzLines:{color:'rgba(42,54,77,0.10)'}},
+        crosshair:{mode:LightweightCharts.CrosshairMode.Normal,vertLine:{color:'rgba(212,175,55,0.25)',width:1,style:2,labelBackgroundColor:'#D4AF37'},horzLine:{color:'rgba(212,175,55,0.25)',width:1,style:2,labelBackgroundColor:'#D4AF37'}},
+        rightPriceScale:{borderColor:'#1c2536',scaleMargins:{top:0.18,bottom:0.20},minimumWidth:55},
+        timeScale:{borderColor:'#1c2536',timeVisible:true,secondsVisible:false,rightOffset:4,barSpacing:3,minBarSpacing:1},
+        handleScroll:{vertTouchDrag:false}
     });
-});
+}
 
-$$('.wl-item').forEach(function(el){ el.addEventListener('click',function(){switchChart(el.dataset.ticker);}); });
+async function openChart(ticker){
+    // Check if already open
+    for(var i=0;i<4;i++){if(slots[i]&&slots[i].ticker===ticker){focusSlot(i);return;}}
+    // Find empty slot
+    var idx=-1;
+    for(var i=0;i<4;i++){if(!slots[i]){idx=i;break;}}
+    if(idx===-1){
+        // Replace focused slot
+        idx=focusedSlot;closeSlot(idx);
+    }
 
-(function initOrders(){
-    var tbody=$('orders-tbody'); var rows=tbody.querySelectorAll('.order-row'); var selectedId=null;
-    rows.forEach(function(row){
-        row.addEventListener('click',function(){
-            var id=row.dataset.orderId;
-            if(selectedId===id){row.classList.remove('selected');selectedId=null;$('order-selection-info').classList.add('hidden');}
-            else{rows.forEach(function(r){r.classList.remove('selected');});row.classList.add('selected');selectedId=id;$('order-selection-info').textContent='1 seleccionada';$('order-selection-info').classList.remove('hidden');}
+    var a=ASSETS[ticker];
+    var el=$('slot-'+idx);
+    var empty=el.querySelector('.slot-empty');if(empty)empty.style.display='none';
+
+    // Update header
+    el.querySelector('.slot-icon').style.background=a.color+'25';
+    el.querySelector('.slot-icon').style.color=a.color;
+    el.querySelector('.slot-icon').textContent=a.abbr;
+    el.querySelector('.slot-label').textContent=a.label;
+    el.querySelector('.slot-label').className='slot-label text-[11px] font-bold text-white';
+    el.querySelector('.slot-tf').textContent='H1';
+
+    // Create chart
+    var box=el.querySelector('.slot-chart');
+    var lw=createLWChart(box);
+    var cs=lw.addCandlestickSeries({upColor:'#00C853',downColor:'#FF3D00',borderUpColor:'#00C853',borderDownColor:'#FF3D00',wickUpColor:'#00C853',wickDownColor:'#FF3D00'});
+    var vs=lw.addHistogramSeries({priceFormat:{type:'volume'},priceScaleId:'vol_'+idx});
+    lw.priceScale('vol_'+idx).applyOptions({scaleMargins:{top:0.92,bottom:0}});
+    var es=lw.addLineSeries({color:'#D4AF37',lineWidth:1,lineStyle:0,priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false});
+
+    new ResizeObserver(function(){lw.applyOptions({width:box.clientWidth,height:box.clientHeight});}).observe(box);
+
+    slots[idx]={ticker:ticker,chart:lw,candleSeries:cs,volumeSeries:vs,emaSeries:es,candles:null,tf:{mul:1,span:'hour'}};
+    focusSlot(idx);
+    buildTabs();
+
+    // Load candles
+    var raw=await getCandles(ticker,1,'hour');
+    if(raw.length){
+        slots[idx].candles=raw;
+        renderSlotCandles(idx,raw);
+    }
+    if(prices[ticker]) updateSlotHeader(idx);
+}
+
+function renderSlotCandles(idx,raw){
+    var s=slots[idx];if(!s)return;
+    var cd=[],vd=[],seen={};
+    for(var i=0;i<raw.length;i++){
+        var c=raw[i],t=Math.floor(c.t/1000);if(seen[t])continue;seen[t]=true;
+        var rng=c.o?(c.h-c.l)/c.o:0;if(rng>0.05&&i>0)c={t:c.t,o:c.o,h:Math.max(c.o,c.c)*1.002,l:Math.min(c.o,c.c)*0.998,c:c.c,v:c.v};
+        cd.push({time:t,open:c.o,high:c.h,low:c.l,close:c.c});
+        vd.push({time:t,value:c.v||0,color:c.c>=c.o?'rgba(0,200,83,0.08)':'rgba(255,61,0,0.08)'});
+    }
+    try{s.candleSeries.setData(cd);s.volumeSeries.setData(vd);s.emaSeries.setData(calcEMA(cd,20));
+    if(cd.length>150) s.chart.timeScale().setVisibleLogicalRange({from:cd.length-150,to:cd.length+4});
+    else s.chart.timeScale().fitContent();
+    s.chart.timeScale().scrollToRealTime();}catch(e){}
+}
+
+function closeSlot(idx){
+    var s=slots[idx];if(!s)return;
+    try{s.chart.remove();}catch(e){}slots[idx]=null;
+    var el=$('slot-'+idx);
+    el.querySelector('.slot-chart').innerHTML='';
+    el.querySelector('.slot-icon').style.background='';el.querySelector('.slot-icon').style.color='';el.querySelector('.slot-icon').textContent='—';
+    el.querySelector('.slot-label').textContent='Vacío';el.querySelector('.slot-label').className='slot-label text-[11px] font-bold text-text-m';
+    el.querySelector('.slot-price').textContent='—';el.querySelector('.slot-price').className='slot-price text-[11px] font-mono text-text-m';
+    el.querySelector('.slot-change').textContent='—';el.querySelector('.slot-change').className='slot-change text-[9px] font-bold text-text-m';
+    el.querySelector('.slot-tf').textContent='H1';
+    var empty=el.querySelector('.slot-empty');if(empty)empty.style.display='';
+    el.classList.remove('focused');
+    buildTabs();
+}
+
+function focusSlot(idx){
+    focusedSlot=idx;
+    $$('.chart-slot').forEach(function(el,i){el.classList.toggle('focused',i===idx);});
+    $$('.chart-tab').forEach(function(t){t.classList.toggle('active',parseInt(t.dataset.idx)===idx);});
+    // Highlight in market watch
+    $$('.mw-row').forEach(function(r){r.classList.remove('sel');});
+    if(slots[idx]){var row=document.querySelector('.mw-row[data-ticker="'+slots[idx].ticker+'"]');if(row)row.classList.add('sel');}
+}
+
+function updateSlotHeader(idx){
+    var s=slots[idx];if(!s)return;
+    var d=prices[s.ticker];if(!d)return;
+    var el=$('slot-'+idx);
+    var pEl=el.querySelector('.slot-price'),cEl=el.querySelector('.slot-change');
+    var pos=d.change>=0;
+    pEl.textContent=fmt(d.price,s.ticker);pEl.className='slot-price text-[11px] font-mono font-medium '+(pos?'text-green':'text-red');
+    cEl.textContent=(pos?'+':'')+d.change.toFixed(2)+'%';cEl.className='slot-change text-[9px] font-bold px-1 py-0.5 rounded '+(pos?'text-green bg-green/10':'text-red bg-red/10');
+}
+
+function updateSlots(ticker){
+    for(var i=0;i<4;i++){
+        var s=slots[i];if(!s||s.ticker!==ticker)continue;
+        updateSlotHeader(i);
+        var d=prices[ticker];if(!d||!s.candles||!s.candles.length)continue;
+        var lc=s.candles[s.candles.length-1],np=d.price,tm=Math.floor(lc.t/1000);
+        if(lc.o&&Math.abs(np-lc.o)/lc.o<0.03){
+            try{s.candleSeries.update({time:tm,open:lc.o,high:Math.max(lc.h,np),low:Math.min(lc.l,np),close:np});
+            s.volumeSeries.update({time:tm,value:lc.v||0,color:np>=lc.o?'rgba(0,200,83,0.08)':'rgba(255,61,0,0.08)'});}catch(e){}
+        }
+    }
+}
+
+function calcEMA(d,p){if(d.length<p)return[];var k=2/(p+1),r=[],s=0;for(var i=0;i<p;i++)s+=d[i].close;var pv=s/p;r.push({time:d[p-1].time,value:pv});for(var j=p;j<d.length;j++){var v=d[j].close*k+pv*(1-k);r.push({time:d[j].time,value:v});pv=v;}return r;}
+
+/* ─── BOTTOM TABS ─── */
+function buildTabs(){
+    var box=$('bottom-tabs');
+    box.innerHTML='<span class="text-[8px] text-text-m font-mono px-2 opacity-50 shrink-0">Gráficos:</span>';
+    for(var i=0;i<4;i++){
+        var s=slots[i];if(!s)continue;
+        var a=ASSETS[s.ticker];
+        var tab=document.createElement('div');
+        tab.className='chart-tab flex items-center gap-1.5 px-3 py-1 rounded-t'+(i===focusedSlot?' active':'');
+        tab.dataset.idx=i;
+        tab.innerHTML=
+            '<div class="size-4 rounded-full flex items-center justify-center text-[6px] font-bold" style="background:'+a.color+'25;color:'+a.color+'">'+a.abbr+'</div>'+
+            '<span class="text-[10px] font-bold text-white">'+a.label+'</span>'+
+            '<span class="text-[8px] font-mono text-text-m">,H1</span>'+
+            '<button class="tab-x ml-1 text-text-m hover:text-red transition text-[10px] leading-none" title="Cerrar">✕</button>';
+        tab.addEventListener('click',function(ev){
+            if(ev.target.closest('.tab-x')){closeSlot(parseInt(this.dataset.idx));return;}
+            focusSlot(parseInt(this.dataset.idx));
         });
-    });
-    var dragRow=null;
-    rows.forEach(function(row){
-        row.addEventListener('dragstart',function(e){dragRow=row;row.classList.add('dragging');e.dataTransfer.effectAllowed='move';});
-        row.addEventListener('dragend',function(){row.classList.remove('dragging');rows.forEach(function(r){r.classList.remove('drag-over');});dragRow=null;});
-        row.addEventListener('dragover',function(e){e.preventDefault();if(dragRow&&dragRow!==row){rows.forEach(function(r){r.classList.remove('drag-over');});row.classList.add('drag-over');}});
-        row.addEventListener('drop',function(e){e.preventDefault();if(dragRow&&dragRow!==row){var parent=row.parentNode;parent.insertBefore(dragRow,row);row.classList.remove('drag-over');}});
-    });
-    $$('.order-tab').forEach(function(tab){
-        tab.addEventListener('click',function(){
-            $$('.order-tab').forEach(function(t){t.className='order-tab py-3 text-sm font-medium text-text-muted hover:text-white transition-colors whitespace-nowrap';});
-            tab.className='order-tab py-3 text-sm font-bold text-primary border-b-2 border-primary whitespace-nowrap';
-        });
-    });
-})();
-
-var pollIdx=0, pollTotal=0;
-async function pollOneTicker(){
-    var ticker=TICKERS[pollIdx%TICKERS.length]; pollIdx++;
-    var result=await getPrice(ticker);
-    if(result){ var changed=!prices[ticker]||prices[ticker].price!==result.price; prices[ticker]=result; if(changed){onUpdate(ticker);pollTotal++;} }
+        box.appendChild(tab);
+    }
 }
 
-async function refreshChart(){
-    var fresh=await getCandles(activeTicker,chartTF.mul,chartTF.span);
-    if(fresh.length){ candles=fresh; updateChartData(candles); }
+/* ─── EVENTS ─── */
+// Category tabs
+$$('.cat-btn').forEach(function(b){b.addEventListener('click',function(){filterMW(b.dataset.cat);});});
+
+// Slot close buttons
+for(var i=0;i<4;i++){
+    (function(idx){
+        $('slot-'+idx).querySelector('.slot-close').addEventListener('click',function(e){e.stopPropagation();closeSlot(idx);});
+        $('slot-'+idx).addEventListener('click',function(){if(slots[idx])focusSlot(idx);});
+    })(i);
 }
 
+/* ═══════════════════════════════════════
+   INIT
+   ═══════════════════════════════════════ */
 async function init(){
-    initChart();
-    await loadPrevCloses();
-    var ok=0;
-    for(var i=0;i<TICKERS.length;i++){
-        var t=TICKERS[i]; var r=await getPrice(t);
-        if(r){prices[t]=r;onUpdate(t);ok++;}
-    }
-    if(!ok){
-        $('chart-loading').innerHTML='<div class="flex flex-col items-center gap-3"><span class="material-symbols-outlined text-[48px] text-chart-red">error</span><span class="text-sm text-chart-red font-bold">Sin datos</span></div>';
-        return;
-    }
-    candles=await getCandles(activeTicker,chartTF.mul,chartTF.span);
-    $('chart-loading').classList.add('hidden');
-    if(candles.length) updateChartData(candles);
-    setInterval(function(){$('chart-update-time').textContent=new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'});},1000);
-    setInterval(pollOneTicker,5000);
-    setInterval(refreshChart,20000);
-    setInterval(function(){
-        if(!tvCandleSeries||!candles.length||!prices[activeTicker]) return;
-        var lastCandle=candles[candles.length-1]; var currentPrice=prices[activeTicker].price; var time=Math.floor(lastCandle.t/1000);
-        var noise=currentPrice*(Math.random()-0.5)*0.0002; var simPrice=currentPrice+noise;
-        tvCandleSeries.update({time:time,open:lastCandle.o,high:Math.max(lastCandle.h,simPrice),low:Math.min(lastCandle.l,simPrice),close:simPrice});
-    },1500);
-}
+    buildMW();
 
+    // Clock
+    setInterval(function(){$('clock').textContent=new Date().toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit',second:'2-digit'});},1000);
+
+    await loadPrevCloses();
+    var ok=await loadAllPrices();
+
+    // Auto-open first 4 charts
+    if(ok){
+        var defaults=['X:BTCUSD','C:EURUSD','SPY','X:ETHUSD'];
+        for(var i=0;i<defaults.length;i++) await openChart(defaults[i]);
+        focusSlot(0);
+    }
+
+    connectAllWS();
+    setInterval(pollREST,8000);
+
+    // Refresh candle data periodically
+    setInterval(async function(){
+        for(var i=0;i<4;i++){
+            var s=slots[i];if(!s)continue;
+            var raw=await getCandles(s.ticker,s.tf.mul,s.tf.span);
+            if(raw.length){s.candles=raw;renderSlotCandles(i,raw);}
+        }
+    },45000);
+}
 document.addEventListener('DOMContentLoaded',init);
 })();
 </script>
