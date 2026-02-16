@@ -33,12 +33,20 @@
         }
     </style>
 </head>
-<body class="text-white font-sans min-h-screen flex flex-col items-center justify-center px-4 py-10">
+<body class="text-white font-sans min-h-screen flex flex-col items-center justify-center px-4 py-10 relative">
 
-    <div class="mb-10 flex justify-center">
+    <!-- Botón de regreso -->
+    <a href="index.html" class="absolute top-6 left-6 flex items-center gap-2 text-gray-400 hover:text-white transition group">
+        <span class="w-9 h-9 rounded-full border border-card-border bg-card/50 flex items-center justify-center group-hover:border-primary/40 group-hover:bg-primary/10 transition">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+        </span>
+        <span class="text-xs font-bold uppercase tracking-wider hidden sm:inline">Volver</span>
+    </a>
+
+    <a href="index.html" class="mb-10 flex justify-center hover:opacity-80 transition">
         <img src="images/logo_azul.png" alt="InvertProfit" class="h-16 w-auto logo-glow object-contain" id="logo-img"/>
         <span class="text-xl md:text-2xl font-bold text-white" id="logo-text" style="display:none;">InvertProfit</span>
-    </div>
+    </a>
     <script>
         document.getElementById('logo-img').onerror = function() {
             this.style.display = 'none';
@@ -69,7 +77,7 @@
             <div class="flex-grow border-t border-card-border"></div>
         </div>
 
-        <form class="space-y-6">
+        <form class="space-y-6" onsubmit="event.preventDefault(); window.location.href='dashboard.html';">
             <div>
                 <label class="block text-xs font-semibold text-gray-500 uppercase mb-2 ml-1">Email</label>
                 <input type="email" placeholder="usuario@invertprofit.com" class="w-full bg-bg-dark border border-card-border rounded-xl py-3.5 px-4 focus:outline-none focus:border-primary transition-colors">

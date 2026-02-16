@@ -3,151 +3,403 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>InvertProfit - Academy Dashboard</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet"/>
+    <title>InvertProfit — Academy Dashboard</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
-            theme: { extend: { colors: { "primary": "#D4AF37", "bg-dark": "#0a0f1a", "card": "#111827", "card-border": "#1f2937" } } }
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#D4AF37",
+                        "bg-dark": "#0a0f1a",
+                        "card": "#111827",
+                        "card-border": "#1f2937",
+                        "positive": "#22c55e",
+                        "negative": "#ef4444"
+                    },
+                    fontFamily: {
+                        "sans": ["Inter", "sans-serif"]
+                    }
+                }
+            }
         }
     </script>
     <style>
-        .custom-scrollbar::-webkit-scrollbar { width: 0px; }
-        .active-link { position: relative; color: white !important; }
-        .active-link::after {
-            content: '';
-            position: absolute;
-            bottom: -6px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: #D4AF37;
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+
+        .logo-glow { filter: drop-shadow(0 0 10px rgba(212,175,55,0.3)); }
+
+        /* Card glow for active level */
+        .level-active {
+            border: 2px solid rgba(59,130,246,0.5);
+            box-shadow: 0 0 30px rgba(59,130,246,0.12), 0 0 60px rgba(59,130,246,0.06), inset 0 1px 0 rgba(59,130,246,0.1);
+            background: linear-gradient(135deg, #111827 0%, #131d30 50%, #111827 100%);
         }
-        /* Fix para evitar que el texto y logo se encimen */
-        #main-logo-text.hidden-text { display: none; }
+
+        /* Animations */
+        @keyframes coin-rotate { 0%,100%{transform:rotateY(0deg)} 50%{transform:rotateY(15deg)} }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+        .float-anim { animation: float 4s ease-in-out infinite; }
+        .coin-anim { animation: coin-rotate 6s ease-in-out infinite; perspective: 600px; }
+
+        /* Reward card hover */
+        .reward-card { transition: all 0.3s ease; }
+        .reward-card:hover { transform: translateY(-4px); border-color: rgba(212,175,55,0.3); }
+
+        /* Resume widget */
+        .resume-widget {
+            background: linear-gradient(135deg, #1a1f2e 0%, #111827 100%);
+            border: 1px solid #1f2937;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.4);
+        }
+
+        /* Sidebar link */
+        .sidebar-link { transition: all 0.2s ease; }
+        .sidebar-link:hover { background: rgba(255,255,255,0.04); color: #fff; }
+        .sidebar-link.active { background: rgba(212,175,55,0.15); color: #D4AF37; border: 1px solid rgba(212,175,55,0.2); }
+
+        /* Level card badges */
+        .badge-completed { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.25); }
+        .badge-progress { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+        .badge-locked { background: rgba(107,114,128,0.15); color: #6b7280; border: 1px solid rgba(107,114,128,0.2); }
+
+        /* No-scrollbar for rewards */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Nav arrow hover */
+        .nav-arrow { transition: all 0.2s; }
+        .nav-arrow:hover { background: #D4AF37; color: #0a0f1a; border-color: #D4AF37; }
     </style>
 </head>
-<body class="bg-bg-dark text-white font-sans flex flex-col min-h-screen overflow-x-hidden">
+<body class="bg-bg-dark text-white font-sans min-h-screen flex flex-col overflow-x-hidden">
 
-    <header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-[60]">
-        <div class="flex items-center justify-between px-4 md:px-8 py-4">
-            
-            <a href="index.html" class="flex items-center gap-3 hover:opacity-80 transition-all shrink-0">
-                <div class="flex items-center gap-2">
-                    <img src="images/logo_azul.png" alt="InvertProfit" class="h-8 md:h-10 block w-auto" id="main-logo"/>
-                    <span class="text-xl font-black tracking-tighter uppercase hidden-text" id="main-logo-text">INVERTPROFIT</span>
-                </div>
+<!-- ═══════════ UNIFIED HEADER / NAV ═══════════ -->
+<header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-[60] shrink-0">
+    <div class="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
+        <div class="flex items-center gap-2 md:gap-3">
+            <img src="images/logo_azul.png" alt="InvertProfit" class="h-8 md:h-10 w-auto logo-glow object-contain" id="logo-img"/>
+            <span class="text-lg md:text-xl font-bold text-white" id="logo-text" style="display:none;">InvertProfit</span>
+        </div>
+        <script>
+            document.getElementById('logo-img').onerror = function() {
+                this.style.display = 'none';
+                document.getElementById('logo-text').style.display = 'inline';
+            };
+        </script>
+        <nav class="hidden lg:flex items-center gap-10">
+            <a class="text-gray-400 hover:text-white transition text-lg" href="index.html">INICIO</a>
+            <a class="text-white font-semibold border-b-2 border-primary pb-1 text-lg" href="portadanivelesacademia.html">ACADEMIA</a>
+            <a class="text-gray-400 hover:text-white transition text-lg" href="mercado.html">MERCADOS</a>
+            <a class="text-gray-400 hover:text-white transition text-lg" href="#">PORTAFOLIO</a>
+        </nav>
+        <div class="flex items-center gap-2 md:gap-4">
+            <button class="shrink-0 bg-primary text-bg-dark font-bold h-10 px-6 rounded-full inline-flex items-center gap-2 whitespace-nowrap hover:bg-primary/90 transition text-xs sm:text-sm tracking-wide leading-none">
+                <span class="leading-none">⚡</span>
+                <span class="leading-none">CONECTAR BROKER</span>
+            </button>
+            <div class="hidden md:flex items-center gap-3">
+                <span class="text-gray-400 text-xl">🔔</span>
+                <div class="w-10 h-10 bg-gray-600 rounded-full"></div>
+            </div>
+            <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="lg:hidden text-gray-400 hover:text-white p-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+        </div>
+    </div>
+    <!-- Mobile nav -->
+    <nav id="mobile-menu" class="hidden lg:hidden border-t border-card-border bg-card px-4 py-3 space-y-2">
+        <a class="block text-gray-400 hover:text-white py-2 pl-3" href="index.html">INICIO</a>
+        <a class="block text-white font-semibold py-2 border-l-2 border-primary pl-3" href="portadanivelesacademia.html">ACADEMIA</a>
+        <a class="block text-gray-400 hover:text-white py-2 pl-3" href="mercado.html">MERCADOS</a>
+        <a class="block text-gray-400 hover:text-white py-2 pl-3" href="#">PORTAFOLIO</a>
+        <div class="flex items-center gap-3 pt-2 border-t border-card-border mt-2">
+            <span class="text-gray-400 text-xl">🔔</span>
+            <div class="w-8 h-8 bg-gray-600 rounded-full"></div>
+        </div>
+    </nav>
+</header>
+
+<!-- ═══════════ MAIN LAYOUT: SIDEBAR + CONTENT ═══════════ -->
+<div class="flex flex-1 overflow-hidden">
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="hidden md:flex w-60 border-r border-card-border bg-bg-dark flex-col shrink-0">
+        <nav class="flex-1 p-5 space-y-1.5 pt-6">
+            <p class="text-[9px] font-black text-gray-500 uppercase tracking-[3px] mb-5 px-3">Menú</p>
+            <a href="#" class="sidebar-link active flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold">
+                <span class="material-symbols-outlined text-[20px]">grid_view</span> Dashboard
             </a>
-
-            <script>
-                // Script mejorado para manejar errores de carga en Firebase
-                const logoImg = document.getElementById('main-logo');
-                const logoText = document.getElementById('main-logo-text');
-                
-                logoImg.onerror = function() {
-                    this.style.display = 'none';
-                    logoText.classList.remove('hidden-text');
-                    logoText.classList.add('block');
-                };
-            </script>
-
-            <nav class="hidden lg:flex items-center bg-[#0d121f] px-8 py-2.5 rounded-full border border-card-border gap-8 shadow-lg">
-                <a href="index.html" class="text-gray-400 hover:text-white transition text-[13px] font-bold uppercase tracking-wider">Inicio</a>
-                <a href="portadanivelesacademia.html" class="active-link text-[13px] font-bold uppercase tracking-wider">Academia</a>
-                <a href="mercado.html" class="text-gray-400 hover:text-white transition text-[13px] font-bold uppercase tracking-wider">Mercados</a>
-                <a href="#" class="text-gray-400 hover:text-white transition text-[13px] font-bold uppercase tracking-wider">Portafolio</a>
-            </nav>
-
-            <div class="flex items-center gap-4">
-                <div class="hidden sm:flex bg-black/40 border border-card-border px-4 py-1.5 rounded-full items-center gap-2 text-[10px] font-bold">
-                    <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div> LIVE
+            <a href="#" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-gray-400">
+                <span class="material-symbols-outlined text-[20px]">school</span> Courses
+            </a>
+            <a href="#" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-gray-400">
+                <span class="material-symbols-outlined text-[20px]">emoji_events</span> Achievements
+            </a>
+            <a href="#" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-gray-400">
+                <span class="material-symbols-outlined text-[20px]">monitoring</span> Analysis
+            </a>
+            <a href="#" class="sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-gray-400">
+                <span class="material-symbols-outlined text-[20px]">forum</span> Community
+            </a>
+        </nav>
+        <!-- User profile -->
+        <div class="p-5 border-t border-card-border">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-extrabold text-primary text-xs">AT</div>
+                <div class="flex-1 min-w-0">
+                    <p class="text-sm font-bold truncate">Alex Trader</p>
+                    <p class="text-[10px] text-primary font-bold uppercase tracking-wider">Pro Member</p>
                 </div>
-                <button class="md:hidden text-gray-400" onclick="document.getElementById('mobile-wrapper').classList.toggle('hidden')">
-                    <span class="material-symbols-outlined">menu</span>
+                <a href="Login.html" class="text-gray-500 hover:text-red-400 transition" title="Cerrar Sesión">
+                    <span class="material-symbols-outlined text-[20px]">logout</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <!-- ── MAIN CONTENT ── -->
+    <main class="flex-1 overflow-y-auto relative">
+        <div class="p-6 md:p-10 pb-32">
+
+            <!-- Dashboard Header -->
+            <div class="flex items-start justify-between mb-10">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight">Academy Dashboard</h1>
+                    <p class="text-gray-500 text-sm mt-1">Welcome back! Continue your journey to financial freedom.</p>
+                </div>
+                <div class="hidden sm:flex items-center gap-3">
+                    <div class="flex items-center gap-2 bg-card border border-card-border px-4 py-2 rounded-full">
+                        <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                        <span class="text-[11px] font-bold uppercase tracking-wider">Live Market</span>
+                    </div>
+                    <button class="w-10 h-10 rounded-full bg-card border border-card-border flex items-center justify-center text-gray-400 hover:text-white transition">
+                        <span class="material-symbols-outlined text-[20px]">notifications</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- ═══ SELECT YOUR LEVEL ═══ -->
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-lg font-black uppercase tracking-tight flex items-center gap-3">
+                    <span class="w-1 h-7 bg-primary rounded-full"></span>
+                    Select Your Level
+                </h2>
+                <div class="flex items-center gap-2">
+                    <button onclick="scrollLevels(-1)" class="nav-arrow w-10 h-10 rounded-full border border-card-border bg-card flex items-center justify-center text-gray-400">
+                        <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+                    </button>
+                    <button onclick="scrollLevels(1)" class="nav-arrow w-10 h-10 rounded-full border-2 border-primary bg-primary text-bg-dark flex items-center justify-center font-bold">
+                        <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="levels-scroll" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
+
+                <!-- BÁSICO — COMPLETED -->
+                <div class="bg-card border border-card-border rounded-3xl p-6 relative group hover:border-green-500/20 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="badge-completed text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">Completed</span>
+                        <span class="text-green-500 text-lg">✓</span>
+                    </div>
+                    <div class="py-8 flex justify-center">
+                        <div class="coin-anim w-28 h-28 rounded-full flex items-center justify-center" style="background: radial-gradient(circle at 35% 35%, #f5d060 0%, #c9952b 40%, #8a6914 80%, #6b5311 100%); box-shadow: 0 8px 30px rgba(212,175,55,0.3), inset 0 2px 4px rgba(255,255,255,0.3);">
+                            <span class="text-5xl font-black text-white/90" style="text-shadow: 0 2px 4px rgba(0,0,0,0.3);">$</span>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-black text-center uppercase tracking-tight text-gray-300 mb-1">Básico</h3>
+                    <p class="text-center text-xs text-gray-500 mb-6">Foundations of trading &amp; market analysis.</p>
+                    <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
+                        <span class="text-gray-500">Progress</span>
+                        <span class="text-green-500">100%</span>
+                    </div>
+                    <div class="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-green-500 rounded-full w-full"></div>
+                    </div>
+                </div>
+
+                <!-- INTERMEDIO — IN PROGRESS -->
+                <div class="level-active rounded-3xl p-6 relative group transition-all duration-300">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="badge-progress text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span> In Progress
+                        </span>
+                        <span class="text-blue-400 text-lg">⚡</span>
+                    </div>
+                    <div class="py-8 flex justify-center">
+                        <div class="float-anim w-28 h-28 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #1e3a5f 0%, #0f2744 50%, #1a365d 100%); box-shadow: 0 8px 30px rgba(59,130,246,0.2), inset 0 1px 0 rgba(255,255,255,0.1);">
+                            <svg viewBox="0 0 60 60" width="56" height="56">
+                                <defs><linearGradient id="cg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#60a5fa"/><stop offset="100%" style="stop-color:#3b82f6"/></linearGradient></defs>
+                                <polygon points="30,8 52,20 52,40 30,52 8,40 8,20" fill="none" stroke="url(#cg)" stroke-width="1.5" opacity="0.6"/>
+                                <polygon points="30,8 52,20 30,32 8,20" fill="rgba(59,130,246,0.15)" stroke="url(#cg)" stroke-width="1"/>
+                                <polygon points="30,32 52,20 52,40 30,52" fill="rgba(59,130,246,0.1)" stroke="url(#cg)" stroke-width="1"/>
+                                <polygon points="30,32 8,20 8,40 30,52" fill="rgba(59,130,246,0.2)" stroke="url(#cg)" stroke-width="1"/>
+                                <line x1="30" y1="8" x2="30" y2="52" stroke="url(#cg)" stroke-width="0.5" opacity="0.4"/>
+                                <line x1="8" y1="20" x2="52" y2="40" stroke="url(#cg)" stroke-width="0.5" opacity="0.3"/>
+                                <line x1="52" y1="20" x2="8" y2="40" stroke="url(#cg)" stroke-width="0.5" opacity="0.3"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-black text-center uppercase tracking-tight text-white mb-1">Intermedio</h3>
+                    <p class="text-center text-xs text-gray-400 mb-6">Technical analysis &amp; risk management strategies.</p>
+                    <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
+                        <span class="text-gray-500">Progress</span>
+                        <span class="text-blue-400">45%</span>
+                    </div>
+                    <div class="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
+                        <div class="h-full bg-blue-500 rounded-full" style="width:45%"></div>
+                    </div>
+                </div>
+
+                <!-- AVANZADO — LOCKED -->
+                <div class="bg-card border border-card-border rounded-3xl p-6 relative opacity-50 grayscale-[60%]">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="badge-locked text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[12px]">lock</span> Locked
+                        </span>
+                    </div>
+                    <div class="py-8 flex justify-center">
+                        <div class="w-28 h-28 rounded-full flex items-center justify-center relative" style="background: radial-gradient(circle at 40% 30%, #4b5563 0%, #1f2937 60%, #111827 100%); box-shadow: 0 8px 30px rgba(0,0,0,0.3);">
+                            <div class="absolute inset-0 rounded-full" style="background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.08) 0%, transparent 50%);"></div>
+                            <div class="w-12 h-12 rounded-full bg-black/50 flex items-center justify-center border border-gray-600/30">
+                                <span class="material-symbols-outlined text-gray-500 text-2xl">lock</span>
+                            </div>
+                        </div>
+                    </div>
+                    <h3 class="text-2xl font-black text-center uppercase tracking-tight text-gray-500 mb-1">Avanzado</h3>
+                    <p class="text-center text-xs text-gray-600 mb-4">Institutional strategies &amp; psychology.</p>
+                    <p class="text-center text-[10px] font-bold text-gray-600 uppercase tracking-wider">Requires Intermedio</p>
+                </div>
+            </div>
+
+            <!-- ═══ REWARDS & MILESTONES ═══ -->
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-lg font-black uppercase tracking-tight flex items-center gap-3">
+                    <span class="w-1 h-7 bg-primary rounded-full"></span>
+                    Rewards &amp; Milestones
+                </h2>
+                <a href="#" class="text-primary text-sm font-bold hover:underline transition">View All Rewards</a>
+            </div>
+
+            <div class="flex gap-5 overflow-x-auto no-scrollbar pb-4">
+                <!-- Reward 1: First Victory -->
+                <div class="reward-card bg-card border border-card-border rounded-2xl p-5 min-w-[200px] flex-shrink-0">
+                    <div class="h-28 flex items-center justify-center mb-4">
+                        <div class="w-20 h-20 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #92702d 0%, #d4af37 50%, #92702d 100%); box-shadow: 0 4px 20px rgba(212,175,55,0.2);">
+                            <span class="text-4xl">🏆</span>
+                        </div>
+                    </div>
+                    <h4 class="font-black text-center text-sm mb-1">First Victory</h4>
+                    <p class="text-center text-[10px] text-gray-500 mb-3">Executed 1st live order</p>
+                    <div class="flex justify-center">
+                        <span class="bg-green-500/15 text-green-400 text-[9px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-green-500/20">Unlocked</span>
+                    </div>
+                </div>
+
+                <!-- Reward 2: Risk Master -->
+                <div class="reward-card bg-card border border-card-border rounded-2xl p-5 min-w-[200px] flex-shrink-0">
+                    <div class="h-28 flex items-center justify-center mb-4">
+                        <div class="w-20 h-20 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #7c3aed 100%); box-shadow: 0 4px 20px rgba(168,85,247,0.2);">
+                            <span class="text-4xl">💎</span>
+                        </div>
+                    </div>
+                    <h4 class="font-black text-center text-sm mb-1">Risk Master</h4>
+                    <p class="text-center text-[10px] text-gray-500 mb-3">Maintained 1:3 RR</p>
+                    <div class="flex justify-center">
+                        <span class="bg-green-500/15 text-green-400 text-[9px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-green-500/20">Unlocked</span>
+                    </div>
+                </div>
+
+                <!-- Reward 3: Chart Reader (locked) -->
+                <div class="reward-card bg-card border border-card-border rounded-2xl p-5 min-w-[200px] flex-shrink-0 opacity-40 grayscale">
+                    <div class="h-28 flex items-center justify-center mb-4">
+                        <div class="w-20 h-20 rounded-2xl flex items-center justify-center bg-gray-700/50">
+                            <span class="text-4xl grayscale">📊</span>
+                        </div>
+                    </div>
+                    <h4 class="font-black text-center text-sm mb-1 text-gray-500">Chart Reader</h4>
+                    <p class="text-center text-[10px] text-gray-600 mb-3">Complete 10 analyses</p>
+                    <div class="flex justify-center">
+                        <span class="bg-gray-500/10 text-gray-500 text-[9px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-gray-500/20">Locked</span>
+                    </div>
+                </div>
+
+                <!-- Reward 4: Consistency (locked) -->
+                <div class="reward-card bg-card border border-card-border rounded-2xl p-5 min-w-[200px] flex-shrink-0 opacity-40 grayscale">
+                    <div class="h-28 flex items-center justify-center mb-4">
+                        <div class="w-20 h-20 rounded-2xl flex items-center justify-center bg-gray-700/50">
+                            <span class="text-4xl grayscale">🔥</span>
+                        </div>
+                    </div>
+                    <h4 class="font-black text-center text-sm mb-1 text-gray-500">Consistency</h4>
+                    <p class="text-center text-[10px] text-gray-600 mb-3">7-day login streak</p>
+                    <div class="flex justify-center">
+                        <span class="bg-gray-500/10 text-gray-500 text-[9px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-gray-500/20">Locked</span>
+                    </div>
+                </div>
+
+                <!-- Reward 5: Market Ninja (locked) -->
+                <div class="reward-card bg-card border border-card-border rounded-2xl p-5 min-w-[200px] flex-shrink-0 opacity-40 grayscale">
+                    <div class="h-28 flex items-center justify-center mb-4">
+                        <div class="w-20 h-20 rounded-2xl flex items-center justify-center bg-gray-700/50">
+                            <span class="text-4xl grayscale">⚔️</span>
+                        </div>
+                    </div>
+                    <h4 class="font-black text-center text-sm mb-1 text-gray-500">Market Ninja</h4>
+                    <p class="text-center text-[10px] text-gray-600 mb-3">Complete Advanced level</p>
+                    <div class="flex justify-center">
+                        <span class="bg-gray-500/10 text-gray-500 text-[9px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border border-gray-500/20">Locked</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══ RESUME LEARNING WIDGET (Floating) ═══ -->
+        <div class="resume-widget fixed bottom-6 right-6 w-[380px] max-w-[calc(100vw-3rem)] rounded-2xl p-4 z-50 hidden sm:block" id="resume-widget">
+            <div class="flex items-start gap-3">
+                <div class="w-12 h-12 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center shrink-0 cursor-pointer hover:bg-white/15 transition">
+                    <span class="material-symbols-outlined text-white text-2xl">play_arrow</span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-[9px] font-bold uppercase tracking-wider text-orange-400 flex items-center gap-1">
+                            <span class="w-1.5 h-1.5 rounded-full bg-orange-400"></span> Resume Learning
+                        </span>
+                        <span class="text-[10px] font-bold text-gray-400">12 MIN LEFT</span>
+                    </div>
+                    <h4 class="text-sm font-bold text-white mb-0.5 truncate">Candle Patterns 101</h4>
+                    <p class="text-[10px] text-gray-500 mb-2 truncate">Understanding the Doji and Hammer formations.</p>
+                    <div class="flex items-center gap-2">
+                        <div class="flex-1 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                            <div class="h-full bg-orange-400 rounded-full" style="width:75%"></div>
+                        </div>
+                        <span class="text-[10px] font-bold text-orange-400">75%</span>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('resume-widget').style.display='none'" class="text-gray-500 hover:text-white transition shrink-0 -mt-1">
+                    <span class="material-symbols-outlined text-[16px]">close</span>
                 </button>
             </div>
         </div>
 
-        <div id="mobile-wrapper" class="hidden lg:hidden bg-card border-b border-card-border">
-            <nav class="flex flex-col p-4 space-y-4">
-                <a href="index.html" class="text-gray-400 font-bold uppercase text-sm">Inicio</a>
-                <a href="portadanivelesacademia.html" class="text-primary font-bold uppercase text-sm">Academia</a>
-                <a href="mercado.html" class="text-gray-400 font-bold uppercase text-sm">Mercados</a>
-                <a href="Login.html" class="text-red-400 font-bold uppercase text-sm">Cerrar Sesión</a>
-            </nav>
-        </div>
-    </header>
+    </main>
+</div>
 
-    <div class="flex flex-grow overflow-hidden">
-        <aside class="hidden md:flex w-64 border-r border-card-border bg-[#0a0f1a] flex-col shrink-0">
-            <nav class="flex-grow p-6 space-y-2">
-                <p class="text-[10px] font-black text-gray-500 uppercase tracking-[2px] mb-4">Internal Menu</p>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 bg-primary/10 text-primary rounded-xl border border-primary/20 font-bold text-sm">
-                    <span class="material-symbols-outlined">grid_view</span> DASHBOARD
-                </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition text-sm font-bold">
-                    <span class="material-symbols-outlined">school</span> MIS CURSOS
-                </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:text-white hover:bg-white/5 rounded-xl transition text-sm font-bold">
-                    <span class="material-symbols-outlined">emoji_events</span> LOGROS
-                </a>
-            </nav>
-            
-            <div class="p-6 border-t border-card-border flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-bold text-primary text-xs">AT</div>
-                <div class="flex-grow">
-                    <p class="text-sm font-bold">Alex Trader</p>
-                    <p class="text-[9px] text-gray-500 uppercase font-black">Pro Member</p>
-                </div>
-                <a href="Login.html" class="text-gray-500 hover:text-white"><span class="material-symbols-outlined">logout</span></a>
-            </div>
-        </aside>
+<script>
+function scrollLevels(dir) {
+    var el = document.getElementById('levels-scroll');
+    if (el) el.scrollBy({ left: dir * 340, behavior: 'smooth' });
+}
+</script>
 
-        <main class="flex-grow overflow-y-auto p-6 md:p-10 custom-scrollbar">
-            <header class="mb-10">
-                <h1 class="text-3xl font-black uppercase tracking-tighter">Academy Dashboard</h1>
-                <p class="text-gray-500 text-sm">Bienvenido de nuevo a tu panel de aprendizaje.</p>
-            </header>
-
-            <h2 class="text-lg font-black uppercase mb-8 border-l-4 border-primary pl-4">Selecciona tu Nivel</h2>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="bg-card border border-card-border rounded-[32px] p-8 relative group hover:border-primary/20 transition-all">
-                    <div class="py-10 flex justify-center">
-                        <div class="w-24 h-24 bg-gradient-to-br from-yellow-600 to-yellow-800 rounded-full flex items-center justify-center shadow-xl">
-                            <span class="text-4xl font-black text-white">$</span>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-black text-center mb-1 uppercase tracking-tighter">Básico</h3>
-                    <p class="text-center text-xs text-gray-500 mb-8">Fundamentos del trading y análisis.</p>
-                    <div class="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
-                        <div class="h-full bg-green-500 w-full"></div>
-                    </div>
-                </div>
-
-                <div class="bg-[#1a2235] border-2 border-primary/40 rounded-[32px] p-8 shadow-2xl">
-                    <div class="py-10 flex justify-center">
-                        <span class="material-symbols-outlined text-8xl text-white">layers</span>
-                    </div>
-                    <h3 class="text-2xl font-black text-center mb-1 uppercase tracking-tighter">Intermedio</h3>
-                    <p class="text-center text-xs text-gray-400 mb-8">Análisis técnico y gestión de riesgo.</p>
-                    <div class="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
-                        <div class="h-full bg-primary w-[45%]"></div>
-                    </div>
-                    <p class="text-center text-[10px] font-bold text-gray-500 mt-3 uppercase">Progreso 45%</p>
-                </div>
-
-                <div class="bg-card border border-card-border rounded-[32px] p-8 opacity-40 grayscale">
-                    <div class="py-10 flex justify-center">
-                        <span class="material-symbols-outlined text-8xl text-gray-600">lock</span>
-                    </div>
-                    <h3 class="text-2xl font-black text-center mb-1 uppercase text-gray-500">Avanzado</h3>
-                    <p class="text-center text-[10px] font-bold text-gray-600 uppercase">Requiere nivel previo</p>
-                </div>
-            </div>
-        </main>
-    </div>
 </body>
 </html>
