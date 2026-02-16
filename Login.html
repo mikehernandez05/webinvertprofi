@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>InvertProfit - Iniciar Sesión</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
+    <title>InvertProfit - Acceso a la Terminal</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -13,62 +13,93 @@
             theme: {
                 extend: {
                     colors: {
-                        "primary": "#D4AF37",
+                        "primary": "#D4AF37", /* Dorado de la imagen */
                         "bg-dark": "#0a0f1a",
                         "card": "#111827",
                         "card-border": "#1f2937",
-                    },
-                    fontFamily: {
-                        "sans": ["Inter", "sans-serif"],
                     }
                 },
             },
         }
     </script>
+    <style>
+        /* Gradiente de fondo sutil como el de la captura */
+        body {
+            background: radial-gradient(circle at 50% 0%, #111a2e 0%, #0a0f1a 100%);
+        }
+        /* Efecto de brillo para el logo */
+        .logo-glow {
+            filter: drop-shadow(0 0 10px rgba(212, 175, 55, 0.3));
+        }
+    </style>
 </head>
-<body class="bg-bg-dark text-white font-sans min-h-screen flex flex-col justify-center items-center relative overflow-hidden">
-    
-    <div class="absolute top-0 left-0 w-full h-full overflow-hidden z-0">
-        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-[100px]"></div>
-    </div>
+<body class="text-white font-sans min-h-screen flex flex-col items-center justify-center px-4 py-10">
 
-    <div class="w-full max-w-md p-6 z-10">
-        <div class="flex justify-center mb-8 gap-3 items-center">
-             <div class="h-10 w-10 bg-primary rounded flex items-center justify-center font-bold text-bg-dark text-xl">IP</div>
-             <span class="text-2xl font-bold">InvertProfit</span>
+    <div class="mb-10 flex justify-center">
+        <img src="images/logo_azul.png" alt="InvertProfit" class="h-16 w-auto logo-glow object-contain" id="logo-img"/>
+        <span class="text-xl md:text-2xl font-bold text-white" id="logo-text" style="display:none;">InvertProfit</span>
+    </div>
+    <script>
+        document.getElementById('logo-img').onerror = function() {
+            this.style.display = 'none';
+            document.getElementById('logo-text').style.display = 'inline';
+        };
+    </script>
+
+    <div class="w-full max-w-md bg-card border border-card-border rounded-[2rem] p-8 md:p-10 shadow-2xl backdrop-blur-sm">
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold tracking-tight mb-2">Iniciar Sesión</h1>
+            <p class="text-gray-400 text-sm">Elige tu nivel de acceso a la academia</p>
         </div>
 
-        <div class="bg-card border border-card-border rounded-2xl p-8 shadow-2xl backdrop-blur-sm">
-            <h2 class="text-2xl font-bold text-center mb-2">Bienvenido</h2>
-            <p class="text-gray-400 text-center text-sm mb-8">Accede a tu panel de control</p>
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <button class="flex items-center justify-center gap-2 py-3 px-4 border border-card-border rounded-xl hover:bg-white/5 transition-all font-medium text-sm">
+                <svg class="w-5 h-5" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+                Google
+            </button>
+            <button class="flex items-center justify-center gap-2 py-3 px-4 border border-card-border rounded-xl hover:bg-white/5 transition-all font-medium text-sm">
+                <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M17.05 20.28c-.98.95-2.05 1.78-3.19 1.76-1.14-.02-1.5-.72-2.82-.72-1.32 0-1.73.7-2.82.74-1.14.04-2.31-.92-3.3-2.34-2-2.89-1.53-7.23 1.34-9.35 1.43-1.04 3.12-1.2 4.07-.8.95.4 1.83.95 2.41.95.58 0 1.64-.67 2.82-.79 1.24-.12 2.76.32 3.63 1.32-2.56 1.48-2.14 5.39.54 6.78-.58 1.47-1.73 2.96-2.7 3.95zM12.03 7.25c-.13-2.23 1.73-4.21 3.8-4.25.13 2.23-1.87 4.31-3.8 4.25z"/></svg>
+                Apple ID
+            </button>
+        </div>
 
-            <form onsubmit="event.preventDefault(); window.location.href='dashboard.html';" class="space-y-6">
-                <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-2">Correo Electrónico</label>
-                    <input type="email" placeholder="usuario@invertprofit.com" class="w-full bg-bg-dark border border-card-border rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-400 mb-2">Contraseña</label>
-                    <input type="password" placeholder="••••••••" class="w-full bg-bg-dark border border-card-border rounded-lg px-4 py-3 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors" required>
-                </div>
+        <div class="relative flex items-center mb-8">
+            <div class="flex-grow border-t border-card-border"></div>
+            <span class="flex-shrink mx-4 text-gray-500 text-xs uppercase tracking-widest">o con email</span>
+            <div class="flex-grow border-t border-card-border"></div>
+        </div>
 
-                <div class="flex items-center justify-between text-xs text-gray-400">
-                    <label class="flex items-center gap-2 cursor-pointer">
-                        <input type="checkbox" class="rounded bg-bg-dark border-card-border text-primary focus:ring-0">
-                        Recordarme
-                    </label>
-                    <a href="#" class="hover:text-primary transition">¿Olvidaste tu contraseña?</a>
-                </div>
-
-                <button type="submit" class="w-full bg-primary text-bg-dark font-bold py-3.5 rounded-lg hover:bg-primary/90 transition shadow-lg shadow-primary/20">
-                    INGRESAR A LA PLATAFORMA
-                </button>
-            </form>
-
-            <div class="mt-6 text-center text-xs text-gray-500">
-                <p>¿No tienes cuenta? <a href="portadanivelesacademia.html" class="text-primary hover:underline">Selecciona tu plan aquí</a></p>
+        <form class="space-y-6">
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase mb-2 ml-1">Email</label>
+                <input type="email" placeholder="usuario@invertprofit.com" class="w-full bg-bg-dark border border-card-border rounded-xl py-3.5 px-4 focus:outline-none focus:border-primary transition-colors">
             </div>
+            <div>
+                <label class="block text-xs font-semibold text-gray-500 uppercase mb-2 ml-1">Contraseña</label>
+                <input type="password" placeholder="••••••••" class="w-full bg-bg-dark border border-card-border rounded-xl py-3.5 px-4 focus:outline-none focus:border-primary transition-colors">
+            </div>
+
+            <button type="submit" class="w-full bg-primary hover:bg-yellow-600 text-bg-dark font-bold py-4 rounded-xl transition-all transform active:scale-[0.98] shadow-lg shadow-primary/20 uppercase tracking-wider">
+                Continuar Ascenso
+            </button>
+        </form>
+
+        <p class="mt-8 text-center text-sm text-gray-400">
+            ¿Nuevo en la academia? <a href="#" class="text-primary font-bold hover:underline">Regístrate</a>
+        </p>
+    </div>
+
+    <div class="mt-12 flex flex-wrap justify-center gap-8 text-[11px] font-bold text-gray-600 uppercase tracking-widest">
+        <div class="flex items-center gap-2">
+            <span class="w-2 h-2 bg-primary rounded-full"></span> SecurePlatform
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="w-2 h-2 bg-primary rounded-full"></span> ProCertified
+        </div>
+        <div class="flex items-center gap-2">
+            <span class="w-2 h-2 bg-primary rounded-full"></span> GlobalMarkets
         </div>
     </div>
+
 </body>
 </html>
