@@ -231,9 +231,13 @@
 
             <!-- Market Movements Table -->
             <div class="bg-card rounded-xl border border-card-border p-4 md:p-6 flex-1 overflow-x-auto">
-                <div class="flex items-center justify-between mb-4 md:mb-6">
+                <div class="flex items-center justify-between mb-4 md:mb-6 flex-wrap gap-2">
                     <h2 class="text-white font-bold text-sm md:text-lg">MOVIMIENTOS DE MERCADO</h2>
-                    <div class="flex gap-1 md:gap-2">
+                    <div class="flex items-center gap-2 md:gap-3">
+                        <div class="relative">
+                            <svg class="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                            <input id="market-search" type="text" placeholder="Buscar..." oninput="searchMarket(this.value)" class="bg-white/5 border border-card-border rounded-lg pl-8 pr-3 py-1.5 text-xs md:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-primary/50 w-28 md:w-40 transition">
+                        </div>
                         <button onclick="filterMarket('forex')" id="btn-forex" class="px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-semibold bg-white/10 text-white">Forex</button>
                         <button onclick="filterMarket('crypto')" id="btn-crypto" class="px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-semibold text-gray-400 hover:bg-white/5">Crypto</button>
                         <button onclick="filterMarket('stocks')" id="btn-stocks" class="px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-semibold text-gray-400 hover:bg-white/5">Indices</button>
@@ -250,7 +254,11 @@
                             <th class="text-right py-2 md:py-3 font-medium">TREND</th>
                         </tr>
                     </thead>
-                    <tbody id="market-table" class="text-base"></tbody>
+                    <tbody id="market-table" class="text-base">
+                        <tr><td colspan="6" class="py-8 text-center text-gray-500 text-sm">
+                            <div class="flex items-center justify-center gap-2"><svg class="animate-spin w-4 h-4" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg> Cargando datos en tiempo real...</div>
+                        </td></tr>
+                    </tbody>
                 </table>
             </div>
         </section>
@@ -682,21 +690,177 @@
         document.addEventListener('keydown',(e)=>{if(e.key==='Escape'){closeCalendarModal();closeChartModal();}});
 
         // ========== MARKET DATA FETCHERS ==========
-        async function fetchForexData(){const pairs=['EUR/USD','GBP/USD','USD/JPY','AUD/USD','USD/CAD'];const data=[];for(const pair of pairs){try{const ticker='C:'+pair.replace('/','');const now=new Date();const from=new Date(now.getTime()-24*3600000);const url=polygonUrl(`/v2/aggs/ticker/${ticker}/range/1/minute/${from.toISOString().split('T')[0]}/${now.toISOString().split('T')[0]}?adjusted=true&sort=desc&limit=1`);const response=await safeFetch(url,'Polygon:forex');if(!response)continue;const json=await response.json();if(json.results&&json.results[0]){const r=json.results[0];const prevUrl=polygonUrl(`/v2/aggs/ticker/${ticker}/prev`);const prevResponse=await safeFetch(prevUrl,'Polygon:forex-prev');const prevJson=prevResponse?await prevResponse.json():{};const prevClose=prevJson.results?.[0]?.c||r.o;data.push({symbol:pair,price:r.c,change:((r.c-prevClose)/prevClose*100),high:r.h,low:r.l,type:'forex'});}}catch(e){try{const ticker='C:'+pair.replace('/','');const url=polygonUrl(`/v2/aggs/ticker/${ticker}/prev`);const response=await safeFetch(url,'Polygon:forex-fallback');if(!response)continue;const json=await response.json();if(json.results&&json.results[0]){const r=json.results[0];data.push({symbol:pair,price:r.c,change:((r.c-r.o)/r.o*100),high:r.h,low:r.l,type:'forex'});}}catch(e2){}}}return data;}
-        async function fetchCryptoData(){const pairs=['BTC/USD','ETH/USD'];const data=[];for(const pair of pairs){try{const ticker='X:'+pair.replace('/','');const now=new Date();const from=new Date(now.getTime()-24*3600000);const url=polygonUrl(`/v2/aggs/ticker/${ticker}/range/1/minute/${from.toISOString().split('T')[0]}/${now.toISOString().split('T')[0]}?adjusted=true&sort=desc&limit=1`);const response=await safeFetch(url,'Polygon:crypto');if(!response)continue;const json=await response.json();if(json.results&&json.results[0]){const r=json.results[0];const prevUrl=polygonUrl(`/v2/aggs/ticker/${ticker}/prev`);const prevResponse=await safeFetch(prevUrl,'Polygon:crypto-prev');const prevJson=prevResponse?await prevResponse.json():{};const prevClose=prevJson.results?.[0]?.c||r.o;data.push({symbol:pair,price:r.c,change:((r.c-prevClose)/prevClose*100),high:r.h,low:r.l,type:'crypto'});}}catch(e){try{const ticker='X:'+pair.replace('/','');const url=polygonUrl(`/v2/aggs/ticker/${ticker}/prev`);const response=await safeFetch(url,'Polygon:crypto-fallback');if(!response)continue;const json=await response.json();if(json.results&&json.results[0]){const r=json.results[0];data.push({symbol:pair,price:r.c,change:((r.c-r.o)/r.o*100),high:r.h,low:r.l,type:'crypto'});}}catch(e2){}}}return data;}
-        async function fetchStocksData(){const symbols=['SPY','NVDA','AAPL','MSFT','TSLA'];const names={'SPY':'SPX 500','NVDA':'NVDA','AAPL':'AAPL','MSFT':'MSFT','TSLA':'TSLA'};const data=[];for(const symbol of symbols){try{const now=new Date();const from=new Date(now.getTime()-24*3600000);const url=polygonUrl(`/v2/aggs/ticker/${symbol}/range/1/minute/${from.toISOString().split('T')[0]}/${now.toISOString().split('T')[0]}?adjusted=true&sort=desc&limit=1`);const response=await safeFetch(url,'Polygon:stocks');if(!response)continue;const json=await response.json();if(json.results&&json.results[0]){const r=json.results[0];const prevUrl=polygonUrl(`/v2/aggs/ticker/${symbol}/prev`);const prevResponse=await safeFetch(prevUrl,'Polygon:stocks-prev');const prevJson=prevResponse?await prevResponse.json():{};const prevClose=prevJson.results?.[0]?.c||r.o;data.push({symbol:names[symbol]||symbol,price:r.c,change:((r.c-prevClose)/prevClose*100),high:r.h,low:r.l,type:'stocks'});}}catch(e){try{const url=polygonUrl(`/v2/aggs/ticker/${symbol}/prev`);const response=await safeFetch(url,'Polygon:stocks-fallback');if(!response)continue;const json=await response.json();if(json.results&&json.results[0]){const r=json.results[0];data.push({symbol:names[symbol]||symbol,price:r.c,change:((r.c-r.o)/r.o*100),high:r.h,low:r.l,type:'stocks'});}}catch(e2){}}}return data;}
+        // Helper: fecha en formato YYYY-MM-DD
+        function fmtDate(d){return d.toISOString().split('T')[0];}
+        function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return fmtDate(d);}
+
+        async function fetchForexData(){
+            const pairs=['EUR/USD','GBP/USD','USD/JPY','AUD/USD','USD/CAD','NZD/USD','USD/CHF','EUR/GBP','EUR/JPY','GBP/JPY'];
+            const data=[];
+            for(const pair of pairs){
+                try{
+                    const ticker='C:'+pair.replace('/','');
+                    // Intentar minutos recientes (7 días atrás para cubrir fines de semana)
+                    let url=polygonUrl(`/v2/aggs/ticker/${ticker}/range/1/minute/${daysAgo(7)}/${fmtDate(new Date())}?adjusted=true&sort=desc&limit=1`);
+                    let response=await safeFetch(url,'Polygon:forex');
+                    let json=response?await response.json():null;
+                    // Si no hay minutos, intentar daily
+                    if(!json?.results?.length){
+                        url=polygonUrl(`/v2/aggs/ticker/${ticker}/range/1/day/${daysAgo(7)}/${fmtDate(new Date())}?adjusted=true&sort=desc&limit=2`);
+                        response=await safeFetch(url,'Polygon:forex-daily');
+                        json=response?await response.json():null;
+                    }
+                    // Último recurso: prev
+                    if(!json?.results?.length){
+                        url=polygonUrl(`/v2/aggs/ticker/${ticker}/prev`);
+                        response=await safeFetch(url,'Polygon:forex-prev');
+                        json=response?await response.json():null;
+                    }
+                    if(json?.results?.length){
+                        const r=json.results[0];
+                        // Obtener prev close para calcular cambio %
+                        const prevUrl=polygonUrl(`/v2/aggs/ticker/${ticker}/prev`);
+                        const prevR=await safeFetch(prevUrl,'Polygon:forex-prev');
+                        const prevJ=prevR?await prevR.json():{};
+                        const prevClose=prevJ?.results?.[0]?.c||r.o;
+                        data.push({symbol:pair,price:r.c,change:((r.c-prevClose)/prevClose*100),high:r.h,low:r.l,type:'forex'});
+                    }
+                }catch(e){console.warn('[Market] Error forex',pair,e.message);}
+            }
+            return data;
+        }
+
+        async function fetchCryptoData(){
+            const pairs=['BTC/USD','ETH/USD','SOL/USD','XRP/USD','ADA/USD','DOGE/USD','AVAX/USD','LINK/USD','DOT/USD','MATIC/USD'];
+            const data=[];
+            for(const pair of pairs){
+                try{
+                    const ticker='X:'+pair.replace('/','');
+                    // Crypto opera 24/7, intentar minutos recientes
+                    let url=polygonUrl(`/v2/aggs/ticker/${ticker}/range/1/minute/${daysAgo(3)}/${fmtDate(new Date())}?adjusted=true&sort=desc&limit=1`);
+                    let response=await safeFetch(url,'Polygon:crypto');
+                    let json=response?await response.json():null;
+                    if(!json?.results?.length){
+                        url=polygonUrl(`/v2/aggs/ticker/${ticker}/range/1/day/${daysAgo(7)}/${fmtDate(new Date())}?adjusted=true&sort=desc&limit=2`);
+                        response=await safeFetch(url,'Polygon:crypto-daily');
+                        json=response?await response.json():null;
+                    }
+                    if(!json?.results?.length){
+                        url=polygonUrl(`/v2/aggs/ticker/${ticker}/prev`);
+                        response=await safeFetch(url,'Polygon:crypto-prev');
+                        json=response?await response.json():null;
+                    }
+                    if(json?.results?.length){
+                        const r=json.results[0];
+                        const prevUrl=polygonUrl(`/v2/aggs/ticker/${ticker}/prev`);
+                        const prevR=await safeFetch(prevUrl,'Polygon:crypto-prev2');
+                        const prevJ=prevR?await prevR.json():{};
+                        const prevClose=prevJ?.results?.[0]?.c||r.o;
+                        data.push({symbol:pair,price:r.c,change:((r.c-prevClose)/prevClose*100),high:r.h,low:r.l,type:'crypto'});
+                    }
+                }catch(e){console.warn('[Market] Error crypto',pair,e.message);}
+            }
+            return data;
+        }
+
+        async function fetchStocksData(){
+            const symbols=['SPY','NVDA','AAPL','MSFT','TSLA','AMZN','GOOGL','META','AMD','NFLX'];
+            const names={'SPY':'SPX 500','NVDA':'NVDA','AAPL':'AAPL','MSFT':'MSFT','TSLA':'TSLA','AMZN':'AMZN','GOOGL':'GOOGL','META':'META','AMD':'AMD','NFLX':'NFLX'};
+            const data=[];
+            for(const symbol of symbols){
+                try{
+                    // Stocks: intentar snapshot primero (funciona en plan Pro)
+                    let url=polygonUrl(`/v2/snapshot/locale/us/markets/stocks/tickers?tickers=${symbol}`);
+                    let response=await safeFetch(url,'Polygon:stocks-snap');
+                    let json=response?await response.json():null;
+                    if(json?.tickers?.length){
+                        const s=json.tickers[0];
+                        const price=s.lastTrade?.p||s.min?.c||s.day?.c||s.prevDay?.c;
+                        if(price){
+                            data.push({symbol:names[symbol]||symbol,price:price,change:s.todaysChangePerc||0,high:s.day?.h||s.prevDay?.h||price,low:s.day?.l||s.prevDay?.l||price,type:'stocks'});
+                            continue;
+                        }
+                    }
+                    // Fallback a aggregates con rango de 7 días
+                    url=polygonUrl(`/v2/aggs/ticker/${symbol}/range/1/minute/${daysAgo(7)}/${fmtDate(new Date())}?adjusted=true&sort=desc&limit=1`);
+                    response=await safeFetch(url,'Polygon:stocks');
+                    json=response?await response.json():null;
+                    if(!json?.results?.length){
+                        url=polygonUrl(`/v2/aggs/ticker/${symbol}/range/1/day/${daysAgo(7)}/${fmtDate(new Date())}?adjusted=true&sort=desc&limit=2`);
+                        response=await safeFetch(url,'Polygon:stocks-daily');
+                        json=response?await response.json():null;
+                    }
+                    if(!json?.results?.length){
+                        url=polygonUrl(`/v2/aggs/ticker/${symbol}/prev`);
+                        response=await safeFetch(url,'Polygon:stocks-prev');
+                        json=response?await response.json():null;
+                    }
+                    if(json?.results?.length){
+                        const r=json.results[0];
+                        const prevUrl=polygonUrl(`/v2/aggs/ticker/${symbol}/prev`);
+                        const prevR=await safeFetch(prevUrl,'Polygon:stocks-prev2');
+                        const prevJ=prevR?await prevR.json():{};
+                        const prevClose=prevJ?.results?.[0]?.c||r.o;
+                        data.push({symbol:names[symbol]||symbol,price:r.c,change:((r.c-prevClose)/prevClose*100),high:r.h,low:r.l,type:'stocks'});
+                    }
+                }catch(e){console.warn('[Market] Error stocks',symbol,e.message);}
+            }
+            return data;
+        }
 
         function renderTicker(data){const c=document.getElementById('ticker-tape');if(!data.length)return;let h='';data.forEach(i=>{const col=i.change>=0?'text-positive':'text-negative';const arr=i.change>=0?'▲':'▼';const p=i.type==='crypto'?i.price.toLocaleString('en-US',{maximumFractionDigits:2}):i.type==='forex'?i.price.toFixed(5):i.price.toFixed(2);h+=`<span class="mx-6 flex items-center gap-2"><span class="text-white font-medium">${i.symbol}</span><span class="text-gray-300 font-mono">${p}</span><span class="${col} text-xs">${arr} ${Math.abs(i.change).toFixed(2)}%</span></span>`;});c.innerHTML=h+h;}
 
-        function renderMarketTable(data,filter){const filtered=data.filter(d=>d.type===filter);const c=document.getElementById('market-table');let h='';filtered.forEach(item=>{const cc=item.change>=0?'text-positive':'text-negative';const cp=item.change>=0?'+':'';const ps=item.type==='crypto'?item.price.toLocaleString('en-US',{maximumFractionDigits:2}):item.type==='forex'?item.price.toFixed(5):item.price.toFixed(2);const hs=item.type==='crypto'?item.high.toLocaleString('en-US',{maximumFractionDigits:2}):item.type==='forex'?item.high.toFixed(5):item.high.toFixed(2);const ls=item.type==='crypto'?item.low.toLocaleString('en-US',{maximumFractionDigits:2}):item.type==='forex'?item.low.toFixed(5):item.low.toFixed(2);
-            let trend='Neutral',tc='text-gray-400';if(item.change>0.5){trend='Strong Buy';tc='text-positive';}else if(item.change>0.1){trend='Buy';tc='text-positive';}else if(item.change<-0.5){trend='Strong Sell';tc='text-negative';}else if(item.change<-0.1){trend='Sell';tc='text-negative';}
-            const dc=item.change>=0?'bg-positive':'bg-negative';const sel=item.symbol===selectedPair.symbol?'bg-primary/10 border-l-2 border-primary':'';
-            let ticker='',dec=2;if(item.type==='forex'){ticker='C:'+item.symbol.replace('/','');dec=5;}else if(item.type==='crypto'){ticker='X:'+item.symbol.replace('/','');}else{const st={'SPX 500':'SPY','NVDA':'NVDA','AAPL':'AAPL','MSFT':'MSFT','TSLA':'TSLA'};ticker=st[item.symbol]||item.symbol;}
-            h+=`<tr class="border-b border-card-border/50 hover:bg-white/5 cursor-pointer transition ${sel}" onclick="selectPair('${item.symbol}','${ticker}','${item.type}',${dec})"><td class="py-3 md:py-4 flex items-center gap-2 md:gap-3"><span class="w-2 md:w-2.5 h-2 md:h-2.5 rounded-full ${dc}"></span><span class="font-semibold text-sm md:text-lg">${item.symbol}</span></td><td class="py-3 md:py-4 text-right font-mono text-sm md:text-lg">${ps}</td><td class="py-3 md:py-4 text-right ${cc} font-mono text-sm md:text-lg">${cp}${item.change.toFixed(2)}%</td><td class="py-3 md:py-4 text-right text-gray-400 font-mono hidden md:table-cell">${hs}</td><td class="py-3 md:py-4 text-right text-gray-400 font-mono hidden md:table-cell">${ls}</td><td class="py-3 md:py-4 text-right ${tc} font-semibold text-xs md:text-base">${trend}</td></tr>`;
-        });c.innerHTML=h;}
+        function renderMarketTable(data,filter){
+            let filtered=data.filter(d=>d.type===filter);
+            if(marketSearchQuery){
+                filtered=filtered.filter(d=>d.symbol.toUpperCase().includes(marketSearchQuery));
+            }
+            const c=document.getElementById('market-table');
+            if(!filtered.length){
+                c.innerHTML=`<tr><td colspan="6" class="py-8 text-center text-gray-500 text-sm">${marketSearchQuery?'Sin resultados para "'+marketSearchQuery+'"':'Cargando datos...'}</td></tr>`;
+                return;
+            }
+            let h='';
+            filtered.forEach(item=>{
+                const cc=item.change>=0?'text-positive':'text-negative';
+                const cp=item.change>=0?'+':'';
+                const ps=item.type==='crypto'?item.price.toLocaleString('en-US',{maximumFractionDigits:2}):item.type==='forex'?item.price.toFixed(5):item.price.toFixed(2);
+                const hs=item.type==='crypto'?item.high.toLocaleString('en-US',{maximumFractionDigits:2}):item.type==='forex'?item.high.toFixed(5):item.high.toFixed(2);
+                const ls=item.type==='crypto'?item.low.toLocaleString('en-US',{maximumFractionDigits:2}):item.type==='forex'?item.low.toFixed(5):item.low.toFixed(2);
+                let trend='Neutral',tc='text-gray-400';
+                if(item.change>0.5){trend='Strong Buy';tc='text-positive';}
+                else if(item.change>0.1){trend='Buy';tc='text-positive';}
+                else if(item.change<-0.5){trend='Strong Sell';tc='text-negative';}
+                else if(item.change<-0.1){trend='Sell';tc='text-negative';}
+                const dc=item.change>=0?'bg-positive':'bg-negative';
+                const sel=item.symbol===selectedPair.symbol?'bg-primary/10 border-l-2 border-primary':'';
+                let ticker='',dec=2;
+                if(item.type==='forex'){ticker='C:'+item.symbol.replace('/','');dec=5;}
+                else if(item.type==='crypto'){ticker='X:'+item.symbol.replace('/','');}
+                else{const st={'SPX 500':'SPY','NVDA':'NVDA','AAPL':'AAPL','MSFT':'MSFT','TSLA':'TSLA','AMZN':'AMZN','GOOGL':'GOOGL','META':'META','AMD':'AMD','NFLX':'NFLX'};ticker=st[item.symbol]||item.symbol;}
+                h+=`<tr class="border-b border-card-border/50 hover:bg-white/5 cursor-pointer transition ${sel}" onclick="selectPair('${item.symbol}','${ticker}','${item.type}',${dec})"><td class="py-3 md:py-4 flex items-center gap-2 md:gap-3"><span class="w-2 md:w-2.5 h-2 md:h-2.5 rounded-full ${dc}"></span><span class="font-semibold text-sm md:text-lg">${item.symbol}</span></td><td class="py-3 md:py-4 text-right font-mono text-sm md:text-lg">${ps}</td><td class="py-3 md:py-4 text-right ${cc} font-mono text-sm md:text-lg">${cp}${item.change.toFixed(2)}%</td><td class="py-3 md:py-4 text-right text-gray-400 font-mono hidden md:table-cell">${hs}</td><td class="py-3 md:py-4 text-right text-gray-400 font-mono hidden md:table-cell">${ls}</td><td class="py-3 md:py-4 text-right ${tc} font-semibold text-xs md:text-base">${trend}</td></tr>`;
+            });
+            c.innerHTML=h;
+        }
 
         function selectPair(symbol,ticker,type,decimals){selectedPair={symbol,ticker,type,decimals};const p=allMarketData.find(d=>d.symbol===symbol);if(p)updateAIAnalysisForPair(p);renderMarketTable(allMarketData,currentFilter);if(!document.getElementById('chart-modal').classList.contains('hidden'))loadChartData();}
-        function filterMarket(type){currentFilter=type;renderMarketTable(allMarketData,type);['forex','crypto','stocks'].forEach(t=>{document.getElementById(`btn-${t}`).className=t===type?'px-4 py-2 rounded-lg text-sm font-semibold bg-white/10 text-white':'px-4 py-2 rounded-lg text-sm font-semibold text-gray-400 hover:bg-white/5';});}
+        
+        let marketSearchQuery = '';
+        function searchMarket(query){
+            marketSearchQuery = query.trim().toUpperCase();
+            renderMarketTable(allMarketData, currentFilter);
+        }
+        function filterMarket(type){
+            currentFilter=type;
+            document.getElementById('market-search').value='';
+            marketSearchQuery='';
+            renderMarketTable(allMarketData,type);
+            ['forex','crypto','stocks'].forEach(t=>{
+                document.getElementById(`btn-${t}`).className=t===type
+                    ?'px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-semibold bg-white/10 text-white'
+                    :'px-3 md:px-4 py-1.5 md:py-2 rounded-lg text-xs md:text-sm font-semibold text-gray-400 hover:bg-white/5';
+            });
+        }
 
         function updateAIAnalysis(data){const p=data.find(d=>d.symbol===selectedPair.symbol)||data[0];if(p)updateAIAnalysisForPair(p);}
         function updateAIAnalysisForPair(pairData){const dec=selectedPair.decimals||(pairData.type==='forex'?5:2);document.getElementById('ai-pair').innerHTML=`${pairData.symbol} <span class="text-gray-500 text-xl font-normal">H4</span>`;document.getElementById('chart-title').textContent=pairData.symbol;const signal=pairData.change>=0?'BULLISH':'BEARISH';const sc=pairData.change>=0?'bg-positive':'bg-negative';const si=pairData.change>=0?'↗':'↘';const conf=Math.min(95,Math.max(60,70+Math.abs(pairData.change)*10));document.getElementById('ai-signal').className=`inline-flex items-center gap-2 px-6 py-3 rounded-lg text-white font-bold text-lg mb-4 ${sc}`;document.getElementById('ai-signal').innerHTML=`${si} ${signal}`;document.getElementById('ai-confidence').textContent=`${conf.toFixed(0)}%`;document.getElementById('ai-price').textContent=pairData.price.toFixed(dec);const range=pairData.high-pairData.low;const entry=pairData.price;
@@ -870,9 +1034,16 @@
         async function init(){
             updateTradingSession();
             const fmpPromise=loadAllFMPData();
-            try{const[forexData,cryptoData,stocksData]=await Promise.all([fetchForexData(),fetchCryptoData(),fetchStocksData()]);allMarketData=[...forexData,...cryptoData,...stocksData];renderTicker(allMarketData);renderMarketTable(allMarketData,currentFilter);updateAIAnalysis(allMarketData);await Promise.all([fetchVIX(),fetchDXY(),fetchFearGreed()]);await fetchNews();}catch(e){}
+            try{
+                console.log('[Market] Cargando datos de mercado...');
+                const[forexData,cryptoData,stocksData]=await Promise.all([fetchForexData(),fetchCryptoData(),fetchStocksData()]);
+                console.log('[Market] Forex:',forexData.length,'| Crypto:',cryptoData.length,'| Stocks:',stocksData.length);
+                allMarketData=[...forexData,...cryptoData,...stocksData];
+                renderTicker(allMarketData);renderMarketTable(allMarketData,currentFilter);updateAIAnalysis(allMarketData);
+                await Promise.all([fetchVIX(),fetchDXY(),fetchFearGreed()]);await fetchNews();
+            }catch(e){console.error('[Market] Error en init:',e);}
             await fmpPromise;
-            setInterval(async()=>{try{const[f,c,s]=await Promise.all([fetchForexData(),fetchCryptoData(),fetchStocksData()]);allMarketData=[...f,...c,...s];renderTicker(allMarketData);renderMarketTable(allMarketData,currentFilter);updateAIAnalysis(allMarketData);}catch(e){}},60000);
+            setInterval(async()=>{try{const[f,c,s]=await Promise.all([fetchForexData(),fetchCryptoData(),fetchStocksData()]);allMarketData=[...f,...c,...s];renderTicker(allMarketData);renderMarketTable(allMarketData,currentFilter);updateAIAnalysis(allMarketData);console.log('[Market] Actualizado:',allMarketData.length,'instrumentos');}catch(e){console.warn('[Market] Error en refresh:',e);}},60000);
             setInterval(()=>{try{Promise.all([fetchVIX(),fetchDXY(),fetchFearGreed()]);}catch(e){}},300000);
             setInterval(()=>{try{fetchNews();}catch(e){}},180000);
             setInterval(()=>{loadAllFMPData();},180000);
