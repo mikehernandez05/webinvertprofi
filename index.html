@@ -9,6 +9,83 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.0/dist/lightweight-charts.standalone.production.min.js"></script>
+    
+    <!-- ★ MODAL ARTÍCULO COMPLETO v2 ★ -->
+    <div id="news-article-modal" class="fixed inset-0 bg-black/90 backdrop-blur-sm z-[110] hidden items-center justify-center p-0 md:p-4">
+        <div class="bg-bg-dark md:bg-card border border-card-border md:rounded-2xl w-full max-w-5xl h-full md:max-h-[95vh] overflow-hidden flex flex-col article-modal-enter">
+            <div class="flex items-center justify-between p-3 md:p-4 border-b border-card-border bg-card/80 backdrop-blur-sm">
+                <div class="flex items-center gap-3 min-w-0 flex-1">
+                    <span class="bg-primary/20 text-primary text-xs px-3 py-1 rounded-full font-semibold shrink-0">📰 ARTÍCULO</span>
+                    <div class="flex items-center gap-2 min-w-0">
+                        <img id="article-source-icon" src="" alt="" class="w-4 h-4 rounded hidden" onerror="this.classList.add('hidden')"/>
+                        <span id="article-source-name" class="text-gray-400 text-sm truncate"></span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <a id="article-external-link" href="#" target="_blank" rel="noopener noreferrer" class="flex items-center gap-1.5 text-gray-400 hover:text-primary text-xs bg-white/5 hover:bg-white/10 px-3 py-1.5 rounded-lg transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                        Abrir fuente
+                    </a>
+                    <button onclick="closeArticleModal()" class="text-gray-400 hover:text-white text-2xl leading-none ml-2 p-1">&times;</button>
+                </div>
+            </div>
+            <div class="flex-1 overflow-y-auto custom-scrollbar" id="article-modal-body">
+                <div id="article-hero-image" class="w-full h-48 md:h-72 bg-card-border/30 overflow-hidden hidden relative">
+                    <img id="article-hero-img" src="" alt="" class="w-full h-full object-cover" onerror="this.parentElement.classList.add('hidden')"/>
+                    <div class="absolute inset-0 bg-gradient-to-t from-bg-dark/80 to-transparent"></div>
+                </div>
+                <div class="p-4 md:p-8 max-w-3xl mx-auto">
+                    <div class="flex flex-wrap items-center gap-3 mb-4">
+                        <span id="article-date" class="text-gray-500 text-sm font-mono"></span>
+                        <span id="article-impact-badge" class="text-xs px-2 py-0.5 rounded font-semibold"></span>
+                    </div>
+                    <h1 id="article-title" class="text-2xl md:text-3xl font-bold text-white leading-tight mb-4"></h1>
+                    <div id="article-tickers" class="flex flex-wrap gap-2 mb-6 hidden"></div>
+                    <div class="h-px bg-card-border mb-6"></div>
+                    <!-- Contenido completo del artículo -->
+                    <div id="article-full-content">
+                        <div id="article-loading-area" class="article-loading-spinner">
+                            <div class="text-center">
+                                <svg class="animate-spin w-8 h-8 text-primary mx-auto mb-3" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>
+                                <p class="text-gray-400 text-sm">Extrayendo artículo completo...</p>
+                            </div>
+                        </div>
+                        <div id="article-body-text" class="hidden article-content-body text-gray-300 text-base md:text-lg leading-relaxed"></div>
+                        <div id="article-fallback-area" class="hidden">
+                            <div id="article-description-text" class="text-gray-300 text-base md:text-lg leading-relaxed mb-6 whitespace-pre-line"></div>
+                            <div class="article-fallback-bar rounded-xl p-4 flex flex-col md:flex-row items-center gap-4">
+                                <div class="flex-1">
+                                    <p class="text-gray-300 text-sm font-medium mb-1">📖 Para leer el artículo completo:</p>
+                                    <p class="text-gray-500 text-xs">El contenido completo está disponible en el sitio original.</p>
+                                </div>
+                                <a id="article-read-full-link" href="#" target="_blank" rel="noopener noreferrer" class="bg-primary text-black font-bold px-5 py-2.5 rounded-lg text-sm hover:bg-primary/90 transition whitespace-nowrap flex items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                                    LEER EN SITIO ORIGINAL
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="article-keywords" class="hidden mt-8 pt-6 border-t border-card-border">
+                        <p class="text-gray-500 text-xs uppercase tracking-wider mb-3">Palabras clave</p>
+                        <div id="article-keywords-list" class="flex flex-wrap gap-2"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="p-3 md:p-4 border-t border-card-border bg-card/80 backdrop-blur-sm flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <button onclick="navigateArticle(-1)" id="article-prev-btn" class="text-gray-400 hover:text-white text-sm flex items-center gap-1 transition">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg> Anterior
+                    </button>
+                    <span id="article-counter" class="text-gray-600 text-xs font-mono"></span>
+                    <button onclick="navigateArticle(1)" id="article-next-btn" class="text-gray-400 hover:text-white text-sm flex items-center gap-1 transition">
+                        Siguiente <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </button>
+                </div>
+                <button onclick="closeArticleModal()" class="bg-white/10 hover:bg-white/20 text-white font-semibold px-5 py-2 rounded-lg transition text-sm">CERRAR</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -116,6 +193,87 @@
         .news-toggle svg {
             transition: transform 0.3s ease;
         }
+    
+        /* ====== MODAL ARTÍCULO COMPLETO ====== */
+        .article-modal-enter { animation: articleSlideUp 0.3s ease-out; }
+        @keyframes articleSlideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+        .article-content-body { line-height: 1.8; }
+        .article-content-body p { margin-bottom: 1.2em; }
+        .article-loading-spinner { display:flex; align-items:center; justify-content:center; padding: 3rem 0; }
+        .article-fallback-bar { background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(17,24,39,0.95)); border: 1px solid rgba(212,175,55,0.2); }
+    
+        /* ====== BUSCADOR DE ACTIVOS AI CARD ====== */
+        .asset-search-wrapper { position: relative; }
+        .asset-search-input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            padding: 8px 12px 8px 40px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 320px;
+            transition: all 0.2s;
+            outline: none;
+        }
+        .asset-search-input::placeholder { color: #4b5563; font-weight: 400; font-size: 1rem; }
+        .asset-search-input:focus {
+            border-color: rgba(212,175,55,0.5);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+            background: rgba(255,255,255,0.08);
+        }
+        .asset-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+        .asset-search-input:focus ~ .asset-search-icon { color: #D4AF37; }
+        .asset-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            max-width: 380px;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 12px;
+            max-height: 320px;
+            overflow-y: auto;
+            z-index: 60;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            display: none;
+        }
+        .asset-dropdown.open { display: block; }
+        .asset-dropdown-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: background 0.15s;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .asset-dropdown-item:last-child { border-bottom: none; }
+        .asset-dropdown-item:hover, .asset-dropdown-item.active { background: rgba(212,175,55,0.1); }
+        .asset-dropdown-item .symbol { font-weight: 700; color: white; font-size: 14px; }
+        .asset-dropdown-item .type-badge {
+            font-size: 10px; padding: 2px 8px; border-radius: 6px; font-weight: 600;
+        }
+        .badge-forex { background: rgba(59,130,246,0.15); color: #60a5fa; }
+        .badge-crypto { background: rgba(168,85,247,0.15); color: #c084fc; }
+        .badge-stocks { background: rgba(34,197,94,0.15); color: #4ade80; }
+        .asset-dropdown-empty {
+            padding: 20px; text-align: center; color: #6b7280; font-size: 13px;
+        }
+        .asset-dropdown-section {
+            padding: 6px 14px 4px; font-size: 10px; color: #6b7280; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }
     </style>
 </head>
 <body class="bg-bg-dark text-white font-sans antialiased min-h-screen">
@@ -192,7 +350,25 @@
                     <span class="bg-primary/20 text-primary text-xs md:text-sm px-3 md:px-4 py-1.5 md:py-2 rounded-full font-semibold flex items-center gap-2 w-fit">🤖 AMIGOTRADE AI</span>
                 </div>
                 <p class="text-gray-400 text-xs md:text-sm mb-1 md:mb-2">ANÁLISIS INTELIGENTE DETECTADO</p>
-                <h2 class="text-2xl md:text-4xl font-bold text-white mb-4 md:mb-8" id="ai-pair">EUR/USD <span class="text-gray-500 text-base md:text-xl font-normal">H4</span></h2>
+                <div class="mb-4 md:mb-8">
+                    <div class="asset-search-wrapper">
+                        <input 
+                            type="text" 
+                            id="asset-search-input" 
+                            class="asset-search-input" 
+                            placeholder="Buscar activo..."
+                            autocomplete="off"
+                            onfocus="onAssetSearchFocus()"
+                            oninput="onAssetSearchInput(this.value)"
+                            onkeydown="onAssetSearchKeydown(event)"
+                        />
+                        <svg class="asset-search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        <div id="asset-dropdown" class="asset-dropdown custom-scrollbar"></div>
+                    </div>
+                    <div class="flex items-center gap-3 mt-2">
+                        <h2 class="text-2xl md:text-4xl font-bold text-white" id="ai-pair">EUR/USD <span class="text-gray-500 text-base md:text-xl font-normal">H4</span></h2>
+                    </div>
+                </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8">
                     <div>
                         <div id="ai-signal" class="inline-flex items-center gap-2 px-4 md:px-6 py-2 md:py-3 rounded-lg text-white font-bold text-sm md:text-lg mb-3 md:mb-4"></div>
@@ -366,6 +542,11 @@
         let allMarketData = [];
         let currentFilter = 'forex';
         let selectedPair = { symbol: 'EUR/USD', ticker: 'C:EURUSD', type: 'forex', decimals: 5 };
+        // ★ VARIABLES MODAL ARTÍCULO ★
+        let newsArticlesCache = [];
+        let currentArticleIndex = 0;
+        let articleContentCache = {};
+
 
         // ========== PROXY HELPERS ==========
         function polygonUrl(path) {
@@ -687,7 +868,18 @@
 
         function openCalendarModal(){const m=document.getElementById('calendar-modal');m.classList.remove('hidden');m.classList.add('flex');document.body.style.overflow='hidden';var si=document.getElementById('cal-search-input');if(si)si.value='';calSearchQuery='';if(fmpCache.economic.data)renderModalEconomic(fmpCache.economic.data);if(fmpCache.earnings.data)renderModalEarnings(fmpCache.earnings.data);if(fmpCache.ipo.data)renderModalIPO(fmpCache.ipo.data);}
         function closeCalendarModal(){const m=document.getElementById('calendar-modal');m.classList.add('hidden');m.classList.remove('flex');document.body.style.overflow='';}
-        document.addEventListener('keydown',(e)=>{if(e.key==='Escape'){closeCalendarModal();closeChartModal();}});
+        document.addEventListener('keydown',(e)=>{
+            if(e.key==='Escape'){
+                const am=document.getElementById('news-article-modal');
+                if(am&&!am.classList.contains('hidden')){closeArticleModal();return;}
+                closeCalendarModal();closeChartModal();
+            }
+            const am=document.getElementById('news-article-modal');
+            if(am&&!am.classList.contains('hidden')){
+                if(e.key==='ArrowLeft')navigateArticle(-1);
+                if(e.key==='ArrowRight')navigateArticle(1);
+            }
+        });
 
         // ========== MARKET DATA FETCHERS ==========
         // Helper: fecha en formato YYYY-MM-DD
@@ -899,8 +1091,9 @@
 
         function renderNews(articles) {
             const container = document.getElementById('news-container');
+            newsArticlesCache = articles.slice(0, 8);
             let html = '';
-            articles.slice(0, 8).forEach((article, index) => {
+            newsArticlesCache.forEach((article, index) => {
                 const time = new Date(article.published_utc).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
                 const fullDate = new Date(article.published_utc).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' });
                 let impact = 'BAJO', impactClass = 'bg-gray-500/20 text-gray-400';
@@ -933,9 +1126,7 @@
                                 <p class="text-gray-500 text-xs">${source}${ticker ? ' • ' + ticker : ''}</p>
                                 <div id="news-arrow-${index}" class="news-toggle text-gray-500 flex items-center gap-1">
                                     <span class="text-[10px] text-gray-600">detalle</span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="6 9 12 15 18 9"></polyline>
-                                    </svg>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"></polyline></svg>
                                 </div>
                             </div>
                         </div>
@@ -944,18 +1135,220 @@
                                 ${imgUrl ? `<img src="${imgUrl}" alt="" class="w-full h-24 object-cover rounded-lg border border-card-border mb-3" onerror="this.style.display='none'"/>` : ''}
                                 <p class="text-gray-300 text-xs leading-relaxed mb-3">${description}</p>
                                 ${tickerTags ? `<div class="flex flex-wrap gap-1 mb-2">${tickerTags}</div>` : ''}
-                                <div class="flex items-center gap-2 pt-2 border-t border-card-border/30">
-                                    ${sourceIcon ? `<img src="${sourceIcon}" alt="" class="w-3 h-3 rounded" onerror="this.style.display='none'"/>` : ''}
-                                    <span class="text-gray-600 text-[10px]">${source} • ${fullDate}</span>
+                                <div class="flex items-center justify-between pt-2 border-t border-card-border/30">
+                                    <div class="flex items-center gap-2">
+                                        ${sourceIcon ? `<img src="${sourceIcon}" alt="" class="w-3 h-3 rounded" onerror="this.style.display='none'"/>` : ''}
+                                        <span class="text-gray-600 text-[10px]">${source} • ${fullDate}</span>
+                                    </div>
                                 </div>
+                                <button onclick="event.stopPropagation(); openFullArticle(${index})" 
+                                        class="w-full mt-3 bg-primary/15 hover:bg-primary/25 text-primary py-2.5 rounded-lg 
+                                               font-semibold text-xs flex items-center justify-center gap-2 transition
+                                               border border-primary/20 hover:border-primary/40">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                                    VER ARTÍCULO COMPLETO
+                                </button>
                             </div>
                         </div>
-                    </div>
-                `;
+                    </div>`;
             });
             container.innerHTML = html;
         }
 
+        // ★ EXTRAER CONTENIDO COMPLETO DEL ARTÍCULO ★
+        async function fetchArticleContent(url) {
+            if (articleContentCache[url]) return articleContentCache[url];
+            
+            // Método 1: AllOrigins proxy (extrae HTML completo)
+            const proxies = [
+                `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+                `https://corsproxy.io/?${encodeURIComponent(url)}`,
+                `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`
+            ];
+            
+            for (const proxyUrl of proxies) {
+                try {
+                    const controller = new AbortController();
+                    const timeout = setTimeout(() => controller.abort(), 8000);
+                    const response = await fetch(proxyUrl, { signal: controller.signal });
+                    clearTimeout(timeout);
+                    
+                    if (!response.ok) continue;
+                    const rawHtml = await response.text();
+                    if (!rawHtml || rawHtml.length < 200) continue;
+                    
+                    // Parsear el HTML y extraer el contenido del artículo
+                    const extracted = extractArticleText(rawHtml);
+                    if (extracted && extracted.length > 100) {
+                        articleContentCache[url] = extracted;
+                        return extracted;
+                    }
+                } catch (e) {
+                    console.warn('[Article] Proxy failed:', e.message);
+                    continue;
+                }
+            }
+            return null;
+        }
+
+        function extractArticleText(rawHtml) {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(rawHtml, 'text/html');
+            
+            // Remover elementos no deseados
+            const removeSelectors = ['script','style','nav','header','footer','aside','.ad,advertisement,.sidebar,.menu,.nav,.social,.share,.related,.comments,.comment','[role="navigation"]','[role="banner"]','[role="complementary"]','noscript','iframe','svg'];
+            removeSelectors.forEach(sel => {
+                try { doc.querySelectorAll(sel).forEach(el => el.remove()); } catch(e) {}
+            });
+
+            // Estrategia 1: Buscar el contenedor principal del artículo
+            const articleSelectors = [
+                'article',
+                '[role="article"]',
+                '.article-body',
+                '.article-content',
+                '.article__body',
+                '.story-body',
+                '.story-content',
+                '.post-content',
+                '.entry-content',
+                '.content-body',
+                '.article-text',
+                '.body-content',
+                '.caas-body',           // Yahoo Finance
+                '.paywall',             // Some paywalled sites show partial
+                '[data-module="ArticleBody"]',
+                '[itemprop="articleBody"]',
+                '.RichTextStoryBody',   // Reuters
+                '#article-body',
+                '#story-body',
+                'main article',
+                'main .content',
+                'main'
+            ];
+
+            for (const selector of articleSelectors) {
+                try {
+                    const el = doc.querySelector(selector);
+                    if (el) {
+                        const paragraphs = el.querySelectorAll('p');
+                        if (paragraphs.length >= 2) {
+                            let text = '';
+                            paragraphs.forEach(p => {
+                                const t = p.textContent.trim();
+                                if (t.length > 30 && !t.startsWith('©') && !t.includes('cookie') && !t.toLowerCase().includes('subscribe') && !t.toLowerCase().includes('sign up')) {
+                                    text += '<p>' + t + '</p>';
+                                }
+                            });
+                            if (text.length > 200) return text;
+                        }
+                    }
+                } catch(e) {}
+            }
+
+            // Estrategia 2: Recopilar todos los <p> del body que parecen contenido
+            const allP = doc.querySelectorAll('body p');
+            let text = '';
+            let contentParagraphs = 0;
+            allP.forEach(p => {
+                const t = p.textContent.trim();
+                if (t.length > 50 && !t.startsWith('©') && !t.includes('cookie') && !t.toLowerCase().includes('subscribe') && !t.toLowerCase().includes('advertisement')) {
+                    text += '<p>' + t + '</p>';
+                    contentParagraphs++;
+                }
+            });
+            if (contentParagraphs >= 3 && text.length > 300) return text;
+
+            return null;
+        }
+
+        // ★ ABRIR MODAL ARTÍCULO ★
+        async function openFullArticle(index) {
+            const article = newsArticlesCache[index];
+            if (!article) return;
+            currentArticleIndex = index;
+            const modal = document.getElementById('news-article-modal');
+            modal.classList.remove('hidden'); modal.classList.add('flex');
+            document.body.style.overflow = 'hidden';
+
+            // Llenar datos básicos
+            document.getElementById('article-title').textContent = article.title || 'Sin título';
+            const pubDate = new Date(article.published_utc);
+            document.getElementById('article-date').textContent = pubDate.toLocaleDateString('es-ES', { weekday:'long', day:'numeric', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' });
+
+            // Impacto
+            const ib = document.getElementById('article-impact-badge');
+            if (article.tickers && article.tickers.length > 0) {
+                const imp = ['SPY','QQQ','AAPL','MSFT','NVDA','TSLA','AMZN','GOOGL'];
+                const hi = article.tickers.some(t => imp.includes(t));
+                if (hi || article.title.toLowerCase().includes('fed') || article.title.toLowerCase().includes('cpi')) { ib.className='text-xs px-2 py-0.5 rounded font-semibold bg-red-500/20 text-red-400'; ib.textContent='🔴 ALTO IMPACTO'; }
+                else if (article.tickers.length >= 2) { ib.className='text-xs px-2 py-0.5 rounded font-semibold bg-yellow-500/20 text-yellow-400'; ib.textContent='🟡 MEDIO'; }
+                else { ib.className='text-xs px-2 py-0.5 rounded font-semibold bg-gray-500/20 text-gray-400'; ib.textContent='BAJO'; }
+            } else { ib.className='text-xs px-2 py-0.5 rounded font-semibold bg-gray-500/20 text-gray-400'; ib.textContent='MERCADO'; }
+
+            // Source
+            document.getElementById('article-source-name').textContent = article.publisher?.name || '';
+            const ic = document.getElementById('article-source-icon');
+            if (article.publisher?.favicon_url) { ic.src = article.publisher.favicon_url; ic.classList.remove('hidden'); } else { ic.classList.add('hidden'); }
+
+            // Hero image
+            const hs = document.getElementById('article-hero-image');
+            if (article.image_url) { document.getElementById('article-hero-img').src = article.image_url; hs.classList.remove('hidden'); } else { hs.classList.add('hidden'); }
+
+            // Tickers
+            const tc = document.getElementById('article-tickers');
+            if (article.tickers && article.tickers.length > 0) { tc.innerHTML = article.tickers.map(t => `<span class="bg-white/5 border border-card-border text-gray-300 text-xs px-2.5 py-1 rounded-lg font-mono">${t}</span>`).join(''); tc.classList.remove('hidden'); } else { tc.classList.add('hidden'); }
+
+            // Keywords
+            const ks = document.getElementById('article-keywords'), kl = document.getElementById('article-keywords-list');
+            if (article.keywords && article.keywords.length > 0) { kl.innerHTML = article.keywords.map(k => `<span class="bg-primary/10 text-primary/80 text-xs px-2 py-1 rounded-lg">${k}</span>`).join(''); ks.classList.remove('hidden'); } else { ks.classList.add('hidden'); }
+
+            // Links
+            const aUrl = article.article_url || article.url || '#';
+            document.getElementById('article-external-link').href = aUrl;
+            document.getElementById('article-read-full-link').href = aUrl;
+
+            // Reset content area: show loading
+            document.getElementById('article-loading-area').classList.remove('hidden');
+            document.getElementById('article-body-text').classList.add('hidden');
+            document.getElementById('article-fallback-area').classList.add('hidden');
+
+            updateArticleNavigation();
+            document.getElementById('article-modal-body').scrollTop = 0;
+
+            // ★ EXTRAER CONTENIDO COMPLETO ★
+            if (aUrl && aUrl !== '#') {
+                const fullContent = await fetchArticleContent(aUrl);
+                // Hide loading
+                document.getElementById('article-loading-area').classList.add('hidden');
+                
+                if (fullContent) {
+                    // Mostrar contenido completo extraído
+                    document.getElementById('article-body-text').innerHTML = fullContent;
+                    document.getElementById('article-body-text').classList.remove('hidden');
+                } else {
+                    // Fallback: mostrar descripción + link al original
+                    document.getElementById('article-description-text').textContent = article.description || 'No hay descripción disponible.';
+                    document.getElementById('article-fallback-area').classList.remove('hidden');
+                }
+            } else {
+                document.getElementById('article-loading-area').classList.add('hidden');
+                document.getElementById('article-description-text').textContent = article.description || 'No hay descripción disponible.';
+                document.getElementById('article-fallback-area').classList.remove('hidden');
+            }
+        }
+
+        function closeArticleModal() {
+            const m = document.getElementById('news-article-modal'); m.classList.add('hidden'); m.classList.remove('flex');
+            if (document.getElementById('calendar-modal').classList.contains('hidden') && document.getElementById('chart-modal').classList.contains('hidden')) document.body.style.overflow = '';
+        }
+        function navigateArticle(dir) { const n = currentArticleIndex + dir; if (n >= 0 && n < newsArticlesCache.length) openFullArticle(n); }
+        function updateArticleNavigation() {
+            const p = document.getElementById('article-prev-btn'), n = document.getElementById('article-next-btn'), c = document.getElementById('article-counter');
+            p.style.opacity = currentArticleIndex <= 0 ? '0.3' : '1'; p.style.pointerEvents = currentArticleIndex <= 0 ? 'none' : 'auto';
+            n.style.opacity = currentArticleIndex >= newsArticlesCache.length - 1 ? '0.3' : '1'; n.style.pointerEvents = currentArticleIndex >= newsArticlesCache.length - 1 ? 'none' : 'auto';
+            c.textContent = (currentArticleIndex + 1) + ' / ' + newsArticlesCache.length;
+        }
 
         // ========== CALENDAR SEARCH ==========
         let calSearchQuery = '';
@@ -1029,6 +1422,303 @@
         async function loadChartData(){const ticker=selectedPair.ticker;const dec=selectedPair.decimals;const now=new Date();let from,mult,ts;document.getElementById('chart-title').textContent=selectedPair.symbol;switch(currentTimeframe){case'1':from=new Date(now.getTime()-6*3600000);mult=1;ts='minute';break;case'5':from=new Date(now.getTime()-24*3600000);mult=5;ts='minute';break;case'15':from=new Date(now.getTime()-3*86400000);mult=15;ts='minute';break;case'60':from=new Date(now.getTime()-7*86400000);mult=1;ts='hour';break;case'D':from=new Date(now.getTime()-90*86400000);mult=1;ts='day';break;default:from=new Date(now.getTime()-7*86400000);mult=1;ts='hour';}
             try{const url=polygonUrl(`/v2/aggs/ticker/${ticker}/range/${mult}/${ts}/${from.toISOString().split('T')[0]}/${now.toISOString().split('T')[0]}?adjusted=true&sort=asc&limit=5000`);const response=await safeFetch(url,'Polygon:chart');if(!response)return;const json=await response.json();if(json.results&&json.results.length>0){const data=json.results.map(r=>({time:r.t/1000,open:r.o,high:r.h,low:r.l,close:r.c}));candleSeries.setData(data);chart.timeScale().fitContent();const last=json.results[json.results.length-1];const first=json.results[0];const change=((last.c-first.o)/first.o*100);document.getElementById('chart-price').textContent=last.c.toFixed(dec);document.getElementById('chart-change').textContent=`${change>=0?'+':''}${change.toFixed(2)}%`;document.getElementById('chart-change').className=`text-lg font-semibold ${change>=0?'text-positive':'text-negative'}`;document.getElementById('chart-open').textContent=last.o.toFixed(dec);document.getElementById('chart-high').textContent=last.h.toFixed(dec);document.getElementById('chart-low').textContent=last.l.toFixed(dec);document.getElementById('chart-volume').textContent=last.v?last.v.toLocaleString():'N/A';}}catch(e){}}
         function changeTimeframe(tf){currentTimeframe=tf;document.querySelectorAll('.timeframe-btn').forEach(btn=>{btn.className='timeframe-btn px-3 py-1 rounded text-sm font-semibold text-gray-400 hover:bg-white/10';});event.target.className='timeframe-btn px-3 py-1 rounded text-sm font-semibold bg-white/10 text-white';loadChartData();}
+
+        
+        // ========== BUSCADOR DE ACTIVOS EN AI CARD ==========
+        let assetDropdownIndex = -1;
+        let assetSearchResults = [];
+        let assetDropdownOpen = false;
+
+        function getAssetSearchables() {
+            // Build searchable list from loaded market data + extras
+            const items = [];
+            const seen = new Set();
+            
+            // From loaded market data
+            allMarketData.forEach(item => {
+                if (seen.has(item.symbol)) return;
+                seen.add(item.symbol);
+                let ticker = '', dec = 2;
+                if (item.type === 'forex') { ticker = 'C:' + item.symbol.replace('/', ''); dec = 5; }
+                else if (item.type === 'crypto') { ticker = 'X:' + item.symbol.replace('/', ''); dec = 2; }
+                else {
+                    const st = {'SPX 500':'SPY','NVDA':'NVDA','AAPL':'AAPL','MSFT':'MSFT','TSLA':'TSLA','AMZN':'AMZN','GOOGL':'GOOGL','META':'META','AMD':'AMD','NFLX':'NFLX'};
+                    ticker = st[item.symbol] || item.symbol; dec = 2;
+                }
+                items.push({
+                    symbol: item.symbol,
+                    ticker: ticker,
+                    type: item.type,
+                    decimals: dec,
+                    price: item.price,
+                    change: item.change
+                });
+            });
+
+            // Add extra popular ones that might not be loaded
+            const extras = [
+                { symbol: 'EUR/JPY', ticker: 'C:EURJPY', type: 'forex', decimals: 3 },
+                { symbol: 'GBP/AUD', ticker: 'C:GBPAUD', type: 'forex', decimals: 5 },
+                { symbol: 'USD/MXN', ticker: 'C:USDMXN', type: 'forex', decimals: 4 },
+                { symbol: 'EUR/CHF', ticker: 'C:EURCHF', type: 'forex', decimals: 5 },
+                { symbol: 'XAU/USD', ticker: 'C:XAUUSD', type: 'forex', decimals: 2 },
+                { symbol: 'PEPE/USD', ticker: 'X:PEPEUSD', type: 'crypto', decimals: 8 },
+                { symbol: 'SHIB/USD', ticker: 'X:SHIBUSD', type: 'crypto', decimals: 8 },
+                { symbol: 'WIF/USD', ticker: 'X:WIFUSD', type: 'crypto', decimals: 4 },
+                { symbol: 'DIS', ticker: 'DIS', type: 'stocks', decimals: 2 },
+                { symbol: 'BA', ticker: 'BA', type: 'stocks', decimals: 2 },
+                { symbol: 'JPM', ticker: 'JPM', type: 'stocks', decimals: 2 },
+                { symbol: 'V', ticker: 'V', type: 'stocks', decimals: 2 },
+                { symbol: 'WMT', ticker: 'WMT', type: 'stocks', decimals: 2 },
+                { symbol: 'COIN', ticker: 'COIN', type: 'stocks', decimals: 2 },
+                { symbol: 'PLTR', ticker: 'PLTR', type: 'stocks', decimals: 2 },
+                { symbol: 'SOFI', ticker: 'SOFI', type: 'stocks', decimals: 2 },
+            ];
+            extras.forEach(e => {
+                if (!seen.has(e.symbol)) { seen.add(e.symbol); items.push(e); }
+            });
+
+            return items;
+        }
+
+        function onAssetSearchFocus() {
+            const input = document.getElementById('asset-search-input');
+            if (!input.value) {
+                showAssetDropdown(getAssetSearchables().slice(0, 12));
+            }
+        }
+
+        function onAssetSearchInput(query) {
+            query = query.trim().toUpperCase();
+            const dropdown = document.getElementById('asset-dropdown');
+            assetDropdownIndex = -1;
+
+            if (!query) {
+                showAssetDropdown(getAssetSearchables().slice(0, 12));
+                return;
+            }
+
+            const all = getAssetSearchables();
+            const exact = all.filter(a => a.symbol.toUpperCase().replace('/', '').startsWith(query.replace('/', '')) || a.symbol.toUpperCase().includes(query));
+            
+            if (exact.length > 0) {
+                showAssetDropdown(exact.slice(0, 10));
+            } else {
+                // Show "searching..." and try Polygon ticker search
+                dropdown.innerHTML = '<div class="asset-dropdown-empty"><svg class="animate-spin w-4 h-4 inline mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Buscando "' + query + '"...</div>';
+                dropdown.classList.add('open');
+                assetDropdownOpen = true;
+                searchPolygonTicker(query);
+            }
+        }
+
+        async function searchPolygonTicker(query) {
+            try {
+                const url = polygonUrl('/v3/reference/tickers?search=' + encodeURIComponent(query) + '&active=true&limit=8');
+                const response = await safeFetch(url, 'Polygon:search');
+                if (!response) {
+                    showAssetDropdown([]);
+                    return;
+                }
+                const json = await response.json();
+                if (json.results && json.results.length > 0) {
+                    const results = json.results.map(r => {
+                        let type = 'stocks', dec = 2;
+                        if (r.market === 'fx') { type = 'forex'; dec = 5; }
+                        else if (r.market === 'crypto') { type = 'crypto'; dec = 2; }
+                        return {
+                            symbol: r.ticker,
+                            ticker: r.market === 'fx' ? 'C:' + r.ticker : r.market === 'crypto' ? 'X:' + r.ticker : r.ticker,
+                            type: type,
+                            decimals: dec,
+                            name: r.name
+                        };
+                    });
+                    showAssetDropdown(results, true);
+                } else {
+                    showAssetDropdown([]);
+                }
+            } catch (e) {
+                showAssetDropdown([]);
+            }
+        }
+
+        function showAssetDropdown(results, showNames) {
+            const dropdown = document.getElementById('asset-dropdown');
+            assetSearchResults = results;
+            
+            if (!results.length) {
+                dropdown.innerHTML = '<div class="asset-dropdown-empty">🔍 No se encontraron resultados</div>';
+                dropdown.classList.add('open');
+                assetDropdownOpen = true;
+                return;
+            }
+
+            // Group by type
+            const groups = { forex: [], crypto: [], stocks: [] };
+            results.forEach(r => {
+                if (groups[r.type]) groups[r.type].push(r);
+                else groups.stocks.push(r);
+            });
+            const labels = { forex: '💱 Forex', crypto: '₿ Crypto', stocks: '📈 Acciones / Índices' };
+
+            let html = '';
+            let globalIdx = 0;
+            ['forex', 'crypto', 'stocks'].forEach(type => {
+                if (!groups[type].length) return;
+                html += '<div class="asset-dropdown-section">' + labels[type] + '</div>';
+                groups[type].forEach(item => {
+                    const badgeClass = 'badge-' + item.type;
+                    const priceStr = item.price ? (item.type === 'forex' ? item.price.toFixed(5) : item.price.toFixed(2)) : '';
+                    const changeStr = item.change != null ? ((item.change >= 0 ? '+' : '') + item.change.toFixed(2) + '%') : '';
+                    const changeColor = item.change >= 0 ? 'text-positive' : 'text-negative';
+                    const nameStr = showNames && item.name ? '<span style="color:#6b7280;font-size:11px;margin-left:6px;">' + item.name.substring(0, 25) + '</span>' : '';
+                    
+                    html += '<div class="asset-dropdown-item" data-idx="' + globalIdx + '" onclick="selectAssetFromSearch(' + globalIdx + ')" onmouseenter="assetDropdownIndex=' + globalIdx + ';highlightAssetDropdown()">';
+                    html += '<div><span class="symbol">' + item.symbol + '</span>' + nameStr + '</div>';
+                    html += '<div class="flex items-center gap-2">';
+                    if (priceStr) html += '<span style="color:#9ca3af;font-size:12px;font-family:monospace;">' + priceStr + '</span>';
+                    if (changeStr) html += '<span style="font-size:11px;font-family:monospace;" class="' + changeColor + '">' + changeStr + '</span>';
+                    html += '<span class="type-badge ' + badgeClass + '">' + item.type.toUpperCase() + '</span>';
+                    html += '</div></div>';
+                    globalIdx++;
+                });
+            });
+
+            dropdown.innerHTML = html;
+            dropdown.classList.add('open');
+            assetDropdownOpen = true;
+        }
+
+        function highlightAssetDropdown() {
+            const items = document.querySelectorAll('.asset-dropdown-item');
+            items.forEach((el, i) => el.classList.toggle('active', i === assetDropdownIndex));
+        }
+
+        function selectAssetFromSearch(idx) {
+            const item = assetSearchResults[idx];
+            if (!item) return;
+
+            // Update selectedPair
+            selectedPair = { symbol: item.symbol, ticker: item.ticker, type: item.type, decimals: item.decimals };
+            
+            // Update input display
+            document.getElementById('asset-search-input').value = '';
+            document.getElementById('ai-pair').innerHTML = item.symbol + ' <span class="text-gray-500 text-base md:text-xl font-normal">H4</span>';
+            
+            // Close dropdown
+            closeAssetDropdown();
+
+            // If we have the data already, update immediately
+            const existing = allMarketData.find(d => d.symbol === item.symbol);
+            if (existing) {
+                updateAIAnalysisForPair(existing);
+                renderMarketTable(allMarketData, currentFilter);
+            } else {
+                // Fetch fresh data for this asset
+                fetchSingleAssetData(item);
+            }
+        }
+
+        async function fetchSingleAssetData(item) {
+            try {
+                document.getElementById('ai-price').textContent = '...';
+                document.getElementById('ai-confidence').textContent = '...';
+                
+                const ticker = item.ticker;
+                let url, response, json;
+
+                // Try minute data first
+                url = polygonUrl('/v2/aggs/ticker/' + ticker + '/range/1/minute/' + daysAgo(7) + '/' + fmtDate(new Date()) + '?adjusted=true&sort=desc&limit=1');
+                response = await safeFetch(url, 'Polygon:search-asset');
+                json = response ? await response.json() : null;
+
+                if (!json?.results?.length) {
+                    url = polygonUrl('/v2/aggs/ticker/' + ticker + '/range/1/day/' + daysAgo(7) + '/' + fmtDate(new Date()) + '?adjusted=true&sort=desc&limit=2');
+                    response = await safeFetch(url, 'Polygon:search-asset-daily');
+                    json = response ? await response.json() : null;
+                }
+
+                if (!json?.results?.length) {
+                    url = polygonUrl('/v2/aggs/ticker/' + ticker + '/prev');
+                    response = await safeFetch(url, 'Polygon:search-asset-prev');
+                    json = response ? await response.json() : null;
+                }
+
+                if (json?.results?.length) {
+                    const r = json.results[0];
+                    const prevUrl = polygonUrl('/v2/aggs/ticker/' + ticker + '/prev');
+                    const prevR = await safeFetch(prevUrl, 'Polygon:search-asset-prev2');
+                    const prevJ = prevR ? await prevR.json() : {};
+                    const prevClose = prevJ?.results?.[0]?.c || r.o;
+                    
+                    const pairData = {
+                        symbol: item.symbol,
+                        price: r.c,
+                        change: ((r.c - prevClose) / prevClose * 100),
+                        high: r.h,
+                        low: r.l,
+                        type: item.type
+                    };
+
+                    // Add to market data if not exists
+                    if (!allMarketData.find(d => d.symbol === item.symbol)) {
+                        allMarketData.push(pairData);
+                    }
+
+                    updateAIAnalysisForPair(pairData);
+                } else {
+                    document.getElementById('ai-price').textContent = 'N/A';
+                    document.getElementById('ai-confidence').textContent = '--';
+                    document.getElementById('ai-reason').textContent = 'No se encontraron datos para ' + item.symbol;
+                }
+            } catch (e) {
+                console.warn('[Search] Error fetching asset:', e);
+                document.getElementById('ai-price').textContent = 'Error';
+            }
+        }
+
+        function closeAssetDropdown() {
+            const dropdown = document.getElementById('asset-dropdown');
+            dropdown.classList.remove('open');
+            assetDropdownOpen = false;
+            assetDropdownIndex = -1;
+        }
+
+        function onAssetSearchKeydown(e) {
+            if (!assetDropdownOpen) return;
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                assetDropdownIndex = Math.min(assetDropdownIndex + 1, assetSearchResults.length - 1);
+                highlightAssetDropdown();
+                // Scroll into view
+                const items = document.querySelectorAll('.asset-dropdown-item');
+                if (items[assetDropdownIndex]) items[assetDropdownIndex].scrollIntoView({ block: 'nearest' });
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                assetDropdownIndex = Math.max(assetDropdownIndex - 1, 0);
+                highlightAssetDropdown();
+                const items = document.querySelectorAll('.asset-dropdown-item');
+                if (items[assetDropdownIndex]) items[assetDropdownIndex].scrollIntoView({ block: 'nearest' });
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (assetDropdownIndex >= 0) {
+                    selectAssetFromSearch(assetDropdownIndex);
+                }
+            } else if (e.key === 'Escape') {
+                closeAssetDropdown();
+                document.getElementById('asset-search-input').blur();
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const wrapper = document.querySelector('.asset-search-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                closeAssetDropdown();
+            }
+        });
 
         // ========== INIT ==========
         async function init(){

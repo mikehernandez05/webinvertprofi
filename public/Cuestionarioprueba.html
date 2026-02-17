@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>InvertProfit — Examen de Nivel</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#D4AF37",
+                        "bg-dark": "#0a0f1a",
+                        "card": "#111827",
+                        "card-border": "#1f2937",
+                        "positive": "#22c55e",
+                        "negative": "#ef4444"
+                    },
+                    fontFamily: { "sans": ["Inter", "sans-serif"] }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
+        .logo-glow { filter: drop-shadow(0 0 10px rgba(212,175,55,0.3)); }
+        .sidebar-link:hover { background: rgba(255,255,255,0.04); color: #fff; }
+        .sidebar-link.active { background: rgba(212,175,55,0.15); color: #D4AF37; border: 1px solid rgba(212,175,55,0.2); }
+        
+        /* Animaciones para el Quiz */
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-bg-dark text-white font-sans min-h-screen flex flex-col overflow-x-hidden">
+
+<header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-[60] shrink-0">
+    <div class="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
+        <div class="flex items-center gap-2 md:gap-3">
+            <div class="h-8 md:h-10 w-10 bg-card border border-card-border rounded flex items-center justify-center font-bold text-primary logo-glow">IP</div>
+            <span class="text-lg md:text-xl font-bold text-white uppercase tracking-tighter">InvertProfit</span>
+        </div>
+        <nav class="hidden lg:flex items-center gap-10 text-sm font-bold tracking-widest text-gray-400">
+            <a class="hover:text-white transition" href="index.html">INICIO</a>
+            <a class="text-white border-b-2 border-primary pb-1" href="portadanivelesacademia.html">ACADEMIA</a>
+            <a class="hover:text-white transition" href="#">MERCADOS</a>
+        </nav>
+        <button class="bg-primary text-bg-dark font-black h-10 px-6 rounded-full text-xs tracking-widest hover:bg-primary/90 transition">CONECTAR BROKER</button>
+    </div>
+</header>
+
+<div class="flex flex-1 overflow-hidden">
+    <aside class="hidden lg:flex w-72 flex-col border-r border-card-border bg-card/30 p-6 space-y-2">
+        <p class="text-[10px] font-black text-primary/80 uppercase tracking-[4px] mb-4">Menú Academia</p>
+        <a href="#" class="sidebar-link active flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold">
+            <span class="material-symbols-outlined text-[22px]">quiz</span> Examen Actual
+        </a>
+        <a href="portadanivelesacademia.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400 transition">
+            <span class="material-symbols-outlined text-[22px]">arrow_back</span> Volver a Cursos
+        </a>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent">
+        <div class="p-6 md:p-12 max-w-4xl mx-auto" id="quiz-container">
+            <div id="quiz-app"></div>
+        </div>
+    </main>
+</div>
+
+<script>
+    const questions = [
+        {
+            id: 1,
+            question: "¿Cuál es la función principal de una Media Móvil (MA)?",
+            options: [
+                "Predecir el precio exacto del cierre",
+                "Suavizar la acción del precio e identificar la tendencia",
+                "Calcular el apalancamiento máximo",
+                "Indicar el volumen de transacciones"
+            ],
+            correctIndex: 1,
+            explanation: "Las medias móviles se utilizan principalmente para filtrar el ruido del mercado y ver la dirección clara de la tendencia."
+        },
+        {
+            id: 2,
+            question: "¿Qué diferencia a la EMA de la SMA?",
+            options: [
+                "La EMA no usa datos históricos",
+                "La EMA da más peso a los precios más recientes",
+                "La SMA es mejor para scalping",
+                "No hay diferencia, funcionan igual"
+            ],
+            correctIndex: 1,
+            explanation: "La EMA (Exponencial) reacciona más rápido a los cambios de precio actuales que la SMA (Simple)."
+        },
+        {
+            id: 3,
+            question: "En una tendencia alcista, las medias móviles suelen actuar como:",
+            options: [
+                "Resistencias fijas",
+                "Soportes dinámicos",
+                "Indicadores de sobreventa",
+                "Señales de salida inmediata"
+            ],
+            correctIndex: 1,
+            explanation: "Durante una tendencia fuerte, el precio suele 'rebotar' en las medias móviles, tratándolas como suelo o soporte."
+        }
+    ];
+
+    let currentStep = 0;
+    let score = 0;
+    let isAnswered = false;
+
+    function renderQuiz() {
+        const quizApp = document.getElementById('quiz-app');
+        const q = questions[currentStep];
+        const progress = ((currentStep + 1) / questions.length) * 100;
+
+        quizApp.innerHTML = `
+            <div class="fade-in">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
+                    <div>
+                        <h1 class="text-3xl font-black uppercase tracking-tight">Cuestionario de Trading</h1>
+                        <p class="text-gray-500 text-sm">Lección: Fundamentos de Medias Móviles</p>
+                    </div>
+                    <div class="flex items-center gap-4 bg-card border border-card-border px-5 py-3 rounded-2xl">
+                        <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Progreso</span>
+                        <div class="w-24 h-2 bg-gray-800 rounded-full overflow-hidden">
+                            <div class="h-full bg-primary" style="width: ${progress}%"></div>
+                        </div>
+                        <span class="text-primary font-bold text-sm">${currentStep + 1}/${questions.length}</span>
+                    </div>
+                </div>
+
+                <div class="bg-card border border-card-border rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-8 opacity-10">
+                        <span class="material-symbols-outlined text-8xl text-primary">analytics</span>
+                    </div>
+                    
+                    <h2 class="text-xl md:text-2xl font-bold mb-10 text-white relative z-10 leading-relaxed">
+                        ${q.question}
+                    </h2>
+
+                    <div class="grid gap-4 relative z-10">
+                        ${q.options.map((opt, i) => `
+                            <button onclick="checkAnswer(${i})" id="opt-${i}" class="group flex items-center gap-5 p-6 rounded-2xl border border-card-border bg-bg-dark/50 hover:border-primary/50 transition-all duration-300 text-left">
+                                <div class="w-10 h-10 rounded-xl bg-card border border-card-border flex items-center justify-center font-black text-gray-500 group-hover:text-primary transition-colors">
+                                    ${String.fromCharCode(65 + i)}
+                                </div>
+                                <span class="text-gray-300 font-medium">${opt}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div id="feedback" class="mt-8 hidden"></div>
+                </div>
+            </div>
+        `;
+    }
+
+    function checkAnswer(idx) {
+        if (isAnswered) return;
+        isAnswered = true;
+        const q = questions[currentStep];
+        const feedbackDiv = document.getElementById('feedback');
+        const isCorrect = idx === q.correctIndex;
+        
+        if (isCorrect) score++;
+
+        // Marcar botones
+        const buttons = document.querySelectorAll('[id^="opt-"]');
+        buttons.forEach((btn, i) => {
+            btn.classList.add('opacity-50');
+            if (i === q.correctIndex) {
+                btn.classList.remove('opacity-50', 'border-card-border');
+                btn.classList.add('border-positive', 'bg-positive/10');
+            } else if (i === idx && !isCorrect) {
+                btn.classList.remove('opacity-50', 'border-card-border');
+                btn.classList.add('border-negative', 'bg-negative/10');
+            }
+        });
+
+        feedbackDiv.classList.remove('hidden');
+        feedbackDiv.innerHTML = `
+            <div class="p-6 rounded-2xl border ${isCorrect ? 'border-positive/20 bg-positive/5' : 'border-negative/20 bg-negative/5'} mb-6">
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="material-symbols-outlined ${isCorrect ? 'text-positive' : 'text-negative'}">
+                        ${isCorrect ? 'check_circle' : 'cancel'}
+                    </span>
+                    <span class="font-black uppercase tracking-widest text-sm ${isCorrect ? 'text-positive' : 'text-negative'}">
+                        ${isCorrect ? '¡Correcto!' : 'Respuesta Incorrecta'}
+                    </span>
+                </div>
+                <p class="text-gray-400 text-sm leading-relaxed">${q.explanation}</p>
+            </div>
+            <button onclick="nextQuestion()" class="w-full bg-primary text-bg-dark font-black py-5 rounded-2xl shadow-xl shadow-primary/20 hover:scale-[1.01] transition-all flex items-center justify-center gap-2 uppercase tracking-[2px]">
+                ${currentStep + 1 === questions.length ? 'Finalizar Examen' : 'Siguiente Pregunta'}
+                <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+        `;
+    }
+
+    function nextQuestion() {
+        isAnswered = false;
+        if (currentStep + 1 < questions.length) {
+            currentStep++;
+            renderQuiz();
+        } else {
+            showFinalScore();
+        }
+    }
+
+    function showFinalScore() {
+        const quizApp = document.getElementById('quiz-app');
+        const percent = Math.round((score / questions.length) * 100);
+        
+        quizApp.innerHTML = `
+            <div class="max-w-2xl mx-auto text-center py-10 fade-in">
+                <div class="w-24 h-24 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-8 border border-primary/30 shadow-[0_0_30px_rgba(212,175,55,0.2)]">
+                    <span class="material-symbols-outlined text-primary text-5xl">military_tech</span>
+                </div>
+                <h2 class="text-5xl font-black uppercase tracking-tighter mb-4 text-white">¡Resultado Final!</h2>
+                <p class="text-gray-500 mb-12 text-lg">Has completado el módulo de Medias Móviles con éxito.</p>
+                
+                <div class="grid grid-cols-2 gap-6 mb-12">
+                    <div class="bg-card border border-card-border p-8 rounded-[2rem]">
+                        <p class="text-4xl font-black text-primary mb-1">${percent}%</p>
+                        <p class="text-[10px] font-bold uppercase tracking-[3px] text-gray-500">Puntaje</p>
+                    </div>
+                    <div class="bg-card border border-card-border p-8 rounded-[2rem]">
+                        <p class="text-4xl font-black text-white mb-1">+${score * 150}</p>
+                        <p class="text-[10px] font-bold uppercase tracking-[3px] text-gray-500">Puntos XP</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button onclick="location.reload()" class="flex-1 border border-card-border bg-card text-white font-bold py-5 rounded-2xl hover:bg-gray-800 transition-all">
+                        REPETIR
+                    </button>
+                    <a href="portadanivelesacademia.html" class="flex-1 bg-primary text-bg-dark font-black py-5 rounded-2xl shadow-lg shadow-primary/20 hover:scale-105 transition-all flex items-center justify-center gap-2">
+                        VOLVER AL CURSO <span class="material-symbols-outlined">school</span>
+                    </a>
+                </div>
+            </div>
+        `;
+    }
+
+    renderQuiz();
+</script>
+</body>
+</html>

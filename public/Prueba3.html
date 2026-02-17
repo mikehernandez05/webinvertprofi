@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>Parchador v3 - Buscador de Activos en AI Card</title>
+<style>
+body { font-family: monospace; background: #0a0f1a; color: #e5e7eb; padding: 20px; }
+h1 { color: #D4AF37; font-size: 20px; }
+h2 { color: #9ca3af; font-size: 14px; font-weight: normal; margin-top: -8px; }
+textarea { width: 100%; height: 180px; background: #111827; color: #e5e7eb; border: 1px solid #374151; border-radius: 8px; padding: 12px; font-family: monospace; font-size: 12px; }
+button { background: #D4AF37; color: #000; font-weight: bold; padding: 12px 32px; border: none; border-radius: 8px; cursor: pointer; font-size: 16px; margin: 12px 0; }
+button:hover { opacity: 0.9; }
+.ok { color: #22c55e; }
+.err { color: #ef4444; }
+#status { margin: 12px 0; font-size: 14px; }
+.preview { background: #111827; border: 1px solid #374151; border-radius: 12px; padding: 16px; margin: 16px 0; }
+.preview img { max-width: 100%; border-radius: 8px; }
+</style>
+</head>
+<body>
+<h1>🔧 Parchador v3: Buscador de Activos en AI Card</h1>
+<h2>Agrega un input de búsqueda donde está EUR/USD para buscar cualquier activo</h2>
+
+<div class="preview">
+<p style="color:#D4AF37; margin:0 0 8px 0;">📋 Lo que hace este parche:</p>
+<ul style="color:#9ca3af; font-size:13px; line-height:1.8;">
+<li>Agrega un <b>buscador con autocompletado</b> justo donde dice "EUR/USD H4"</li>
+<li>Busca en <b>Forex, Crypto e Índices</b> que ya tienes cargados</li>
+<li>También busca via <b>Polygon API</b> cualquier ticker (AAPL, TSLA, BTC, etc.)</li>
+<li>Al seleccionar un activo, actualiza el análisis AI + precio + señales</li>
+<li>Incluye <b>búsqueda por teclado</b> con resultados en dropdown</li>
+</ul>
+</div>
+
+<p>1. Pega tu index.html actual (puede tener parches anteriores):</p>
+<textarea id="input" placeholder="Pega aquí todo el contenido de tu index.html..."></textarea>
+<br>
+<button onclick="patchIt()">⚡ APLICAR PARCHE</button>
+<div id="status"></div>
+<p>2. Resultado:</p>
+<textarea id="output" placeholder="Aquí aparecerá el resultado..."></textarea>
+<br>
+<button onclick="downloadResult()">💾 DESCARGAR index.html</button>
+
+<script>
+function patchIt() {
+    const input = document.getElementById('input').value;
+    const status = document.getElementById('status');
+    
+    if (!input || input.length < 1000) {
+        status.innerHTML = '<span class="err">❌ Pega tu index.html completo primero</span>';
+        return;
+    }
+
+    let html = input;
+    let changes = 0;
+
+    // ═══ PATCH 1: CSS para el buscador ═══
+    const cssAdd = `
+        /* ====== BUSCADOR DE ACTIVOS AI CARD ====== */
+        .asset-search-wrapper { position: relative; }
+        .asset-search-input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            padding: 8px 12px 8px 40px;
+            border-radius: 10px;
+            width: 100%;
+            max-width: 320px;
+            transition: all 0.2s;
+            outline: none;
+        }
+        .asset-search-input::placeholder { color: #4b5563; font-weight: 400; font-size: 1rem; }
+        .asset-search-input:focus {
+            border-color: rgba(212,175,55,0.5);
+            box-shadow: 0 0 0 3px rgba(212,175,55,0.1);
+            background: rgba(255,255,255,0.08);
+        }
+        .asset-search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #6b7280;
+            pointer-events: none;
+            transition: color 0.2s;
+        }
+        .asset-search-input:focus ~ .asset-search-icon { color: #D4AF37; }
+        .asset-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0;
+            right: 0;
+            max-width: 380px;
+            background: #1f2937;
+            border: 1px solid #374151;
+            border-radius: 12px;
+            max-height: 320px;
+            overflow-y: auto;
+            z-index: 60;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            display: none;
+        }
+        .asset-dropdown.open { display: block; }
+        .asset-dropdown-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 14px;
+            cursor: pointer;
+            transition: background 0.15s;
+            border-bottom: 1px solid rgba(255,255,255,0.03);
+        }
+        .asset-dropdown-item:last-child { border-bottom: none; }
+        .asset-dropdown-item:hover, .asset-dropdown-item.active { background: rgba(212,175,55,0.1); }
+        .asset-dropdown-item .symbol { font-weight: 700; color: white; font-size: 14px; }
+        .asset-dropdown-item .type-badge {
+            font-size: 10px; padding: 2px 8px; border-radius: 6px; font-weight: 600;
+        }
+        .badge-forex { background: rgba(59,130,246,0.15); color: #60a5fa; }
+        .badge-crypto { background: rgba(168,85,247,0.15); color: #c084fc; }
+        .badge-stocks { background: rgba(34,197,94,0.15); color: #4ade80; }
+        .asset-dropdown-empty {
+            padding: 20px; text-align: center; color: #6b7280; font-size: 13px;
+        }
+        .asset-dropdown-section {
+            padding: 6px 14px 4px; font-size: 10px; color: #6b7280; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.05em;
+        }`;
+    
+    if (html.includes('</style>')) {
+        html = html.replace('</style>', cssAdd + '\n    </style>');
+        changes++;
+    }
+
+    // ═══ PATCH 2: Replace the static EUR/USD h2 with search input ═══
+    const oldH2 = `<h2 class="text-2xl md:text-4xl font-bold text-white mb-4 md:mb-8" id="ai-pair">EUR/USD <span class="text-gray-500 text-base md:text-xl font-normal">H4</span></h2>`;
+    
+    const newSearchHTML = `<div class="mb-4 md:mb-8">
+                    <div class="asset-search-wrapper">
+                        <input 
+                            type="text" 
+                            id="asset-search-input" 
+                            class="asset-search-input" 
+                            placeholder="Buscar activo..."
+                            autocomplete="off"
+                            onfocus="onAssetSearchFocus()"
+                            oninput="onAssetSearchInput(this.value)"
+                            onkeydown="onAssetSearchKeydown(event)"
+                        />
+                        <svg class="asset-search-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                        <div id="asset-dropdown" class="asset-dropdown custom-scrollbar"></div>
+                    </div>
+                    <div class="flex items-center gap-3 mt-2">
+                        <h2 class="text-2xl md:text-4xl font-bold text-white" id="ai-pair">EUR/USD <span class="text-gray-500 text-base md:text-xl font-normal">H4</span></h2>
+                    </div>
+                </div>`;
+
+    if (html.includes(oldH2)) {
+        html = html.replace(oldH2, newSearchHTML);
+        changes++;
+    }
+
+    // ═══ PATCH 3: Add search JS functions before init() ═══
+    const searchJS = `
+        // ========== BUSCADOR DE ACTIVOS EN AI CARD ==========
+        let assetDropdownIndex = -1;
+        let assetSearchResults = [];
+        let assetDropdownOpen = false;
+
+        function getAssetSearchables() {
+            // Build searchable list from loaded market data + extras
+            const items = [];
+            const seen = new Set();
+            
+            // From loaded market data
+            allMarketData.forEach(item => {
+                if (seen.has(item.symbol)) return;
+                seen.add(item.symbol);
+                let ticker = '', dec = 2;
+                if (item.type === 'forex') { ticker = 'C:' + item.symbol.replace('/', ''); dec = 5; }
+                else if (item.type === 'crypto') { ticker = 'X:' + item.symbol.replace('/', ''); dec = 2; }
+                else {
+                    const st = {'SPX 500':'SPY','NVDA':'NVDA','AAPL':'AAPL','MSFT':'MSFT','TSLA':'TSLA','AMZN':'AMZN','GOOGL':'GOOGL','META':'META','AMD':'AMD','NFLX':'NFLX'};
+                    ticker = st[item.symbol] || item.symbol; dec = 2;
+                }
+                items.push({
+                    symbol: item.symbol,
+                    ticker: ticker,
+                    type: item.type,
+                    decimals: dec,
+                    price: item.price,
+                    change: item.change
+                });
+            });
+
+            // Add extra popular ones that might not be loaded
+            const extras = [
+                { symbol: 'EUR/JPY', ticker: 'C:EURJPY', type: 'forex', decimals: 3 },
+                { symbol: 'GBP/AUD', ticker: 'C:GBPAUD', type: 'forex', decimals: 5 },
+                { symbol: 'USD/MXN', ticker: 'C:USDMXN', type: 'forex', decimals: 4 },
+                { symbol: 'EUR/CHF', ticker: 'C:EURCHF', type: 'forex', decimals: 5 },
+                { symbol: 'XAU/USD', ticker: 'C:XAUUSD', type: 'forex', decimals: 2 },
+                { symbol: 'PEPE/USD', ticker: 'X:PEPEUSD', type: 'crypto', decimals: 8 },
+                { symbol: 'SHIB/USD', ticker: 'X:SHIBUSD', type: 'crypto', decimals: 8 },
+                { symbol: 'WIF/USD', ticker: 'X:WIFUSD', type: 'crypto', decimals: 4 },
+                { symbol: 'DIS', ticker: 'DIS', type: 'stocks', decimals: 2 },
+                { symbol: 'BA', ticker: 'BA', type: 'stocks', decimals: 2 },
+                { symbol: 'JPM', ticker: 'JPM', type: 'stocks', decimals: 2 },
+                { symbol: 'V', ticker: 'V', type: 'stocks', decimals: 2 },
+                { symbol: 'WMT', ticker: 'WMT', type: 'stocks', decimals: 2 },
+                { symbol: 'COIN', ticker: 'COIN', type: 'stocks', decimals: 2 },
+                { symbol: 'PLTR', ticker: 'PLTR', type: 'stocks', decimals: 2 },
+                { symbol: 'SOFI', ticker: 'SOFI', type: 'stocks', decimals: 2 },
+            ];
+            extras.forEach(e => {
+                if (!seen.has(e.symbol)) { seen.add(e.symbol); items.push(e); }
+            });
+
+            return items;
+        }
+
+        function onAssetSearchFocus() {
+            const input = document.getElementById('asset-search-input');
+            if (!input.value) {
+                showAssetDropdown(getAssetSearchables().slice(0, 12));
+            }
+        }
+
+        function onAssetSearchInput(query) {
+            query = query.trim().toUpperCase();
+            const dropdown = document.getElementById('asset-dropdown');
+            assetDropdownIndex = -1;
+
+            if (!query) {
+                showAssetDropdown(getAssetSearchables().slice(0, 12));
+                return;
+            }
+
+            const all = getAssetSearchables();
+            const exact = all.filter(a => a.symbol.toUpperCase().replace('/', '').startsWith(query.replace('/', '')) || a.symbol.toUpperCase().includes(query));
+            
+            if (exact.length > 0) {
+                showAssetDropdown(exact.slice(0, 10));
+            } else {
+                // Show "searching..." and try Polygon ticker search
+                dropdown.innerHTML = '<div class="asset-dropdown-empty"><svg class="animate-spin w-4 h-4 inline mr-2" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/></svg>Buscando "' + query + '"...</div>';
+                dropdown.classList.add('open');
+                assetDropdownOpen = true;
+                searchPolygonTicker(query);
+            }
+        }
+
+        async function searchPolygonTicker(query) {
+            try {
+                const url = polygonUrl('/v3/reference/tickers?search=' + encodeURIComponent(query) + '&active=true&limit=8');
+                const response = await safeFetch(url, 'Polygon:search');
+                if (!response) {
+                    showAssetDropdown([]);
+                    return;
+                }
+                const json = await response.json();
+                if (json.results && json.results.length > 0) {
+                    const results = json.results.map(r => {
+                        let type = 'stocks', dec = 2;
+                        if (r.market === 'fx') { type = 'forex'; dec = 5; }
+                        else if (r.market === 'crypto') { type = 'crypto'; dec = 2; }
+                        return {
+                            symbol: r.ticker,
+                            ticker: r.market === 'fx' ? 'C:' + r.ticker : r.market === 'crypto' ? 'X:' + r.ticker : r.ticker,
+                            type: type,
+                            decimals: dec,
+                            name: r.name
+                        };
+                    });
+                    showAssetDropdown(results, true);
+                } else {
+                    showAssetDropdown([]);
+                }
+            } catch (e) {
+                showAssetDropdown([]);
+            }
+        }
+
+        function showAssetDropdown(results, showNames) {
+            const dropdown = document.getElementById('asset-dropdown');
+            assetSearchResults = results;
+            
+            if (!results.length) {
+                dropdown.innerHTML = '<div class="asset-dropdown-empty">🔍 No se encontraron resultados</div>';
+                dropdown.classList.add('open');
+                assetDropdownOpen = true;
+                return;
+            }
+
+            // Group by type
+            const groups = { forex: [], crypto: [], stocks: [] };
+            results.forEach(r => {
+                if (groups[r.type]) groups[r.type].push(r);
+                else groups.stocks.push(r);
+            });
+            const labels = { forex: '💱 Forex', crypto: '₿ Crypto', stocks: '📈 Acciones / Índices' };
+
+            let html = '';
+            let globalIdx = 0;
+            ['forex', 'crypto', 'stocks'].forEach(type => {
+                if (!groups[type].length) return;
+                html += '<div class="asset-dropdown-section">' + labels[type] + '</div>';
+                groups[type].forEach(item => {
+                    const badgeClass = 'badge-' + item.type;
+                    const priceStr = item.price ? (item.type === 'forex' ? item.price.toFixed(5) : item.price.toFixed(2)) : '';
+                    const changeStr = item.change != null ? ((item.change >= 0 ? '+' : '') + item.change.toFixed(2) + '%') : '';
+                    const changeColor = item.change >= 0 ? 'text-positive' : 'text-negative';
+                    const nameStr = showNames && item.name ? '<span style="color:#6b7280;font-size:11px;margin-left:6px;">' + item.name.substring(0, 25) + '</span>' : '';
+                    
+                    html += '<div class="asset-dropdown-item" data-idx="' + globalIdx + '" onclick="selectAssetFromSearch(' + globalIdx + ')" onmouseenter="assetDropdownIndex=' + globalIdx + ';highlightAssetDropdown()">';
+                    html += '<div><span class="symbol">' + item.symbol + '</span>' + nameStr + '</div>';
+                    html += '<div class="flex items-center gap-2">';
+                    if (priceStr) html += '<span style="color:#9ca3af;font-size:12px;font-family:monospace;">' + priceStr + '</span>';
+                    if (changeStr) html += '<span style="font-size:11px;font-family:monospace;" class="' + changeColor + '">' + changeStr + '</span>';
+                    html += '<span class="type-badge ' + badgeClass + '">' + item.type.toUpperCase() + '</span>';
+                    html += '</div></div>';
+                    globalIdx++;
+                });
+            });
+
+            dropdown.innerHTML = html;
+            dropdown.classList.add('open');
+            assetDropdownOpen = true;
+        }
+
+        function highlightAssetDropdown() {
+            const items = document.querySelectorAll('.asset-dropdown-item');
+            items.forEach((el, i) => el.classList.toggle('active', i === assetDropdownIndex));
+        }
+
+        function selectAssetFromSearch(idx) {
+            const item = assetSearchResults[idx];
+            if (!item) return;
+
+            // Update selectedPair
+            selectedPair = { symbol: item.symbol, ticker: item.ticker, type: item.type, decimals: item.decimals };
+            
+            // Update input display
+            document.getElementById('asset-search-input').value = '';
+            document.getElementById('ai-pair').innerHTML = item.symbol + ' <span class="text-gray-500 text-base md:text-xl font-normal">H4</span>';
+            
+            // Close dropdown
+            closeAssetDropdown();
+
+            // If we have the data already, update immediately
+            const existing = allMarketData.find(d => d.symbol === item.symbol);
+            if (existing) {
+                updateAIAnalysisForPair(existing);
+                renderMarketTable(allMarketData, currentFilter);
+            } else {
+                // Fetch fresh data for this asset
+                fetchSingleAssetData(item);
+            }
+        }
+
+        async function fetchSingleAssetData(item) {
+            try {
+                document.getElementById('ai-price').textContent = '...';
+                document.getElementById('ai-confidence').textContent = '...';
+                
+                const ticker = item.ticker;
+                let url, response, json;
+
+                // Try minute data first
+                url = polygonUrl('/v2/aggs/ticker/' + ticker + '/range/1/minute/' + daysAgo(7) + '/' + fmtDate(new Date()) + '?adjusted=true&sort=desc&limit=1');
+                response = await safeFetch(url, 'Polygon:search-asset');
+                json = response ? await response.json() : null;
+
+                if (!json?.results?.length) {
+                    url = polygonUrl('/v2/aggs/ticker/' + ticker + '/range/1/day/' + daysAgo(7) + '/' + fmtDate(new Date()) + '?adjusted=true&sort=desc&limit=2');
+                    response = await safeFetch(url, 'Polygon:search-asset-daily');
+                    json = response ? await response.json() : null;
+                }
+
+                if (!json?.results?.length) {
+                    url = polygonUrl('/v2/aggs/ticker/' + ticker + '/prev');
+                    response = await safeFetch(url, 'Polygon:search-asset-prev');
+                    json = response ? await response.json() : null;
+                }
+
+                if (json?.results?.length) {
+                    const r = json.results[0];
+                    const prevUrl = polygonUrl('/v2/aggs/ticker/' + ticker + '/prev');
+                    const prevR = await safeFetch(prevUrl, 'Polygon:search-asset-prev2');
+                    const prevJ = prevR ? await prevR.json() : {};
+                    const prevClose = prevJ?.results?.[0]?.c || r.o;
+                    
+                    const pairData = {
+                        symbol: item.symbol,
+                        price: r.c,
+                        change: ((r.c - prevClose) / prevClose * 100),
+                        high: r.h,
+                        low: r.l,
+                        type: item.type
+                    };
+
+                    // Add to market data if not exists
+                    if (!allMarketData.find(d => d.symbol === item.symbol)) {
+                        allMarketData.push(pairData);
+                    }
+
+                    updateAIAnalysisForPair(pairData);
+                } else {
+                    document.getElementById('ai-price').textContent = 'N/A';
+                    document.getElementById('ai-confidence').textContent = '--';
+                    document.getElementById('ai-reason').textContent = 'No se encontraron datos para ' + item.symbol;
+                }
+            } catch (e) {
+                console.warn('[Search] Error fetching asset:', e);
+                document.getElementById('ai-price').textContent = 'Error';
+            }
+        }
+
+        function closeAssetDropdown() {
+            const dropdown = document.getElementById('asset-dropdown');
+            dropdown.classList.remove('open');
+            assetDropdownOpen = false;
+            assetDropdownIndex = -1;
+        }
+
+        function onAssetSearchKeydown(e) {
+            if (!assetDropdownOpen) return;
+            
+            if (e.key === 'ArrowDown') {
+                e.preventDefault();
+                assetDropdownIndex = Math.min(assetDropdownIndex + 1, assetSearchResults.length - 1);
+                highlightAssetDropdown();
+                // Scroll into view
+                const items = document.querySelectorAll('.asset-dropdown-item');
+                if (items[assetDropdownIndex]) items[assetDropdownIndex].scrollIntoView({ block: 'nearest' });
+            } else if (e.key === 'ArrowUp') {
+                e.preventDefault();
+                assetDropdownIndex = Math.max(assetDropdownIndex - 1, 0);
+                highlightAssetDropdown();
+                const items = document.querySelectorAll('.asset-dropdown-item');
+                if (items[assetDropdownIndex]) items[assetDropdownIndex].scrollIntoView({ block: 'nearest' });
+            } else if (e.key === 'Enter') {
+                e.preventDefault();
+                if (assetDropdownIndex >= 0) {
+                    selectAssetFromSearch(assetDropdownIndex);
+                }
+            } else if (e.key === 'Escape') {
+                closeAssetDropdown();
+                document.getElementById('asset-search-input').blur();
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const wrapper = document.querySelector('.asset-search-wrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                closeAssetDropdown();
+            }
+        });
+`;
+
+    // Insert before "// ========== INIT =========="
+    const initMarker = '// ========== INIT ==========';
+    if (html.includes(initMarker)) {
+        html = html.replace(initMarker, searchJS + '\n        ' + initMarker);
+        changes++;
+    }
+
+    document.getElementById('output').value = html;
+    
+    if (changes >= 3) {
+        status.innerHTML = '<span class="ok">✅ Parche aplicado! ' + changes + ' cambios. Buscador de activos agregado en la card AI.</span>';
+    } else {
+        status.innerHTML = '<span class="err">⚠️ Solo ' + changes + ' de 3 cambios. Verifica que pegaste el HTML correcto.</span>';
+    }
+}
+
+function downloadResult() {
+    const output = document.getElementById('output').value;
+    if (!output) { alert('Primero aplica el parche'); return; }
+    const blob = new Blob([output], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'index.html';
+    a.click(); URL.revokeObjectURL(url);
+}
+</script>
+</body>
+</html>

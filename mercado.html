@@ -488,6 +488,12 @@ var API_KEY='Q3I6b14c8HL2l_A7faplgnuMTXekxCUU';
 var BASE='https://api.polygon.io';
 var WS_URLS={crypto:'wss://socket.polygon.io/crypto',forex:'wss://socket.polygon.io/forex',stocks:'wss://socket.polygon.io/stocks'};
 
+/* Plan capabilities — Stocks Advanced: stocks full, forex/crypto limited */
+var PLAN={
+    wsEnabled:    {stocks:true, forex:false, crypto:false},
+    snapEnabled:  {stocks:true, forex:true,  crypto:false}
+};
+
 var ASSETS={
     'SPY':       {label:'S&P 500', sub:'SPY',    d:2,ws:'stocks',cat:'indices',color:'#10b981',abbr:'SPX'},
     'QQQ':       {label:'NASDAQ',  sub:'QQQ',    d:2,ws:'stocks',cat:'indices',color:'#6366f1',abbr:'NDQ'},
@@ -568,7 +574,7 @@ async function loadSnapshots(){
         });
         console.log('[Polygon] Stocks:',stocksSnap.tickers.length,'tickers cargados');
     }else{
-        console.warn('[Polygon] Stocks snapshot falló, usando fallback REST...');
+        console.log('[Polygon] Stocks snapshot no disponible, usando aggregates...');
         await loadFallback(stockTickers);loaded+=stockTickers.length;
     }
 
@@ -590,30 +596,34 @@ async function loadSnapshots(){
         });
         console.log('[Polygon] Forex:',fxSnap.tickers.length,'pares cargados');
     }else{
-        console.warn('[Polygon] Forex snapshot falló, usando fallback REST...');
+        console.log('[Polygon] Forex snapshot no disponible, usando aggregates...');
         await loadFallback(fxTickers);loaded+=fxTickers.length;
     }
 
-    // 3) Crypto snapshot
+    // 3) Crypto — snapshot no disponible en plan actual, usar aggregates directamente
     var cryptoTickers=TICKERS.filter(function(t){return ASSETS[t].ws==='crypto';});
-    var cryptoSnap=await api('/v2/snapshot/locale/global/markets/crypto/tickers?tickers='+cryptoTickers.join(','));
-    if(cryptoSnap&&cryptoSnap.tickers){
-        cryptoSnap.tickers.forEach(function(s){
-            var tk=s.ticker;if(!ASSETS[tk])return;
-            var price=null;
-            if(s.lastTrade&&s.lastTrade.p) price=s.lastTrade.p;
-            else if(s.min&&s.min.c) price=s.min.c;
-            else if(s.day&&s.day.c) price=s.day.c;
-            else if(s.prevDay&&s.prevDay.c) price=s.prevDay.c;
-            if(!price)return;
-            if(s.prevDay&&s.prevDay.c) prevCloses[tk]=s.prevDay.c;
-            prices[tk]={price:price,change:s.todaysChangePerc||0,ts:s.updated||Date.now()};
-            updateMW(tk);loaded++;
-        });
-        console.log('[Polygon] Crypto:',cryptoSnap.tickers.length,'tokens cargados');
+    if(PLAN.snapEnabled.crypto){
+        var cryptoSnap=await api('/v2/snapshot/locale/global/markets/crypto/tickers?tickers='+cryptoTickers.join(','));
+        if(cryptoSnap&&cryptoSnap.tickers){
+            cryptoSnap.tickers.forEach(function(s){
+                var tk=s.ticker;if(!ASSETS[tk])return;
+                var price=null;
+                if(s.lastTrade&&s.lastTrade.p) price=s.lastTrade.p;
+                else if(s.min&&s.min.c) price=s.min.c;
+                else if(s.day&&s.day.c) price=s.day.c;
+                else if(s.prevDay&&s.prevDay.c) price=s.prevDay.c;
+                if(!price)return;
+                if(s.prevDay&&s.prevDay.c) prevCloses[tk]=s.prevDay.c;
+                prices[tk]={price:price,change:s.todaysChangePerc||0,ts:s.updated||Date.now()};
+                updateMW(tk);loaded++;
+            });
+            console.log('[Polygon] Crypto:',cryptoSnap.tickers.length,'tokens cargados');
+        }else{
+            await loadFallback(cryptoTickers);loaded+=cryptoTickers.length;
+        }
     }else{
-        console.warn('[Polygon] Crypto snapshot falló, usando fallback REST...');
-        await loadFallback(cryptoTickers);loaded+=cryptoTickers.length;
+        console.log('[Polygon] Crypto: snapshot omitido (plan), usando aggregates...');
+        await loadFallbackAgg(cryptoTickers);loaded+=cryptoTickers.length;
     }
 
     console.log('[Polygon] Total cargados:',loaded,'/',TICKERS.length,'| API calls:',apiCalls,'| Errores:',apiErrors);
@@ -636,24 +646,40 @@ async function loadFallback(tickers){
     }));
 }
 
+/* ── Fallback: aggregates only (for markets without snapshot access) ── */
+async function loadFallbackAgg(tickers){
+    await Promise.allSettled(tickers.map(function(t){
+        return api('/v2/aggs/ticker/'+t+'/prev?adjusted=true').then(function(d){
+            if(d&&d.results&&d.results.length) prevCloses[t]=d.results[0].c;
+        });
+    }));
+    await Promise.allSettled(tickers.map(function(t){
+        return getPrice(t).then(function(r){
+            if(r){prices[t]=r;updateMW(t);}
+        });
+    }));
+}
+
 async function getPrice(ticker){
-    // Try snapshot for single ticker first
+    // Try snapshot for single ticker first (only if plan allows)
     var a=ASSETS[ticker];if(!a)return null;
     var market=a.ws==='stocks'?'stocks':a.ws;
     var locale=a.ws==='stocks'?'us':'global';
     var mkt=a.ws==='stocks'?'stocks':a.ws==='forex'?'forex':'crypto';
 
-    var snap=await api('/v2/snapshot/locale/'+locale+'/markets/'+mkt+'/tickers/'+ticker);
-    if(snap&&snap.ticker){
-        var s=snap.ticker;
-        var price=null;
-        if(mkt==='forex'&&s.lastQuote) price=(s.lastQuote.a+s.lastQuote.b)/2;
-        else if(s.lastTrade&&s.lastTrade.p) price=s.lastTrade.p;
-        else if(s.min&&s.min.c) price=s.min.c;
-        else if(s.day&&s.day.c) price=s.day.c;
-        if(price){
-            if(s.prevDay&&s.prevDay.c) prevCloses[ticker]=s.prevDay.c;
-            return{price:price,change:s.todaysChangePerc||0,ts:s.updated||Date.now()};
+    if(PLAN.snapEnabled[mkt]){
+        var snap=await api('/v2/snapshot/locale/'+locale+'/markets/'+mkt+'/tickers/'+ticker);
+        if(snap&&snap.ticker){
+            var s=snap.ticker;
+            var price=null;
+            if(mkt==='forex'&&s.lastQuote) price=(s.lastQuote.a+s.lastQuote.b)/2;
+            else if(s.lastTrade&&s.lastTrade.p) price=s.lastTrade.p;
+            else if(s.min&&s.min.c) price=s.min.c;
+            else if(s.day&&s.day.c) price=s.day.c;
+            if(price){
+                if(s.prevDay&&s.prevDay.c) prevCloses[ticker]=s.prevDay.c;
+                return{price:price,change:s.todaysChangePerc||0,ts:s.updated||Date.now()};
+            }
         }
     }
 
@@ -687,7 +713,7 @@ var pollIdx=0;
 function pollREST(){
     var markets=['crypto','forex','stocks'];
     var m=markets[pollIdx%3];pollIdx++;
-    if(wsAlive[m]) return; // WS is live for this market, skip
+    if(PLAN.wsEnabled[m]&&wsAlive[m]) return; // WS is live for this market, skip
     var tks=TICKERS.filter(function(t){return ASSETS[t].ws===m;});
     tks.forEach(function(t){
         getPrice(t).then(function(r){
@@ -697,7 +723,10 @@ function pollREST(){
 }
 
 /* ═══ WEBSOCKET (Real-time Polygon streams) ═══ */
-function connectAllWS(){['crypto','forex','stocks'].forEach(connectWS);}
+function connectAllWS(){['crypto','forex','stocks'].forEach(function(m){
+    if(PLAN.wsEnabled[m]) connectWS(m);
+    else console.log('[WS] '+m+' omitido (plan no incluye WS para '+m+')');
+});}
 function connectWS(market){
     if(wsConns[market])try{wsConns[market].close();}catch(e){}
     var ws;try{ws=new WebSocket(WS_URLS[market]);}catch(e){console.warn('[WS] No se pudo conectar a',market);return;}
