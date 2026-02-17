@@ -152,6 +152,18 @@ html,body{height:100%;overflow:hidden}
     .right-panel{display:none!important}
     .bottom-orders{display:none!important}
 }
+
+/* ── Global Search Dropdown ── */
+.gs-item{display:flex;align-items:center;justify-content:space-between;padding:8px 14px;cursor:pointer;transition:background .12s;border-bottom:1px solid rgba(255,255,255,0.03)}
+.gs-item:last-child{border-bottom:none}
+.gs-item:hover,.gs-item.active{background:rgba(212,175,55,0.08)}
+.gs-section{padding:5px 14px 3px;font-size:9px;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+.gs-empty{padding:18px;text-align:center;color:#6b7280;font-size:12px}
+.gs-badge{font-size:9px;padding:2px 7px;border-radius:5px;font-weight:600}
+.gs-badge-forex{background:rgba(59,130,246,0.12);color:#60a5fa}
+.gs-badge-crypto{background:rgba(168,85,247,0.12);color:#c084fc}
+.gs-badge-indices{background:rgba(34,197,94,0.12);color:#4ade80}
+.gs-badge-commodities{background:rgba(234,179,8,0.12);color:#eab308}
 </style>
 </head>
 <body class="bg-bg-dark text-white font-sans antialiased h-screen flex flex-col overflow-hidden">
@@ -179,6 +191,14 @@ html,body{height:100%;overflow:hidden}
                 <span class="leading-none">⚡</span>
                 <span class="leading-none">CONECTAR BROKER</span>
             </button>
+            <!-- Global Search -->
+            <div class="hidden md:flex relative" id="global-search-wrap">
+                <div class="flex items-center gap-1.5 bg-bg-dark/80 rounded-lg px-3 py-1.5 border border-card-border/50 hover:border-primary/30 transition w-[220px] focus-within:border-primary/50 focus-within:w-[280px]" style="transition:all .3s">
+                    <span class="material-symbols-outlined text-[16px] text-gray-500">search</span>
+                    <input id="global-search" type="text" placeholder="Buscar activo… (Ctrl+K)" class="bg-transparent text-[12px] text-white placeholder-gray-500 outline-none w-full font-sans border-none focus:ring-0 p-0" autocomplete="off"/>
+                </div>
+                <div id="global-search-dropdown" class="absolute top-full left-0 right-0 mt-1 bg-card border border-card-border rounded-xl max-h-[320px] overflow-y-auto z-[80] shadow-2xl hidden custom-scrollbar"></div>
+            </div>
             <div class="hidden md:flex items-center gap-3">
                 <span class="text-gray-400 text-xl">🔔</span>
                 <div class="w-10 h-10 bg-gray-600 rounded-full"></div>
@@ -540,11 +560,23 @@ function fmt(v,t){if(v==null)return'—';var dd=ASSETS[t]?ASSETS[t].d:2;return d
 
 /* ═══ REST API ═══ */
 var apiCalls=0,apiErrors=0;
+var lastApiCall=0;
 async function api(path){
+    // Rate limit: min 120ms between calls to avoid 429
+    var now=Date.now();
+    var wait=Math.max(0,120-(now-lastApiCall));
+    if(wait>0) await new Promise(function(r){setTimeout(r,wait);});
+    lastApiCall=Date.now();
+    
     var sep=path.indexOf('?')>=0?'&':'?';
     apiCalls++;
     try{
         var r=await fetch(BASE+path+sep+'apiKey='+API_KEY);
+        if(r.status===429){
+            console.warn('[Polygon] Rate limited, esperando 1s...');
+            await new Promise(function(r){setTimeout(r,1000);});
+            r=await fetch(BASE+path+sep+'apiKey='+API_KEY);
+        }
         if(!r.ok){apiErrors++;console.warn('[Polygon] HTTP',r.status,'→',path.split('?')[0]);return null;}
         var j=await r.json();
         if(j.status==='ERROR'||j.status==='NOT_FOUND'){console.warn('[Polygon]',j.status,j.message||'',path.split('?')[0]);return null;}
@@ -840,9 +872,94 @@ function filterMW(){
     });
 }
 
-/* ═══ GLOBAL SEARCH (disabled - search removed from header) ═══ */
-function initGlobalSearch(){}
-function showSearchResults(){}
+/* ═══ GLOBAL SEARCH ═══ */
+var gsIndex=-1,gsResults=[];
+function initGlobalSearch(){
+    var inp=$('global-search');if(!inp)return;
+    var dd=$('global-search-dropdown');
+    
+    inp.addEventListener('focus',function(){
+        if(!inp.value.trim()) showGSDropdown(getGSDefaults());
+    });
+    inp.addEventListener('input',function(){
+        var q=inp.value.trim().toUpperCase();
+        gsIndex=-1;
+        if(!q){showGSDropdown(getGSDefaults());return;}
+        var matches=TICKERS.filter(function(tk){
+            var a=ASSETS[tk];
+            var haystack=(a.label+' '+a.sub+' '+a.abbr+' '+tk).toUpperCase();
+            return haystack.indexOf(q)>=0;
+        }).map(function(tk){return{ticker:tk,asset:ASSETS[tk]};});
+        if(matches.length) showGSDropdown(matches);
+        else{
+            dd.innerHTML='<div class="gs-empty">🔍 No encontrado: "'+q+'"</div>';
+            dd.classList.remove('hidden');
+        }
+    });
+    inp.addEventListener('keydown',function(e){
+        if(!dd||dd.classList.contains('hidden'))return;
+        if(e.key==='ArrowDown'){e.preventDefault();gsIndex=Math.min(gsIndex+1,gsResults.length-1);highlightGS();}
+        else if(e.key==='ArrowUp'){e.preventDefault();gsIndex=Math.max(gsIndex-1,0);highlightGS();}
+        else if(e.key==='Enter'){e.preventDefault();if(gsIndex>=0&&gsResults[gsIndex])selectGS(gsResults[gsIndex].ticker);else if(gsResults.length===1)selectGS(gsResults[0].ticker);}
+        else if(e.key==='Escape'){dd.classList.add('hidden');inp.blur();}
+    });
+    document.addEventListener('click',function(e){
+        var wrap=$('global-search-wrap');
+        if(wrap&&!wrap.contains(e.target)) dd.classList.add('hidden');
+    });
+    // Ctrl+K shortcut
+    document.addEventListener('keydown',function(e){
+        if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();inp.focus();inp.select();}
+    });
+}
+function getGSDefaults(){
+    return TICKERS.slice(0,12).map(function(tk){return{ticker:tk,asset:ASSETS[tk]};});
+}
+function showGSDropdown(items){
+    var dd=$('global-search-dropdown');
+    gsResults=items;
+    var groups={indices:[],forex:[],commodities:[],crypto:[]};
+    items.forEach(function(it){
+        var cat=it.asset.cat;
+        if(groups[cat])groups[cat].push(it);
+    });
+    var labels={indices:'📈 Índices',forex:'💱 Forex',commodities:'🥇 Commodities',crypto:'₿ Crypto'};
+    var html='';var gi=0;
+    ['indices','forex','commodities','crypto'].forEach(function(cat){
+        if(!groups[cat].length)return;
+        html+='<div class="gs-section">'+labels[cat]+'</div>';
+        groups[cat].forEach(function(it){
+            var d=prices[it.ticker];
+            var priceStr=d?fmt(d.price,it.ticker):'—';
+            var chgStr=d?((d.change>=0?'+':'')+d.change.toFixed(2)+'%'):'';
+            var chgClass=d?(d.change>=0?'text-green-500':'text-red-500'):'text-gray-500';
+            html+='<div class="gs-item" data-gsi="'+gi+'" data-ticker="'+it.ticker+'">';
+            html+='<div class="flex items-center gap-2"><div class="size-6 rounded-md flex items-center justify-center text-[8px] font-bold" style="background:'+it.asset.color+'15;color:'+it.asset.color+';border:1px solid '+it.asset.color+'25">'+it.asset.abbr+'</div>';
+            html+='<div><div class="text-[12px] font-bold text-white">'+it.asset.label+'</div><div class="text-[9px] text-gray-500">'+it.asset.sub+'</div></div></div>';
+            html+='<div class="text-right"><div class="text-[11px] font-mono text-white">'+priceStr+'</div><div class="text-[9px] font-mono '+chgClass+'">'+chgStr+'</div></div>';
+            html+='</div>';
+            gi++;
+        });
+    });
+    dd.innerHTML=html;
+    dd.classList.remove('hidden');
+    // Event delegation for clicks and hover
+    dd.querySelectorAll('.gs-item').forEach(function(el){
+        el.addEventListener('click',function(){selectGS(this.dataset.ticker);});
+        el.addEventListener('mouseenter',function(){gsIndex=parseInt(this.dataset.gsi);highlightGS();});
+    });
+}
+function highlightGS(){
+    var items=document.querySelectorAll('.gs-item');
+    items.forEach(function(el,i){el.classList.toggle('active',i===gsIndex);});
+    if(items[gsIndex])items[gsIndex].scrollIntoView({block:'nearest'});
+}
+function selectGS(ticker){
+    var dd=$('global-search-dropdown');
+    dd.classList.add('hidden');
+    $('global-search').value='';
+    openChart(ticker);
+}
 
 /* ═══ CHART SLOTS ═══ */
 function createLWChart(container){
@@ -1116,21 +1233,28 @@ function setTool(tool){
 
 function initToolbar(){
     $$('.tool-btn').forEach(function(btn){
-        btn.addEventListener('click',function(){
-            var tool=this.dataset.tool;
-            if(tool) setTool(tool);
+        var tool=btn.dataset.tool;
+        if(!tool)return;
+        // Remove any old listeners by cloning
+        var newBtn=btn.cloneNode(true);
+        btn.parentNode.replaceChild(newBtn,btn);
+        newBtn.addEventListener('click',function(e){
+            e.preventDefault();e.stopPropagation();
+            setTool(this.dataset.tool);
         });
     });
     // ESC key returns to cursor
     document.addEventListener('keydown',function(e){
+        // Skip if typing in an input
+        if(document.activeElement&&document.activeElement.tagName==='INPUT')return;
         if(e.key==='Escape'){setTool('cursor');}
-        // Shortcut keys
-        if(e.key==='h'&&!e.ctrlKey&&!e.metaKey&&document.activeElement.tagName!=='INPUT') setTool('hline');
-        if(e.key==='t'&&!e.ctrlKey&&!e.metaKey&&document.activeElement.tagName!=='INPUT') setTool('trendline');
-        if(e.key==='f'&&!e.ctrlKey&&!e.metaKey&&document.activeElement.tagName!=='INPUT') setTool('fibonacci');
-        if(e.key==='m'&&!e.ctrlKey&&!e.metaKey&&document.activeElement.tagName!=='INPUT') setTool('marker');
-        if(e.key==='Delete'||e.key==='Backspace'&&document.activeElement.tagName!=='INPUT') deleteDrawings();
+        if(e.key==='h'&&!e.ctrlKey&&!e.metaKey) setTool('hline');
+        if(e.key==='t'&&!e.ctrlKey&&!e.metaKey) setTool('trendline');
+        if(e.key==='f'&&!e.ctrlKey&&!e.metaKey) setTool('fibonacci');
+        if(e.key==='m'&&!e.ctrlKey&&!e.metaKey) setTool('marker');
+        if(e.key==='Delete'||e.key==='Backspace') deleteDrawings();
     });
+    console.log('[Toolbar] Inicializada con',$$('.tool-btn').length,'botones');
 }
 
 /* ─── CHART CLICK HANDLER FOR DRAWING ─── */
@@ -1376,17 +1500,44 @@ async function init(){
     initOrderTabs();
     initToolbar();
 
-    // Load all prices via Polygon Snapshots (3 API calls)
+    // Show loading state in MW
+    $$('.mw-row .mw-price').forEach(function(el){el.textContent='...';});
+
+    // Load all prices via Polygon Snapshots (3 API calls) with retry
     var ok=await loadSnapshots();
+
+    if(!ok||ok<3){
+        console.warn('[InvertProfit] Primer intento parcial ('+ok+'), reintentando en 2s...');
+        await new Promise(function(r){setTimeout(r,2000);});
+        var ok2=await loadSnapshots();
+        ok=(ok||0)+(ok2||0);
+    }
 
     if(ok){
         renderTickerTape();
         var defaults=['X:BTCUSD','C:EURUSD','SPY','X:ETHUSD'];
-        for(var i=0;i<defaults.length;i++) await openChart(defaults[i]);
+        for(var i=0;i<defaults.length;i++){
+            try{await openChart(defaults[i]);}catch(e){console.warn('[Init] Error opening',defaults[i],e);}
+        }
         focusSlot(0);
         console.log('[InvertProfit] Gráficos por defecto cargados');
     }else{
-        console.warn('[InvertProfit] No se pudieron cargar precios iniciales');
+        console.warn('[InvertProfit] No se pudieron cargar precios iniciales, usando fallback individual...');
+        // Try individual loads as last resort
+        for(var i=0;i<TICKERS.length;i++){
+            (function(tk){
+                getPrice(tk).then(function(r){if(r){prices[tk]=r;updateMW(tk);}});
+            })(TICKERS[i]);
+        }
+        renderTickerTape();
+        // Still try to open default charts
+        setTimeout(async function(){
+            var defaults=['X:BTCUSD','C:EURUSD','SPY','X:ETHUSD'];
+            for(var i=0;i<defaults.length;i++){
+                try{await openChart(defaults[i]);}catch(e){}
+            }
+            focusSlot(0);
+        },3000);
     }
 
     // Connect WebSockets for real-time streaming
