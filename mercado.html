@@ -176,69 +176,54 @@ html,body{height:100%;overflow:hidden}
 </head>
 <body class="bg-bg-dark text-white font-sans antialiased h-screen flex flex-col overflow-hidden">
 
-<header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-50 shrink-0">
-    <div class="flex items-center justify-between px-4 md:px-8 h-[64px]">
-        <div class="flex items-center gap-2 md:gap-3">
-            <a href="index.html" class="flex items-center gap-2">
-                <img src="images/logo_azul.png" alt="InvertProfit" class="h-8 md:h-10 w-auto logo-glow object-contain" id="logo-img"/>
-                <span class="text-lg md:text-xl font-bold text-white" id="logo-text" style="display:none;">InvertProfit</span>
-            </a>
-        </div>
-        <nav class="hidden lg:flex items-center gap-10">
-            <a class="text-gray-400 hover:text-white transition text-lg" href="index.html">INICIO</a>
-            <a class="text-gray-400 hover:text-white transition text-lg" href="portadanivelesacademia.html">ACADEMIA</a>
-            <a class="text-white font-semibold border-b-2 border-primary pb-1 text-lg" href="mercado.html">MERCADOS</a>
-            <a class="text-gray-400 hover:text-white transition text-lg" href="#">PORTAFOLIO</a>
-        </nav>
-        <div class="flex items-center gap-3 md:gap-4 shrink-0">
-            <div class="hidden md:flex items-center gap-1.5 mr-1">
-                <span id="ws-dot" class="size-2 rounded-full bg-gray-400"></span>
-                <span id="ws-lbl" class="text-[11px] font-mono text-gray-400">Conectando...</span>
-            </div>
-            <button class="shrink-0 bg-primary text-bg-black font-bold h-10 px-6 rounded-full inline-flex items-center gap-2 whitespace-nowrap hover:bg-primary/90 transition text-xs sm:text-sm tracking-wide leading-none">
-                <span class="leading-none">⚡</span>
-                <span class="leading-none">CONECTAR BROKER</span>
-            </button>
-            <!-- Global Search -->
-            <div class="hidden md:flex relative" id="global-search-wrap">
-                <div class="flex items-center gap-1.5 bg-bg-dark/80 rounded-lg px-3 py-1.5 border border-card-border/50 hover:border-primary/30 transition w-[220px] focus-within:border-primary/50 focus-within:w-[280px]" style="transition:all .3s">
-                    <span class="material-symbols-outlined text-[16px] text-gray-500">search</span>
-                    <input id="global-search" type="text" placeholder="Buscar activo… (Ctrl+K)" class="bg-transparent text-[12px] text-white placeholder-gray-500 outline-none w-full font-sans border-none focus:ring-0 p-0" autocomplete="off"/>
+<header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-50">
+        <div class="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
+            <div class="flex items-center gap-2 md:gap-3">
+            <img src="images/logo_azul.png" alt="InvertProfit" class="h-8 md:h-10 w-auto logo-glow object-contain" id="logo-img"/>
+</div>
+            <nav class="hidden lg:flex items-center gap-10">
+                <a class="text-gray-400 hover:text-white transition text-lg" href="index.html">INICIO</a>
+                <a class="text-gray-400 hover:text-white transition text-lg" href="portadanivelesacademia.html">ACADEMIA</a>
+                <a class="text-white font-semibold border-b-2 border-primary pb-1 text-lg" href="mercado.html">MERCADOS</a>
+                <a class="text-gray-400 hover:text-white transition text-lg" href="#">PORTAFOLIO</a>
+            </nav>
+            <div class="flex items-center gap-2 md:gap-4">
+                <button
+                class="shrink-0 bg-primary text-midnight font-bold h-10 px-6 rounded-full
+                inline-flex items-center gap-2 whitespace-nowrap
+               hover:bg-primary/90 transition text-xs sm:text-sm tracking-wide leading-none">
+               <span class="leading-none">⚡</span>
+               <span class="leading-none">CONECTAR BROKER</span>
+               </button>
+                <div class="hidden md:flex items-center gap-3">
+                    <span id="ws-dot" class="size-2 rounded-full bg-gray-400"></span>
+                    <span id="ws-lbl" class="text-[9px] font-mono text-gray-400">REST</span>
+                    <span class="text-gray-400 text-xl">🔔</span>
+                    <div class="w-10 h-10 bg-gray-600 rounded-full"></div>
                 </div>
-                <div id="global-search-dropdown" class="absolute top-full left-0 right-0 mt-1 bg-card border border-card-border rounded-xl max-h-[320px] overflow-y-auto z-[80] shadow-2xl hidden custom-scrollbar"></div>
+                <!-- Mobile hamburger -->
+                <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="lg:hidden text-gray-400 hover:text-white p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                </button>
             </div>
-            <div class="hidden md:flex items-center gap-3">
+        </div>
+        <!-- Mobile nav -->
+        <nav id="mobile-menu" class="hidden lg:hidden border-t border-card-border bg-card px-4 py-3 space-y-2">
+            <a class="block text-gray-400 hover:text-white py-2 pl-3" href="index.html">INICIO</a>
+            <a class="block text-gray-400 hover:text-white py-2 pl-3" href="portadanivelesacademia.html">ACADEMIA</a>
+            <a class="block text-white font-semibold py-2 border-l-2 border-primary pl-3" href="mercado.html">MERCADOS</a>
+            <a class="block text-gray-400 hover:text-white py-2 pl-3" href="#">PORTAFOLIO</a>
+            <div class="flex items-center gap-3 pt-2 border-t border-card-border mt-2">
                 <span class="text-gray-400 text-xl">🔔</span>
-                <div class="w-10 h-10 bg-gray-600 rounded-full"></div>
+                <div class="w-8 h-8 bg-gray-600 rounded-full"></div>
             </div>
-            <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="lg:hidden text-gray-400 hover:text-white p-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-            </button>
+        </nav>
+        
+        <!-- Ticker Tape -->
+        <div class="bg-card border-t border-card-border overflow-hidden py-2 md:py-3">
+            <div class="animate-ticker whitespace-nowrap flex text-xs md:text-base" id="ticker-tape"></div>
         </div>
-    </div>
-    <!-- Mobile nav -->
-    <nav id="mobile-menu" class="hidden lg:hidden border-t border-card-border bg-card px-4 py-3 space-y-2">
-        <a class="block text-gray-400 hover:text-white py-2 pl-3" href="index.html">INICIO</a>
-        <a class="block text-gray-400 hover:text-white py-2 pl-3" href="portadanivelesacademia.html">ACADEMIA</a>
-        <a class="block text-white font-semibold py-2 border-l-2 border-primary pl-3" href="mercado.html">MERCADOS</a>
-        <a class="block text-gray-400 hover:text-white py-2 pl-3" href="#">PORTAFOLIO</a>
-        <div class="flex items-center gap-3 pt-2 border-t border-card-border mt-2">
-            <span class="text-gray-400 text-xl">🔔</span>
-            <div class="w-8 h-8 bg-gray-600 rounded-full"></div>
-        </div>
-    </nav>
-    <!-- Ticker Tape -->
-    <div class="bg-card border-t border-card-border overflow-hidden py-1.5">
-        <div class="animate-ticker whitespace-nowrap flex text-xs" id="ticker-tape"></div>
-    </div>
-</header>
-
-<script>
-    document.getElementById('logo-img').onerror = function() {
-        this.style.display = 'none';
-        document.getElementById('logo-text').style.display = 'inline';
-    };
-</script>
+    </header>
 
 <div class="flex-1 flex overflow-hidden">
 
