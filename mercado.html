@@ -119,6 +119,37 @@ html,body{height:100%;overflow:hidden}
 .tool-btn.active{color:#D4AF37;background:rgba(212,175,55,.1)}
 .tool-btn.active::before{content:'';position:absolute;left:0;top:25%;bottom:25%;width:2px;background:#D4AF37;border-radius:0 2px 2px 0}
 
+/* ── Toolbar Tooltips ── */
+.tool-tip{
+    position:absolute;
+    left:calc(100% + 10px);
+    top:50%;
+    transform:translateY(-50%);
+    background:#1f2937;
+    border:1px solid #374151;
+    border-radius:10px;
+    padding:8px 12px;
+    white-space:nowrap;
+    z-index:100;
+    pointer-events:none;
+    opacity:0;
+    transition:opacity .15s,transform .15s;
+    transform:translateY(-50%) translateX(-4px);
+    box-shadow:0 8px 24px rgba(0,0,0,0.4);
+    min-width:160px;
+}
+.tool-tip::before{
+    content:'';position:absolute;left:-5px;top:50%;transform:translateY(-50%);
+    border:5px solid transparent;border-right-color:#374151;
+}
+.tool-btn:hover .tool-tip{
+    opacity:1;
+    transform:translateY(-50%) translateX(0);
+}
+.tool-tip-title{font-size:11px;font-weight:700;color:#fff;margin-bottom:2px}
+.tool-tip-desc{font-size:9px;color:#9ca3af;line-height:1.4}
+.tool-tip-key{display:inline-block;font-size:8px;font-family:'JetBrains Mono',monospace;background:rgba(212,175,55,0.1);color:#D4AF37;padding:1px 5px;border-radius:4px;margin-top:4px;border:1px solid rgba(212,175,55,0.15)}
+
 /* ── AmigoTrade AI Card ── */
 .ai-card{background:linear-gradient(135deg, rgba(17, 24, 39, 0.9), rgba(17, 24, 39, 0.7)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:%23134e4a;stop-opacity:0.3"/><stop offset="100%" style="stop-color:%230f172a;stop-opacity:0.1"/></linearGradient></defs><rect fill="url(%23g)" width="100" height="100"/></svg>');border:1px solid #1f2937;position:relative;overflow:hidden}
 .ai-card::before{content:'';position:absolute;top:0;right:0;width:120px;height:120px;background:radial-gradient(circle,rgba(212,175,55,.06) 0%,transparent 70%);pointer-events:none}
@@ -176,7 +207,7 @@ html,body{height:100%;overflow:hidden}
 </head>
 <body class="bg-bg-dark text-white font-sans antialiased h-screen flex flex-col overflow-hidden">
 
-<header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-50">
+    <header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-50">
         <div class="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
             <div class="flex items-center gap-2 md:gap-3">
             <img src="images/logo_azul.png" alt="InvertProfit" class="h-8 md:h-10 w-auto logo-glow object-contain" id="logo-img"/>
@@ -188,6 +219,11 @@ html,body{height:100%;overflow:hidden}
                 <a class="text-gray-400 hover:text-white transition text-lg" href="#">PORTAFOLIO</a>
             </nav>
             <div class="flex items-center gap-2 md:gap-4">
+                <!-- Search Bar -->
+                <div class="hidden md:flex items-center gap-2 bg-white/5 border border-card-border rounded-full px-4 py-2 hover:border-primary/30 focus-within:border-primary/50 transition w-[240px]">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+                    <input id="header-search" type="text" placeholder="Buscar activo (ej. BTC/USD)" class="bg-transparent text-sm text-white placeholder-gray-500 outline-none w-full border-none focus:ring-0 p-0" autocomplete="off"/>
+                </div>
                 <button
                 class="shrink-0 bg-primary text-midnight font-bold h-10 px-6 rounded-full
                 inline-flex items-center gap-2 whitespace-nowrap
@@ -196,8 +232,6 @@ html,body{height:100%;overflow:hidden}
                <span class="leading-none">CONECTAR BROKER</span>
                </button>
                 <div class="hidden md:flex items-center gap-3">
-                    <span id="ws-dot" class="size-2 rounded-full bg-gray-400"></span>
-                    <span id="ws-lbl" class="text-[9px] font-mono text-gray-400">REST</span>
                     <span class="text-gray-400 text-xl">🔔</span>
                     <div class="w-10 h-10 bg-gray-600 rounded-full"></div>
                 </div>
@@ -228,36 +262,82 @@ html,body{height:100%;overflow:hidden}
 <div class="flex-1 flex overflow-hidden">
 
 <aside class="w-[46px] shrink-0 border-r border-card-border bg-card flex flex-col items-center py-3 gap-1">
-    <button class="tool-btn active w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="cursor" title="Cursor (Esc)">
+    <button class="tool-btn active w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="cursor" title="">
         <span class="material-symbols-outlined text-[18px]">near_me</span>
+        <div class="tool-tip">
+            <div class="tool-tip-title">Cursor</div>
+            <div class="tool-tip-desc">Modo normal para navegar y hacer zoom en el gráfico</div>
+            <span class="tool-tip-key">Esc</span>
+        </div>
     </button>
-    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="hline" title="Línea Horizontal — click en gráfico">
+    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="hline" title="">
         <span class="material-symbols-outlined text-[18px]">horizontal_rule</span>
+        <div class="tool-tip">
+            <div class="tool-tip-title">Línea Horizontal</div>
+            <div class="tool-tip-desc">Click en el gráfico para marcar un nivel de precio</div>
+            <span class="tool-tip-key">H</span>
+        </div>
     </button>
-    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="trendline" title="Línea de Tendencia — click 2 puntos">
+    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="trendline" title="">
         <span class="material-symbols-outlined text-[18px]">show_chart</span>
+        <div class="tool-tip">
+            <div class="tool-tip-title">Línea de Tendencia</div>
+            <div class="tool-tip-desc">Click en 2 puntos para dibujar una línea entre ellos</div>
+            <span class="tool-tip-key">T</span>
+        </div>
     </button>
-    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="fibonacci" title="Fibonacci — click 2 puntos">
+    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="fibonacci" title="">
         <span class="material-symbols-outlined text-[18px]">straighten</span>
+        <div class="tool-tip">
+            <div class="tool-tip-title">Fibonacci</div>
+            <div class="tool-tip-desc">Click en 2 puntos para dibujar niveles de retroceso 23.6%, 38.2%, 50%, 61.8%</div>
+            <span class="tool-tip-key">F</span>
+        </div>
     </button>
-    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="marker" title="Marcador — click en gráfico">
+    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="marker" title="">
         <span class="material-symbols-outlined text-[18px]">push_pin</span>
+        <div class="tool-tip">
+            <div class="tool-tip-title">Marcador</div>
+            <div class="tool-tip-desc">Click en el gráfico para marcar un punto de interés con el precio</div>
+            <span class="tool-tip-key">M</span>
+        </div>
     </button>
-    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="measure" title="Medir — click 2 puntos">
+    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="measure" title="">
         <span class="material-symbols-outlined text-[18px]">square_foot</span>
+        <div class="tool-tip">
+            <div class="tool-tip-title">Medir</div>
+            <div class="tool-tip-desc">Click en 2 puntos para medir la diferencia en precio y porcentaje</div>
+        </div>
     </button>
-    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="screenshot" title="Captura del gráfico">
+    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="screenshot" title="">
         <span class="material-symbols-outlined text-[18px]">photo_camera</span>
+        <div class="tool-tip">
+            <div class="tool-tip-title">Captura</div>
+            <div class="tool-tip-desc">Copia una imagen del gráfico activo al portapapeles</div>
+        </div>
     </button>
     <div class="flex-1"></div>
-    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="toggleEMA" title="Mostrar/Ocultar EMA 20">
+    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="toggleEMA" title="">
         <span class="material-symbols-outlined text-[18px]">timeline</span>
+        <div class="tool-tip">
+            <div class="tool-tip-title">EMA 20</div>
+            <div class="tool-tip-desc">Mostrar/ocultar la media móvil exponencial de 20 períodos</div>
+        </div>
     </button>
-    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="toggleVol" title="Mostrar/Ocultar Volumen">
+    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="toggleVol" title="">
         <span class="material-symbols-outlined text-[18px]">bar_chart</span>
+        <div class="tool-tip">
+            <div class="tool-tip-title">Volumen</div>
+            <div class="tool-tip-desc">Mostrar/ocultar las barras de volumen en la parte inferior</div>
+        </div>
     </button>
-    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="delete" title="Borrar dibujos del gráfico activo">
+    <button class="tool-btn w-9 h-9 rounded-lg flex items-center justify-center text-gray-400" data-tool="delete" title="">
         <span class="material-symbols-outlined text-[18px]">delete</span>
+        <div class="tool-tip">
+            <div class="tool-tip-title">Borrar Dibujos</div>
+            <div class="tool-tip-desc">Elimina todas las líneas, marcadores y dibujos del gráfico activo</div>
+            <span class="tool-tip-key">Delete</span>
+        </div>
     </button>
 </aside>
 
@@ -443,8 +523,8 @@ html,body{height:100%;overflow:hidden}
                         <span class="text-primary">⚡</span> AmigoTrade AI
                     </h3>
                     <p class="text-[9px] text-green-500 font-mono flex items-center gap-1 mt-0.5">
-                        <span class="size-1.5 rounded-full bg-green-500 live-p inline-block"></span>
-                        Análisis en Vivo
+                        <span id="ws-dot" class="size-1.5 rounded-full bg-green-500 live-p inline-block"></span>
+                        <span id="ws-lbl">Análisis en Vivo</span>
                     </p>
                 </div>
                 <span class="material-symbols-outlined text-[22px] text-gray-500 gear-icon cursor-pointer hover:text-primary transition">settings</span>
@@ -485,9 +565,9 @@ html,body{height:100%;overflow:hidden}
             </button>
         </div>
         <div class="px-3 py-1.5 border-b border-card-border/50 shrink-0">
-            <div class="flex items-center gap-1.5 bg-bg-dark/80 rounded-md px-2 py-1 border border-card-border/50">
+            <div class="flex items-center gap-1.5 bg-bg-dark/80 rounded-md px-2 py-1.5 border border-card-border/50 focus-within:border-primary/40 transition">
                 <span class="material-symbols-outlined text-[14px] text-gray-500">search</span>
-                <input id="mw-search" type="text" placeholder="Filtrar activos..." class="bg-transparent text-[10px] text-white placeholder-gray-500 outline-none w-full font-sans border-none focus:ring-0 p-0"/>
+                <input id="mw-search" type="text" placeholder="Buscar activo... (Ctrl+K)" class="bg-transparent text-[11px] text-white placeholder-gray-500 outline-none w-full font-sans border-none focus:ring-0 p-0"/>
             </div>
         </div>
         <div class="flex border-b border-card-border shrink-0">
@@ -826,9 +906,10 @@ function handleWS(msg){
 function updWS(){
     var alive=0;['crypto','forex','stocks'].forEach(function(m){if(wsAlive[m])alive++;});
     var d=$('ws-dot'),l=$('ws-lbl');
-    if(alive===3){d.className='size-2 rounded-full bg-green-500 live-p';l.textContent='LIVE';l.className='text-[9px] font-mono text-green-500 font-bold';}
-    else if(alive>0){d.className='size-2 rounded-full bg-yellow-500 live-p';l.textContent='WS '+alive+'/3';l.className='text-[9px] font-mono text-yellow-500';}
-    else{d.className='size-2 rounded-full bg-gray-400 animate-pulse';l.textContent='REST';l.className='text-[9px] font-mono text-gray-400';}
+    if(!d||!l)return;
+    if(alive===3){d.className='size-1.5 rounded-full bg-green-500 live-p inline-block';l.textContent='LIVE';l.parentElement.className='text-[9px] text-green-500 font-mono flex items-center gap-1 mt-0.5 font-bold';}
+    else if(alive>0){d.className='size-1.5 rounded-full bg-yellow-500 live-p inline-block';l.textContent='WS '+alive+'/3';l.parentElement.className='text-[9px] text-yellow-500 font-mono flex items-center gap-1 mt-0.5';}
+    else{d.className='size-1.5 rounded-full bg-gray-400 animate-pulse inline-block';l.textContent='Conectando...';l.parentElement.className='text-[9px] text-gray-400 font-mono flex items-center gap-1 mt-0.5';}
 }
 
 /* ═══ MARKET WATCH / LISTA DE SEGUIMIENTO ═══ */
@@ -880,92 +961,89 @@ function filterMW(){
 }
 
 /* ═══ GLOBAL SEARCH ═══ */
-var gsIndex=-1,gsResults=[];
 function initGlobalSearch(){
-    var inp=$('global-search');if(!inp)return;
-    var dd=$('global-search-dropdown');
+    var headerInp=$('header-search');
+    var mwSearch=$('mw-search');
     
-    inp.addEventListener('focus',function(){
-        if(!inp.value.trim()) showGSDropdown(getGSDefaults());
-    });
-    inp.addEventListener('input',function(){
-        var q=inp.value.trim().toUpperCase();
-        gsIndex=-1;
-        if(!q){showGSDropdown(getGSDefaults());return;}
-        var matches=TICKERS.filter(function(tk){
-            var a=ASSETS[tk];
-            var haystack=(a.label+' '+a.sub+' '+a.abbr+' '+tk).toUpperCase();
-            return haystack.indexOf(q)>=0;
-        }).map(function(tk){return{ticker:tk,asset:ASSETS[tk]};});
-        if(matches.length) showGSDropdown(matches);
-        else{
-            dd.innerHTML='<div class="gs-empty">🔍 No encontrado: "'+q+'"</div>';
+    if(headerInp){
+        // Create dropdown for header search
+        var dd=document.createElement('div');
+        dd.id='header-search-dropdown';
+        dd.className='absolute top-full left-0 right-0 mt-2 bg-card border border-card-border rounded-xl max-h-[360px] overflow-y-auto z-[80] shadow-2xl hidden custom-scrollbar';
+        headerInp.parentElement.style.position='relative';
+        headerInp.parentElement.appendChild(dd);
+        
+        var hsIndex=-1,hsResults=[];
+        
+        headerInp.addEventListener('focus',function(){
+            showHeaderResults(TICKERS.slice(0,10));
+        });
+        headerInp.addEventListener('input',function(){
+            var q=this.value.trim().toUpperCase();
+            hsIndex=-1;
+            if(!q){showHeaderResults(TICKERS.slice(0,10));return;}
+            var matches=TICKERS.filter(function(tk){
+                var a=ASSETS[tk];
+                return (a.label+' '+a.sub+' '+a.abbr+' '+tk).toUpperCase().indexOf(q)>=0;
+            });
+            if(matches.length) showHeaderResults(matches.slice(0,10));
+            else{dd.innerHTML='<div style="padding:16px;text-align:center;color:#6b7280;font-size:12px">No encontrado</div>';dd.classList.remove('hidden');}
+            // Also sync to mw-search
+            if(mwSearch){mwSearch.value=this.value;currentMWSearch=this.value;filterMW();}
+        });
+        headerInp.addEventListener('keydown',function(e){
+            if(dd.classList.contains('hidden'))return;
+            if(e.key==='ArrowDown'){e.preventDefault();hsIndex=Math.min(hsIndex+1,hsResults.length-1);hlHS();}
+            else if(e.key==='ArrowUp'){e.preventDefault();hsIndex=Math.max(hsIndex-1,0);hlHS();}
+            else if(e.key==='Enter'){e.preventDefault();if(hsIndex>=0&&hsResults[hsIndex])pickHS(hsResults[hsIndex]);else if(hsResults.length===1)pickHS(hsResults[0]);}
+            else if(e.key==='Escape'){dd.classList.add('hidden');headerInp.blur();}
+        });
+        document.addEventListener('click',function(e){
+            if(!headerInp.parentElement.contains(e.target))dd.classList.add('hidden');
+        });
+        
+        function showHeaderResults(tickers){
+            hsResults=tickers;hsIndex=-1;
+            var html='';
+            tickers.forEach(function(tk,i){
+                var a=ASSETS[tk],d=prices[tk];
+                var pStr=d?fmt(d.price,tk):'—';
+                var cStr=d?((d.change>=0?'+':'')+d.change.toFixed(2)+'%'):'';
+                var cCls=d?(d.change>=0?'color:#22c55e':'color:#ef4444'):'color:#6b7280';
+                html+='<div class="hs-item flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-white/5 transition" data-i="'+i+'" style="border-bottom:1px solid rgba(255,255,255,0.03)">';
+                html+='<div class="flex items-center gap-2"><div class="size-6 rounded-md flex items-center justify-center text-[8px] font-bold" style="background:'+a.color+'15;color:'+a.color+'">'+a.abbr+'</div>';
+                html+='<div><div style="font-size:12px;font-weight:700;color:#fff">'+a.label+'</div><div style="font-size:9px;color:#6b7280">'+a.sub+'</div></div></div>';
+                html+='<div style="text-align:right"><div style="font-size:11px;font-family:monospace;color:#fff">'+pStr+'</div><div style="font-size:9px;font-family:monospace;'+cCls+'">'+cStr+'</div></div>';
+                html+='</div>';
+            });
+            dd.innerHTML=html;
             dd.classList.remove('hidden');
+            dd.querySelectorAll('.hs-item').forEach(function(el){
+                el.addEventListener('click',function(){pickHS(hsResults[parseInt(this.dataset.i)]);});
+                el.addEventListener('mouseenter',function(){hsIndex=parseInt(this.dataset.i);hlHS();});
+            });
         }
-    });
-    inp.addEventListener('keydown',function(e){
-        if(!dd||dd.classList.contains('hidden'))return;
-        if(e.key==='ArrowDown'){e.preventDefault();gsIndex=Math.min(gsIndex+1,gsResults.length-1);highlightGS();}
-        else if(e.key==='ArrowUp'){e.preventDefault();gsIndex=Math.max(gsIndex-1,0);highlightGS();}
-        else if(e.key==='Enter'){e.preventDefault();if(gsIndex>=0&&gsResults[gsIndex])selectGS(gsResults[gsIndex].ticker);else if(gsResults.length===1)selectGS(gsResults[0].ticker);}
-        else if(e.key==='Escape'){dd.classList.add('hidden');inp.blur();}
-    });
-    document.addEventListener('click',function(e){
-        var wrap=$('global-search-wrap');
-        if(wrap&&!wrap.contains(e.target)) dd.classList.add('hidden');
-    });
+        function hlHS(){
+            dd.querySelectorAll('.hs-item').forEach(function(el,i){el.style.background=i===hsIndex?'rgba(212,175,55,0.08)':'';});
+            var items=dd.querySelectorAll('.hs-item');
+            if(items[hsIndex])items[hsIndex].scrollIntoView({block:'nearest'});
+        }
+        function pickHS(ticker){
+            dd.classList.add('hidden');
+            headerInp.value='';
+            if(mwSearch){mwSearch.value='';currentMWSearch='';filterMW();}
+            openChart(ticker);
+        }
+    }
+    
     // Ctrl+K shortcut
     document.addEventListener('keydown',function(e){
-        if((e.ctrlKey||e.metaKey)&&e.key==='k'){e.preventDefault();inp.focus();inp.select();}
+        if((e.ctrlKey||e.metaKey)&&e.key==='k'){
+            e.preventDefault();
+            if(headerInp)headerInp.focus();
+            else if(mwSearch)mwSearch.focus();
+        }
     });
-}
-function getGSDefaults(){
-    return TICKERS.slice(0,12).map(function(tk){return{ticker:tk,asset:ASSETS[tk]};});
-}
-function showGSDropdown(items){
-    var dd=$('global-search-dropdown');
-    gsResults=items;
-    var groups={indices:[],forex:[],commodities:[],crypto:[]};
-    items.forEach(function(it){
-        var cat=it.asset.cat;
-        if(groups[cat])groups[cat].push(it);
-    });
-    var labels={indices:'📈 Índices',forex:'💱 Forex',commodities:'🥇 Commodities',crypto:'₿ Crypto'};
-    var html='';var gi=0;
-    ['indices','forex','commodities','crypto'].forEach(function(cat){
-        if(!groups[cat].length)return;
-        html+='<div class="gs-section">'+labels[cat]+'</div>';
-        groups[cat].forEach(function(it){
-            var d=prices[it.ticker];
-            var priceStr=d?fmt(d.price,it.ticker):'—';
-            var chgStr=d?((d.change>=0?'+':'')+d.change.toFixed(2)+'%'):'';
-            var chgClass=d?(d.change>=0?'text-green-500':'text-red-500'):'text-gray-500';
-            html+='<div class="gs-item" data-gsi="'+gi+'" data-ticker="'+it.ticker+'">';
-            html+='<div class="flex items-center gap-2"><div class="size-6 rounded-md flex items-center justify-center text-[8px] font-bold" style="background:'+it.asset.color+'15;color:'+it.asset.color+';border:1px solid '+it.asset.color+'25">'+it.asset.abbr+'</div>';
-            html+='<div><div class="text-[12px] font-bold text-white">'+it.asset.label+'</div><div class="text-[9px] text-gray-500">'+it.asset.sub+'</div></div></div>';
-            html+='<div class="text-right"><div class="text-[11px] font-mono text-white">'+priceStr+'</div><div class="text-[9px] font-mono '+chgClass+'">'+chgStr+'</div></div>';
-            html+='</div>';
-            gi++;
-        });
-    });
-    dd.innerHTML=html;
-    dd.classList.remove('hidden');
-    // Event delegation for clicks and hover
-    dd.querySelectorAll('.gs-item').forEach(function(el){
-        el.addEventListener('click',function(){selectGS(this.dataset.ticker);});
-        el.addEventListener('mouseenter',function(){gsIndex=parseInt(this.dataset.gsi);highlightGS();});
-    });
-}
-function highlightGS(){
-    var items=document.querySelectorAll('.gs-item');
-    items.forEach(function(el,i){el.classList.toggle('active',i===gsIndex);});
-    if(items[gsIndex])items[gsIndex].scrollIntoView({block:'nearest'});
-}
-function selectGS(ticker){
-    var dd=$('global-search-dropdown');
-    dd.classList.add('hidden');
-    $('global-search').value='';
-    openChart(ticker);
 }
 
 /* ═══ DYNAMIC GRID LAYOUT ═══ */
