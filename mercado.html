@@ -219,11 +219,6 @@ html,body{height:100%;overflow:hidden}
                 <a class="text-gray-400 hover:text-white transition text-lg" href="#">PORTAFOLIO</a>
             </nav>
             <div class="flex items-center gap-2 md:gap-4">
-                <!-- Search Bar -->
-                <div class="hidden md:flex items-center gap-2 bg-white/5 border border-card-border rounded-full px-4 py-2 hover:border-primary/30 focus-within:border-primary/50 transition w-[240px]">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-                    <input id="header-search" type="text" placeholder="Buscar activo (ej. BTC/USD)" class="bg-transparent text-sm text-white placeholder-gray-500 outline-none w-full border-none focus:ring-0 p-0" autocomplete="off"/>
-                </div>
                 <button
                 class="shrink-0 bg-primary text-midnight font-bold h-10 px-6 rounded-full
                 inline-flex items-center gap-2 whitespace-nowrap
@@ -962,86 +957,12 @@ function filterMW(){
 
 /* ═══ GLOBAL SEARCH ═══ */
 function initGlobalSearch(){
-    var headerInp=$('header-search');
-    var mwSearch=$('mw-search');
-    
-    if(headerInp){
-        // Create dropdown for header search
-        var dd=document.createElement('div');
-        dd.id='header-search-dropdown';
-        dd.className='absolute top-full left-0 right-0 mt-2 bg-card border border-card-border rounded-xl max-h-[360px] overflow-y-auto z-[80] shadow-2xl hidden custom-scrollbar';
-        headerInp.parentElement.style.position='relative';
-        headerInp.parentElement.appendChild(dd);
-        
-        var hsIndex=-1,hsResults=[];
-        
-        headerInp.addEventListener('focus',function(){
-            showHeaderResults(TICKERS.slice(0,10));
-        });
-        headerInp.addEventListener('input',function(){
-            var q=this.value.trim().toUpperCase();
-            hsIndex=-1;
-            if(!q){showHeaderResults(TICKERS.slice(0,10));return;}
-            var matches=TICKERS.filter(function(tk){
-                var a=ASSETS[tk];
-                return (a.label+' '+a.sub+' '+a.abbr+' '+tk).toUpperCase().indexOf(q)>=0;
-            });
-            if(matches.length) showHeaderResults(matches.slice(0,10));
-            else{dd.innerHTML='<div style="padding:16px;text-align:center;color:#6b7280;font-size:12px">No encontrado</div>';dd.classList.remove('hidden');}
-            // Also sync to mw-search
-            if(mwSearch){mwSearch.value=this.value;currentMWSearch=this.value;filterMW();}
-        });
-        headerInp.addEventListener('keydown',function(e){
-            if(dd.classList.contains('hidden'))return;
-            if(e.key==='ArrowDown'){e.preventDefault();hsIndex=Math.min(hsIndex+1,hsResults.length-1);hlHS();}
-            else if(e.key==='ArrowUp'){e.preventDefault();hsIndex=Math.max(hsIndex-1,0);hlHS();}
-            else if(e.key==='Enter'){e.preventDefault();if(hsIndex>=0&&hsResults[hsIndex])pickHS(hsResults[hsIndex]);else if(hsResults.length===1)pickHS(hsResults[0]);}
-            else if(e.key==='Escape'){dd.classList.add('hidden');headerInp.blur();}
-        });
-        document.addEventListener('click',function(e){
-            if(!headerInp.parentElement.contains(e.target))dd.classList.add('hidden');
-        });
-        
-        function showHeaderResults(tickers){
-            hsResults=tickers;hsIndex=-1;
-            var html='';
-            tickers.forEach(function(tk,i){
-                var a=ASSETS[tk],d=prices[tk];
-                var pStr=d?fmt(d.price,tk):'—';
-                var cStr=d?((d.change>=0?'+':'')+d.change.toFixed(2)+'%'):'';
-                var cCls=d?(d.change>=0?'color:#22c55e':'color:#ef4444'):'color:#6b7280';
-                html+='<div class="hs-item flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-white/5 transition" data-i="'+i+'" style="border-bottom:1px solid rgba(255,255,255,0.03)">';
-                html+='<div class="flex items-center gap-2"><div class="size-6 rounded-md flex items-center justify-center text-[8px] font-bold" style="background:'+a.color+'15;color:'+a.color+'">'+a.abbr+'</div>';
-                html+='<div><div style="font-size:12px;font-weight:700;color:#fff">'+a.label+'</div><div style="font-size:9px;color:#6b7280">'+a.sub+'</div></div></div>';
-                html+='<div style="text-align:right"><div style="font-size:11px;font-family:monospace;color:#fff">'+pStr+'</div><div style="font-size:9px;font-family:monospace;'+cCls+'">'+cStr+'</div></div>';
-                html+='</div>';
-            });
-            dd.innerHTML=html;
-            dd.classList.remove('hidden');
-            dd.querySelectorAll('.hs-item').forEach(function(el){
-                el.addEventListener('click',function(){pickHS(hsResults[parseInt(this.dataset.i)]);});
-                el.addEventListener('mouseenter',function(){hsIndex=parseInt(this.dataset.i);hlHS();});
-            });
-        }
-        function hlHS(){
-            dd.querySelectorAll('.hs-item').forEach(function(el,i){el.style.background=i===hsIndex?'rgba(212,175,55,0.08)':'';});
-            var items=dd.querySelectorAll('.hs-item');
-            if(items[hsIndex])items[hsIndex].scrollIntoView({block:'nearest'});
-        }
-        function pickHS(ticker){
-            dd.classList.add('hidden');
-            headerInp.value='';
-            if(mwSearch){mwSearch.value='';currentMWSearch='';filterMW();}
-            openChart(ticker);
-        }
-    }
-    
-    // Ctrl+K shortcut
+    // Ctrl+K shortcut to focus watchlist search
     document.addEventListener('keydown',function(e){
         if((e.ctrlKey||e.metaKey)&&e.key==='k'){
             e.preventDefault();
-            if(headerInp)headerInp.focus();
-            else if(mwSearch)mwSearch.focus();
+            var mws=$('mw-search');
+            if(mws){mws.focus();mws.select();}
         }
     });
 }
