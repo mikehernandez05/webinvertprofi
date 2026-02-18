@@ -92,9 +92,17 @@ html,body{height:100%;overflow:hidden}
 
 /* ── Chart Slots ── */
 .chart-slot{position:relative;border:1px solid #1f2937;transition:border-color .2s,box-shadow .2s;overflow:hidden;display:flex;flex-direction:column}
+.chart-slot.slot-hidden{display:none!important}
 .chart-slot:hover{border-color:#374151}.chart-slot.focused{border-color:rgba(212,175,55,.5);box-shadow:0 0 0 1px rgba(212,175,55,.15),inset 0 0 0 1px rgba(212,175,55,.05)}
 .chart-slot .slot-close{position:absolute;top:6px;right:6px;z-index:20;opacity:0;transition:opacity .15s}
 .chart-slot:hover .slot-close{opacity:1}
+
+/* ── Dynamic grid layouts ── */
+#chart-grid.layout-0{display:flex;align-items:center;justify-content:center;background:#0a0f1a}
+#chart-grid.layout-1{display:grid;grid-template-columns:1fr;grid-template-rows:1fr}
+#chart-grid.layout-2{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr}
+#chart-grid.layout-3{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
+#chart-grid.layout-4{display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr}
 
 /* ── Bottom Tabs ── */
 .chart-tab{cursor:pointer;transition:all .12s;border-bottom:2px solid transparent}
@@ -269,8 +277,22 @@ html,body{height:100%;overflow:hidden}
 </aside>
 
 <div class="flex-1 flex flex-col min-w-0">
-    <div id="chart-grid" class="flex-1 grid grid-cols-2 grid-rows-2 gap-[1px] bg-card-border/50 min-h-0">
-        <div class="chart-slot bg-bg-dark focused" id="slot-0" data-idx="0">
+    <div id="chart-grid" class="flex-1 layout-0 gap-[1px] bg-card-border/50 min-h-0">
+        <!-- Empty state: shown when no charts open -->
+        <div id="grid-empty-state" class="flex flex-col items-center justify-center gap-4 text-center px-8">
+            <div class="relative">
+                <span class="material-symbols-outlined text-[64px] text-gray-700">candlestick_chart</span>
+                <span class="absolute -bottom-1 -right-1 material-symbols-outlined text-[24px] text-primary bg-bg-dark rounded-full p-0.5">add_circle</span>
+            </div>
+            <div>
+                <h3 class="text-lg font-bold text-gray-400 mb-1">Selecciona un activo</h3>
+                <p class="text-sm text-gray-600 max-w-[300px]">Haz click en cualquier activo de la <span class="text-primary font-semibold">Lista de Seguimiento</span> o usa el <span class="text-primary font-semibold">Buscador</span> para abrir gráficos</p>
+            </div>
+            <div class="flex items-center gap-2 mt-2">
+                <span class="text-[10px] text-gray-600 bg-card px-3 py-1.5 rounded-lg border border-card-border">Máximo 4 gráficos simultáneos</span>
+            </div>
+        </div>
+        <div class="chart-slot bg-bg-dark slot-hidden" id="slot-0" data-idx="0">
             <div class="slot-header flex items-center justify-between px-3 py-1.5 bg-card/80 backdrop-blur border-b border-card-border shrink-0">
                 <div class="flex items-center gap-2">
                     <div class="slot-icon size-[22px] rounded-md flex items-center justify-center text-[7px] font-bold bg-gray-500/20 text-gray-500">—</div>
@@ -299,7 +321,7 @@ html,body{height:100%;overflow:hidden}
                 </div>
             </div>
         </div>
-        <div class="chart-slot bg-bg-dark" id="slot-1" data-idx="1">
+        <div class="chart-slot bg-bg-dark slot-hidden" id="slot-1" data-idx="1">
             <div class="slot-header flex items-center justify-between px-3 py-1.5 bg-card/80 backdrop-blur border-b border-card-border shrink-0">
                 <div class="flex items-center gap-2">
                     <div class="slot-icon size-[22px] rounded-md flex items-center justify-center text-[7px] font-bold bg-gray-500/20 text-gray-500">—</div>
@@ -323,7 +345,7 @@ html,body{height:100%;overflow:hidden}
                 <div class="text-center"><span class="material-symbols-outlined text-[36px] text-gray-600">candlestick_chart</span><p class="text-[10px] text-gray-500 mt-1.5">Slot disponible</p></div>
             </div>
         </div>
-        <div class="chart-slot bg-bg-dark" id="slot-2" data-idx="2">
+        <div class="chart-slot bg-bg-dark slot-hidden" id="slot-2" data-idx="2">
             <div class="slot-header flex items-center justify-between px-3 py-1.5 bg-card/80 backdrop-blur border-b border-card-border shrink-0">
                 <div class="flex items-center gap-2">
                     <div class="slot-icon size-[22px] rounded-md flex items-center justify-center text-[7px] font-bold bg-gray-500/20 text-gray-500">—</div>
@@ -347,7 +369,7 @@ html,body{height:100%;overflow:hidden}
                 <div class="text-center"><span class="material-symbols-outlined text-[36px] text-gray-600">candlestick_chart</span><p class="text-[10px] text-gray-500 mt-1.5">Slot disponible</p></div>
             </div>
         </div>
-        <div class="chart-slot bg-bg-dark" id="slot-3" data-idx="3">
+        <div class="chart-slot bg-bg-dark slot-hidden" id="slot-3" data-idx="3">
             <div class="slot-header flex items-center justify-between px-3 py-1.5 bg-card/80 backdrop-blur border-b border-card-border shrink-0">
                 <div class="flex items-center gap-2">
                     <div class="slot-icon size-[22px] rounded-md flex items-center justify-center text-[7px] font-bold bg-gray-500/20 text-gray-500">—</div>
@@ -961,6 +983,46 @@ function selectGS(ticker){
     openChart(ticker);
 }
 
+/* ═══ DYNAMIC GRID LAYOUT ═══ */
+function updateGridLayout(){
+    var grid=$('chart-grid');
+    var emptyState=$('grid-empty-state');
+    var count=0;
+    var visibleSlots=[];
+    for(var i=0;i<4;i++){
+        var el=$('slot-'+i);
+        if(slots[i]){
+            el.classList.remove('slot-hidden');
+            el.style.gridColumn='';
+            count++;
+            visibleSlots.push(i);
+        }else{
+            el.classList.add('slot-hidden');
+            el.style.gridColumn='';
+        }
+    }
+    // Remove all layout classes
+    grid.classList.remove('layout-0','layout-1','layout-2','layout-3','layout-4');
+    grid.classList.add('layout-'+count);
+    // For 3 charts: first visible slot spans full top row
+    if(count===3&&visibleSlots.length>=1){
+        $('slot-'+visibleSlots[0]).style.gridColumn='1 / 3';
+    }
+    // Show/hide empty state
+    if(emptyState){
+        emptyState.style.display=count===0?'':'none';
+    }
+    // Resize all visible charts after layout settles
+    setTimeout(function(){
+        for(var i=0;i<4;i++){
+            if(slots[i]&&slots[i].chart){
+                var box=$('slot-'+i).querySelector('.slot-chart');
+                if(box) slots[i].chart.applyOptions({width:box.clientWidth,height:box.clientHeight});
+            }
+        }
+    },80);
+}
+
 /* ═══ CHART SLOTS ═══ */
 function createLWChart(container){
     return LightweightCharts.createChart(container,{
@@ -983,6 +1045,14 @@ async function openChart(ticker){
     var a=ASSETS[ticker];
     var el=$('slot-'+idx);
     var empty=el.querySelector('.slot-empty');if(empty)empty.style.display='none';
+    
+    // Show slot and update grid BEFORE creating chart (needs dimensions)
+    el.classList.remove('slot-hidden');
+    // Temporarily store that this slot is being used
+    slots[idx]={ticker:ticker,chart:null,candleSeries:null,volumeSeries:null,emaSeries:null,candles:null,tf:{mul:1,span:'hour'},drawings:[],markers:[],_emaVisible:true,_volVisible:true};
+    updateGridLayout();
+    // Small delay to let layout settle before creating chart
+    await new Promise(function(r){setTimeout(r,80);});
 
     el.querySelector('.slot-icon').style.background=a.color+'18';
     el.querySelector('.slot-icon').style.color=a.color;
@@ -1045,7 +1115,11 @@ function closeSlot(idx){
     el.querySelector('.slot-change').textContent='—';el.querySelector('.slot-change').className='slot-change text-[9px] font-bold px-1.5 py-0.5 rounded text-gray-400';
     var empty=el.querySelector('.slot-empty');if(empty)empty.style.display='';
     el.classList.remove('focused');
+    el.classList.add('slot-hidden');
+    updateGridLayout();
     buildTabs();
+    // Focus next available slot
+    for(var i=0;i<4;i++){if(slots[i]){focusSlot(i);return;}}
 }
 
 function focusSlot(idx){
@@ -1515,12 +1589,9 @@ async function init(){
 
     if(ok){
         renderTickerTape();
-        var defaults=['X:BTCUSD','C:EURUSD','SPY','X:ETHUSD'];
-        for(var i=0;i<defaults.length;i++){
-            try{await openChart(defaults[i]);}catch(e){console.warn('[Init] Error opening',defaults[i],e);}
-        }
-        focusSlot(0);
-        console.log('[InvertProfit] Gráficos por defecto cargados');
+        // Don't auto-open charts — let user select from watchlist
+        updateGridLayout();
+        console.log('[InvertProfit] Precios cargados, esperando selección de activos');
     }else{
         console.warn('[InvertProfit] No se pudieron cargar precios iniciales, usando fallback individual...');
         // Try individual loads as last resort
@@ -1530,14 +1601,7 @@ async function init(){
             })(TICKERS[i]);
         }
         renderTickerTape();
-        // Still try to open default charts
-        setTimeout(async function(){
-            var defaults=['X:BTCUSD','C:EURUSD','SPY','X:ETHUSD'];
-            for(var i=0;i<defaults.length;i++){
-                try{await openChart(defaults[i]);}catch(e){}
-            }
-            focusSlot(0);
-        },3000);
+        updateGridLayout();
     }
 
     // Connect WebSockets for real-time streaming
