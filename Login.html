@@ -184,16 +184,26 @@
         setInterval(updateTime, 1000);
     </script>
 
+    <!-- ← BOTÓN VOLVER (esquina superior izquierda, debajo del HUD) -->
+    <a href="dashboard.html"
+       class="fixed top-12 left-5 z-50 flex items-center gap-2 px-4 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95"
+       style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.35); color:#D4AF37;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Volver
+    </a>
+
     <!-- Logo -->
     <div class="mb-8 text-center fade-in" style="z-index:10; position:relative;">
         <div class="flex items-center justify-center gap-3 mb-2">
-            <div class="w-12 h-12 rounded-xl flex items-center justify-center font-black text-xl" style="background:linear-gradient(135deg,#D4AF37,#b8860b); color:#0a0f1a; box-shadow:0 0 30px rgba(212,175,55,0.4);">IP</div>
-            <div>
-                <h1 class="text-2xl font-black tracking-wider title-glow" style="color:#D4AF37;">INVERT<span class="text-white">PROFIT</span></h1>
-                <p class="text-[10px] font-black tracking-[4px] text-gray-500 uppercase">VOID ACADEMY</p>
-            </div>
+            <!-- Imagen logo con fallback al badge IP -->
+            <img src="images/logo_azul.png" alt="InvertProfit" id="logo-img"
+                 class="h-12 w-auto object-contain"
+                 style="filter: drop-shadow(0 0 12px rgba(212,175,55,0.5));"
+                 onerror="this.style.display='none'; document.getElementById('logo-badge').style.display='flex';">
+            <div id="logo-badge" class="w-12 h-12 rounded-xl items-center justify-center font-black text-xl" style="display:none; background:linear-gradient(135deg,#D4AF37,#b8860b); color:#0a0f1a; box-shadow:0 0 30px rgba(212,175,55,0.4);">IP</div>
         </div>
     </div>
+
 
     <!-- Login Card -->
     <div class="hud-card hud-card-bottom w-full max-w-md fade-in-delay" style="z-index:10; position:relative;">

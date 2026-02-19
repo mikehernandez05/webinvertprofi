@@ -242,49 +242,60 @@
 </head>
 <body class="min-h-screen text-white overflow-x-hidden">
 
-    <!-- ══════════ HUD HEADER ══════════ -->
-    <header class="hud-header px-6 py-3 flex items-center justify-between sticky top-0 z-50">
-        <!-- Left: Logo + session -->
-        <div class="flex items-center gap-4">
-            <a href="/portadanivelesacademia.html" class="flex items-center gap-3 group">
-                <div class="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-black"
-                     style="background: linear-gradient(135deg, #D4AF37, #b8960b); color: #060c16;">IP</div>
-                <div>
-                    <div class="font-black text-sm tracking-widest text-white uppercase">InvertProfit <span style="color:#D4AF37">Academy</span></div>
-                    <div class="flex items-center gap-2">
-                        <div class="active-dot"></div>
-                        <span class="font-mono text-xs" style="color:#22c55e; font-size:9px; letter-spacing:2px;">SYS.ONLINE</span>
-                        <span class="font-mono text-xs text-gray-600" style="font-size:9px; letter-spacing:1px;">· SESSION ID: IP-AX-99</span>
+    <!-- ══════════ HEADER (igual que portadanivelesacademia) ══════════ -->
+    <header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-[60] shrink-0">
+        <div class="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
+            <!-- LEFT: Back button + Logo -->
+            <div class="flex items-center gap-3">
+                <!-- ← BOTÓN VOLVER AL MAPA -->
+                <a href="niveles-novato.html"
+                   class="flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shrink-0"
+                   style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.35); color:#D4AF37;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                    <span class="hidden sm:inline">Volver</span>
+                </a>
+                <!-- Logo imagen + fallback badge -->
+                <div class="flex items-center gap-2.5">
+                    <img src="images/logo_azul.png" alt="InvertProfit" id="logo-img"
+                         class="h-10 w-auto object-contain shrink-0"
+                         style="filter:drop-shadow(0 0 10px rgba(212,175,55,0.4));"
+                         onerror="this.style.display='none'; document.getElementById('logo-badge').style.display='flex';">
+                    <div id="logo-badge" class="w-11 h-11 rounded-xl items-center justify-center font-black text-lg shrink-0" style="display:none; background:linear-gradient(135deg,#D4AF37,#b8860b); color:#0a0f1a; box-shadow:0 0 30px rgba(212,175,55,0.4);">IP</div>
+                    <div class="hidden sm:block">
+                        <div class="text-lg font-black tracking-wider leading-none" style="color:#D4AF37;">INVERT<span style="color:#fff;">PROFIT</span></div>
+                        <div class="text-[9px] font-black tracking-[4px] text-gray-500 uppercase leading-none mt-0.5">VOID ACADEMY</div>
                     </div>
                 </div>
-            </a>
-        </div>
-
-        <!-- Center: Stats -->
-        <div class="hidden md:flex items-center gap-8">
-            <div class="text-center">
-                <div class="font-mono text-xs text-gray-500 uppercase tracking-widest" style="font-size:9px;">Volatilidad</div>
-                <div class="font-mono text-sm font-bold" style="color:#D4AF37;">ALTA [94%]</div>
             </div>
-            <div class="w-px h-8 bg-gray-800"></div>
-            <div class="text-center">
-                <div class="font-mono text-xs text-gray-500 uppercase tracking-widest" style="font-size:9px;">Hora Servidor</div>
-                <div class="font-mono text-sm font-bold text-white" id="server-time">00:00:00 UTC</div>
-            </div>
-        </div>
-
-        <!-- Right: User profile -->
-        <div class="flex items-center gap-3">
-            <div class="text-right">
-                <div class="font-bold text-sm" style="color:#D4AF37;">Cmdr. Trader</div>
-                <div class="text-xs text-gray-500 font-mono" style="font-size:10px;">Nivel 12 · Novato</div>
-            </div>
-            <div class="w-10 h-10 rounded-full flex items-center justify-center text-xl font-black relative"
-                 style="background: linear-gradient(135deg, #1f2937, #374151); border: 2px solid rgba(212,175,55,0.4);">
-                🎯
-                <div class="absolute -bottom-0.5 -right-0.5 active-dot" style="width:8px;height:8px;"></div>
+            <!-- Center: nav igual al index -->
+            <nav class="hidden lg:flex items-center gap-10">
+                <a class="font-black border-b-2 border-primary pb-1 text-sm tracking-widest uppercase" style="color:#D4AF37;" href="portadanivelesacademia.html">ACADEMIA</a>
+                <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="mercado.html">MERCADOS</a>
+                <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="#">PORTAFOLIO</a>
+            </nav>
+            <!-- Right: acciones -->
+            <div class="flex items-center gap-2 md:gap-4">
+                <div class="hidden md:flex items-center gap-3">
+                    <div class="text-right">
+                        <div class="font-bold text-sm" style="color:#D4AF37;">Cmdr. Trader</div>
+                        <div class="text-xs text-gray-500 font-mono" style="font-size:10px;">Nivel 12 · Novato</div>
+                    </div>
+                    <div class="w-9 h-9 rounded-full flex items-center justify-center text-lg font-black relative"
+                         style="background: linear-gradient(135deg, #1f2937, #374151); border: 2px solid rgba(212,175,55,0.4);">
+                        🎯
+                        <div class="absolute -bottom-0.5 -right-0.5 active-dot" style="width:8px;height:8px;"></div>
+                    </div>
+                </div>
+                <button onclick="document.getElementById('mobile-menu-leccion').classList.toggle('hidden')" class="lg:hidden text-gray-400 hover:text-white p-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+                </button>
             </div>
         </div>
+        <nav id="mobile-menu-leccion" class="hidden lg:hidden border-t border-card-border bg-card px-4 py-3 space-y-2">
+            <a class="block font-bold py-2 border-l-2 border-primary pl-3 text-sm" style="color:#D4AF37;" href="portadanivelesacademia.html">ACADEMIA</a>
+            <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="mercado.html">MERCADOS</a>
+            <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="#">PORTAFOLIO</a>
+        </nav>
     </header>
 
     <div class="glow-line-cyan"></div>
