@@ -1,0 +1,46 @@
+const Index = () => {
+  const pages = [
+    { title: "Dashboard", file: "dashboard.html", icon: "📊", desc: "Panel principal de la academia" },
+    { title: "Selecciona tu Mundo", file: "portadanivelesacademia.html", icon: "🌍", desc: "Elige entre Novato, Intermedio y Experto" },
+    { title: "Mundo Novato", file: "niveles-novato.html", icon: "🌿", desc: "12 niveles — Fundamentos del trading (100% completo)" },
+    { title: "Mundo Intermedio", file: "niveles-intermedio.html", icon: "📈", desc: "12 niveles — Análisis técnico avanzado (en progreso)" },
+  ];
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center gap-8 px-6 py-12"
+      style={{ background: "#0a0f1a", fontFamily: "Inter, sans-serif" }}>
+      <div className="text-center mb-4">
+        <p className="text-xs font-black tracking-[6px] mb-3" style={{ color: "rgba(212,175,55,0.7)" }}>INVERTPROFIT</p>
+        <h1 className="text-4xl font-black uppercase tracking-tight text-white mb-2">
+          Academia <span style={{ color: "#D4AF37" }}>HTML Pages</span>
+        </h1>
+        <p className="text-gray-500 text-sm">Archivos HTML generados para tu proyecto</p>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full max-w-2xl">
+        {pages.map((p) => (
+          <a
+            key={p.file}
+            href={`/${p.file}`}
+            className="group block rounded-2xl p-5 transition-all hover:scale-105 hover:border-yellow-500/40"
+            style={{
+              background: "#111827",
+              border: "1px solid #1f2937",
+              textDecoration: "none",
+            }}
+          >
+            <div className="flex items-start gap-4">
+              <div className="text-3xl shrink-0">{p.icon}</div>
+              <div>
+                <h2 className="font-black text-white text-sm uppercase tracking-wide mb-1 group-hover:text-yellow-400 transition-colors">{p.title}</h2>
+                <p className="text-gray-500 text-xs leading-relaxed">{p.desc}</p>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+      <p className="text-gray-700 text-xs">Los archivos HTML están en la carpeta <code className="text-yellow-600 bg-gray-900 px-2 py-0.5 rounded">public/</code></p>
+    </div>
+  );
+};
+
+export default Index;

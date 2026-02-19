@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>InvertProfit — Mundo Intermedio</title>
+    <title>InvertProfit — Mundo Experto</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -30,21 +30,28 @@
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
-        ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+        ::-webkit-scrollbar-thumb:hover { background: #818cf8; }
 
         .logo-glow { filter: drop-shadow(0 0 10px rgba(212,175,55,0.3)); }
 
-        /* World background: gold/amber theme */
+        /* World background: purple/space theme */
         .world-bg {
             background:
-                radial-gradient(ellipse at 20% 40%, rgba(212,175,55,0.1) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 70%, rgba(180,140,30,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 20% 40%, rgba(99,102,241,0.1) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 70%, rgba(129,140,248,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 20%, rgba(168,85,247,0.05) 0%, transparent 40%),
                 #0a0f1a;
         }
 
-        .level-node { position: relative; z-index: 10; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        /* Level node */
+        .level-node {
+            position: relative;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
         .level-node:hover .node-btn { transform: scale(1.15); }
-        .level-node.locked { cursor: not-allowed; opacity: 0.4; }
+        .level-node.locked { cursor: not-allowed; opacity: 0.45; }
 
         .node-btn {
             width: 72px; height: 72px;
@@ -54,15 +61,10 @@
             transition: all 0.3s ease;
             position: relative;
         }
-        .node-btn.completed {
-            background: radial-gradient(circle at 35% 35%, #D4AF37 0%, #b8860b 60%, #3d2d05 100%);
-            box-shadow: 0 0 20px rgba(212,175,55,0.5), 0 4px 15px rgba(0,0,0,0.5);
-            border: 3px solid rgba(212,175,55,0.7);
-        }
         .node-btn.active {
-            background: radial-gradient(circle at 35% 35%, #fbbf24 0%, #D4AF37 40%, #92400e 100%);
-            box-shadow: 0 0 30px rgba(212,175,55,0.8), 0 4px 15px rgba(0,0,0,0.5);
-            border: 3px solid #D4AF37;
+            background: radial-gradient(circle at 35% 35%, #a78bfa 0%, #818cf8 40%, #3730a3 100%);
+            box-shadow: 0 0 30px rgba(129,140,248,0.8), 0 4px 15px rgba(0,0,0,0.5);
+            border: 3px solid #818cf8;
             animation: active-pulse 2s ease-in-out infinite;
         }
         .node-btn.locked-node {
@@ -70,24 +72,26 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.5);
             border: 3px solid rgba(75,85,99,0.4);
         }
+
         @keyframes active-pulse {
-            0%,100% { box-shadow: 0 0 30px rgba(212,175,55,0.8), 0 4px 15px rgba(0,0,0,0.5); transform:scale(1); }
-            50% { box-shadow: 0 0 50px rgba(212,175,55,1), 0 0 80px rgba(212,175,55,0.4), 0 4px 15px rgba(0,0,0,0.5); transform:scale(1.07); }
+            0%,100% { box-shadow: 0 0 30px rgba(129,140,248,0.8), 0 4px 15px rgba(0,0,0,0.5); transform: scale(1); }
+            50% { box-shadow: 0 0 50px rgba(129,140,248,1), 0 0 80px rgba(129,140,248,0.4), 0 4px 15px rgba(0,0,0,0.5); transform: scale(1.07); }
         }
+
         @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
         .float-anim { animation: float 3s ease-in-out infinite; }
+
+        /* Stars rating on nodes */
         .star-row { font-size: 0.75rem; line-height: 1; }
+
+        /* Path dot animation */
         @keyframes path-dot { 0%,100%{opacity:0.3} 50%{opacity:1} }
         .path-dot { animation: path-dot 1.5s ease-in-out infinite; }
         .path-dot:nth-child(2) { animation-delay: 0.3s; }
         .path-dot:nth-child(3) { animation-delay: 0.6s; }
         .path-dot:nth-child(4) { animation-delay: 0.9s; }
 
-        /* Gold path dots (completed) vs grey (locked) */
-        .dot-completed { background:#D4AF37; box-shadow:0 0 6px rgba(212,175,55,0.6); }
-        .dot-active { background:#D4AF37; box-shadow:0 0 8px rgba(212,175,55,0.8); animation: path-dot 1s ease-in-out infinite; }
-        .dot-locked { background:#374151; }
-
+        /* Sidebar */
         .sidebar-link { transition: all 0.2s ease; }
         .sidebar-link:hover { background: rgba(255,255,255,0.04); color: #fff; }
         .sidebar-link.active { background: rgba(212,175,55,0.15); color: #D4AF37; border: 1px solid rgba(212,175,55,0.2); }
@@ -95,13 +99,16 @@
         .hamburger-open .hamburger-line-2 { opacity: 0; }
         .hamburger-open .hamburger-line-3 { transform: rotate(-45deg) translateY(-8px); }
 
+        /* Level modal */
         .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:200; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
         .modal-box { background:#111827; border:1px solid rgba(212,175,55,0.3); border-radius:24px; padding:32px; max-width:420px; width:calc(100% - 2rem); box-shadow: 0 0 60px rgba(212,175,55,0.15); }
 
-        @keyframes chart-float { 0%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-15px) rotate(2deg)} 100%{transform:translateY(0) rotate(-2deg)} }
-        .chart-float { position:absolute; animation: chart-float 7s ease-in-out infinite; font-size:1.5rem; pointer-events:none; opacity:0.4; }
+        /* Floating decorations */
+        @keyframes nebula-float { 0%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-15px) rotate(2deg)} 100%{transform:translateY(0) rotate(-2deg)} }
+        .nebula { position:absolute; animation: nebula-float 7s ease-in-out infinite; font-size:1.5rem; pointer-events:none; opacity:0.4; }
 
-        @keyframes title-in { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+        /* World header */
+        @keyframes title-in { from{opacity:0; transform:translateY(-20px)} to{opacity:1; transform:translateY(0)} }
         .title-in { animation: title-in 0.6s ease-out forwards; }
     </style>
 </head>
@@ -126,8 +133,10 @@
             <div class="hidden md:flex items-center gap-3">
                 <div class="w-9 h-9 bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 rounded-full flex items-center justify-center text-xs font-black text-primary">AT</div>
             </div>
-            <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="lg:hidden text-gray-400 hover:text-white p-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+            <button id="hamburger-btn-inline" onclick="toggleSideMenu()" class="lg:hidden text-gray-400 hover:text-white p-2 flex flex-col gap-1.5 transition-all">
+                <span class="hamburger-line-1 block w-6 h-0.5 bg-current transition-all duration-300"></span>
+                <span class="hamburger-line-2 block w-6 h-0.5 bg-current transition-all duration-300"></span>
+                <span class="hamburger-line-3 block w-6 h-0.5 bg-current transition-all duration-300"></span>
             </button>
         </div>
     </div>
@@ -163,52 +172,52 @@
 <!-- MAIN -->
 <main class="flex-1 overflow-y-auto">
 
-    <!-- World banner — Gold theme -->
-    <div class="relative overflow-hidden" style="background:linear-gradient(180deg, rgba(212,175,55,0.12) 0%, rgba(10,15,26,0) 100%); border-bottom:1px solid rgba(212,175,55,0.2);">
-        <!-- Decorative chart icons -->
-        <div class="chart-float" style="top:15px; left:5%; animation-delay:0s;">📈</div>
-        <div class="chart-float" style="top:10px; left:18%; animation-delay:1.2s; font-size:1rem;">📊</div>
-        <div class="chart-float" style="top:20px; right:8%; animation-delay:2s;">💹</div>
-        <div class="chart-float" style="top:8px; right:22%; animation-delay:0.5s; font-size:1rem;">🕯️</div>
-        <div class="chart-float" style="top:5px; left:50%; animation-delay:1.7s; font-size:0.9rem;">⚡</div>
+    <!-- World banner — Purple/Space theme -->
+    <div class="relative overflow-hidden" style="background:linear-gradient(180deg, rgba(99,102,241,0.12) 0%, rgba(10,15,26,0) 100%); border-bottom:1px solid rgba(129,140,248,0.2);">
+        <!-- Decorative floating icons -->
+        <div class="nebula" style="top:20px; left:5%; animation-delay:0s;">🧠</div>
+        <div class="nebula" style="top:10px; left:15%; animation-delay:1s; font-size:1rem;">🔮</div>
+        <div class="nebula" style="top:30px; right:10%; animation-delay:2s;">🏛️</div>
+        <div class="nebula" style="top:15px; right:25%; animation-delay:0.5s; font-size:1rem;">💎</div>
+        <div class="nebula" style="top:5px; left:45%; animation-delay:1.5s; font-size:0.8rem;">⚡</div>
 
         <div class="max-w-5xl mx-auto px-6 py-8">
             <div class="flex items-center gap-3 mb-3">
-                <a href="portadanivelesacademia.html" class="flex items-center gap-1.5 text-gray-500 hover:text-primary transition text-sm font-semibold">
+                <a href="portadanivelesacademia.html" class="flex items-center gap-1.5 text-gray-500 hover:text-indigo-400 transition text-sm font-semibold">
                     <span class="material-symbols-outlined text-[18px]">arrow_back</span> Mundos
                 </a>
                 <span class="text-gray-700">/</span>
-                <span class="text-sm font-semibold" style="color:#D4AF37;">Mundo 02 — Intermedio</span>
+                <span class="text-sm font-semibold" style="color:#818cf8;">Mundo 03 — Experto</span>
             </div>
             <div class="flex items-center justify-between flex-wrap gap-4 title-in">
                 <div class="flex items-center gap-5">
-                    <div class="text-5xl float-anim">📈</div>
+                    <div class="text-5xl float-anim">🌌</div>
                     <div>
-                        <p class="text-[10px] font-black tracking-[5px] uppercase" style="color:rgba(212,175,55,0.7);">MUNDO 02</p>
-                        <h1 class="text-3xl md:text-4xl font-black uppercase tracking-tight text-white">INTERMEDIO</h1>
-                        <p class="text-gray-400 text-sm">Análisis técnico avanzado & gestión de riesgo</p>
+                        <p class="text-[10px] font-black tracking-[5px] uppercase" style="color:rgba(129,140,248,0.7);">MUNDO 03</p>
+                        <h1 class="text-3xl md:text-4xl font-black uppercase tracking-tight text-white">EXPERTO</h1>
+                        <p class="text-gray-400 text-sm">Estrategias institucionales & psicología de trading</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
                     <div class="text-center">
-                        <div class="text-2xl font-black" style="color:#D4AF37;">5/12</div>
+                        <div class="text-2xl font-black" style="color:#818cf8;">0/12</div>
                         <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Completados</div>
                     </div>
                     <div class="w-px h-10 bg-card-border"></div>
                     <div class="text-center">
-                        <div class="flex gap-1">⭐⭐<span style="color:#374151">⭐</span></div>
+                        <div class="flex gap-1"><span class="text-gray-600">⭐⭐⭐</span></div>
                         <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Estrellas</div>
                     </div>
                     <div class="w-px h-10 bg-card-border"></div>
                     <div class="text-center">
-                        <div class="text-2xl font-black text-primary">1,000</div>
+                        <div class="text-2xl font-black" style="color:#818cf8;">0</div>
                         <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">XP ganada</div>
                     </div>
                 </div>
             </div>
-            <!-- Progress bar -->
+            <!-- Global progress bar -->
             <div class="mt-4 h-3 w-full rounded-full overflow-hidden bg-gray-800">
-                <div class="h-full rounded-full" style="width:42%; background:linear-gradient(90deg, #b8860b, #D4AF37, #fbbf24);"></div>
+                <div class="h-full rounded-full" style="width:0%; background:linear-gradient(90deg, #4f46e5, #818cf8, #a78bfa);"></div>
             </div>
         </div>
     </div>
@@ -217,117 +226,124 @@
     <div class="max-w-3xl mx-auto px-4 py-10 pb-20">
         <p class="text-center text-[11px] font-black tracking-[5px] text-gray-600 uppercase mb-10">— MAPA DE NIVELES —</p>
 
+        <!-- Level nodes in Candy Crush style serpentine path -->
         <div class="relative flex flex-col items-center gap-0" id="level-map">
 
-            <!-- ROW 1 — Left to Right: Levels 1,2,3 -->
-            <div class="flex justify-start w-full">
+            <!-- ROW 1 — Left to Right: Levels 1, 2, 3 -->
+            <div class="flex justify-start w-full mb-0">
                 <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8">
 
-                    <!-- Level 1 — completed -->
-                    <div class="level-node text-center" onclick="openModal(1,'Patrones de Velas','Doji, martillo, estrella fugaz. Domina los patrones de velas japonesas y lo que predicen.','completed',200)">
+                    <!-- Level 1 — ACTIVE -->
+                    <div class="level-node text-center" onclick="openModal(1,'Smart Money Concepts','Comprende cómo operan las instituciones: order blocks, liquidity pools y market structure.','active',300)">
                         <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 1</div>
+                            <div class="node-btn active">1</div>
+                            <div class="star-row text-gray-600">⭐⭐⭐</div>
+                            <div class="text-[10px] font-black uppercase tracking-wider" style="color:#818cf8;">NIV 1</div>
                         </div>
                     </div>
+
+                    <!-- Connector dots (active glow) -->
                     <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
+                        <div class="w-2.5 h-2.5 rounded-full path-dot" style="background:#818cf8; box-shadow:0 0 6px rgba(129,140,248,0.7);"></div>
+                        <div class="w-2.5 h-2.5 rounded-full path-dot" style="background:#818cf8; box-shadow:0 0 6px rgba(129,140,248,0.7);"></div>
+                        <div class="w-2.5 h-2.5 rounded-full path-dot" style="background:#818cf8; box-shadow:0 0 6px rgba(129,140,248,0.7);"></div>
+                        <div class="w-2.5 h-2.5 rounded-full path-dot" style="background:#818cf8; box-shadow:0 0 6px rgba(129,140,248,0.7);"></div>
                     </div>
 
-                    <!-- Level 2 — completed -->
-                    <div class="level-node text-center" onclick="openModal(2,'Fibonacci Retracements','La herramienta mágica. Aprende a trazar niveles de Fibonacci y encontrar puntos de entrada.','completed',200)">
+                    <!-- Level 2 — LOCKED -->
+                    <div class="level-node locked text-center">
                         <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 2</div>
+                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
+                            <div class="star-row text-gray-700">⭐⭐⭐</div>
+                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 2</div>
                         </div>
                     </div>
+
                     <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
                     </div>
 
-                    <!-- Level 3 — completed -->
-                    <div class="level-node text-center" onclick="openModal(3,'RSI & MACD Avanzado','Divergencias, señales de sobrecompra/sobreventa. El análisis que separa novatos de pros.','completed',200)">
+                    <!-- Level 3 — LOCKED -->
+                    <div class="level-node locked text-center">
                         <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 3</div>
+                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
+                            <div class="star-row text-gray-700">⭐⭐⭐</div>
+                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 3</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Vertical down-right -->
+            <!-- Vertical connector down-right -->
             <div class="self-end mr-16 md:mr-24 flex flex-col items-center gap-2 my-1">
-                <div class="w-2.5 h-2.5 rounded-full dot-completed"></div>
-                <div class="w-2.5 h-2.5 rounded-full dot-completed"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
             </div>
 
-            <!-- ROW 2 — Right to Left: Levels 4,5,6 -->
+            <!-- ROW 2 — Right to Left: Levels 4, 5, 6 (BOSS) -->
             <div class="flex justify-end w-full">
                 <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8 flex-row-reverse">
 
-                    <!-- Level 4 — completed -->
-                    <div class="level-node text-center" onclick="openModal(4,'Zonas de Oferta y Demanda','Supply & demand. Las zonas donde los grandes players mueven el mercado.','completed',200)">
+                    <!-- Level 4 — LOCKED -->
+                    <div class="level-node locked text-center">
                         <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 4</div>
+                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
+                            <div class="star-row text-gray-700">⭐⭐⭐</div>
+                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 4</div>
                         </div>
                     </div>
+
                     <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
                     </div>
 
-                    <!-- Level 5 — completed -->
-                    <div class="level-node text-center" onclick="openModal(5,'Stop Loss Profesional','No es cuánto ganas, es cuánto no pierdes. Domina el arte del stop loss estratégico.','completed',200)">
+                    <!-- Level 5 — LOCKED -->
+                    <div class="level-node locked text-center">
                         <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 5</div>
+                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
+                            <div class="star-row text-gray-700">⭐⭐⭐</div>
+                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 5</div>
                         </div>
                     </div>
+
                     <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-active path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-active path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-active path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-active path-dot"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
                     </div>
 
-                    <!-- Level 6 BOSS — ACTIVE -->
-                    <div class="level-node text-center" onclick="openModal(6,'⚡ BOSS: Análisis Multi-Timeframe','El gran desafío: analiza un activo en 4 timeframes distintos y determina la dirección. ¡Es tu momento!','active',400)">
+                    <!-- Level 6 BOSS — LOCKED -->
+                    <div class="level-node locked text-center">
                         <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn active relative" style="width:84px; height:84px; font-size:1.75rem;">
-                                <span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:#D4AF37;color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">BOSS</span>
-                                ⚡
+                            <div class="node-btn locked-node relative" style="width:84px; height:84px; font-size:1.75rem; opacity:0.5;">
+                                <span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:#374151;color:#9ca3af;border-radius:999px;padding:2px 7px;font-weight:900;">BOSS</span>
+                                <span class="material-symbols-outlined text-gray-600 text-3xl">lock</span>
                             </div>
-                            <div class="star-row text-gray-600">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-primary uppercase tracking-wider">NIV 6</div>
+                            <div class="star-row text-gray-700">⭐⭐⭐</div>
+                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 6</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Vertical down-left -->
+            <!-- Vertical connector down-left -->
             <div class="self-start ml-16 md:ml-24 flex flex-col items-center gap-2 my-1">
-                <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
             </div>
 
-            <!-- ROW 3 — Left to Right: Levels 7,8,9 — LOCKED -->
+            <!-- ROW 3 — Left to Right: Levels 7, 8, 9 — LOCKED -->
             <div class="flex justify-start w-full">
                 <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8">
 
+                    <!-- Level 7 — LOCKED -->
                     <div class="level-node locked text-center">
                         <div class="flex flex-col items-center gap-2">
                             <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
@@ -335,13 +351,15 @@
                             <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 7</div>
                         </div>
                     </div>
+
                     <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
                     </div>
 
+                    <!-- Level 8 — LOCKED -->
                     <div class="level-node locked text-center">
                         <div class="flex flex-col items-center gap-2">
                             <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
@@ -349,13 +367,15 @@
                             <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 8</div>
                         </div>
                     </div>
+
                     <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
                     </div>
 
+                    <!-- Level 9 — LOCKED -->
                     <div class="level-node locked text-center">
                         <div class="flex flex-col items-center gap-2">
                             <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
@@ -366,16 +386,17 @@
                 </div>
             </div>
 
-            <!-- Vertical down-right -->
+            <!-- Vertical connector down-right -->
             <div class="self-end mr-16 md:mr-24 flex flex-col items-center gap-2 my-1">
-                <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
             </div>
 
-            <!-- ROW 4 — Right to Left: Levels 10,11,12 — LOCKED -->
+            <!-- ROW 4 — Right to Left: Levels 10, 11, 12 FINAL BOSS — LOCKED -->
             <div class="flex justify-end w-full">
                 <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8 flex-row-reverse">
 
+                    <!-- Level 10 — LOCKED -->
                     <div class="level-node locked text-center">
                         <div class="flex flex-col items-center gap-2">
                             <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
@@ -383,13 +404,15 @@
                             <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 10</div>
                         </div>
                     </div>
+
                     <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
                     </div>
 
+                    <!-- Level 11 — LOCKED -->
                     <div class="level-node locked text-center">
                         <div class="flex flex-col items-center gap-2">
                             <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
@@ -397,18 +420,19 @@
                             <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 11</div>
                         </div>
                     </div>
+
                     <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
+                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
                     </div>
 
-                    <!-- Final Boss — LOCKED -->
+                    <!-- Level 12 FINAL BOSS — LOCKED -->
                     <div class="level-node locked text-center">
                         <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node relative" style="width:84px; height:84px; font-size:1.75rem; opacity:0.5;">
-                                <span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:#374151;color:#6b7280;border-radius:999px;padding:2px 7px;font-weight:900;">FINAL</span>
+                            <div class="node-btn locked-node relative" style="width:88px; height:88px; font-size:2rem; opacity:0.5;">
+                                <span style="position:absolute;top:-10px;right:-10px;font-size:0.65rem;background:#374151;color:#9ca3af;border-radius:999px;padding:2px 7px;font-weight:900;">FINAL</span>
                                 <span class="material-symbols-outlined text-gray-600 text-3xl">lock</span>
                             </div>
                             <div class="star-row text-gray-700">⭐⭐⭐</div>
@@ -420,17 +444,19 @@
 
             <!-- Current quest indicator -->
             <div class="w-full mt-10">
-                <div class="mx-4 rounded-2xl p-5 flex items-center gap-4" style="background:linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.05) 100%); border:1px solid rgba(212,175,55,0.3);">
-                    <div class="text-3xl float-anim">⚡</div>
+                <div class="mx-4 rounded-2xl p-5 flex items-center gap-4" style="background:linear-gradient(135deg, rgba(129,140,248,0.12) 0%, rgba(99,102,241,0.06) 100%); border:1px solid rgba(129,140,248,0.3);">
+                    <div class="text-3xl float-anim">🧠</div>
                     <div class="flex-1">
-                        <p class="text-[10px] font-black tracking-[4px] text-primary/70 uppercase mb-1">NIVEL ACTUAL</p>
-                        <p class="font-black text-white text-sm">Completa el Boss "Análisis Multi-Timeframe" para desbloquear los niveles 7-12.</p>
+                        <p class="text-[10px] font-black tracking-[4px] uppercase mb-1" style="color:rgba(129,140,248,0.8);">NIVEL ACTUAL</p>
+                        <p class="font-black text-white text-sm">Completa "Smart Money Concepts" para desbloquear los siguientes niveles.</p>
+                        <p class="text-gray-500 text-xs mt-1">Completa el Mundo Intermedio para acceder a este mundo.</p>
                     </div>
-                    <button onclick="openModal(6,'⚡ BOSS: Análisis Multi-Timeframe','El gran desafío: analiza un activo en 4 timeframes distintos y determina la dirección.','active',400)" class="shrink-0 px-5 py-2.5 rounded-xl font-black uppercase tracking-wider text-xs transition hover:scale-105 whitespace-nowrap" style="background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;">
+                    <button onclick="openModal(1,'Smart Money Concepts','Comprende cómo operan las instituciones: order blocks, liquidity pools y market structure.','active',300)" class="shrink-0 px-5 py-2.5 rounded-xl font-black uppercase tracking-wider text-xs transition hover:scale-105 whitespace-nowrap" style="background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;">
                         ▶ JUGAR
                     </button>
                 </div>
             </div>
+
         </div>
     </div>
 </main>
@@ -439,7 +465,7 @@
 <div id="level-modal" class="modal-overlay hidden" onclick="if(event.target===this)closeModal()">
     <div class="modal-box">
         <div class="flex items-center justify-between mb-5">
-            <span id="modal-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"></span>
+            <span id="modal-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider" style="background:rgba(129,140,248,0.15); color:#818cf8; border:1px solid rgba(129,140,248,0.4);">▶ En Progreso</span>
             <button onclick="closeModal()" class="text-gray-500 hover:text-white transition"><span class="material-symbols-outlined">close</span></button>
         </div>
         <div class="text-5xl text-center mb-4" id="modal-icon">📚</div>
@@ -448,10 +474,10 @@
         <div class="flex justify-center gap-1 mb-5" id="modal-stars">⭐⭐⭐</div>
         <div class="flex items-center justify-between mb-5 bg-card rounded-xl px-4 py-3" style="border:1px solid rgba(212,175,55,0.15);">
             <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">XP a ganar</span>
-            <span class="font-black text-primary" id="modal-xp">+200 XP</span>
+            <span class="font-black text-primary" id="modal-xp">+300 XP</span>
         </div>
-        <button id="modal-cta" onclick="closeModal()" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;">
-            JUGAR NIVEL
+        <button id="modal-cta" onclick="closeModal()" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;">
+            ▶ JUGAR NIVEL
         </button>
     </div>
 </div>
@@ -460,39 +486,44 @@
 function toggleSideMenu() {
     const menu = document.getElementById('side-menu');
     const overlay = document.getElementById('menu-overlay');
+    const hamburger = document.getElementById('hamburger-btn-inline');
     if (menu.classList.contains('-translate-x-full')) {
         menu.classList.remove('-translate-x-full');
         overlay.classList.remove('opacity-0', 'pointer-events-none');
+        if (hamburger) hamburger.classList.add('hamburger-open');
     } else {
         menu.classList.add('-translate-x-full');
         overlay.classList.add('opacity-0', 'pointer-events-none');
+        if (hamburger) hamburger.classList.remove('hamburger-open');
     }
 }
 
-const icons = ['🕯️','📐','📡','📊','🛡️','⚡','📈','🔮','💼','🧠','📝','🏆'];
+const icons = ['🧠','🔮','🏛️','💎','📡','⚡','🌀','🎯','🛡️','📊','💰','🏆'];
 function openModal(num, title, desc, status, xp) {
     const badge = document.getElementById('modal-badge');
     const cta = document.getElementById('modal-cta');
     if (status === 'completed') {
         badge.textContent = '✓ Completado';
-        badge.style.cssText = 'background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);';
+        badge.style.cssText = 'background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;';
         document.getElementById('modal-stars').textContent = '⭐⭐⭐';
-        cta.style.cssText = 'background:linear-gradient(135deg,#16a34a,#4ade80);color:#0a0f1a;';
+        cta.style.cssText = 'background:linear-gradient(135deg,#16a34a,#4ade80);color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;transition:all 0.2s;cursor:pointer;border:none;';
         cta.textContent = 'REPASAR NIVEL';
     } else {
-        badge.innerHTML = '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#D4AF37;animation:blink 1s ease-in-out infinite;margin-right:4px;"></span> En Progreso';
-        badge.style.cssText = 'background:rgba(212,175,55,0.2);color:#D4AF37;border:1px solid rgba(212,175,55,0.5);';
+        badge.innerHTML = '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#818cf8;animation:path-dot 1s ease-in-out infinite;"></span> En Progreso';
+        badge.style.cssText = 'background:rgba(129,140,248,0.15);color:#818cf8;border:1px solid rgba(129,140,248,0.4);display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;';
         document.getElementById('modal-stars').textContent = '⭐⭐⭐ (por ganar)';
-        cta.style.cssText = 'background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;';
+        cta.style.cssText = 'background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;transition:all 0.2s;cursor:pointer;border:none;';
         cta.textContent = '▶ JUGAR NIVEL';
     }
     document.getElementById('modal-title').textContent = 'Nivel ' + num + ': ' + title;
     document.getElementById('modal-desc').textContent = desc;
     document.getElementById('modal-xp').textContent = '+' + xp + ' XP';
-    document.getElementById('modal-icon').textContent = icons[num-1] || '📚';
+    document.getElementById('modal-icon').textContent = icons[num - 1] || '📚';
     document.getElementById('level-modal').classList.remove('hidden');
 }
-function closeModal() { document.getElementById('level-modal').classList.add('hidden'); }
+function closeModal() {
+    document.getElementById('level-modal').classList.add('hidden');
+}
 </script>
 </body>
 </html>

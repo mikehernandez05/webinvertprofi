@@ -414,52 +414,52 @@
                 </div>
             </div>
 
-            <!-- MUNDO 3: EXPERTO — AVAILABLE -->
-            <div class="world-card world-experto relative" onclick="window.location.href='niveles-experto.html'">
+            <!-- MUNDO 3: EXPERTO — LOCKED -->
+            <div class="world-card world-experto opacity-60 relative" style="pointer-events: none;">
                 <div class="card-glow rounded-3xl p-1" style="border:2px solid rgba(99,102,241,0.2);">
                     <div class="bg-gradient-to-b from-[#0d0d1f] to-[#111827] rounded-3xl p-8 text-center relative overflow-hidden" style="min-height:420px;">
                         <div class="absolute inset-0 rounded-3xl" style="background: radial-gradient(circle at 50% 60%, rgba(99,102,241,0.1) 0%, transparent 70%);"></div>
 
-                        <!-- New badge -->
+                        <!-- Locked badge -->
                         <div class="flex justify-center mb-4">
-                            <span class="badge-pop inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider" style="background:rgba(129,140,248,0.2); color:#818cf8; border:1px solid rgba(129,140,248,0.4);">
-                                <span class="w-1.5 h-1.5 rounded-full inline-block animate-pulse" style="background:#818cf8;"></span> Nuevo
+                            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider" style="background:rgba(107,114,128,0.15); color:#6b7280; border:1px solid rgba(107,114,128,0.2);">
+                                <span class="material-symbols-outlined text-[12px]">lock</span> Bloqueado
                             </span>
                         </div>
 
                         <!-- Planet -->
                         <div class="flex justify-center mb-6 relative">
                             <div class="relative w-32 h-32 md:w-40 md:h-40">
-                                <div class="orbit-ring" style="width:160px; height:160px; top:-10px; left:-10px; animation-duration:14s; border-color:rgba(129,140,248,0.15);"></div>
-                                <div class="planet w-full h-full rounded-full relative">
-                                    <div class="absolute inset-0 rounded-full" style="background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);"></div>
+                                <div class="planet w-full h-full rounded-full relative grayscale">
                                     <div class="absolute inset-0 rounded-full flex items-center justify-center">
                                         <span class="text-5xl">🌌</span>
                                     </div>
                                 </div>
-                                <div class="absolute -top-2 -right-2 text-indigo-300 text-lg animate-pulse">✦</div>
-                                <div class="absolute -bottom-1 -left-2 text-indigo-400 text-sm animate-pulse" style="animation-delay:0.8s;">✦</div>
+                                <!-- Lock overlay -->
+                                <div class="absolute inset-0 rounded-full flex items-center justify-center" style="background:rgba(10,15,26,0.5);">
+                                    <span class="material-symbols-outlined text-gray-500 text-4xl">lock</span>
+                                </div>
                             </div>
                         </div>
 
-                        <p class="text-[10px] font-black tracking-[4px] uppercase mb-1" style="color:rgba(129,140,248,0.7);">MUNDO 03</p>
-                        <h3 class="text-3xl font-black uppercase tracking-tight text-white mb-2">EXPERTO</h3>
-                        <p class="text-gray-400 text-xs mb-6 leading-relaxed">Estrategias institucionales & psicología de trading. Solo para los mejores.</p>
+                        <p class="text-[10px] font-black tracking-[4px] text-gray-600 uppercase mb-1">MUNDO 03</p>
+                        <h3 class="text-3xl font-black uppercase tracking-tight text-gray-500 mb-2">EXPERTO</h3>
+                        <p class="text-gray-600 text-xs mb-6 leading-relaxed">Estrategias institucionales & psicología de trading. Solo para los mejores.</p>
 
                         <div class="flex justify-center gap-1 mb-5">
-                            <span class="text-2xl text-gray-600">⭐</span><span class="text-2xl text-gray-600">⭐</span><span class="text-2xl text-gray-600">⭐</span>
+                            <span class="text-2xl text-gray-700">⭐</span><span class="text-2xl text-gray-700">⭐</span><span class="text-2xl text-gray-700">⭐</span>
                         </div>
 
                         <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
-                            <span class="text-gray-500">Progreso</span>
-                            <span style="color:#818cf8;">0/12 niveles</span>
+                            <span class="text-gray-600">Requisito</span>
+                            <span class="text-gray-500">Completa Intermedio</span>
                         </div>
                         <div class="h-2.5 w-full bg-gray-800 rounded-full overflow-hidden mb-5">
-                            <div class="h-full rounded-full" style="width:0%; background: linear-gradient(90deg, #4f46e5, #818cf8);"></div>
+                            <div class="h-full rounded-full bg-gray-700" style="width:0%;"></div>
                         </div>
 
-                        <button class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition-all duration-300 hover:scale-105" style="background:rgba(129,140,248,0.2); color:#818cf8; border:1px solid rgba(129,140,248,0.4);">
-                            ▶ COMENZAR
+                        <button class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm" style="background:rgba(107,114,128,0.15); color:#4b5563; border:1px solid rgba(107,114,128,0.2); cursor:not-allowed;">
+                            🔒 BLOQUEADO
                         </button>
                     </div>
                 </div>
@@ -540,3 +540,4 @@ function toggleSideMenu() {
 </script>
 </body>
 </html>
+ 
