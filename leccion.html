@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>InvertProfit — Academia · Lección</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#D4AF37",
+                        "bg-dark": "#0a0f1a",
+                        "card": "#0d1420",
+                        "card-border": "#1f2937",
+                        "positive": "#22c55e",
+                        "negative": "#ef4444",
+                        "cyan-accent": "#00d4ff"
+                    },
+                    fontFamily: { "sans": ["Inter", "sans-serif"], "mono": ["Share Tech Mono", "monospace"] }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+
+        body { background: #060c16; font-family: 'Inter', sans-serif; }
+
+        /* Corner brackets decoration */
+        .corner-box {
+            position: relative;
+            border: 1px solid rgba(0, 212, 255, 0.15);
+        }
+        .corner-box::before, .corner-box::after {
+            content: '';
+            position: absolute;
+            width: 12px; height: 12px;
+        }
+        .corner-box::before { top: -1px; left: -1px; border-top: 2px solid #00d4ff; border-left: 2px solid #00d4ff; }
+        .corner-box::after { bottom: -1px; right: -1px; border-bottom: 2px solid #00d4ff; border-right: 2px solid #00d4ff; }
+
+        .corner-gold::before { border-top-color: #D4AF37; border-left-color: #D4AF37; }
+        .corner-gold::after { border-bottom-color: #D4AF37; border-right-color: #D4AF37; }
+        .corner-gold { border-color: rgba(212,175,55,0.15); }
+
+        /* HUD header line */
+        .hud-header {
+            background: #080e1a;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.2);
+        }
+
+        /* Module list items */
+        .module-item {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-left: 3px solid transparent;
+        }
+        .module-item:hover { background: rgba(212,175,55,0.06); border-left-color: rgba(212,175,55,0.4); }
+        .module-item.active { background: rgba(212,175,55,0.1); border-left-color: #D4AF37; }
+        .module-item.locked { opacity: 0.4; cursor: not-allowed; }
+
+        /* Progress bar */
+        .progress-bar-track { background: rgba(255,255,255,0.08); border-radius: 2px; }
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 2px;
+            background: linear-gradient(90deg, #D4AF37, #f0d060);
+            box-shadow: 0 0 8px rgba(212,175,55,0.5);
+            transition: width 1s ease;
+        }
+
+        /* Circular progress */
+        .circle-progress {
+            transform: rotate(-90deg);
+        }
+        .circle-track { fill: none; stroke: rgba(255,255,255,0.08); stroke-width: 8; }
+        .circle-fill {
+            fill: none;
+            stroke: #D4AF37;
+            stroke-width: 8;
+            stroke-linecap: round;
+            stroke-dasharray: 251;
+            stroke-dashoffset: 63; /* 75% = 251 * 0.25 */
+            filter: drop-shadow(0 0 6px rgba(212,175,55,0.6));
+            transition: stroke-dashoffset 1s ease;
+        }
+
+        /* Video player */
+        .video-container {
+            position: relative;
+            background: #000;
+            border: 1px solid rgba(212,175,55,0.2);
+        }
+        .video-placeholder {
+            background: radial-gradient(ellipse at 50% 50%, rgba(212,175,55,0.08) 0%, #050a12 70%);
+        }
+        .play-btn {
+            width: 72px; height: 72px;
+            background: rgba(212,175,55,0.15);
+            border: 2px solid #D4AF37;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(4px);
+        }
+        .play-btn:hover { background: rgba(212,175,55,0.3); transform: scale(1.1); box-shadow: 0 0 30px rgba(212,175,55,0.4); }
+
+        /* Live badge */
+        .live-badge {
+            background: rgba(212,175,55,0.2);
+            border: 1px solid rgba(212,175,55,0.5);
+            color: #D4AF37;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2px;
+            animation: live-pulse 2s ease-in-out infinite;
+        }
+        @keyframes live-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        /* Action buttons */
+        .btn-action {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: all 0.2s ease;
+            border: 1px solid;
+            cursor: pointer;
+        }
+        .btn-secondary {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.15);
+            color: rgba(255,255,255,0.7);
+        }
+        .btn-secondary:hover { background: rgba(255,255,255,0.08); border-color: rgba(255,255,255,0.3); color: #fff; }
+
+        .btn-primary-gold {
+            background: linear-gradient(135deg, #D4AF37, #b8960b);
+            border-color: #D4AF37;
+            color: #060c16;
+            font-weight: 900;
+            box-shadow: 0 0 20px rgba(212,175,55,0.3);
+        }
+        .btn-primary-gold:hover { box-shadow: 0 0 35px rgba(212,175,55,0.5); transform: translateY(-1px); }
+
+        /* Stat cards */
+        .stat-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.07);
+            transition: border-color 0.2s;
+        }
+        .stat-card:hover { border-color: rgba(212,175,55,0.25); }
+
+        /* Reward artifact */
+        .artifact {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .artifact:hover { transform: translateY(-4px); }
+        .artifact-img {
+            width: 64px; height: 64px;
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2rem;
+            border: 1px solid rgba(212,175,55,0.3);
+            background: rgba(212,175,55,0.08);
+        }
+        .artifact.locked-art .artifact-img {
+            background: rgba(255,255,255,0.04);
+            border-color: rgba(255,255,255,0.1);
+            filter: grayscale(1);
+        }
+
+        /* Scan lines effect */
+        .scanlines::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Glow dividers */
+        .glow-line { background: linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent); height: 1px; }
+        .glow-line-cyan { background: linear-gradient(90deg, transparent, rgba(0,212,255,0.3), transparent); height: 1px; }
+
+        /* Server time blink */
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        .blink { animation: blink 1s step-end infinite; }
+
+        /* Active dot */
+        .active-dot {
+            width: 6px; height: 6px;
+            background: #22c55e;
+            border-radius: 50%;
+            box-shadow: 0 0 6px #22c55e;
+            animation: blink 2s ease-in-out infinite;
+        }
+
+        /* Tooltip on hover modules */
+        .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .module-item:hover .tooltip-text { visibility: visible; opacity: 1; }
+
+        /* Floating glow behind video */
+        .video-glow {
+            position: absolute;
+            width: 420px; height: 420px;
+            background: radial-gradient(circle, rgba(212,175,55,0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Quest box */
+        .quest-box {
+            background: rgba(0,212,255,0.05);
+            border: 1px solid rgba(0,212,255,0.2);
+            border-left: 3px solid #00d4ff;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-white overflow-x-hidden">
+
+    <!-- ══════════ HUD HEADER ══════════ -->
+    <header class="hud-header px-6 py-3 flex items-center justify-between sticky top-0 z-50">
+        <!-- Left: Logo + session -->
+        <div class="flex items-center gap-4">
+            <a href="/portadanivelesacademia.html" class="flex items-center gap-3 group">
+                <div class="w-10 h-10 rounded-lg flex items-center justify-center text-sm font-black"
+                     style="background: linear-gradient(135deg, #D4AF37, #b8960b); color: #060c16;">IP</div>
+                <div>
+                    <div class="font-black text-sm tracking-widest text-white uppercase">InvertProfit <span style="color:#D4AF37">Academy</span></div>
+                    <div class="flex items-center gap-2">
+                        <div class="active-dot"></div>
+                        <span class="font-mono text-xs" style="color:#22c55e; font-size:9px; letter-spacing:2px;">SYS.ONLINE</span>
+                        <span class="font-mono text-xs text-gray-600" style="font-size:9px; letter-spacing:1px;">· SESSION ID: IP-AX-99</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <!-- Center: Stats -->
+        <div class="hidden md:flex items-center gap-8">
+            <div class="text-center">
+                <div class="font-mono text-xs text-gray-500 uppercase tracking-widest" style="font-size:9px;">Volatilidad</div>
+                <div class="font-mono text-sm font-bold" style="color:#D4AF37;">ALTA [94%]</div>
+            </div>
+            <div class="w-px h-8 bg-gray-800"></div>
+            <div class="text-center">
+                <div class="font-mono text-xs text-gray-500 uppercase tracking-widest" style="font-size:9px;">Hora Servidor</div>
+                <div class="font-mono text-sm font-bold text-white" id="server-time">00:00:00 UTC</div>
+            </div>
+        </div>
+
+        <!-- Right: User profile -->
+        <div class="flex items-center gap-3">
+            <div class="text-right">
+                <div class="font-bold text-sm" style="color:#D4AF37;">Cmdr. Trader</div>
+                <div class="text-xs text-gray-500 font-mono" style="font-size:10px;">Nivel 12 · Novato</div>
+            </div>
+            <div class="w-10 h-10 rounded-full flex items-center justify-center text-xl font-black relative"
+                 style="background: linear-gradient(135deg, #1f2937, #374151); border: 2px solid rgba(212,175,55,0.4);">
+                🎯
+                <div class="absolute -bottom-0.5 -right-0.5 active-dot" style="width:8px;height:8px;"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="glow-line-cyan"></div>
+
+    <!-- ══════════ MAIN LAYOUT ══════════ -->
+    <div class="flex h-[calc(100vh-57px)]" style="min-height: 600px;">
+
+        <!-- ═══ LEFT PANEL: Training Modules ═══ -->
+        <aside class="w-72 flex-shrink-0 flex flex-col corner-box" style="background: #080d18; border-color: rgba(0,212,255,0.12); border-top:none; border-bottom:none;">
+            <!-- Panel header -->
+            <div class="px-5 py-4 border-b" style="border-color: rgba(0,212,255,0.1);">
+                <div class="flex items-center gap-2">
+                    <div class="w-1 h-5 rounded" style="background:#00d4ff;"></div>
+                    <span class="font-mono text-xs tracking-widest uppercase font-bold" style="color:#00d4ff;">Módulos de Entrenamiento</span>
+                </div>
+            </div>
+
+            <!-- Modules list -->
+            <div class="flex-1 overflow-y-auto py-2">
+
+                <!-- MOD 01 — Active -->
+                <div class="module-item active px-5 py-4" onclick="selectModule(1)">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded flex items-center justify-center text-xs font-black flex-shrink-0 mt-0.5"
+                             style="background: rgba(212,175,55,0.2); color:#D4AF37; border: 1px solid rgba(212,175,55,0.4);">▶</div>
+                        <div class="flex-1 min-w-0">
+                            <div class="font-bold text-xs uppercase tracking-wide" style="color:#D4AF37;">MOD 01: Fundamentos</div>
+                            <div class="text-xs text-gray-400 mt-0.5">Estructura del mercado</div>
+                            <div class="flex items-center gap-2 mt-2">
+                                <div class="progress-bar-track h-1 flex-1">
+                                    <div class="progress-bar-fill" style="width:65%;"></div>
+                                </div>
+                                <span class="font-mono text-xs" style="color:#D4AF37; font-size:9px;">65%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MOD 02 -->
+                <div class="module-item px-5 py-4" onclick="selectModule(2)">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded flex items-center justify-center text-xs font-black flex-shrink-0 mt-0.5"
+                             style="background: rgba(255,255,255,0.05); color:rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.1);">02</div>
+                        <div>
+                            <div class="font-bold text-xs uppercase tracking-wide text-gray-300">MOD 02: Tipos de Activos</div>
+                            <div class="text-xs text-gray-500 mt-0.5">Acciones, Forex, Cripto</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MOD 03 -->
+                <div class="module-item px-5 py-4" onclick="selectModule(3)">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded flex items-center justify-center text-xs font-black flex-shrink-0 mt-0.5"
+                             style="background: rgba(255,255,255,0.05); color:rgba(255,255,255,0.6); border: 1px solid rgba(255,255,255,0.1);">03</div>
+                        <div>
+                            <div class="font-bold text-xs uppercase tracking-wide text-gray-300">MOD 03: Patrones</div>
+                            <div class="text-xs text-gray-500 mt-0.5">Análisis de velas V2</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MOD 04 — Locked -->
+                <div class="module-item locked px-5 py-4">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded flex items-center justify-center text-xs flex-shrink-0 mt-0.5"
+                             style="background: rgba(255,255,255,0.03); color:rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.06);">🔒</div>
+                        <div>
+                            <div class="font-bold text-xs uppercase tracking-wide text-gray-600">MOD 04: Institucional</div>
+                            <div class="text-xs text-gray-600 mt-0.5">BLOQUEADO</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MOD 05 — Locked -->
+                <div class="module-item locked px-5 py-4">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded flex items-center justify-center text-xs flex-shrink-0 mt-0.5"
+                             style="background: rgba(255,255,255,0.03); color:rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.06);">🔒</div>
+                        <div>
+                            <div class="font-bold text-xs uppercase tracking-wide text-gray-600">MOD 05: Smart Money</div>
+                            <div class="text-xs text-gray-600 mt-0.5">BLOQUEADO</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MOD 06 — Locked -->
+                <div class="module-item locked px-5 py-4">
+                    <div class="flex items-start gap-3">
+                        <div class="w-8 h-8 rounded flex items-center justify-center text-xs flex-shrink-0 mt-0.5"
+                             style="background: rgba(255,255,255,0.03); color:rgba(255,255,255,0.3); border: 1px solid rgba(255,255,255,0.06);">🔒</div>
+                        <div>
+                            <div class="font-bold text-xs uppercase tracking-wide text-gray-600">MOD 06: Psicología</div>
+                            <div class="text-xs text-gray-600 mt-0.5">BLOQUEADO</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress footer -->
+            <div class="px-5 py-4 border-t" style="border-color: rgba(0,212,255,0.1);">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-xs text-gray-500 uppercase tracking-widest font-mono" style="font-size:9px;">Progreso Total</span>
+                    <span class="font-mono text-sm font-bold" style="color:#D4AF37;">35%</span>
+                </div>
+                <div class="progress-bar-track h-2 rounded-full">
+                    <div class="progress-bar-fill h-2 rounded-full" style="width:35%;"></div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- ═══ CENTER: Video + Controls ═══ -->
+        <main class="flex-1 flex flex-col overflow-y-auto" style="background: #060c16;">
+
+            <!-- Video section wrapper with glow -->
+            <div class="flex-1 flex flex-col items-center justify-center px-8 py-6 relative">
+                <div class="video-glow"></div>
+
+                <!-- Lesson title -->
+                <div class="w-full max-w-3xl mb-4 z-10">
+                    <div class="flex items-center gap-3">
+                        <div class="live-badge px-3 py-1 rounded-sm">● SESIÓN</div>
+                        <h2 class="font-black text-white uppercase tracking-wide text-sm">MOD 01 — Estructura del Mercado: Zonas de Oferta y Demanda</h2>
+                    </div>
+                </div>
+
+                <!-- Video Player -->
+                <div class="video-container w-full max-w-3xl rounded-lg overflow-hidden z-10" style="aspect-ratio: 16/9;">
+                    <div class="video-placeholder w-full h-full flex flex-col items-center justify-center relative scanlines" id="video-area">
+                        <!-- Eye icon top-right -->
+                        <div class="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-sm"
+                             style="background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.4);">👁</div>
+
+                        <!-- Fake chart bars -->
+                        <div class="flex items-end gap-1.5 mb-10 opacity-20" style="height:120px;">
+                            <div class="rounded-t" style="width:14px;height:40%;background:linear-gradient(180deg,#D4AF37,transparent)"></div>
+                            <div class="rounded-t" style="width:14px;height:70%;background:linear-gradient(180deg,#D4AF37,transparent)"></div>
+                            <div class="rounded-t" style="width:14px;height:55%;background:linear-gradient(180deg,#D4AF37,transparent)"></div>
+                            <div class="rounded-t" style="width:14px;height:90%;background:linear-gradient(180deg,#D4AF37,transparent)"></div>
+                            <div class="rounded-t" style="width:14px;height:80%;background:linear-gradient(180deg,#D4AF37,transparent)"></div>
+                            <div class="rounded-t" style="width:14px;height:65%;background:linear-gradient(180deg,#D4AF37,transparent)"></div>
+                            <div class="rounded-t" style="width:14px;height:100%;background:linear-gradient(180deg,#D4AF37,transparent)"></div>
+                            <div class="rounded-t" style="width:14px;height:75%;background:linear-gradient(180deg,#D4AF37,transparent)"></div>
+                            <div class="rounded-t" style="width:14px;height:45%;background:linear-gradient(180deg,#D4AF37,transparent)"></div>
+                            <div class="rounded-t" style="width:14px;height:85%;background:linear-gradient(180deg,#D4AF37,transparent)"></div>
+                        </div>
+
+                        <!-- Play button -->
+                        <div class="play-btn absolute" onclick="playVideo()">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="#D4AF37" style="margin-left:4px;">
+                                <path d="M8 5v14l11-7z"/>
+                            </svg>
+                        </div>
+
+                        <!-- Video duration -->
+                        <div class="absolute bottom-4 left-4 font-mono text-xs text-gray-500">00:00 / 18:34</div>
+
+                        <!-- Video quality badge -->
+                        <div class="absolute bottom-4 right-4 font-mono text-xs px-2 py-0.5 rounded"
+                             style="background:rgba(255,255,255,0.08); color:rgba(255,255,255,0.5); font-size:9px; letter-spacing:1px;">HD 1080p</div>
+                    </div>
+                </div>
+
+                <!-- ── Action Buttons ── -->
+                <div class="w-full max-w-3xl mt-5 grid grid-cols-3 gap-3 z-10">
+                    <button class="btn-action btn-secondary py-4 px-6 rounded flex items-center justify-center gap-2" onclick="replayLesson()">
+                        <span>⏮</span> REPLAY
+                    </button>
+                    <button class="btn-action btn-primary-gold py-4 px-6 rounded flex items-center justify-center gap-2 text-base" onclick="completeModule()">
+                        ✅ COMPLETAR MÓDULO
+                    </button>
+                    <button class="btn-action btn-secondary py-4 px-6 rounded flex items-center justify-center gap-2" onclick="nextLesson()">
+                        SIGUIENTE ⏭
+                    </button>
+                </div>
+            </div>
+
+            <!-- ── Liquid Rewards Bar ── -->
+            <div class="border-t px-8 py-5" style="border-color: rgba(212,175,55,0.15); background:#07111e;">
+                <div class="flex items-center gap-10 flex-wrap">
+                    <div>
+                        <div class="font-mono text-xs tracking-widest uppercase font-bold" style="color:#D4AF37; font-size:9px;">⬡ Recompensas Desbloqueadas</div>
+                        <div class="text-xs text-gray-600 font-mono mt-0.5" style="font-size:9px;">Artefactos coleccionados</div>
+                    </div>
+                    <div class="flex items-center gap-6 flex-wrap">
+                        <!-- Artifact 1: unlocked -->
+                        <div class="artifact text-center" title="Toro Dorado">
+                            <div class="artifact-img mx-auto">🏆</div>
+                            <div class="font-mono text-xs text-gray-400 mt-2 uppercase tracking-wide" style="font-size:9px;">Toro Dorado</div>
+                        </div>
+                        <!-- Artifact 2: unlocked -->
+                        <div class="artifact text-center" title="ETH Shard">
+                            <div class="artifact-img mx-auto">💎</div>
+                            <div class="font-mono text-xs text-gray-400 mt-2 uppercase tracking-wide" style="font-size:9px;">Shard ETH</div>
+                        </div>
+                        <!-- Artifact 3: unlocked -->
+                        <div class="artifact text-center" title="Alpha Coin">
+                            <div class="artifact-img mx-auto">🪙</div>
+                            <div class="font-mono text-xs text-gray-400 mt-2 uppercase tracking-wide" style="font-size:9px;">Alpha Coin</div>
+                        </div>
+                        <!-- Artifact 4: locked -->
+                        <div class="artifact locked-art text-center" title="Bloqueado">
+                            <div class="artifact-img mx-auto">🔒</div>
+                            <div class="font-mono text-xs text-gray-600 mt-2 uppercase tracking-wide" style="font-size:9px;">BLOQUEADO</div>
+                        </div>
+                        <!-- Artifact 5: locked -->
+                        <div class="artifact locked-art text-center" title="Bloqueado">
+                            <div class="artifact-img mx-auto">🔒</div>
+                            <div class="font-mono text-xs text-gray-600 mt-2 uppercase tracking-wide" style="font-size:9px;">BLOQUEADO</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ═══ RIGHT PANEL: Performance ═══ -->
+        <aside class="w-64 flex-shrink-0 flex flex-col overflow-y-auto corner-box corner-gold"
+               style="background: #080d18; border-color: rgba(212,175,55,0.12); border-top:none; border-bottom:none;">
+
+            <!-- Panel header -->
+            <div class="px-5 py-4 border-b" style="border-color: rgba(212,175,55,0.1);">
+                <div class="flex items-center gap-2">
+                    <div class="w-1 h-5 rounded" style="background:#D4AF37;"></div>
+                    <span class="font-mono text-xs tracking-widest uppercase font-bold" style="color:#D4AF37;">Rendimiento</span>
+                </div>
+            </div>
+
+            <!-- Accuracy ring -->
+            <div class="flex flex-col items-center py-6 border-b" style="border-color: rgba(212,175,55,0.08);">
+                <div class="relative" style="width:110px;height:110px;">
+                    <svg viewBox="0 0 90 90" class="circle-progress w-full h-full">
+                        <circle class="circle-track" cx="45" cy="45" r="40"/>
+                        <circle class="circle-fill" cx="45" cy="45" r="40"/>
+                    </svg>
+                    <div class="absolute inset-0 flex flex-col items-center justify-center">
+                        <span class="font-black text-2xl text-white">75<span class="text-base" style="color:#D4AF37;">%</span></span>
+                        <span class="font-mono text-xs text-gray-500 uppercase tracking-widest" style="font-size:8px;">Precisión</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- XP & Rank -->
+            <div class="px-5 py-4 border-b" style="border-color: rgba(212,175,55,0.08);">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="font-mono text-xs text-gray-500 uppercase" style="font-size:9px; letter-spacing:2px;">XP Actual</span>
+                    <span class="font-mono text-sm font-bold" style="color:#D4AF37;">4,500</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="font-mono text-xs text-gray-500 uppercase" style="font-size:9px; letter-spacing:2px;">Próximo Rango</span>
+                    <span class="font-mono text-xs font-bold text-white">TRADER PRO</span>
+                </div>
+                <div class="progress-bar-track h-1.5 mt-3 rounded-full">
+                    <div class="progress-bar-fill h-1.5 rounded-full" style="width:60%;"></div>
+                </div>
+                <div class="flex justify-between mt-1">
+                    <span class="font-mono text-xs text-gray-600" style="font-size:8px;">4,500 XP</span>
+                    <span class="font-mono text-xs text-gray-600" style="font-size:8px;">7,500 XP</span>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="px-4 py-4 grid grid-cols-2 gap-2">
+                <div class="stat-card rounded p-3 text-center">
+                    <div class="font-mono text-xs text-gray-500 uppercase mb-1" style="font-size:8px; letter-spacing:1px;">Racha</div>
+                    <div class="font-black text-xl" style="color:#D4AF37;">12</div>
+                </div>
+                <div class="stat-card rounded p-3 text-center">
+                    <div class="font-mono text-xs text-gray-500 uppercase mb-1" style="font-size:8px; letter-spacing:1px;">Trades</div>
+                    <div class="font-black text-xl" style="color:#D4AF37;">84</div>
+                </div>
+                <div class="stat-card rounded p-3 text-center">
+                    <div class="font-mono text-xs text-gray-500 uppercase mb-1" style="font-size:8px; letter-spacing:1px;">PnL</div>
+                    <div class="font-black text-xl text-green-400">+24%</div>
+                </div>
+                <div class="stat-card rounded p-3 text-center">
+                    <div class="font-mono text-xs text-gray-500 uppercase mb-1" style="font-size:8px; letter-spacing:1px;">Horas</div>
+                    <div class="font-black text-xl" style="color:#D4AF37;">102</div>
+                </div>
+            </div>
+
+            <!-- Daily Quest -->
+            <div class="px-4 py-3 mt-auto border-t" style="border-color: rgba(212,175,55,0.08);">
+                <div class="quest-box rounded p-3">
+                    <div class="font-mono text-xs font-bold mb-1" style="color:#00d4ff; letter-spacing:2px; font-size:9px;">⬡ MISIÓN DIARIA</div>
+                    <p class="text-xs text-gray-300 leading-relaxed">Completa 3 módulos consecutivos para desbloquear el siguiente nivel.</p>
+                    <div class="flex items-center gap-2 mt-2">
+                        <div class="progress-bar-track h-1 flex-1">
+                            <div class="h-1 rounded" style="width:33%; background:#00d4ff; box-shadow: 0 0 6px rgba(0,212,255,0.5);"></div>
+                        </div>
+                        <span class="font-mono text-xs" style="color:#00d4ff; font-size:9px;">1/3</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- ══════════ COMPLETE MODULE MODAL ══════════ -->
+    <div id="complete-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden" style="background:rgba(0,0,0,0.85); backdrop-filter:blur(6px);">
+        <div class="corner-box corner-gold p-8 text-center max-w-md mx-4 rounded-lg" style="background:#080d18;">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="font-black text-2xl text-white uppercase tracking-widest mb-2">¡Módulo Completado!</h2>
+            <p class="text-gray-400 text-sm mb-6">Has completado <span style="color:#D4AF37;">MOD 01: Fundamentos</span> con un 75% de precisión.</p>
+            <div class="grid grid-cols-3 gap-4 mb-6">
+                <div class="stat-card rounded p-3">
+                    <div class="text-xs text-gray-500 mb-1 font-mono uppercase" style="font-size:9px;">XP Ganado</div>
+                    <div class="font-black text-xl" style="color:#D4AF37;">+250</div>
+                </div>
+                <div class="stat-card rounded p-3">
+                    <div class="text-xs text-gray-500 mb-1 font-mono uppercase" style="font-size:9px;">Estrellas</div>
+                    <div class="font-black text-xl text-yellow-300">⭐⭐⭐</div>
+                </div>
+                <div class="stat-card rounded p-3">
+                    <div class="text-xs text-gray-500 mb-1 font-mono uppercase" style="font-size:9px;">Rango</div>
+                    <div class="font-black text-xl text-green-400">+1</div>
+                </div>
+            </div>
+            <div class="flex gap-3">
+                <button class="btn-action btn-secondary flex-1 py-3 rounded" onclick="closeModal()">VOLVER</button>
+                <button class="btn-action btn-primary-gold flex-1 py-3 rounded" onclick="goToMap()">VER MAPA →</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══════════ SCRIPTS ══════════ -->
+    <script>
+        // Server time clock
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getUTCHours()).padStart(2,'0');
+            const m = String(now.getUTCMinutes()).padStart(2,'0');
+            const s = String(now.getUTCSeconds()).padStart(2,'0');
+            document.getElementById('server-time').textContent = `${h}:${m}:${s} UTC`;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // Module selection
+        function selectModule(num) {
+            document.querySelectorAll('.module-item').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.module-item:not(.locked)')[num - 1]?.classList.add('active');
+        }
+
+        // Play video (placeholder interaction)
+        function playVideo() {
+            const area = document.getElementById('video-area');
+            area.innerHTML = `
+                <div class="w-full h-full flex items-center justify-center" style="background:#000;">
+                    <div class="text-center">
+                        <div class="text-6xl mb-4">▶</div>
+                        <p class="font-mono text-xs text-gray-500 uppercase tracking-widest">Conecta tu reproductor de video aquí</p>
+                        <p class="font-mono text-xs text-gray-600 mt-2" style="font-size:9px;">Integra un iframe de YouTube, Vimeo o Wistia</p>
+                    </div>
+                </div>`;
+        }
+
+        // Actions
+        function replayLesson() {
+            playVideo();
+        }
+
+        function completeModule() {
+            document.getElementById('complete-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('complete-modal').classList.add('hidden');
+        }
+
+        function nextLesson() {
+            document.querySelectorAll('.module-item:not(.locked)').forEach((el, i) => {
+                el.classList.remove('active');
+            });
+            document.querySelectorAll('.module-item:not(.locked)')[1]?.classList.add('active');
+        }
+
+        function goToMap() {
+            window.location.href = '/niveles-novato.html';
+        }
+
+        // Close modal on backdrop click
+        document.getElementById('complete-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+</body>
+</html>
