@@ -147,7 +147,7 @@
             <button id="hamburger-btn-inline" onclick="toggleSideMenu()" class="lg:hidden text-gray-400 hover:text-white p-2 flex flex-col gap-1.5 transition-all">
                 <span class="hamburger-line-1 block w-6 h-0.5 bg-current transition-all duration-300"></span>
                 <span class="hamburger-line-2 block w-6 h-0.5 bg-current transition-all duration-300"></span>
-                <span class="hamburger-line-3 block w-6 h-0.5 bg-current transition-all duration-300"></span>
+                <span class="hamburger-line-3 block w-6 h-0.5 bg-current transition-all duration-300"></span> 
             </button>
         </div>
     </div>
@@ -233,243 +233,91 @@
         </div>
     </div>
 
-    <!-- LEVEL MAP -->
-    <div class="max-w-3xl mx-auto px-4 py-10 pb-20">
+    <!-- LEVEL MAP - Candy Crush Long Winding Path -->
+    <div class="max-w-xl mx-auto px-4 py-10 pb-20">
         <p class="text-center text-[11px] font-black tracking-[5px] text-gray-600 uppercase mb-10">— MAPA DE NIVELES —</p>
+        <div id="level-map" class="relative flex flex-col items-start gap-0"></div>
 
-        <!-- Level nodes in Candy Crush style serpentine path -->
-        <div class="relative flex flex-col items-center gap-0" id="level-map">
-
-            <!-- ROW 1 — Left to Right: Levels 1, 2, 3 -->
-            <div class="flex justify-start w-full mb-0">
-                <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8">
-
-                    <!-- Level 1 — ACTIVE -->
-                    <div class="level-node text-center" onclick="openModal(1,'Smart Money Concepts','Comprende cómo operan las instituciones: order blocks, liquidity pools y market structure.','active',300)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn active">1</div>
-                            <div class="star-row text-gray-600">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black uppercase tracking-wider" style="color:#818cf8;">NIV 1</div>
-                        </div>
-                    </div>
-
-                    <!-- Connector dots (active glow) -->
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full path-dot" style="background:#818cf8; box-shadow:0 0 6px rgba(129,140,248,0.7);"></div>
-                        <div class="w-2.5 h-2.5 rounded-full path-dot" style="background:#818cf8; box-shadow:0 0 6px rgba(129,140,248,0.7);"></div>
-                        <div class="w-2.5 h-2.5 rounded-full path-dot" style="background:#818cf8; box-shadow:0 0 6px rgba(129,140,248,0.7);"></div>
-                        <div class="w-2.5 h-2.5 rounded-full path-dot" style="background:#818cf8; box-shadow:0 0 6px rgba(129,140,248,0.7);"></div>
-                    </div>
-
-                    <!-- Level 2 — LOCKED -->
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 2</div>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                    </div>
-
-                    <!-- Level 3 — LOCKED -->
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 3</div>
-                        </div>
-                    </div>
+        <!-- Current quest indicator -->
+        <div class="mt-10">
+            <div class="mx-4 rounded-2xl p-5 flex items-center gap-4" style="background:linear-gradient(135deg, rgba(129,140,248,0.12) 0%, rgba(99,102,241,0.06) 100%); border:1px solid rgba(129,140,248,0.3);">
+                <div class="text-3xl float-anim">🧠</div>
+                <div class="flex-1">
+                    <p class="text-[10px] font-black tracking-[4px] uppercase mb-1" style="color:rgba(129,140,248,0.8);">NIVEL ACTUAL</p>
+                    <p class="font-black text-white text-sm">Completa "Smart Money Concepts" para desbloquear los siguientes niveles.</p>
+                    <p class="text-gray-500 text-xs mt-1">Completa el Mundo Intermedio para acceder a este mundo.</p>
                 </div>
+                <button onclick="openModal(1,'Smart Money Concepts','Comprende cómo operan las instituciones: order blocks, liquidity pools y market structure.','active',300)" class="shrink-0 px-5 py-2.5 rounded-xl font-black uppercase tracking-wider text-xs transition hover:scale-105 whitespace-nowrap" style="background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;">
+                    ▶ JUGAR
+                </button>
             </div>
-
-            <!-- Vertical connector down-right -->
-            <div class="self-end mr-16 md:mr-24 flex flex-col items-center gap-2 my-1">
-                <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-            </div>
-
-            <!-- ROW 2 — Right to Left: Levels 4, 5, 6 (BOSS) -->
-            <div class="flex justify-end w-full">
-                <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8 flex-row-reverse">
-
-                    <!-- Level 4 — LOCKED -->
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 4</div>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                    </div>
-
-                    <!-- Level 5 — LOCKED -->
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 5</div>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                    </div>
-
-                    <!-- Level 6 BOSS — LOCKED -->
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node relative" style="width:84px; height:84px; font-size:1.75rem; opacity:0.5;">
-                                <span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:#374151;color:#9ca3af;border-radius:999px;padding:2px 7px;font-weight:900;">BOSS</span>
-                                <span class="material-symbols-outlined text-gray-600 text-3xl">lock</span>
-                            </div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 6</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vertical connector down-left -->
-            <div class="self-start ml-16 md:ml-24 flex flex-col items-center gap-2 my-1">
-                <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-            </div>
-
-            <!-- ROW 3 — Left to Right: Levels 7, 8, 9 — LOCKED -->
-            <div class="flex justify-start w-full">
-                <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8">
-
-                    <!-- Level 7 — LOCKED -->
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 7</div>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                    </div>
-
-                    <!-- Level 8 — LOCKED -->
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 8</div>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                    </div>
-
-                    <!-- Level 9 — LOCKED -->
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 9</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vertical connector down-right -->
-            <div class="self-end mr-16 md:mr-24 flex flex-col items-center gap-2 my-1">
-                <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-            </div>
-
-            <!-- ROW 4 — Right to Left: Levels 10, 11, 12 FINAL BOSS — LOCKED -->
-            <div class="flex justify-end w-full">
-                <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8 flex-row-reverse">
-
-                    <!-- Level 10 — LOCKED -->
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 10</div>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                    </div>
-
-                    <!-- Level 11 — LOCKED -->
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 11</div>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-gray-700"></div>
-                    </div>
-
-                    <!-- Level 12 FINAL BOSS — LOCKED -->
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node relative" style="width:88px; height:88px; font-size:2rem; opacity:0.5;">
-                                <span style="position:absolute;top:-10px;right:-10px;font-size:0.65rem;background:#374151;color:#9ca3af;border-radius:999px;padding:2px 7px;font-weight:900;">FINAL</span>
-                                <span class="material-symbols-outlined text-gray-600 text-3xl">lock</span>
-                            </div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 12</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Current quest indicator -->
-            <div class="w-full mt-10">
-                <div class="mx-4 rounded-2xl p-5 flex items-center gap-4" style="background:linear-gradient(135deg, rgba(129,140,248,0.12) 0%, rgba(99,102,241,0.06) 100%); border:1px solid rgba(129,140,248,0.3);">
-                    <div class="text-3xl float-anim">🧠</div>
-                    <div class="flex-1">
-                        <p class="text-[10px] font-black tracking-[4px] uppercase mb-1" style="color:rgba(129,140,248,0.8);">NIVEL ACTUAL</p>
-                        <p class="font-black text-white text-sm">Completa "Smart Money Concepts" para desbloquear los siguientes niveles.</p>
-                        <p class="text-gray-500 text-xs mt-1">Completa el Mundo Intermedio para acceder a este mundo.</p>
-                    </div>
-                    <button onclick="openModal(1,'Smart Money Concepts','Comprende cómo operan las instituciones: order blocks, liquidity pools y market structure.','active',300)" class="shrink-0 px-5 py-2.5 rounded-xl font-black uppercase tracking-wider text-xs transition hover:scale-105 whitespace-nowrap" style="background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;">
-                        ▶ JUGAR
-                    </button>
-                </div>
-            </div>
-
         </div>
     </div>
+
+    <script>
+    (function(){
+        var levels=[
+            {n:1,t:'Smart Money Concepts',d:'Comprende cómo operan las instituciones: order blocks, liquidity pools y market structure.',s:'active',xp:300},
+            {n:2,t:'ICT Power of 3',d:'Acumulación, manipulación, distribución. El ciclo que mueve todos los mercados.',s:'locked',xp:300},
+            {n:3,t:'Order Flow & Volume Profile',d:'Lee el flujo de órdenes como un profesional. Delta, POC, Value Area.',s:'locked',xp:300},
+            {n:4,t:'Wyckoff Method',d:'El método legendario. Fases de acumulación y distribución de Wyckoff.',s:'locked',xp:300},
+            {n:5,t:'Breaker Blocks & Mitigation',d:'Cuando los order blocks fallan. Aprende a identificar breakers y mitigation blocks.',s:'locked',xp:300},
+            {n:6,t:'⚡ BOSS: Lectura Institucional',d:'Analiza un gráfico real usando SMC, ICT y Wyckoff. Demuestra tu visión institucional.',s:'locked',xp:500,boss:'BOSS'},
+            {n:7,t:'Trading Algorítmico Intro',d:'Automatiza tus estrategias. Introducción a bots, APIs y ejecución algorítmica.',s:'locked',xp:300},
+            {n:8,t:'Correlaciones Macro',d:'DXY, bonos, commodities. Cómo se conectan los mercados globales.',s:'locked',xp:300},
+            {n:9,t:'Gestión de Portafolio Pro',d:'Diversificación avanzada, hedging, y optimización de portafolio.',s:'locked',xp:300},
+            {n:10,t:'Psicología Avanzada',d:'Peak performance, estado de flujo, manejo del drawdown. La mente del trader elite.',s:'locked',xp:300},
+            {n:11,t:'Plan de Trading Institucional',d:'Crea tu edge definitivo. Un plan de trading de nivel hedge fund.',s:'locked',xp:300},
+            {n:12,t:'🏆 FINAL: El Gran Examen',d:'El desafío supremo. Demuestra dominio total del trading profesional. ¡Conviértete en Master Trader!',s:'locked',xp:800,boss:'FINAL'}
+        ];
+        var pos=[44,62,74,62,44,24,14,24,44,62,74,44];
+        var dpos=[[48,53,58],[65,69,72],[72,69,65],[58,53,48],[39,33,28],[21,18,15],[15,18,21],[28,33,39],[48,53,58],[65,69,72],[68,58,48]];
+        var ic=['🧠','🔮','🏛️','💎','📡','⚡','🌀','🎯','🛡️','📊','💰','🏆'];
+        var activeDot='background:#818cf8;box-shadow:0 0 8px rgba(129,140,248,0.9);';
+        var lockedDot='background:#374151;';
+
+        var h='';
+        levels.forEach(function(lv,i){
+            var isBoss=!!lv.boss;
+            var sz=lv.boss==='FINAL'?'width:88px;height:88px;font-size:2rem;':'width:84px;height:84px;font-size:1.75rem;';
+            var tEsc=lv.t.replace(/'/g,"\\'");
+            var dEsc=lv.d.replace(/'/g,"\\'");
+            var nodeClass,nodeContent,nodeStyleExtra='',bossTag='';
+
+            if(lv.s==='active'){
+                nodeClass='node-btn active'+(isBoss?' relative':'');
+                if(isBoss){nodeStyleExtra=sz;bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:#818cf8;color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
+                nodeContent=bossTag+ic[i];
+            } else {
+                nodeClass='node-btn locked-node'+(isBoss?' relative':'');
+                if(isBoss){nodeStyleExtra=sz+'opacity:0.5;';bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:#374151;color:#9ca3af;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
+                nodeContent=bossTag+'<span class="material-symbols-outlined text-gray-500 text-2xl">lock</span>';
+            }
+
+            var starClass=lv.s==='active'?'star-row text-gray-600':'star-row text-gray-700';
+            var labelClass=lv.s==='locked'?'text-[10px] font-black text-gray-600 uppercase tracking-wider':'text-[10px] font-black uppercase tracking-wider';
+            var labelStyle=lv.s!=='locked'?'style="color:#818cf8;"':'';
+            var clickAttr=lv.s==='locked'?'':'onclick="openModal('+lv.n+',\''+tEsc+'\',\''+dEsc+'\',\''+lv.s+'\','+lv.xp+')"';
+            var wrapClass=lv.s==='locked'?'level-node locked text-center inline-block':'level-node text-center inline-block';
+
+            h+='<div class="w-full" style="padding-left:'+pos[i]+'%">';
+            h+='<div class="'+wrapClass+'" '+clickAttr+'>';
+            h+='<div class="flex flex-col items-center gap-2">';
+            h+='<div class="'+nodeClass+'" style="'+nodeStyleExtra+'">'+nodeContent+'</div>';
+            h+='<div class="'+starClass+'">⭐⭐⭐</div>';
+            h+='<div class="'+labelClass+'" '+labelStyle+'>NIV '+lv.n+'</div>';
+            h+='</div></div></div>';
+
+            if(i<levels.length-1){
+                var dc=(lv.s==='active')?activeDot:lockedDot;
+                h+='<div class="w-full flex flex-col gap-2.5 py-3">';
+                dpos[i].forEach(function(dp){h+='<div class="w-2.5 h-2.5 rounded-full" style="margin-left:'+dp+'%;'+dc+'"></div>';});
+                h+='</div>';
+            }
+        });
+        document.getElementById('level-map').innerHTML=h;
+    })();
+    </script>
 </main>
 
 <!-- LEVEL MODAL -->

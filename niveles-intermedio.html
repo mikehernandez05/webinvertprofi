@@ -111,11 +111,21 @@
 <!-- HEADER -->
 <header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-[60] shrink-0">
     <div class="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
-        <div class="flex items-center gap-2 md:gap-3">
-            <img src="images/logo_azul.png" alt="InvertProfit" class="h-8 md:h-10 w-auto logo-glow object-contain" id="logo-img"/>
-            <span class="text-lg md:text-xl font-bold text-white" id="logo-text" style="display:none;"><span style="color:#D4AF37;">INVERT</span>PROFIT</span>
+        <div class="flex items-center gap-3">
+            <a href="portadanivelesacademia.html"
+               class="flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shrink-0"
+               style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.35); color:#D4AF37;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span class="hidden sm:inline">Volver</span>
+            </a>
+            <div class="flex items-center gap-2.5">
+                <img src="images/logo_azul.png" alt="InvertProfit" id="logo-img"
+                     class="h-10 w-auto object-contain shrink-0"
+                     style="filter:drop-shadow(0 0 10px rgba(212,175,55,0.4));"
+                     onerror="this.style.display='none'; document.getElementById('logo-badge').style.display='flex';">
+                <div id="logo-badge" class="w-11 h-11 rounded-xl items-center justify-center font-black text-lg shrink-0" style="display:none; background:linear-gradient(135deg,#D4AF37,#b8860b); color:#0a0f1a; box-shadow:0 0 30px rgba(212,175,55,0.4);">IP</div>
+            </div>
         </div>
-        <script>document.getElementById('logo-img').onerror=function(){this.style.display='none';document.getElementById('logo-text').style.display='inline';};</script>
         <nav class="hidden lg:flex items-center gap-10">
             <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="index.html">INICIO</a>
             <a class="font-black border-b-2 border-primary pb-1 text-sm tracking-widest uppercase" style="color:#D4AF37;" href="portadanivelesacademia.html">ACADEMIA</a>
@@ -214,226 +224,95 @@
         </div>
     </div>
 
-    <!-- LEVEL MAP -->
-    <div class="max-w-3xl mx-auto px-4 py-10 pb-20">
+    <!-- LEVEL MAP - Candy Crush Long Winding Path -->
+    <div class="max-w-xl mx-auto px-4 py-10 pb-20">
         <p class="text-center text-[11px] font-black tracking-[5px] text-gray-600 uppercase mb-10">— MAPA DE NIVELES —</p>
+        <div id="level-map" class="relative flex flex-col items-start gap-0"></div>
 
-        <div class="relative flex flex-col items-center gap-0" id="level-map">
-
-            <!-- ROW 1 — Left to Right: Levels 1,2,3 -->
-            <div class="flex justify-start w-full">
-                <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8">
-
-                    <!-- Level 1 — completed -->
-                    <div class="level-node text-center" onclick="openModal(1,'Patrones de Velas','Doji, martillo, estrella fugaz. Domina los patrones de velas japonesas y lo que predicen.','completed',200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 1</div>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                    </div>
-
-                    <!-- Level 2 — completed -->
-                    <div class="level-node text-center" onclick="openModal(2,'Fibonacci Retracements','La herramienta mágica. Aprende a trazar niveles de Fibonacci y encontrar puntos de entrada.','completed',200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 2</div>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                    </div>
-
-                    <!-- Level 3 — completed -->
-                    <div class="level-node text-center" onclick="openModal(3,'RSI & MACD Avanzado','Divergencias, señales de sobrecompra/sobreventa. El análisis que separa novatos de pros.','completed',200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 3</div>
-                        </div>
-                    </div>
+        <!-- Current quest indicator -->
+        <div class="mt-10">
+            <div class="mx-4 rounded-2xl p-5 flex items-center gap-4" style="background:linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.05) 100%); border:1px solid rgba(212,175,55,0.3);">
+                <div class="text-3xl float-anim">⚡</div>
+                <div class="flex-1">
+                    <p class="text-[10px] font-black tracking-[4px] text-primary/70 uppercase mb-1">NIVEL ACTUAL</p>
+                    <p class="font-black text-white text-sm">Completa el Boss "Análisis Multi-Timeframe" para desbloquear los niveles 7-12.</p>
                 </div>
-            </div>
-
-            <!-- Vertical down-right -->
-            <div class="self-end mr-16 md:mr-24 flex flex-col items-center gap-2 my-1">
-                <div class="w-2.5 h-2.5 rounded-full dot-completed"></div>
-                <div class="w-2.5 h-2.5 rounded-full dot-completed"></div>
-            </div>
-
-            <!-- ROW 2 — Right to Left: Levels 4,5,6 -->
-            <div class="flex justify-end w-full">
-                <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8 flex-row-reverse">
-
-                    <!-- Level 4 — completed -->
-                    <div class="level-node text-center" onclick="openModal(4,'Zonas de Oferta y Demanda','Supply & demand. Las zonas donde los grandes players mueven el mercado.','completed',200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 4</div>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                    </div>
-
-                    <!-- Level 5 — completed -->
-                    <div class="level-node text-center" onclick="openModal(5,'Stop Loss Profesional','No es cuánto ganas, es cuánto no pierdes. Domina el arte del stop loss estratégico.','completed',200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 5</div>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-active path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-active path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-active path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-active path-dot"></div>
-                    </div>
-
-                    <!-- Level 6 BOSS — ACTIVE -->
-                    <div class="level-node text-center" onclick="openModal(6,'⚡ BOSS: Análisis Multi-Timeframe','El gran desafío: analiza un activo en 4 timeframes distintos y determina la dirección. ¡Es tu momento!','active',400)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn active relative" style="width:84px; height:84px; font-size:1.75rem;">
-                                <span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:#D4AF37;color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">BOSS</span>
-                                ⚡
-                            </div>
-                            <div class="star-row text-gray-600">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-primary uppercase tracking-wider">NIV 6</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vertical down-left -->
-            <div class="self-start ml-16 md:ml-24 flex flex-col items-center gap-2 my-1">
-                <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-            </div>
-
-            <!-- ROW 3 — Left to Right: Levels 7,8,9 — LOCKED -->
-            <div class="flex justify-start w-full">
-                <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8">
-
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 7</div>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                    </div>
-
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 8</div>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                    </div>
-
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 9</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vertical down-right -->
-            <div class="self-end mr-16 md:mr-24 flex flex-col items-center gap-2 my-1">
-                <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-            </div>
-
-            <!-- ROW 4 — Right to Left: Levels 10,11,12 — LOCKED -->
-            <div class="flex justify-end w-full">
-                <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8 flex-row-reverse">
-
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 10</div>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                    </div>
-
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 11</div>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                    </div>
-
-                    <!-- Final Boss — LOCKED -->
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node relative" style="width:84px; height:84px; font-size:1.75rem; opacity:0.5;">
-                                <span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:#374151;color:#6b7280;border-radius:999px;padding:2px 7px;font-weight:900;">FINAL</span>
-                                <span class="material-symbols-outlined text-gray-600 text-3xl">lock</span>
-                            </div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 12</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Current quest indicator -->
-            <div class="w-full mt-10">
-                <div class="mx-4 rounded-2xl p-5 flex items-center gap-4" style="background:linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.05) 100%); border:1px solid rgba(212,175,55,0.3);">
-                    <div class="text-3xl float-anim">⚡</div>
-                    <div class="flex-1">
-                        <p class="text-[10px] font-black tracking-[4px] text-primary/70 uppercase mb-1">NIVEL ACTUAL</p>
-                        <p class="font-black text-white text-sm">Completa el Boss "Análisis Multi-Timeframe" para desbloquear los niveles 7-12.</p>
-                    </div>
-                    <button onclick="openModal(6,'⚡ BOSS: Análisis Multi-Timeframe','El gran desafío: analiza un activo en 4 timeframes distintos y determina la dirección.','active',400)" class="shrink-0 px-5 py-2.5 rounded-xl font-black uppercase tracking-wider text-xs transition hover:scale-105 whitespace-nowrap" style="background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;">
-                        ▶ JUGAR
-                    </button>
-                </div>
+                <button onclick="openModal(6,'⚡ BOSS: Análisis Multi-Timeframe','El gran desafío: analiza un activo en 4 timeframes distintos y determina la dirección.','active',400)" class="shrink-0 px-5 py-2.5 rounded-xl font-black uppercase tracking-wider text-xs transition hover:scale-105 whitespace-nowrap" style="background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;">
+                    ▶ JUGAR
+                </button>
             </div>
         </div>
     </div>
+
+    <script>
+    (function(){
+        var levels=[
+            {n:1,t:'Patrones de Velas',d:'Doji, martillo, estrella fugaz. Domina los patrones de velas japonesas y lo que predicen.',s:'completed',xp:200},
+            {n:2,t:'Fibonacci Retracements',d:'La herramienta mágica. Aprende a trazar niveles de Fibonacci y encontrar puntos de entrada.',s:'completed',xp:200},
+            {n:3,t:'RSI & MACD Avanzado',d:'Divergencias, señales de sobrecompra/sobreventa. El análisis que separa novatos de pros.',s:'completed',xp:200},
+            {n:4,t:'Zonas de Oferta y Demanda',d:'Supply & demand. Las zonas donde los grandes players mueven el mercado.',s:'completed',xp:200},
+            {n:5,t:'Stop Loss Profesional',d:'No es cuánto ganas, es cuánto no pierdes. Domina el arte del stop loss estratégico.',s:'completed',xp:200},
+            {n:6,t:'⚡ BOSS: Análisis Multi-Timeframe',d:'El gran desafío: analiza un activo en 4 timeframes distintos y determina la dirección. ¡Es tu momento!',s:'active',xp:400,boss:'BOSS'},
+            {n:7,t:'Estructura de Mercado',d:'Break of structure, change of character. El lenguaje institucional del precio.',s:'locked',xp:200},
+            {n:8,t:'Order Blocks Básicos',d:'Identifica las zonas donde las instituciones colocan sus órdenes masivas.',s:'locked',xp:200},
+            {n:9,t:'Liquidez del Mercado',d:'Dónde está el dinero. Comprende cómo se mueve la liquidez y quién la captura.',s:'locked',xp:200},
+            {n:10,t:'Gestión Avanzada de Riesgo',d:'Risk/reward ratio, position sizing, correlación. El arsenal completo del profesional.',s:'locked',xp:200},
+            {n:11,t:'Backtesting & Journaling',d:'Tu diario de trading. Aprende a evaluar tu rendimiento y mejorar constantemente.',s:'locked',xp:200},
+            {n:12,t:'🏆 FINAL: Examen Intermedio',d:'Demuestra tu dominio del análisis técnico avanzado. ¡Supera esto y accede al Mundo Experto!',s:'locked',xp:600,boss:'FINAL'}
+        ];
+        var pos=[44,62,74,62,44,24,14,24,44,62,74,44];
+        var dpos=[[48,53,58],[65,69,72],[72,69,65],[58,53,48],[39,33,28],[21,18,15],[15,18,21],[28,33,39],[48,53,58],[65,69,72],[68,58,48]];
+        var ic=['🕯️','📐','📡','📊','🛡️','⚡','📈','🔮','💼','🧠','📝','🏆'];
+        var completedDot='background:#D4AF37;box-shadow:0 0 6px rgba(212,175,55,0.7);';
+        var activeDot='background:#D4AF37;box-shadow:0 0 8px rgba(212,175,55,0.9);';
+        var lockedDot='background:#374151;';
+
+        var h='';
+        levels.forEach(function(lv,i){
+            var isBoss=!!lv.boss;
+            var sz=lv.boss==='FINAL'?'width:88px;height:88px;font-size:2rem;':'width:84px;height:84px;font-size:1.75rem;';
+            var tEsc=lv.t.replace(/'/g,"\\'");
+            var dEsc=lv.d.replace(/'/g,"\\'");
+            var nodeClass,nodeContent,nodeStyleExtra='',bossTag='';
+
+            if(lv.s==='completed'){
+                nodeClass='node-btn completed'+(isBoss?' relative':'');
+                if(isBoss){nodeStyleExtra=sz+'box-shadow:0 0 30px rgba(212,175,55,0.6);background:radial-gradient(circle at 35% 35%,#fbbf24 0%,#D4AF37 40%,#92400e 80%);';bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:linear-gradient(135deg,#D4AF37,#b8860b);color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
+                nodeContent=bossTag+(isBoss?ic[i]:'✓');
+            } else if(lv.s==='active'){
+                nodeClass='node-btn active'+(isBoss?' relative':'');
+                if(isBoss){nodeStyleExtra=sz;bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:#D4AF37;color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
+                nodeContent=bossTag+ic[i];
+            } else {
+                nodeClass='node-btn locked-node'+(isBoss?' relative':'');
+                if(isBoss){nodeStyleExtra=sz+'opacity:0.5;';bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:#374151;color:#6b7280;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
+                nodeContent=bossTag+'<span class="material-symbols-outlined text-gray-500 text-2xl">lock</span>';
+            }
+
+            var starClass=lv.s==='completed'?'star-row':'star-row text-gray-700';
+            var labelClass=lv.s==='locked'?'text-[10px] font-black text-gray-600 uppercase tracking-wider':(isBoss?'text-[10px] font-black text-primary uppercase tracking-wider':'text-[10px] font-black text-gray-400 uppercase tracking-wider');
+            var clickAttr=lv.s==='locked'?'':'onclick="openModal('+lv.n+',\''+tEsc+'\',\''+dEsc+'\',\''+lv.s+'\','+lv.xp+')"';
+            var wrapClass=lv.s==='locked'?'level-node locked text-center inline-block':'level-node text-center inline-block';
+
+            h+='<div class="w-full" style="padding-left:'+pos[i]+'%">';
+            h+='<div class="'+wrapClass+'" '+clickAttr+'>';
+            h+='<div class="flex flex-col items-center gap-2">';
+            h+='<div class="'+nodeClass+'" style="'+nodeStyleExtra+'">'+nodeContent+'</div>';
+            h+='<div class="'+starClass+'">⭐⭐⭐</div>';
+            h+='<div class="'+labelClass+'">NIV '+lv.n+'</div>';
+            h+='</div></div></div>';
+
+            if(i<levels.length-1){
+                var nextS=levels[i+1].s;
+                var dc=(lv.s==='completed'&&nextS==='completed')?completedDot:(lv.s==='completed'&&nextS==='active')?activeDot:lockedDot;
+                h+='<div class="w-full flex flex-col gap-2.5 py-3">';
+                dpos[i].forEach(function(dp){h+='<div class="w-2.5 h-2.5 rounded-full" style="margin-left:'+dp+'%;'+dc+'"></div>';});
+                h+='</div>';
+            }
+        });
+        document.getElementById('level-map').innerHTML=h;
+    })();
+    </script>
 </main>
 
 <!-- LEVEL MODAL -->

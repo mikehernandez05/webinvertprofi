@@ -135,11 +135,21 @@
 <!-- HEADER -->
 <header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-[60] shrink-0">
     <div class="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
-        <div class="flex items-center gap-2 md:gap-3">
-            <img src="images/logo_azul.png" alt="InvertProfit" class="h-8 md:h-10 w-auto logo-glow object-contain" id="logo-img"/>
-            <span class="text-lg md:text-xl font-bold text-white" id="logo-text" style="display:none;"><span style="color:#D4AF37;">INVERT</span>PROFIT</span>
+        <div class="flex items-center gap-3">
+            <a href="portadanivelesacademia.html"
+               class="flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shrink-0"
+               style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.35); color:#D4AF37;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span class="hidden sm:inline">Volver</span>
+            </a>
+            <div class="flex items-center gap-2.5">
+                <img src="images/logo_azul.png" alt="InvertProfit" id="logo-img"
+                     class="h-10 w-auto object-contain shrink-0"
+                     style="filter:drop-shadow(0 0 10px rgba(212,175,55,0.4));"
+                     onerror="this.style.display='none'; document.getElementById('logo-badge').style.display='flex';">
+                <div id="logo-badge" class="w-11 h-11 rounded-xl items-center justify-center font-black text-lg shrink-0" style="display:none; background:linear-gradient(135deg,#D4AF37,#b8860b); color:#0a0f1a; box-shadow:0 0 30px rgba(212,175,55,0.4);">IP</div>
+            </div>
         </div>
-        <script>document.getElementById('logo-img').onerror=function(){this.style.display='none';document.getElementById('logo-text').style.display='inline';};</script>
         <nav class="hidden lg:flex items-center gap-10">
             <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="index.html">INICO</a>
             <a class="font-black border-b-2 border-primary pb-1 text-sm tracking-widest uppercase" style="color:#D4AF37;" href="portadanivelesacademia.html">ACADEMIA</a>
@@ -238,240 +248,74 @@
         </div>
     </div>
 
-    <!-- LEVEL MAP -->
-    <div class="max-w-3xl mx-auto px-4 py-10 pb-20">
+    <!-- LEVEL MAP - Candy Crush Long Winding Path -->
+    <div class="max-w-xl mx-auto px-4 py-10 pb-20">
         <p class="text-center text-[11px] font-black tracking-[5px] text-gray-600 uppercase mb-10">— MAPA DE NIVELES —</p>
+        <div id="level-map" class="relative flex flex-col items-start gap-0"></div>
 
-        <!-- Level nodes in Candy Crush style serpentine path -->
-        <div class="relative flex flex-col items-center gap-0" id="level-map">
-
-            <!-- ROW 1 — Left to Right: Levels 1,2,3 -->
-            <div class="flex justify-start w-full mb-0">
-                <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8">
-
-                    <!-- Level 1 -->
-                    <div class="level-node text-center" onclick="openModal(1, 'Introducción al Trading', 'El primer paso en tu viaje financiero. Aprende qué es el trading y cómo funciona el mercado.', 'completed', 200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 1</div>
-                        </div>
-                    </div>
-
-                    <!-- Connector dots -->
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot" style="box-shadow:0 0 6px #22c55e;"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot" style="box-shadow:0 0 6px #22c55e;"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot" style="box-shadow:0 0 6px #22c55e;"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot" style="box-shadow:0 0 6px #22c55e;"></div>
-                    </div>
-
-                    <!-- Level 2 -->
-                    <div class="level-node text-center" onclick="openModal(2, 'Tipos de Mercado', 'Forex, acciones, cripto, commodities. Conoce los distintos mercados donde puedes operar.', 'completed', 200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 2</div>
-                        </div>
-                    </div>
-
-                    <!-- Connector -->
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                    </div>
-
-                    <!-- Level 3 -->
-                    <div class="level-node text-center" onclick="openModal(3, 'Lectura de Gráficos', 'Aprende a leer velas japonesas y gráficos de precios. La base del análisis técnico.', 'completed', 200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 3</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vertical connector down-right -->
-            <div class="self-end mr-16 md:mr-24 flex flex-col items-center gap-2 my-1">
-                <div class="w-2.5 h-2.5 rounded-full bg-green-500" style="box-shadow:0 0 6px #22c55e;"></div>
-                <div class="w-2.5 h-2.5 rounded-full bg-green-500" style="box-shadow:0 0 6px #22c55e;"></div>
-            </div>
-
-            <!-- ROW 2 — Right to Left: Levels 4,5,6 -->
-            <div class="flex justify-end w-full">
-                <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8 flex-row-reverse">
-
-                    <!-- Level 4 -->
-                    <div class="level-node text-center" onclick="openModal(4, 'Órdenes de Compra/Venta', 'Market, limit, stop. Domina todos los tipos de órdenes del mercado.', 'completed', 200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 4</div>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                    </div>
-
-                    <!-- Level 5 -->
-                    <div class="level-node text-center" onclick="openModal(5, 'Gestión de Capital', 'Aprende a gestionar tu dinero para sobrevivir en el mercado a largo plazo.', 'completed', 200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 5</div>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                    </div>
-
-                    <!-- Level 6 (BOSS) -->
-                    <div class="level-node text-center" onclick="openModal(6, '⚡ BOSS: Primer Trade Real', 'El desafío final de la primera zona. Analiza un activo real y toma tu primera decisión de trading.', 'completed', 400)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed relative" style="width:84px; height:84px; font-size:1.75rem; box-shadow:0 0 30px rgba(212,175,55,0.6);">
-                                <span style="position:absolute;top:-8px;right:-8px;font-size:0.7rem;background:#D4AF37;color:#0a0f1a;border-radius:999px;padding:1px 6px;font-weight:900;">BOSS</span>
-                                ⚡
-                            </div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-primary uppercase tracking-wider">NIV 6</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vertical connector down-left -->
-            <div class="self-start ml-16 md:ml-24 flex flex-col items-center gap-2 my-1">
-                <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-            </div>
-
-            <!-- ROW 3 — Left to Right: Levels 7,8,9 -->
-            <div class="flex justify-start w-full">
-                <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8">
-
-                    <!-- Level 7 -->
-                    <div class="level-node text-center" onclick="openModal(7, 'Soporte y Resistencia', 'Los niveles más importantes del gráfico. Aprende a identificarlos y usarlos a tu favor.', 'completed', 200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 7</div>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                    </div>
-
-                    <!-- Level 8 -->
-                    <div class="level-node text-center" onclick="openModal(8, 'Tendencias del Mercado', 'Uptrend, downtrend, sideways. Identifica la dirección del mercado y opera a favor.', 'completed', 200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 8</div>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                    </div>
-
-                    <!-- Level 9 -->
-                    <div class="level-node text-center" onclick="openModal(9, 'Indicadores Básicos', 'Media móvil, RSI, MACD. Tus primeras herramientas de análisis técnico.', 'completed', 200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 9</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vertical connector down-right -->
-            <div class="self-end mr-16 md:mr-24 flex flex-col items-center gap-2 my-1">
-                <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-            </div>
-
-            <!-- ROW 4 — Right to Left: Levels 10,11, FINAL BOSS -->
-            <div class="flex justify-end w-full">
-                <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8 flex-row-reverse">
-
-                    <!-- Level 10 -->
-                    <div class="level-node text-center" onclick="openModal(10, 'Psicología del Trader', 'El 80% del éxito en trading es mental. Controla tus emociones y sesgos cognitivos.', 'completed', 200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 10</div>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                    </div>
-
-                    <!-- Level 11 -->
-                    <div class="level-node text-center" onclick="openModal(11, 'Tu Plan de Trading', 'Crea tu propio plan de trading personalizado con reglas claras de entrada y salida.', 'completed', 200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 11</div>
-                        </div>
-                    </div>
-
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full bg-green-500 path-dot"></div>
-                    </div>
-
-                    <!-- Level 12 FINAL BOSS -->
-                    <div class="level-node text-center" onclick="openModal(12, '🏆 FINAL BOSS: El Examen Novato', 'Demuestra todo lo aprendido. Un análisis completo de mercado. ¡Completa esto y desbloquea el Mundo Intermedio!', 'completed', 600)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed relative" style="width:88px; height:88px; font-size:2rem; background:radial-gradient(circle at 35% 35%, #fbbf24 0%, #D4AF37 40%, #92400e 80%); box-shadow:0 0 35px rgba(212,175,55,0.7), 0 0 60px rgba(212,175,55,0.3);">
-                                <span style="position:absolute;top:-10px;right:-10px;font-size:0.65rem;background:linear-gradient(135deg,#D4AF37,#b8860b);color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">FINAL</span>
-                                🏆
-                            </div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-primary uppercase tracking-wider">NIV 12</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- World Complete Banner -->
-            <div class="w-full mt-10">
-                <div class="mx-4 rounded-3xl p-8 text-center relative overflow-hidden" style="background:linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(16,185,129,0.1) 100%); border:1px solid rgba(34,197,94,0.3);">
-                    <div class="text-6xl mb-4">🏆</div>
-                    <h3 class="text-2xl font-black uppercase tracking-tight text-green-400 mb-2">¡MUNDO COMPLETADO!</h3>
-                    <p class="text-gray-400 text-sm mb-5">Has dominado todos los fundamentos del trading. Estás listo para el siguiente desafío.</p>
-                    <a href="niveles-intermedio.html" class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-black uppercase tracking-wider text-sm transition-all hover:scale-105" style="background:linear-gradient(135deg, #b8860b, #D4AF37); color:#0a0f1a;">
-                        MUNDO INTERMEDIO <span class="material-symbols-outlined">arrow_forward</span>
-                    </a>
-                </div>
+        <!-- World Complete Banner -->
+        <div class="mt-10">
+            <div class="mx-4 rounded-3xl p-8 text-center relative overflow-hidden" style="background:linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(16,185,129,0.1) 100%); border:1px solid rgba(34,197,94,0.3);">
+                <div class="text-6xl mb-4">🏆</div>
+                <h3 class="text-2xl font-black uppercase tracking-tight text-green-400 mb-2">¡MUNDO COMPLETADO!</h3>
+                <p class="text-gray-400 text-sm mb-5">Has dominado todos los fundamentos del trading. Estás listo para el siguiente desafío.</p>
+                <a href="niveles-intermedio.html" class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-black uppercase tracking-wider text-sm transition-all hover:scale-105" style="background:linear-gradient(135deg, #b8860b, #D4AF37); color:#0a0f1a;">
+                    MUNDO INTERMEDIO <span class="material-symbols-outlined">arrow_forward</span>
+                </a>
             </div>
         </div>
     </div>
+
+    <script>
+    (function(){
+        const levels = [
+            {n:1,t:'Introducción al Trading',d:'El primer paso en tu viaje financiero. Aprende qué es el trading y cómo funciona el mercado.',s:'completed',xp:200},
+            {n:2,t:'Tipos de Mercado',d:'Forex, acciones, cripto, commodities. Conoce los distintos mercados donde puedes operar.',s:'completed',xp:200},
+            {n:3,t:'Lectura de Gráficos',d:'Aprende a leer velas japonesas y gráficos de precios. La base del análisis técnico.',s:'completed',xp:200},
+            {n:4,t:'Órdenes de Compra/Venta',d:'Market, limit, stop. Domina todos los tipos de órdenes del mercado.',s:'completed',xp:200},
+            {n:5,t:'Gestión de Capital',d:'Aprende a gestionar tu dinero para sobrevivir en el mercado a largo plazo.',s:'completed',xp:200},
+            {n:6,t:'⚡ BOSS: Primer Trade Real',d:'El desafío final de la primera zona. Analiza un activo real y toma tu primera decisión de trading.',s:'completed',xp:400,boss:'BOSS'},
+            {n:7,t:'Soporte y Resistencia',d:'Los niveles más importantes del gráfico. Aprende a identificarlos y usarlos a tu favor.',s:'completed',xp:200},
+            {n:8,t:'Tendencias del Mercado',d:'Uptrend, downtrend, sideways. Identifica la dirección del mercado y opera a favor.',s:'completed',xp:200},
+            {n:9,t:'Indicadores Básicos',d:'Media móvil, RSI, MACD. Tus primeras herramientas de análisis técnico.',s:'completed',xp:200},
+            {n:10,t:'Psicología del Trader',d:'El 80% del éxito en trading es mental. Controla tus emociones y sesgos cognitivos.',s:'completed',xp:200},
+            {n:11,t:'Tu Plan de Trading',d:'Crea tu propio plan de trading personalizado con reglas claras de entrada y salida.',s:'completed',xp:200},
+            {n:12,t:'🏆 FINAL BOSS: El Examen Novato',d:'Demuestra todo lo aprendido. Un análisis completo de mercado. ¡Completa esto y desbloquea el Mundo Intermedio!',s:'completed',xp:600,boss:'FINAL'}
+        ];
+        const pos=[44,62,74,62,44,24,14,24,44,62,74,44];
+        const dpos=[[48,53,58],[65,69,72],[72,69,65],[58,53,48],[39,33,28],[21,18,15],[15,18,21],[28,33,39],[48,53,58],[65,69,72],[68,58,48]];
+        const ic=['📚','🌍','📊','🛒','💰','⚡','📐','📈','📡','🧠','📝','🏆'];
+        const dotC='background:#22c55e;box-shadow:0 0 6px #22c55e;';
+
+        let h='';
+        levels.forEach(function(lv,i){
+            var isBoss=!!lv.boss;
+            var sz=lv.boss==='FINAL'?'width:88px;height:88px;font-size:2rem;':'width:84px;height:84px;font-size:1.75rem;';
+            var bossGlow='box-shadow:0 0 30px rgba(212,175,55,0.6),0 0 60px rgba(212,175,55,0.3);background:radial-gradient(circle at 35% 35%,#fbbf24 0%,#D4AF37 40%,#92400e 80%);';
+            var nodeStyle=isBoss?sz+bossGlow:'';
+            var bossTag=isBoss?'<span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:linear-gradient(135deg,#D4AF37,#b8860b);color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>':'';
+            var tEsc=lv.t.replace(/'/g,"\\'");
+            var dEsc=lv.d.replace(/'/g,"\\'");
+
+            h+='<div class="w-full" style="padding-left:'+pos[i]+'%">';
+            h+='<div class="level-node text-center inline-block" onclick="openModal('+lv.n+',\''+tEsc+'\',\''+dEsc+'\',\''+lv.s+'\','+lv.xp+')">';
+            h+='<div class="flex flex-col items-center gap-2">';
+            h+='<div class="node-btn completed'+(isBoss?' relative':'')+'" style="'+nodeStyle+'">'+bossTag+(isBoss?ic[i]:'✓')+'</div>';
+            h+='<div class="star-row">⭐⭐⭐</div>';
+            h+='<div class="text-[10px] font-black '+(isBoss?'text-primary':'text-gray-400')+' uppercase tracking-wider">NIV '+lv.n+'</div>';
+            h+='</div></div></div>';
+
+            if(i<levels.length-1){
+                h+='<div class="w-full flex flex-col gap-2.5 py-3">';
+                dpos[i].forEach(function(dp){
+                    h+='<div class="w-2.5 h-2.5 rounded-full" style="margin-left:'+dp+'%;'+dotC+'"></div>';
+                });
+                h+='</div>';
+            }
+        });
+        document.getElementById('level-map').innerHTML=h;
+    })();
+    </script>
 </main>
 
 <!-- LEVEL MODAL -->
