@@ -285,7 +285,7 @@
             </div>
 
             <div class="mb-14 flex justify-center">
-                <a href="#" class="group relative inline-flex items-center gap-3 bg-gradient-to-r from-amber-600 to-yellow-500 hover:from-amber-500 hover:to-yellow-400 px-8 py-4 rounded-2xl font-bold text-base transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30 hover:scale-105">
+                <a href="portadanivelesacademia.html" class="group relative inline-flex items-center gap-3 bg-gradient-to-r from-amber-600 to-yellow-500 hover:from-amber-500 hover:to-yellow-400 px-8 py-4 rounded-2xl font-bold text-base transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30 hover:scale-105">
                     <span class="text-2xl">📚</span>
                     <span class="text-bg-dark">Ver todas las lecciones</span>
                     <span class="material-symbols-outlined text-bg-dark group-hover:translate-x-1 transition-transform">arrow_forward</span>
@@ -363,6 +363,41 @@ function toggleSideMenu() {
         if (hamburger) hamburger.classList.remove('hamburger-open');
     }
 }
+
+// Dynamic level states based on test result
+(function() {
+    const level = (localStorage.getItem('ip_user_level') || 'basico').toLowerCase();
+    const cards = document.querySelectorAll('#levels-scroll > div');
+    if (cards.length < 3) return;
+
+    const basico = cards[0], intermedio = cards[1], avanzado = cards[2];
+
+    function setCompleted(card) {
+        card.className = 'bg-card border border-card-border rounded-3xl p-6 relative group hover:border-green-500/20 transition-all duration-300';
+        card.style.opacity = '1'; card.style.filter = '';
+        const badge = card.querySelector('span[class*="badge"]');
+        if (badge) { badge.className = 'badge-completed text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full'; badge.innerHTML = 'Completed'; }
+    }
+    function setActive(card) {
+        card.className = 'level-active rounded-3xl p-6 relative group transition-all duration-300';
+        card.style.opacity = '1'; card.style.filter = '';
+        const badge = card.querySelector('span[class*="badge"]');
+        if (badge) { badge.className = 'badge-progress text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1'; badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span> In Progress'; }
+    }
+    function setLocked(card) {
+        card.className = 'bg-card border border-card-border rounded-3xl p-6 relative opacity-50 grayscale-[60%]';
+        const badge = card.querySelector('span[class*="badge"]');
+        if (badge) { badge.className = 'badge-locked text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1'; badge.innerHTML = '<span class="material-symbols-outlined text-[12px]">lock</span> Locked'; }
+    }
+
+    if (level === 'basico') {
+        setActive(basico); setLocked(intermedio); setLocked(avanzado);
+    } else if (level === 'intermedio') {
+        setCompleted(basico); setActive(intermedio); setLocked(avanzado);
+    } else {
+        setCompleted(basico); setCompleted(intermedio); setActive(avanzado);
+    }
+})();
 </script>
 
 </body>

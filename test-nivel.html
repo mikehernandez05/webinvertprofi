@@ -325,7 +325,7 @@ function goToAcademy(world){
         // We don't auto-complete levels, just save the recommended start
         localStorage.setItem('ip_recommended_world',world.toString());
     }
-    window.location.href = 'portadanivelesacademia.html';
+    window.location.href = 'dashboard.html';
 }
 
 // ══ CELEBRATION ══
@@ -341,7 +341,7 @@ function launchCelebration(){
 // ══ CHECK IF ALREADY DONE ══
 if(localStorage.getItem('ip_level_test_done')==='1'){
     // Already classified, skip to academy
-    window.location.replace('portadanivelesacademia.html');
+    window.location.replace('dashboard.html');
 } else {
     renderScreen();
 }
