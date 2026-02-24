@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="auth.js"></script>
+    <script src="curriculum.js"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -247,19 +248,20 @@
     <script>
     (function(){
         var levels=[
-            {n:1,t:'Patrones de Velas',d:'Doji, martillo, estrella fugaz. Domina los patrones de velas japonesas y lo que predicen.',s:'completed',xp:200},
-            {n:2,t:'Fibonacci Retracements',d:'La herramienta mágica. Aprende a trazar niveles de Fibonacci y encontrar puntos de entrada.',s:'completed',xp:200},
-            {n:3,t:'RSI & MACD Avanzado',d:'Divergencias, señales de sobrecompra/sobreventa. El análisis que separa novatos de pros.',s:'completed',xp:200},
-            {n:4,t:'Zonas de Oferta y Demanda',d:'Supply & demand. Las zonas donde los grandes players mueven el mercado.',s:'completed',xp:200},
-            {n:5,t:'Stop Loss Profesional',d:'No es cuánto ganas, es cuánto no pierdes. Domina el arte del stop loss estratégico.',s:'completed',xp:200},
-            {n:6,t:'⚡ BOSS: Análisis Multi-Timeframe',d:'El gran desafío: analiza un activo en 4 timeframes distintos y determina la dirección. ¡Es tu momento!',s:'active',xp:400,boss:'BOSS'},
-            {n:7,t:'Estructura de Mercado',d:'Break of structure, change of character. El lenguaje institucional del precio.',s:'locked',xp:200},
-            {n:8,t:'Order Blocks Básicos',d:'Identifica las zonas donde las instituciones colocan sus órdenes masivas.',s:'locked',xp:200},
-            {n:9,t:'Liquidez del Mercado',d:'Dónde está el dinero. Comprende cómo se mueve la liquidez y quién la captura.',s:'locked',xp:200},
-            {n:10,t:'Gestión Avanzada de Riesgo',d:'Risk/reward ratio, position sizing, correlación. El arsenal completo del profesional.',s:'locked',xp:200},
-            {n:11,t:'Backtesting & Journaling',d:'Tu diario de trading. Aprende a evaluar tu rendimiento y mejorar constantemente.',s:'locked',xp:200},
-            {n:12,t:'🏆 FINAL: Examen Intermedio',d:'Demuestra tu dominio del análisis técnico avanzado. ¡Supera esto y accede al Mundo Experto!',s:'locked',xp:600,boss:'FINAL'}
+            {n:11,t:'Patrones de Velas',d:'Doji, martillo, estrella fugaz. Domina los patrones de velas japonesas y lo que predicen.',xp:200},
+            {n:12,t:'Fibonacci Retracements',d:'La herramienta mágica. Aprende a trazar niveles de Fibonacci y encontrar puntos de entrada.',xp:200},
+            {n:13,t:'RSI & MACD Avanzado',d:'Divergencias, señales de sobrecompra/sobreventa. El análisis que separa novatos de pros.',xp:200},
+            {n:14,t:'Zonas de Oferta y Demanda',d:'Supply & demand. Las zonas donde los grandes players mueven el mercado.',xp:200},
+            {n:15,t:'Stop Loss Profesional',d:'No es cuánto ganas, es cuánto no pierdes. Domina el arte del stop loss estratégico.',xp:200},
+            {n:16,t:'⚡ BOSS: Análisis Multi-Timeframe',d:'El gran desafío: analiza un activo en 4 timeframes distintos y determina la dirección. ¡Es tu momento!',xp:400,boss:'BOSS'},
+            {n:17,t:'Estructura de Mercado',d:'Break of structure, change of character. El lenguaje institucional del precio.',xp:200},
+            {n:18,t:'Order Blocks Básicos',d:'Identifica las zonas donde las instituciones colocan sus órdenes masivas.',xp:200},
+            {n:19,t:'Liquidez del Mercado',d:'Dónde está el dinero. Comprende cómo se mueve la liquidez y quién la captura.',xp:200},
+            {n:20,t:'Gestión Avanzada de Riesgo',d:'Risk/reward ratio, position sizing, correlación. El arsenal completo del profesional.',xp:200},
+            {n:21,t:'Backtesting & Journaling',d:'Tu diario de trading. Aprende a evaluar tu rendimiento y mejorar constantemente.',xp:200},
+            {n:22,t:'🏆 FINAL: Examen Intermedio',d:'Demuestra tu dominio del análisis técnico avanzado. ¡Supera esto y accede al Mundo Experto!',xp:600,boss:'FINAL'}
         ];
+        levels.forEach(function(l){ l.s = CURRICULUM.getLevelStatus(l.n); });
         var pos=[44,62,74,62,44,24,14,24,44,62,74,44];
         var dpos=[[48,53,58],[65,69,72],[72,69,65],[58,53,48],[39,33,28],[21,18,15],[15,18,21],[28,33,39],[48,53,58],[65,69,72],[68,58,48]];
         var ic=['🕯️','📐','📡','📊','🛡️','⚡','📈','🔮','💼','🧠','📝','🏆'];
@@ -356,19 +358,20 @@ function toggleSideMenu() {
 
 const icons = ['🕯️','📐','📡','📊','🛡️','⚡','📈','🔮','💼','🧠','📝','🏆'];
 const allLevels = [
-    {n:1,t:'Patrones de Velas',d:'Doji, martillo, estrella fugaz.',s:'completed',xp:200},
-    {n:2,t:'Fibonacci Retracements',d:'La herramienta mágica.',s:'completed',xp:200},
-    {n:3,t:'RSI & MACD Avanzado',d:'Divergencias, señales.',s:'completed',xp:200},
-    {n:4,t:'Zonas de Oferta y Demanda',d:'Supply & demand.',s:'completed',xp:200},
-    {n:5,t:'Stop Loss Profesional',d:'Domina el stop loss.',s:'completed',xp:200},
-    {n:6,t:'⚡ BOSS: Análisis Multi-Timeframe',d:'Analiza en 4 timeframes.',s:'active',xp:400,boss:'BOSS'},
-    {n:7,t:'Estructura de Mercado',d:'Break of structure.',s:'locked',xp:200},
-    {n:8,t:'Order Blocks Básicos',d:'Órdenes institucionales.',s:'locked',xp:200},
-    {n:9,t:'Liquidez del Mercado',d:'Cómo se mueve la liquidez.',s:'locked',xp:200},
-    {n:10,t:'Gestión Avanzada de Riesgo',d:'Risk/reward ratio.',s:'locked',xp:200},
-    {n:11,t:'Backtesting & Journaling',d:'Tu diario de trading.',s:'locked',xp:200},
-    {n:12,t:'🏆 FINAL: Examen Intermedio',d:'Demuestra tu dominio.',s:'locked',xp:600,boss:'FINAL'}
+    {n:11,t:'Patrones de Velas',d:'Doji, martillo, estrella fugaz.',xp:200},
+    {n:12,t:'Fibonacci Retracements',d:'La herramienta mágica.',xp:200},
+    {n:13,t:'RSI & MACD Avanzado',d:'Divergencias, señales.',xp:200},
+    {n:14,t:'Zonas de Oferta y Demanda',d:'Supply & demand.',xp:200},
+    {n:15,t:'Stop Loss Profesional',d:'Domina el stop loss.',xp:200},
+    {n:16,t:'⚡ BOSS: Análisis Multi-Timeframe',d:'Analiza en 4 timeframes.',xp:400,boss:'BOSS'},
+    {n:17,t:'Estructura de Mercado',d:'Break of structure.',xp:200},
+    {n:18,t:'Order Blocks Básicos',d:'Órdenes institucionales.',xp:200},
+    {n:19,t:'Liquidez del Mercado',d:'Cómo se mueve la liquidez.',xp:200},
+    {n:20,t:'Gestión Avanzada de Riesgo',d:'Risk/reward ratio.',xp:200},
+    {n:21,t:'Backtesting & Journaling',d:'Tu diario de trading.',xp:200},
+    {n:22,t:'🏆 FINAL: Examen Intermedio',d:'Demuestra tu dominio.',xp:600,boss:'FINAL'}
 ];
+allLevels.forEach(function(l){ l.s = CURRICULUM.getLevelStatus(l.n); });
 
 function openModal(num, title, desc, status, xp) {
     const badge = document.getElementById('modal-badge');
@@ -376,7 +379,7 @@ function openModal(num, title, desc, status, xp) {
     const nextBtn = document.getElementById('modal-next');
 
     // Find the next playable level
-    const nextLevel = allLevels.find(function(l){ return l.s === 'active'; }) || allLevels.find(function(l){ return l.s === 'locked'; });
+    const nextLevel = allLevels.find(function(l){ return l.n === num + 1; });
 
     if (status === 'completed') {
         badge.textContent = '✓ Completado';
@@ -384,16 +387,15 @@ function openModal(num, title, desc, status, xp) {
         document.getElementById('modal-stars').textContent = '⭐⭐⭐';
         cta.style.cssText = 'background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);';
         cta.textContent = '🔄 REPASAR NIVEL';
-        cta.onclick = function(){ window.location.href='leccion.html'; };
+        cta.onclick = function(){ window.location.href='leccion.html?world=2&level='+num; };
 
         // Show "next level" button
         if (nextLevel) {
             nextBtn.classList.remove('hidden');
-            nextBtn.style.cssText = 'background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;';
+            nextBtn.style.cssText = 'background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;cursor:pointer;';
             nextBtn.textContent = '▶ SIGUIENTE NIVEL (M' + nextLevel.n + ')';
             nextBtn.onclick = function(){
-                closeModal();
-                openModal(nextLevel.n, nextLevel.t, nextLevel.d, nextLevel.s, nextLevel.xp);
+                window.location.href='leccion.html?world=2&level='+nextLevel.n;
             };
         } else {
             nextBtn.classList.add('hidden');
@@ -402,15 +404,15 @@ function openModal(num, title, desc, status, xp) {
         badge.innerHTML = '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#D4AF37;animation:blink 1s ease-in-out infinite;margin-right:4px;"></span> En Progreso';
         badge.style.cssText = 'background:rgba(212,175,55,0.2);color:#D4AF37;border:1px solid rgba(212,175,55,0.5);';
         document.getElementById('modal-stars').textContent = '⭐⭐⭐ (por ganar)';
-        cta.style.cssText = 'background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;';
+        cta.style.cssText = 'background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;cursor:pointer;';
         cta.textContent = '▶ JUGAR NIVEL';
-        cta.onclick = function(){ window.location.href='leccion.html'; };
+        cta.onclick = function(){ window.location.href='leccion.html?world=2&level='+num; };
         nextBtn.classList.add('hidden');
     }
     document.getElementById('modal-title').textContent = 'Nivel ' + num + ': ' + title;
     document.getElementById('modal-desc').textContent = desc;
     document.getElementById('modal-xp').textContent = '+' + xp + ' XP';
-    document.getElementById('modal-icon').textContent = icons[num-1] || '📚';
+    document.getElementById('modal-icon').textContent = icons[num-11] || '📚';
     document.getElementById('level-modal').classList.remove('hidden');
 }
 function closeModal() { document.getElementById('level-modal').classList.add('hidden'); }

@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="auth.js"></script>
+    <script src="curriculum.js"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -238,6 +239,117 @@
             border: 1px solid rgba(0,212,255,0.2);
             border-left: 3px solid #00d4ff;
         }
+
+        /* ══ Confetti & Celebration ══ */
+        .confetti-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+        .confetti-piece {
+            position: absolute;
+            top: -20px;
+            animation: confetti-fall linear forwards;
+        }
+        @keyframes confetti-fall {
+            0% { transform: translateY(-20px) rotate(0deg) scale(1); opacity: 1; }
+            70% { opacity: 1; }
+            100% { transform: translateY(110vh) rotate(var(--rot)) scale(0.5); opacity: 0; }
+        }
+        .golden-burst {
+            position: fixed;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(212,175,55,0.6) 0%, rgba(212,175,55,0) 70%);
+            transform: translate(-50%, -50%);
+            z-index: 9998;
+            pointer-events: none;
+            animation: burst-expand 0.8s ease-out forwards;
+        }
+        @keyframes burst-expand {
+            0% { width: 0; height: 0; opacity: 1; }
+            100% { width: 800px; height: 800px; opacity: 0; }
+        }
+        .star-particle {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: star-fly ease-out forwards;
+            pointer-events: none;
+        }
+        @keyframes star-fly {
+            0% { transform: translate(0, 0) scale(0) rotate(0deg); opacity: 1; }
+            50% { opacity: 1; transform: translate(var(--dx), var(--dy)) scale(1.2) rotate(180deg); }
+            100% { transform: translate(calc(var(--dx) * 1.5), calc(var(--dy) * 1.5 + 100px)) scale(0.3) rotate(360deg); opacity: 0; }
+        }
+        .celebration-text {
+            position: fixed;
+            top: 30%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 3rem;
+            font-weight: 900;
+            color: #D4AF37;
+            text-shadow: 0 0 40px rgba(212,175,55,0.8), 0 0 80px rgba(212,175,55,0.4);
+            z-index: 10000;
+            pointer-events: none;
+            animation: celebration-pop 1.5s ease-out forwards;
+            letter-spacing: 4px;
+        }
+        @keyframes celebration-pop {
+            0% { transform: translate(-50%, -50%) scale(0) rotate(-10deg); opacity: 0; }
+            30% { transform: translate(-50%, -50%) scale(1.3) rotate(3deg); opacity: 1; }
+            50% { transform: translate(-50%, -50%) scale(1) rotate(0deg); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(0.8) rotate(0deg); opacity: 0; }
+        }
+
+        /* ══ Theme System ══ */
+        .theme-banner {
+            padding: 10px 20px;
+            text-align: center;
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+        body[data-theme="genesis"] .theme-banner { color: #D4AF37; background: linear-gradient(90deg, transparent, rgba(212,175,55,0.08), transparent); border-bottom: 1px solid rgba(212,175,55,0.15); }
+        body[data-theme="cartografia"] .theme-banner { color: #00d4ff; background: linear-gradient(90deg, transparent, rgba(0,212,255,0.08), transparent); border-bottom: 1px solid rgba(0,212,255,0.15); }
+        body[data-theme="anatomia"] .theme-banner { color: #818cf8; background: linear-gradient(90deg, transparent, rgba(129,140,248,0.08), transparent); border-bottom: 1px solid rgba(129,140,248,0.15); }
+        body[data-theme="sincronia"] .theme-banner { color: #a78bfa; background: linear-gradient(90deg, transparent, rgba(167,139,250,0.08), transparent); border-bottom: 1px solid rgba(167,139,250,0.15); }
+        body[data-theme="estrategia"] .theme-banner { color: #34d399; background: linear-gradient(90deg, transparent, rgba(52,211,153,0.08), transparent); border-bottom: 1px solid rgba(52,211,153,0.15); }
+        body[data-theme="soberania"] .theme-banner { color: #fb7185; background: linear-gradient(90deg, transparent, rgba(251,113,133,0.08), transparent); border-bottom: 1px solid rgba(251,113,133,0.15); }
+        body[data-theme="legado"] .theme-banner { color: #fbbf24; background: linear-gradient(90deg, transparent, rgba(251,191,36,0.12), transparent); border-bottom: 1px solid rgba(251,191,36,0.2); }
+
+        body[data-theme="cartografia"] .progress-bar-fill { background: linear-gradient(90deg, #00d4ff, #38bdf8); box-shadow: 0 0 8px rgba(0,212,255,0.5); }
+        body[data-theme="anatomia"] .progress-bar-fill { background: linear-gradient(90deg, #818cf8, #a5b4fc); box-shadow: 0 0 8px rgba(129,140,248,0.5); }
+        body[data-theme="sincronia"] .progress-bar-fill { background: linear-gradient(90deg, #a78bfa, #c4b5fd); box-shadow: 0 0 8px rgba(167,139,250,0.5); }
+        body[data-theme="estrategia"] .progress-bar-fill { background: linear-gradient(90deg, #34d399, #6ee7b7); box-shadow: 0 0 8px rgba(52,211,153,0.5); }
+        body[data-theme="soberania"] .progress-bar-fill { background: linear-gradient(90deg, #fb7185, #fda4af); box-shadow: 0 0 8px rgba(251,113,133,0.5); }
+        body[data-theme="legado"] .progress-bar-fill { background: linear-gradient(90deg, #fbbf24, #fde68a); box-shadow: 0 0 8px rgba(251,191,36,0.5); }
+
+        body[data-theme="cartografia"] .video-glow { background: radial-gradient(circle, rgba(0,212,255,0.12) 0%, transparent 70%); }
+        body[data-theme="anatomia"] .video-glow { background: radial-gradient(circle, rgba(129,140,248,0.12) 0%, transparent 70%); }
+        body[data-theme="sincronia"] .video-glow { background: radial-gradient(circle, rgba(167,139,250,0.12) 0%, transparent 70%); }
+        body[data-theme="estrategia"] .video-glow { background: radial-gradient(circle, rgba(52,211,153,0.12) 0%, transparent 70%); }
+        body[data-theme="soberania"] .video-glow { background: radial-gradient(circle, rgba(251,113,133,0.12) 0%, transparent 70%); }
+        body[data-theme="legado"] .video-glow { background: radial-gradient(circle, rgba(251,191,36,0.15) 0%, transparent 70%); }
+
+        body[data-theme="cartografia"] .btn-primary-gold { background: linear-gradient(135deg, #00d4ff, #0284c7); border-color: #00d4ff; box-shadow: 0 0 20px rgba(0,212,255,0.3); }
+        body[data-theme="anatomia"] .btn-primary-gold { background: linear-gradient(135deg, #818cf8, #4f46e5); border-color: #818cf8; box-shadow: 0 0 20px rgba(129,140,248,0.3); }
+        body[data-theme="sincronia"] .btn-primary-gold { background: linear-gradient(135deg, #a78bfa, #7c3aed); border-color: #a78bfa; box-shadow: 0 0 20px rgba(167,139,250,0.3); }
+        body[data-theme="estrategia"] .btn-primary-gold { background: linear-gradient(135deg, #34d399, #059669); border-color: #34d399; box-shadow: 0 0 20px rgba(52,211,153,0.3); }
+        body[data-theme="soberania"] .btn-primary-gold { background: linear-gradient(135deg, #fb7185, #be123c); border-color: #fb7185; box-shadow: 0 0 20px rgba(251,113,133,0.3); }
+        body[data-theme="legado"] .btn-primary-gold { background: linear-gradient(135deg, #fbbf24, #d97706); border-color: #fbbf24; box-shadow: 0 0 20px rgba(251,191,36,0.3); }
+
+        body[data-theme="cartografia"] .live-badge { background: rgba(0,212,255,0.2); border-color: rgba(0,212,255,0.5); color: #00d4ff; }
+        body[data-theme="anatomia"] .live-badge { background: rgba(129,140,248,0.2); border-color: rgba(129,140,248,0.5); color: #818cf8; }
+        body[data-theme="sincronia"] .live-badge { background: rgba(167,139,250,0.2); border-color: rgba(167,139,250,0.5); color: #a78bfa; }
+        body[data-theme="estrategia"] .live-badge { background: rgba(52,211,153,0.2); border-color: rgba(52,211,153,0.5); color: #34d399; }
+        body[data-theme="soberania"] .live-badge { background: rgba(251,113,133,0.2); border-color: rgba(251,113,133,0.5); color: #fb7185; }
+        body[data-theme="legado"] .live-badge { background: rgba(251,191,36,0.2); border-color: rgba(251,191,36,0.5); color: #fbbf24; }
     </style>
 </head>
 <body class="min-h-screen text-white overflow-x-hidden">
@@ -248,7 +360,7 @@
             <!-- LEFT: Back button + Logo -->
             <div class="flex items-center gap-3">
                 <!-- ← BOTÓN VOLVER AL MAPA -->
-                <a href="niveles-novato.html"
+                <a id="back-to-map" href="niveles-novato.html"
                    class="flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shrink-0"
                    style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.35); color:#D4AF37;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -298,11 +410,14 @@
 
     <div class="glow-line-cyan"></div>
 
+    <!-- Theme banner -->
+    <div class="theme-banner" id="theme-banner">▸ MUNDO 1 — GÉNESIS ▸</div>
+
     <!-- ══════════ MAIN LAYOUT ══════════ -->
-    <div class="flex h-[calc(100vh-57px)]" style="min-height: 600px;">
+    <div class="flex flex-col lg:flex-row lg:h-[calc(100vh-65px)]" style="min-height: 600px;">
 
         <!-- ═══ LEFT PANEL: Training Modules ═══ -->
-        <aside class="w-72 flex-shrink-0 flex flex-col corner-box" style="background: #080d18; border-color: rgba(0,212,255,0.12); border-top:none; border-bottom:none;">
+        <aside class="w-72 flex-shrink-0 hidden lg:flex flex-col corner-box" style="background: #080d18; border-color: rgba(0,212,255,0.12); border-top:none; border-bottom:none;">
             <!-- Panel header -->
             <div class="px-5 py-4 border-b" style="border-color: rgba(0,212,255,0.1);">
                 <div class="flex items-center gap-2">
@@ -416,7 +531,7 @@
                 <div class="w-full max-w-3xl mb-4 z-10">
                     <div class="flex items-center gap-3">
                         <div class="live-badge px-3 py-1 rounded-sm">● SESIÓN</div>
-                        <h2 class="font-black text-white uppercase tracking-wide text-sm">MOD 01 — Estructura del Mercado: Zonas de Oferta y Demanda</h2>
+                        <h2 id="lesson-title" class="font-black text-white uppercase tracking-wide text-sm">MOD 01 — Estructura del Mercado: Zonas de Oferta y Demanda</h2>
                     </div>
                 </div>
 
@@ -510,7 +625,7 @@
         </main>
 
         <!-- ═══ RIGHT PANEL: Performance ═══ -->
-        <aside class="w-64 flex-shrink-0 flex flex-col overflow-y-auto corner-box corner-gold"
+        <aside class="w-64 flex-shrink-0 hidden xl:flex flex-col overflow-y-auto corner-box corner-gold"
                style="background: #080d18; border-color: rgba(212,175,55,0.12); border-top:none; border-bottom:none;">
 
             <!-- Panel header -->
@@ -595,11 +710,11 @@
         <div class="corner-box corner-gold p-8 text-center max-w-md mx-4 rounded-lg" style="background:#080d18;">
             <div class="text-6xl mb-4">🏆</div>
             <h2 class="font-black text-2xl text-white uppercase tracking-widest mb-2">¡Módulo Completado!</h2>
-            <p class="text-gray-400 text-sm mb-6">Has completado <span style="color:#D4AF37;">MOD 01: Fundamentos</span> con un 75% de precisión.</p>
+            <p class="text-gray-400 text-sm mb-6">Has completado <span style="color:#D4AF37;" id="complete-module-name">MOD 01: Fundamentos</span> con un 75% de precisión.</p>
             <div class="grid grid-cols-3 gap-4 mb-6">
                 <div class="stat-card rounded p-3">
                     <div class="text-xs text-gray-500 mb-1 font-mono uppercase" style="font-size:9px;">XP Ganado</div>
-                    <div class="font-black text-xl" style="color:#D4AF37;">+250</div>
+                    <div class="font-black text-xl" style="color:#D4AF37;" id="complete-xp">+250</div>
                 </div>
                 <div class="stat-card rounded p-3">
                     <div class="text-xs text-gray-500 mb-1 font-mono uppercase" style="font-size:9px;">Estrellas</div>
@@ -611,51 +726,193 @@
                 </div>
             </div>
             <div class="flex gap-3">
-                <button class="btn-action btn-secondary flex-1 py-3 rounded" onclick="closeModal()">VOLVER</button>
-                <button class="btn-action btn-primary-gold flex-1 py-3 rounded" onclick="goToMap()">VER MAPA →</button>
+                <button class="btn-action btn-secondary flex-1 py-3 rounded" onclick="goToMap()">VER MAPA</button>
+                <button id="next-level-btn" class="btn-action btn-primary-gold flex-1 py-3 rounded" onclick="goToNextLevel()">SIGUIENTE NIVEL ⏭</button>
             </div>
         </div>
     </div>
 
     <!-- ══════════ SCRIPTS ══════════ -->
     <script>
+        // ── Read URL params to determine current level ──
+        var params = new URLSearchParams(window.location.search);
+        var currentWorld = parseInt(params.get('world')) || 1;
+        var currentLevel = parseInt(params.get('level')) || 1;
+        var currentInfo = CURRICULUM.findLevel(currentLevel);
+        var nextInfo = CURRICULUM.getNextLevel(currentLevel);
+
+        // Update page with current level info
+        if (currentInfo) {
+            var lvl = currentInfo.level;
+            var wld = currentInfo.world;
+            document.title = 'InvertProfit — M' + lvl.n + ': ' + lvl.t;
+            document.getElementById('lesson-title').textContent = 'MOD ' + String(lvl.n).padStart(2,'0') + ' — ' + lvl.t;
+            document.getElementById('back-to-map').href = wld.page;
+        }
+
+        // ══ THEME SYSTEM ══
+        var worldThemes = {1:'genesis',2:'cartografia',3:'anatomia',4:'sincronia',5:'estrategia',6:'soberania',7:'legado'};
+        var worldNames = {1:'GÉNESIS',2:'CARTOGRAFÍA',3:'ANATOMÍA',4:'SINCRONÍA',5:'ESTRATEGIA',6:'SOBERANÍA',7:'LEGADO'};
+        var themeKey = worldThemes[currentWorld] || 'genesis';
+        document.body.setAttribute('data-theme', themeKey);
+        var banner = document.getElementById('theme-banner');
+        if (banner && currentInfo) {
+            banner.textContent = '▸ MUNDO ' + currentWorld + ' — ' + (worldNames[currentWorld] || 'ACADEMIA') + ' ▸ NIVEL ' + currentLevel + ' DE 100 ▸';
+        }
+
+        // ══ COMPLETION SOUND ══
+        function playCompletionSound() {
+            try {
+                var ctx = new (window.AudioContext || window.webkitAudioContext)();
+                var notes = [523.25, 659.25, 783.99, 1046.50]; // C5, E5, G5, C6 - victory arpeggio
+                notes.forEach(function(freq, i) {
+                    var osc = ctx.createOscillator();
+                    var gain = ctx.createGain();
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.frequency.value = freq;
+                    osc.type = 'sine';
+                    gain.gain.setValueAtTime(0, ctx.currentTime + i * 0.15);
+                    gain.gain.linearRampToValueAtTime(0.25, ctx.currentTime + i * 0.15 + 0.05);
+                    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + i * 0.15 + 0.6);
+                    osc.start(ctx.currentTime + i * 0.15);
+                    osc.stop(ctx.currentTime + i * 0.15 + 0.6);
+                });
+                // Add a final shimmer chord
+                setTimeout(function() {
+                    [1046.50, 1318.51, 1567.98].forEach(function(freq) {
+                        var osc = ctx.createOscillator();
+                        var gain = ctx.createGain();
+                        osc.connect(gain);
+                        gain.connect(ctx.destination);
+                        osc.frequency.value = freq;
+                        osc.type = 'triangle';
+                        gain.gain.setValueAtTime(0.15, ctx.currentTime);
+                        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 1.2);
+                        osc.start(ctx.currentTime);
+                        osc.stop(ctx.currentTime + 1.2);
+                    });
+                }, 600);
+            } catch(e) { /* Audio not supported */ }
+        }
+
         // Server time clock
         function updateClock() {
-            const now = new Date();
-            const h = String(now.getUTCHours()).padStart(2,'0');
-            const m = String(now.getUTCMinutes()).padStart(2,'0');
-            const s = String(now.getUTCSeconds()).padStart(2,'0');
-            document.getElementById('server-time').textContent = `${h}:${m}:${s} UTC`;
+            var now = new Date();
+            var h = String(now.getUTCHours()).padStart(2,'0');
+            var m = String(now.getUTCMinutes()).padStart(2,'0');
+            var s = String(now.getUTCSeconds()).padStart(2,'0');
+            document.getElementById('server-time').textContent = h+':'+m+':'+s+' UTC';
         }
         setInterval(updateClock, 1000);
         updateClock();
 
         // Module selection
         function selectModule(num) {
-            document.querySelectorAll('.module-item').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.module-item:not(.locked)')[num - 1]?.classList.add('active');
+            document.querySelectorAll('.module-item').forEach(function(el){ el.classList.remove('active'); });
+            var items = document.querySelectorAll('.module-item:not(.locked)');
+            if (items[num - 1]) items[num - 1].classList.add('active');
         }
 
         // Play video (placeholder interaction)
         function playVideo() {
-            const area = document.getElementById('video-area');
-            area.innerHTML = `
-                <div class="w-full h-full flex items-center justify-center" style="background:#000;">
-                    <div class="text-center">
-                        <div class="text-6xl mb-4">▶</div>
-                        <p class="font-mono text-xs text-gray-500 uppercase tracking-widest">Conecta tu reproductor de video aquí</p>
-                        <p class="font-mono text-xs text-gray-600 mt-2" style="font-size:9px;">Integra un iframe de YouTube, Vimeo o Wistia</p>
-                    </div>
-                </div>`;
+            var area = document.getElementById('video-area');
+            area.innerHTML = '<div class="w-full h-full flex items-center justify-center" style="background:#000;"><div class="text-center"><div class="text-6xl mb-4">▶</div><p class="font-mono text-xs text-gray-500 uppercase tracking-widest">Conecta tu reproductor de video aquí</p><p class="font-mono text-xs text-gray-600 mt-2" style="font-size:9px;">Integra un iframe de YouTube, Vimeo o Wistia</p></div></div>';
         }
 
         // Actions
-        function replayLesson() {
-            playVideo();
-        }
+        function replayLesson() { playVideo(); }
 
         function completeModule() {
-            document.getElementById('complete-modal').classList.remove('hidden');
+            // Save progress to localStorage
+            CURRICULUM.completeLevel(currentLevel);
+
+            // Play sound + celebration
+            playCompletionSound();
+            launchCelebration();
+
+            // Update completion modal with current level info
+            if (currentInfo) {
+                document.getElementById('complete-module-name').textContent = 'M' + currentInfo.level.n + ': ' + currentInfo.level.t;
+                document.getElementById('complete-xp').textContent = '+' + currentInfo.level.xp + ' XP';
+            }
+            // Show/hide next level button
+            var nextBtn = document.getElementById('next-level-btn');
+            if (nextInfo) {
+                nextBtn.style.display = '';
+                nextBtn.textContent = 'SIGUIENTE: M' + nextInfo.level.n + ' ⏭';
+            } else {
+                nextBtn.style.display = 'none';
+            }
+            // Show modal after a short delay so celebration plays first
+            setTimeout(function() {
+                document.getElementById('complete-modal').classList.remove('hidden');
+            }, 900);
+        }
+
+        // ══ CELEBRATION SYSTEM ══
+        function launchCelebration() {
+            // 1. Golden burst flash
+            var burst = document.createElement('div');
+            burst.className = 'golden-burst';
+            document.body.appendChild(burst);
+            setTimeout(function() { burst.remove(); }, 900);
+
+            // 2. Celebration text
+            var txt = document.createElement('div');
+            txt.className = 'celebration-text';
+            txt.textContent = '🏆 ¡COMPLETADO!';
+            document.body.appendChild(txt);
+            setTimeout(function() { txt.remove(); }, 1600);
+
+            // 3. Confetti rain
+            var container = document.createElement('div');
+            container.className = 'confetti-container';
+            document.body.appendChild(container);
+
+            var colors = ['#D4AF37', '#f0d060', '#FFD700', '#FFA500', '#FF6347', '#22c55e', '#00d4ff', '#a78bfa', '#fb7185', '#fbbf24'];
+            var shapes = ['■', '●', '◆', '▲', '★'];
+
+            for (var i = 0; i < 80; i++) {
+                (function(index) {
+                    setTimeout(function() {
+                        var piece = document.createElement('div');
+                        piece.className = 'confetti-piece';
+                        piece.style.left = Math.random() * 100 + '%';
+                        piece.style.setProperty('--rot', (Math.random() * 1080 - 540) + 'deg');
+                        piece.style.animationDuration = (2 + Math.random() * 2) + 's';
+                        piece.style.animationDelay = '0s';
+                        piece.style.fontSize = (10 + Math.random() * 16) + 'px';
+                        piece.style.color = colors[Math.floor(Math.random() * colors.length)];
+                        piece.textContent = shapes[Math.floor(Math.random() * shapes.length)];
+                        container.appendChild(piece);
+                    }, index * 15);
+                })(i);
+            }
+
+            // 4. Golden star particles from center
+            for (var j = 0; j < 12; j++) {
+                (function(idx) {
+                    var star = document.createElement('div');
+                    star.className = 'star-particle';
+                    star.textContent = '⭐';
+                    star.style.position = 'fixed';
+                    star.style.top = '50%';
+                    star.style.left = '50%';
+                    var angle = (idx / 12) * Math.PI * 2;
+                    var dist = 120 + Math.random() * 100;
+                    star.style.setProperty('--dx', Math.cos(angle) * dist + 'px');
+                    star.style.setProperty('--dy', Math.sin(angle) * dist + 'px');
+                    star.style.animationDuration = (1 + Math.random() * 0.5) + 's';
+                    star.style.animationDelay = (0.1 + idx * 0.05) + 's';
+                    star.style.zIndex = '10000';
+                    document.body.appendChild(star);
+                    setTimeout(function() { star.remove(); }, 2000);
+                })(j);
+            }
+
+            // Cleanup confetti container
+            setTimeout(function() { container.remove(); }, 5000);
         }
 
         function closeModal() {
@@ -663,14 +920,26 @@
         }
 
         function nextLesson() {
-            document.querySelectorAll('.module-item:not(.locked)').forEach((el, i) => {
-                el.classList.remove('active');
-            });
-            document.querySelectorAll('.module-item:not(.locked)')[1]?.classList.add('active');
+            // Go to next level directly
+            if (nextInfo) {
+                window.location.href = 'leccion.html?world=' + nextInfo.world.id + '&level=' + nextInfo.level.n;
+            }
+        }
+
+        function goToNextLevel() {
+            if (nextInfo) {
+                window.location.href = 'leccion.html?world=' + nextInfo.world.id + '&level=' + nextInfo.level.n;
+            } else {
+                goToMap();
+            }
         }
 
         function goToMap() {
-            window.location.href = '/niveles-novato.html';
+            if (currentInfo) {
+                window.location.href = currentInfo.world.page;
+            } else {
+                window.location.href = 'niveles-novato.html';
+            }
         }
 
         // Close modal on backdrop click

@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="auth.js"></script>
+    <script src="curriculum.js"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -138,6 +139,7 @@
             {n:9,t:'Horarios y Sesiones (El Reloj del Dinero)',d:'Londres, Nueva York, Tokio. Aprende cuándo opera el mundo.',s:'completed',xp:200},
             {n:10,t:'⚡ BOSS: El Primer Trade Simulado',d:'Examen de entrada. Ejecuta tu primer trade simulado y obtén el Pasaporte del Inversor.',s:'completed',xp:500,boss:'BOSS'}
         ];
+        levels.forEach(function(l){ l.s = CURRICULUM.getLevelStatus(l.n); });
         const icons=['🎓','🏛️','📊','👥','💱','₿','🛒','📏','🕐','🏆'];
         buildMap(levels, icons, '#22c55e', 'background:#22c55e;box-shadow:0 0 6px #22c55e;');
     })();
@@ -187,16 +189,55 @@
     }
 
     const icons = ['🎓','🏛️','📊','👥','💱','₿','🛒','📏','🕐','🏆'];
+    const allLevels = [
+        {n:1,t:'Filosofía InvertProfit y AmigoTrade',d:'Conoce la misión, visión y tu compañero de viaje: AmigoTrade.',xp:200},
+        {n:2,t:'Historia del Dinero y los Mercados',d:'Desde el trueque hasta Wall Street.',xp:200},
+        {n:3,t:'¿Qué es una Acción? El Origen del Equity',d:'Aprende qué significa ser dueño de una parte de una empresa.',xp:200},
+        {n:4,t:'Participantes del Mercado',d:'Retail vs Institucional.',xp:200},
+        {n:5,t:'Tipos de Activos: Divisas, Metales e Índices',d:'Forex, oro, S&P 500…',xp:200},
+        {n:6,t:'Tipos de Activos: Commodities y Criptomonedas',d:'Petróleo, gas, Bitcoin.',xp:200},
+        {n:7,t:'Anatomía de una Orden: Market, Limit y Stop',d:'Domina todos los tipos de órdenes.',xp:200},
+        {n:8,t:'El Lenguaje del Precio: Pips, Lotes y Spread',d:'Habla el idioma del trader.',xp:200},
+        {n:9,t:'Horarios y Sesiones (El Reloj del Dinero)',d:'Londres, Nueva York, Tokio.',xp:200},
+        {n:10,t:'⚡ BOSS: El Primer Trade Simulado',d:'Ejecuta tu primer trade simulado.',xp:500,boss:'BOSS'}
+    ];
+    allLevels.forEach(function(l){ l.s = CURRICULUM.getLevelStatus(l.n); });
     function openModal(num, title, desc, status, xp) {
         document.getElementById('modal-title').textContent = 'M' + num + ': ' + title;
         document.getElementById('modal-desc').textContent = desc;
         document.getElementById('modal-xp').textContent = '+' + xp + ' XP';
         document.getElementById('modal-icon').textContent = icons[num - 1] || '📚';
-        const badge = document.getElementById('modal-badge');
-        if (status === 'completed') { badge.textContent = '✓ Completado'; badge.style.background = 'rgba(34,197,94,.15)'; badge.style.color = '#22c55e'; badge.style.borderColor = 'rgba(34,197,94,.3)'; }
-        else if (status === 'active') { badge.textContent = '▶ En Progreso'; badge.style.background = 'rgba(212,175,55,.15)'; badge.style.color = '#D4AF37'; badge.style.borderColor = 'rgba(212,175,55,.3)'; }
-        else { badge.textContent = '🔒 Bloqueado'; badge.style.background = 'rgba(107,114,128,.15)'; badge.style.color = '#6b7280'; badge.style.borderColor = 'rgba(107,114,128,.3)'; }
-        document.getElementById('modal-btn').style.display = status === 'locked' ? 'none' : 'block';
+        var badge = document.getElementById('modal-badge');
+        var btn = document.getElementById('modal-btn');
+        var nextBtn = document.getElementById('modal-next');
+        var nextLevel = allLevels.find(function(l){ return l.n === num + 1; });
+
+        if (status === 'completed') {
+            badge.textContent = '✓ Completado'; badge.style.background = 'rgba(34,197,94,.15)'; badge.style.color = '#22c55e'; badge.style.borderColor = 'rgba(34,197,94,.3)';
+            btn.textContent = '🔄 REPASAR NIVEL';
+            btn.style.cssText = 'background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;cursor:pointer;';
+            btn.onclick = function(){ window.location.href='leccion.html?world=1&level='+num; };
+            btn.style.display = 'block';
+            if (nextLevel) {
+                nextBtn.classList.remove('hidden');
+                nextBtn.textContent = '▶ SIGUIENTE NIVEL (M' + nextLevel.n + ')';
+                nextBtn.style.cssText = 'background:linear-gradient(135deg,#16a34a,#4ade80);color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;cursor:pointer;';
+                nextBtn.onclick = function(){ window.location.href='leccion.html?world=1&level='+nextLevel.n; };
+            } else {
+                nextBtn.classList.add('hidden');
+            }
+        } else if (status === 'active') {
+            badge.textContent = '▶ En Progreso'; badge.style.background = 'rgba(212,175,55,.15)'; badge.style.color = '#D4AF37'; badge.style.borderColor = 'rgba(212,175,55,.3)';
+            btn.textContent = '▶ JUGAR NIVEL';
+            btn.style.cssText = 'background:linear-gradient(135deg,#16a34a,#4ade80);color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;cursor:pointer;';
+            btn.onclick = function(){ window.location.href='leccion.html?world=1&level='+num; };
+            btn.style.display = 'block';
+            nextBtn.classList.add('hidden');
+        } else {
+            badge.textContent = '🔒 Bloqueado'; badge.style.background = 'rgba(107,114,128,.15)'; badge.style.color = '#6b7280'; badge.style.borderColor = 'rgba(107,114,128,.3)';
+            btn.style.display = 'none';
+            nextBtn.classList.add('hidden');
+        }
         document.getElementById('level-modal').classList.remove('hidden');
     }
     function closeModal() { document.getElementById('level-modal').classList.add('hidden'); }
@@ -217,9 +258,14 @@
             <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">XP ganada</span>
             <span class="font-black text-primary" id="modal-xp">+200 XP</span>
         </div>
-        <button id="modal-btn" onclick="window.location.href='leccion.html'" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#16a34a,#4ade80);color:#0a0f1a;">
-            ⚡ JUGAR NIVEL
-        </button>
+        <div class="flex flex-col gap-2">
+            <button id="modal-btn" onclick="window.location.href='leccion.html'" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#16a34a,#4ade80);color:#0a0f1a;">
+                ⚡ JUGAR NIVEL
+            </button>
+            <button id="modal-next" class="hidden w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#16a34a,#4ade80);color:#0a0f1a;">
+                ▶ SIGUIENTE NIVEL
+            </button>
+        </div>
     </div>
 </div>
 </body>

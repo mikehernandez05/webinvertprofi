@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="auth.js"></script>
+    <script src="curriculum.js"></script>
     <script>
         tailwind.config={darkMode:"class",theme:{extend:{colors:{"primary":"#D4AF37","bg-dark":"#0a0f1a","card":"#111827","card-border":"#1f2937"},fontFamily:{"sans":["Inter","sans-serif"]}}}}
     </script>
@@ -86,7 +87,7 @@
     </div>
     <script>
     (function(){
-        const levels = [
+        var levels = window._wLevels = [
             {n:91,t:'Estadística y Esperanza Matemática',d:'La base científica del trading rentable.',s:'locked',xp:250},
             {n:92,t:'Teoría de Juegos Aplicada',d:'Estrategias competitivas en el mercado. Nash y más.',s:'locked',xp:250},
             {n:93,t:'Ingeniería de Riesgo y Gestión de Drawdown',d:'Protege tu capital como un ingeniero financiero.',s:'locked',xp:300},
@@ -98,6 +99,7 @@
             {n:99,t:'Ética y Legado del Inversor Élite',d:'Trading como filosofía de vida. Tu legado financiero.',s:'locked',xp:250},
             {n:100,t:'🏆 GRADUACIÓN: Certificación Grand Master',d:'El examen final. Acceso VIP y Certificación oficial. RANGO FINAL: SOCIO AMIGOTRADE.',s:'locked',xp:1000,boss:'FINAL'}
         ];
+        levels.forEach(function(l){ l.s = CURRICULUM.getLevelStatus(l.n); });
         const icons=['📊','♟️','🛡️','🤖','📈','🔗','🏖️','📋','⚖️','👑'];
         const pattern=[20,40,60,70,60,40,20,10,20,40];
         let h='';
@@ -116,7 +118,24 @@
     })();
     function openModal(num,title,desc,status,xp){
         document.getElementById('modal-title').textContent='M'+num+': '+title;document.getElementById('modal-desc').textContent=desc;document.getElementById('modal-xp').textContent='+'+xp+' XP';
-        document.getElementById('modal-badge').textContent='🔒 Bloqueado';document.getElementById('modal-btn').style.display='none';document.getElementById('level-modal').classList.remove('hidden');
+        var badge=document.getElementById('modal-badge');var btn=document.getElementById('modal-btn');
+        var nextBtn=document.getElementById('modal-next');
+        var nextLevel=window._wLevels.find(function(l){return l.n===num+1;});
+        if(status==='completed'){
+            badge.textContent='✓ Completado';badge.style.cssText='background:rgba(34,197,94,.15);color:#22c55e;border:1px solid rgba(34,197,94,.3);';
+            btn.textContent='🔄 REPASAR NIVEL';btn.style.cssText='background:rgba(212,175,55,.15);color:#D4AF37;border:1px solid rgba(212,175,55,.3);width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;cursor:pointer;display:block;';
+            btn.onclick=function(){window.location.href='leccion.html?world=7&level='+num;};
+            if(nextLevel){nextBtn.classList.remove('hidden');nextBtn.textContent='▶ SIGUIENTE NIVEL (M'+nextLevel.n+')';nextBtn.style.cssText='background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;cursor:pointer;';nextBtn.onclick=function(){window.location.href='leccion.html?world=7&level='+nextLevel.n;};}
+            else{nextBtn.classList.add('hidden');}
+        } else if(status==='active'){
+            badge.textContent='▶ En Progreso';badge.style.cssText='background:rgba(212,175,55,.15);color:#D4AF37;border:1px solid rgba(212,175,55,.3);';
+            btn.textContent='▶ JUGAR NIVEL';btn.style.cssText='background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;cursor:pointer;display:block;';
+            btn.onclick=function(){window.location.href='leccion.html?world=7&level='+num;};nextBtn.classList.add('hidden');
+        } else{
+            badge.textContent='🔒 Bloqueado';badge.style.cssText='background:rgba(107,114,128,.15);color:#6b7280;border:1px solid rgba(107,114,128,.3);';
+            btn.style.display='none';nextBtn.classList.add('hidden');
+        }
+        document.getElementById('level-modal').classList.remove('hidden');
     }
     function closeModal(){document.getElementById('level-modal').classList.add('hidden');}
     </script>
@@ -128,7 +147,10 @@
         <h3 class="text-xl font-black text-center uppercase tracking-tight mb-2" id="modal-title">Título</h3>
         <p class="text-gray-400 text-sm text-center mb-5 leading-relaxed" id="modal-desc">Descripción</p>
         <div class="flex items-center justify-between mb-5 bg-card rounded-xl px-4 py-3" style="border:1px solid rgba(212,175,55,.2);"><span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">XP</span><span class="font-black text-primary" id="modal-xp">+200 XP</span></div>
-        <button id="modal-btn" onclick="window.location.href='leccion.html'" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="display:none;background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;">⚡ JUGAR NIVEL</button>
+        <div class="flex flex-col gap-2">
+            <button id="modal-btn" onclick="window.location.href='leccion.html'" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="display:none;background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;">⚡ JUGAR NIVEL</button>
+            <button id="modal-next" class="hidden w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;">▶ SIGUIENTE NIVEL</button>
+        </div>
     </div>
 </div>
 </body>

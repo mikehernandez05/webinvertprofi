@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="auth.js"></script>
+    <script src="curriculum.js"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -257,19 +258,20 @@
     <script>
     (function(){
         var levels=[
-            {n:1,t:'Smart Money Concepts',d:'Comprende cómo operan las instituciones: order blocks, liquidity pools y market structure.',s:'active',xp:300},
-            {n:2,t:'ICT Power of 3',d:'Acumulación, manipulación, distribución. El ciclo que mueve todos los mercados.',s:'locked',xp:300},
-            {n:3,t:'Order Flow & Volume Profile',d:'Lee el flujo de órdenes como un profesional. Delta, POC, Value Area.',s:'locked',xp:300},
-            {n:4,t:'Wyckoff Method',d:'El método legendario. Fases de acumulación y distribución de Wyckoff.',s:'locked',xp:300},
-            {n:5,t:'Breaker Blocks & Mitigation',d:'Cuando los order blocks fallan. Aprende a identificar breakers y mitigation blocks.',s:'locked',xp:300},
-            {n:6,t:'⚡ BOSS: Lectura Institucional',d:'Analiza un gráfico real usando SMC, ICT y Wyckoff. Demuestra tu visión institucional.',s:'locked',xp:500,boss:'BOSS'},
-            {n:7,t:'Trading Algorítmico Intro',d:'Automatiza tus estrategias. Introducción a bots, APIs y ejecución algorítmica.',s:'locked',xp:300},
-            {n:8,t:'Correlaciones Macro',d:'DXY, bonos, commodities. Cómo se conectan los mercados globales.',s:'locked',xp:300},
-            {n:9,t:'Gestión de Portafolio Pro',d:'Diversificación avanzada, hedging, y optimización de portafolio.',s:'locked',xp:300},
-            {n:10,t:'Psicología Avanzada',d:'Peak performance, estado de flujo, manejo del drawdown. La mente del trader elite.',s:'locked',xp:300},
-            {n:11,t:'Plan de Trading Institucional',d:'Crea tu edge definitivo. Un plan de trading de nivel hedge fund.',s:'locked',xp:300},
-            {n:12,t:'🏆 FINAL: El Gran Examen',d:'El desafío supremo. Demuestra dominio total del trading profesional. ¡Conviértete en Master Trader!',s:'locked',xp:800,boss:'FINAL'}
+            {n:23,t:'Smart Money Concepts',d:'Comprende cómo operan las instituciones: order blocks, liquidity pools y market structure.',xp:300},
+            {n:24,t:'ICT Power of 3',d:'Acumulación, manipulación, distribución. El ciclo que mueve todos los mercados.',xp:300},
+            {n:25,t:'Order Flow & Volume Profile',d:'Lee el flujo de órdenes como un profesional. Delta, POC, Value Area.',xp:300},
+            {n:26,t:'Wyckoff Method',d:'El método legendario. Fases de acumulación y distribución de Wyckoff.',xp:300},
+            {n:27,t:'Breaker Blocks & Mitigation',d:'Cuando los order blocks fallan. Aprende a identificar breakers y mitigation blocks.',xp:300},
+            {n:28,t:'⚡ BOSS: Lectura Institucional',d:'Analiza un gráfico real usando SMC, ICT y Wyckoff. Demuestra tu visión institucional.',xp:500,boss:'BOSS'},
+            {n:29,t:'Trading Algorítmico Intro',d:'Automatiza tus estrategias. Introducción a bots, APIs y ejecución algorítmica.',xp:300},
+            {n:30,t:'Correlaciones Macro',d:'DXY, bonos, commodities. Cómo se conectan los mercados globales.',xp:300},
+            {n:31,t:'Gestión de Portafolio Pro',d:'Diversificación avanzada, hedging, y optimización de portafolio.',xp:300},
+            {n:32,t:'Psicología Avanzada',d:'Peak performance, estado de flujo, manejo del drawdown. La mente del trader elite.',xp:300},
+            {n:33,t:'Plan de Trading Institucional',d:'Crea tu edge definitivo. Un plan de trading de nivel hedge fund.',xp:300},
+            {n:34,t:'🏆 FINAL: El Gran Examen',d:'El desafío supremo. Demuestra dominio total del trading profesional. ¡Conviértete en Master Trader!',xp:800,boss:'FINAL'}
         ];
+        levels.forEach(function(l){ l.s = CURRICULUM.getLevelStatus(l.n); });
         var pos=[44,62,74,62,44,24,14,24,44,62,74,44];
         var dpos=[[48,53,58],[65,69,72],[72,69,65],[58,53,48],[39,33,28],[21,18,15],[15,18,21],[28,33,39],[48,53,58],[65,69,72],[68,58,48]];
         var ic=['🧠','🔮','🏛️','💎','📡','⚡','🌀','🎯','🛡️','📊','💰','🏆'];
@@ -338,6 +340,11 @@
         <button id="modal-cta" onclick="window.location.href='leccion.html'" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;">
             ▶ JUGAR NIVEL
         </button>
+        <button id="modal-next" class="hidden w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;">
+            ▶ SIGUIENTE NIVEL
+        </button>
+            ▶ JUGAR NIVEL
+        </button>
     </div>
 </div>
 
@@ -358,26 +365,53 @@ function toggleSideMenu() {
 }
 
 const icons = ['🧠','🔮','🏛️','💎','📡','⚡','🌀','🎯','🛡️','📊','💰','🏆'];
+const allLevels = [
+    {n:23,t:'Smart Money Concepts',xp:300},
+    {n:24,t:'ICT Power of 3',xp:300},
+    {n:25,t:'Order Flow & Volume Profile',xp:300},
+    {n:26,t:'Wyckoff Method',xp:300},
+    {n:27,t:'Breaker Blocks & Mitigation',xp:300},
+    {n:28,t:'⚡ BOSS: Lectura Institucional',xp:500,boss:'BOSS'},
+    {n:29,t:'Trading Algorítmico Intro',xp:300},
+    {n:30,t:'Correlaciones Macro',xp:300},
+    {n:31,t:'Gestión de Portafolio Pro',xp:300},
+    {n:32,t:'Psicología Avanzada',xp:300},
+    {n:33,t:'Plan de Trading Institucional',xp:300},
+    {n:34,t:'🏆 FINAL: El Gran Examen',xp:800,boss:'FINAL'}
+];
+allLevels.forEach(function(l){ l.s = CURRICULUM.getLevelStatus(l.n); });
 function openModal(num, title, desc, status, xp) {
-    const badge = document.getElementById('modal-badge');
-    const cta = document.getElementById('modal-cta');
+    var badge = document.getElementById('modal-badge');
+    var cta = document.getElementById('modal-cta');
+    var nextBtn = document.getElementById('modal-next');
+    var nextLevel = allLevels.find(function(l){ return l.n === num + 1; });
+
     if (status === 'completed') {
         badge.textContent = '✓ Completado';
-        badge.style.cssText = 'background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;';
+        badge.style.cssText = 'background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:10px;font-weight:900;text-transform:uppercase;';
         document.getElementById('modal-stars').textContent = '⭐⭐⭐';
-        cta.style.cssText = 'background:linear-gradient(135deg,#16a34a,#4ade80);color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;transition:all 0.2s;cursor:pointer;border:none;';
-        cta.textContent = 'REPASAR NIVEL';
+        cta.style.cssText = 'background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;cursor:pointer;';
+        cta.textContent = '🔄 REPASAR NIVEL';
+        cta.onclick = function(){ window.location.href='leccion.html?world=3&level='+num; };
+        if (nextLevel) {
+            nextBtn.classList.remove('hidden');
+            nextBtn.style.cssText = 'background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;cursor:pointer;';
+            nextBtn.textContent = '▶ SIGUIENTE NIVEL (M' + nextLevel.n + ')';
+            nextBtn.onclick = function(){ window.location.href='leccion.html?world=3&level='+nextLevel.n; };
+        } else { nextBtn.classList.add('hidden'); }
     } else {
         badge.innerHTML = '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#818cf8;animation:path-dot 1s ease-in-out infinite;"></span> En Progreso';
-        badge.style.cssText = 'background:rgba(129,140,248,0.15);color:#818cf8;border:1px solid rgba(129,140,248,0.4);display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;';
+        badge.style.cssText = 'background:rgba(129,140,248,0.15);color:#818cf8;border:1px solid rgba(129,140,248,0.4);display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:10px;font-weight:900;text-transform:uppercase;';
         document.getElementById('modal-stars').textContent = '⭐⭐⭐ (por ganar)';
-        cta.style.cssText = 'background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;transition:all 0.2s;cursor:pointer;border:none;';
+        cta.style.cssText = 'background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;cursor:pointer;';
         cta.textContent = '▶ JUGAR NIVEL';
+        cta.onclick = function(){ window.location.href='leccion.html?world=3&level='+num; };
+        nextBtn.classList.add('hidden');
     }
     document.getElementById('modal-title').textContent = 'Nivel ' + num + ': ' + title;
     document.getElementById('modal-desc').textContent = desc;
     document.getElementById('modal-xp').textContent = '+' + xp + ' XP';
-    document.getElementById('modal-icon').textContent = icons[num - 1] || '📚';
+    document.getElementById('modal-icon').textContent = icons[num - 23] || '📚';
     document.getElementById('level-modal').classList.remove('hidden');
 }
 function closeModal() {
