@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>InvertProfit — Selecciona tu Mundo</title>
+    <title>InvertProfit — La Torre del Conocimiento</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -66,36 +66,154 @@
             pointer-events: none;
         }
 
-        /* World card animations */
-        @keyframes float-card { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
-        @keyframes pulse-glow { 0%,100%{box-shadow: 0 0 30px rgba(212,175,55,0.3)} 50%{box-shadow: 0 0 60px rgba(212,175,55,0.6), 0 0 90px rgba(212,175,55,0.2)} }
+        /* Shooting stars */
+        @keyframes shoot { 0%{transform:translateX(-200px) translateY(-200px) rotate(45deg); opacity:1; width:100px;} 100%{transform:translateX(400px) translateY(400px) rotate(45deg); opacity:0; width:0;} }
+        .shooting-star {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+            animation: shoot 3s linear infinite;
+        }
+
+        /* Animations */
+        @keyframes title-glow { 0%,100%{text-shadow:0 0 20px rgba(212,175,55,0.5)} 50%{text-shadow:0 0 40px rgba(212,175,55,1), 0 0 80px rgba(212,175,55,0.5)} }
+        @keyframes float-card { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+        @keyframes pulse-glow-gold { 0%,100%{box-shadow: 0 0 20px rgba(212,175,55,0.3)} 50%{box-shadow: 0 0 50px rgba(212,175,55,0.6), 0 0 80px rgba(212,175,55,0.2)} }
         @keyframes spin-slow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
         @keyframes shimmer { 0%{opacity:0.5} 50%{opacity:1} 100%{opacity:0.5} }
-        @keyframes title-glow { 0%,100%{text-shadow:0 0 20px rgba(212,175,55,0.5)} 50%{text-shadow:0 0 40px rgba(212,175,55,1), 0 0 80px rgba(212,175,55,0.5)} }
+        @keyframes chain-pulse { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
+        @keyframes beacon { 0%,100%{box-shadow:0 0 15px currentColor} 50%{box-shadow:0 0 40px currentColor, 0 0 70px currentColor} }
+        @keyframes badge-pop { 0%{transform:scale(0.8); opacity:0} 100%{transform:scale(1); opacity:1} }
+        @keyframes coin-bounce { 0%,100%{transform:scale(1) rotate(0deg)} 25%{transform:scale(1.1) rotate(-5deg)} 75%{transform:scale(1.1) rotate(5deg)} }
 
-        .world-card { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
-        .world-card:hover { transform: translateY(-16px) scale(1.03); }
-        .world-card.active { animation: float-card 4s ease-in-out infinite; }
-        .world-card.active .card-glow { animation: pulse-glow 2s ease-in-out infinite; }
+        .title-glow { animation: title-glow 2.5s ease-in-out infinite; }
+        .badge-pop { animation: badge-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .coin-bounce { animation: coin-bounce 3s ease-in-out infinite; }
 
-        .world-novato .planet {
-            background: radial-gradient(circle at 35% 30%, #4ade80 0%, #16a34a 40%, #14532d 80%, #052e16 100%);
-            box-shadow: 0 0 40px rgba(74,222,128,0.4), inset -10px -10px 20px rgba(0,0,0,0.5), inset 5px 5px 15px rgba(255,255,255,0.1);
+        /* Tower connector line */
+        .tower-connector {
+            width: 3px;
+            margin: 0 auto;
+            position: relative;
         }
-        .world-intermedio .planet {
-            background: radial-gradient(circle at 35% 30%, #D4AF37 0%, #b8860b 40%, #7a5c0a 80%, #3d2d05 100%);
-            box-shadow: 0 0 40px rgba(212,175,55,0.5), inset -10px -10px 20px rgba(0,0,0,0.5), inset 5px 5px 15px rgba(255,255,255,0.2);
+        .tower-connector.completed { background: linear-gradient(180deg, #D4AF37, #b8860b); box-shadow: 0 0 10px rgba(212,175,55,0.4); }
+        .tower-connector.active { background: linear-gradient(180deg, #D4AF37 0%, #374151 100%); }
+        .tower-connector.locked { background: #1f2937; }
+
+        /* World floor card */
+        .world-floor {
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
         }
-        .world-experto .planet {
-            background: radial-gradient(circle at 35% 30%, #818cf8 0%, #4f46e5 40%, #312e81 80%, #1e1b4b 100%);
-            box-shadow: 0 0 40px rgba(99,102,241,0.4), inset -10px -10px 20px rgba(0,0,0,0.5), inset 5px 5px 15px rgba(255,255,255,0.1);
+        .world-floor:hover:not(.floor-locked) { transform: scale(1.03); }
+        .world-floor.floor-active { animation: float-card 4s ease-in-out infinite; }
+
+        /* Locked overlay */
+        .locked-overlay {
+            position: absolute; inset: 0;
+            background: rgba(10,15,26,0.75);
+            border-radius: inherit;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            backdrop-filter: blur(3px);
+            z-index: 10;
+        }
+        .chain-icon { animation: chain-pulse 2s ease-in-out infinite; font-size: 2rem; }
+
+        /* Zoom transition overlay */
+        #zoom-overlay {
+            position: fixed; inset: 0; z-index: 100;
+            background: radial-gradient(circle, transparent 0%, rgba(10,15,26,0.98) 100%);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        #zoom-overlay.active { opacity: 1; pointer-events: all; }
+        #zoom-overlay .zoom-content {
+            transform: scale(0.5); opacity: 0;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #zoom-overlay.active .zoom-content {
+            transform: scale(1); opacity: 1;
         }
 
-        .world-novato .card-glow { border: 2px solid rgba(74,222,128,0.4); }
-        .world-novato.active .card-glow { box-shadow: 0 0 40px rgba(74,222,128,0.3); }
-        .world-intermedio .card-glow { border: 2px solid rgba(212,175,55,0.6); box-shadow: 0 0 30px rgba(212,175,55,0.3); }
-        .world-experto .card-glow { border: 2px solid rgba(99,102,241,0.4); }
+        /* Flash effect */
+        #zoom-flash {
+            position: fixed; inset: 0; z-index: 99;
+            background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(212,175,55,0.4) 40%, transparent 70%);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.15s ease;
+        }
+        #zoom-flash.active { opacity: 1; }
 
+        /* Explosion particles */
+        @keyframes explode-particle {
+            0% { transform: translate(0,0) scale(1); opacity:1; }
+            100% { opacity:0; }
+        }
+        .explosion-particle {
+            position: fixed; z-index: 101;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Shockwave ring */
+        @keyframes shockwave {
+            0% { transform: translate(-50%,-50%) scale(0); opacity:0.8; border-width:4px; }
+            100% { transform: translate(-50%,-50%) scale(1); opacity:0; border-width:1px; }
+        }
+        #shockwave-ring {
+            position: fixed; z-index: 101;
+            width: 500px; height: 500px;
+            border: 4px solid rgba(212,175,55,0.6);
+            border-radius: 50%;
+            top: 50%; left: 50%;
+            transform: translate(-50%,-50%) scale(0);
+            pointer-events: none; opacity:0;
+        }
+
+        /* Candy Crush serpentine path */
+        .tower-path {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            position: relative;
+        }
+        .floor-wrapper {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            transition: all 0.3s ease;
+        }
+        .floor-wrapper:nth-child(odd) { justify-content: flex-start; padding-left: 0; padding-right: 20%; }
+        .floor-wrapper:nth-child(even) { justify-content: flex-end; padding-left: 20%; padding-right: 0; }
+        @media (max-width: 640px) {
+            .floor-wrapper:nth-child(odd) { padding-right: 8%; }
+            .floor-wrapper:nth-child(even) { padding-left: 8%; }
+        }
+
+        /* SVG path connector */
+        .path-connector {
+            width: 100%; max-width: 600px;
+            height: 60px;
+            position: relative;
+        }
+        .path-connector svg { width: 100%; height: 100%; }
+        .path-line { stroke-dasharray: 8,6; stroke-linecap: round; fill: none; }
+
+        /* Planet / Icon for each world */
+        .world-icon-container {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.8rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* Orbit ring */
         .orbit-ring {
             position: absolute;
             border: 1px solid rgba(255,255,255,0.08);
@@ -105,41 +223,27 @@
         .orbit-ring::after {
             content: '';
             position: absolute;
-            width: 6px; height: 6px;
+            width: 5px; height: 5px;
             background: #D4AF37;
             border-radius: 50%;
-            top: -3px;
-            left: calc(50% - 3px);
+            top: -2.5px;
+            left: calc(50% - 2.5px);
             box-shadow: 0 0 8px #D4AF37;
         }
 
-        .title-glow { animation: title-glow 2.5s ease-in-out infinite; }
-
-        /* Stars shooting */
-        @keyframes shoot { 0%{transform:translateX(-200px) translateY(-200px) rotate(45deg); opacity:1; width:100px;} 100%{transform:translateX(400px) translateY(400px) rotate(45deg); opacity:0; width:0px;} }
-        .shooting-star {
-            position: absolute;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
-            animation: shoot 3s linear infinite;
-        }
-
-        /* Lock overlay for locked world */
-        .locked-overlay {
-            position: absolute; inset: 0;
-            background: rgba(10,15,26,0.7);
+        /* Completed golden shimmer */
+        .completed-shimmer {
+            position: absolute; inset: -4px;
             border-radius: inherit;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            backdrop-filter: blur(2px);
+            background: conic-gradient(from 0deg, transparent, rgba(212,175,55,0.4), transparent, rgba(212,175,55,0.2), transparent);
+            animation: spin-slow 6s linear infinite;
+            z-index: -1;
         }
 
         /* Sidebar */
         .sidebar-link { transition: all 0.2s ease; }
         .sidebar-link:hover { background: rgba(255,255,255,0.04); color: #fff; }
         .sidebar-link.active { background: rgba(212,175,55,0.15); color: #D4AF37; border: 1px solid rgba(212,175,55,0.2); }
-
-        /* Hamburger */
         .hamburger-open .hamburger-line-1 { transform: rotate(45deg) translateY(8px); }
         .hamburger-open .hamburger-line-2 { opacity: 0; }
         .hamburger-open .hamburger-line-3 { transform: rotate(-45deg) translateY(-8px); }
@@ -148,17 +252,19 @@
         @keyframes xp-fill { from{width:0} to{width:var(--xp-w)} }
         .xp-bar { animation: xp-fill 1.5s ease-out 0.5s both; }
 
-        /* Coin bounce */
-        @keyframes coin-bounce { 0%,100%{transform:scale(1) rotate(0deg)} 25%{transform:scale(1.1) rotate(-5deg)} 75%{transform:scale(1.1) rotate(5deg)} }
-        .coin-bounce { animation: coin-bounce 3s ease-in-out infinite; }
-
-        /* Badge pop */
-        @keyframes badge-pop { 0%{transform:scale(0.8); opacity:0} 100%{transform:scale(1); opacity:1} }
-        .badge-pop { animation: badge-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-
-        /* Nav active */
         .nav-arrow { transition: all 0.2s; }
         .nav-arrow:hover { background: #D4AF37; color: #0a0f1a; border-color: #D4AF37; }
+
+        /* Floor number badge */
+        .floor-number {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 0.85rem;
+            position: absolute;
+            top: -18px; left: 50%; transform: translateX(-50%);
+            z-index: 20;
+        }
     </style>
 </head>
 <body class="bg-bg-dark text-white font-sans min-h-screen flex flex-col overflow-x-hidden">
@@ -168,6 +274,25 @@
     <div class="shooting-star" style="top:15%; left:10%; animation-delay:0s;"></div>
     <div class="shooting-star" style="top:40%; left:5%; animation-delay:1.5s;"></div>
     <div class="shooting-star" style="top:70%; left:20%; animation-delay:3s;"></div>
+</div>
+
+<!-- ZOOM FLASH -->
+<div id="zoom-flash"></div>
+<!-- SHOCKWAVE -->
+<div id="shockwave-ring"></div>
+
+<!-- ZOOM OVERLAY -->
+<div id="zoom-overlay">
+    <div class="zoom-content text-center">
+        <div id="zoom-icon" class="text-8xl mb-6" style="filter:drop-shadow(0 0 40px rgba(212,175,55,0.8));"></div>
+        <h2 id="zoom-title" class="text-4xl font-black uppercase tracking-tight mb-2" style="text-shadow:0 0 30px rgba(212,175,55,0.6);"></h2>
+        <p id="zoom-sub" class="text-gray-400 text-sm mb-4"></p>
+        <div class="flex items-center justify-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-primary animate-bounce" style="animation-delay:0s;"></div>
+            <div class="w-3 h-3 rounded-full bg-primary animate-bounce" style="animation-delay:0.15s;"></div>
+            <div class="w-3 h-3 rounded-full bg-primary animate-bounce" style="animation-delay:0.3s;"></div>
+        </div>
+    </div>
 </div>
 
 <!-- HEADER -->
@@ -253,7 +378,7 @@
 <main class="flex-1 overflow-y-auto relative z-10">
     <div class="stars-bg absolute inset-0 pointer-events-none"></div>
 
-    <div class="p-6 md:p-10 pb-20 max-w-7xl mx-auto">
+    <div class="p-6 md:p-10 pb-20 max-w-4xl mx-auto">
 
         <!-- Top bar -->
         <div class="flex items-center justify-between mb-10">
@@ -266,8 +391,8 @@
                     </div>
                 </button>
                 <div>
-                    <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight">Academia</h1>
-                    <p class="text-gray-500 text-sm mt-1">Elige tu mundo y empieza tu aventura.</p>
+                    <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight">La Torre</h1>
+                    <p class="text-gray-500 text-sm mt-1">Escala la torre del conocimiento. Conquista cada piso.</p>
                 </div>
             </div>
             <!-- XP Player Bar -->
@@ -280,191 +405,237 @@
                     </div>
                     <div class="w-px h-8 bg-card-border mx-1"></div>
                     <div>
-                        <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Rango</p>
-                        <p class="text-sm font-black text-white">Nivel 3</p>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Piso</p>
+                        <p class="text-sm font-black text-white">2 / 7</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- TITLE -->
-        <div class="text-center mb-16">
+        <div class="text-center mb-14">
             <p class="text-[11px] font-black tracking-[6px] text-primary/70 uppercase mb-4">— ACADEMY MODE —</p>
-            <h2 class="text-5xl md:text-7xl font-black uppercase tracking-tight title-glow mb-4">
-                SELECCIONA TU <span style="color:#D4AF37;">MUNDO</span>
+            <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tight title-glow mb-4">
+                LA TORRE DEL <span style="color:#D4AF37;">CONOCIMIENTO</span>
             </h2>
-            <p class="text-gray-400 text-base max-w-lg mx-auto">Cada mundo es un universo de conocimiento. Conquista todos los niveles para convertirte en un trader élite.</p>
+            <p class="text-gray-400 text-base max-w-lg mx-auto">Asciende desde La Forja hasta La Cúspide. Cada piso es un universo de conocimiento que te acerca a la maestría total.</p>
         </div>
 
-        <!-- WORLD CARDS -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <!-- ========== TOWER — CANDY CRUSH PATH ========== -->
+        <div class="tower-path mb-16" id="tower-container">
 
-            <!-- MUNDO 1: NOVATO — COMPLETED -->
-            <div class="world-card world-novato relative" onclick="window.location.href='niveles-novato.html'">
-                <div class="card-glow rounded-3xl p-1">
-                    <div class="bg-gradient-to-b from-[#0d1f12] to-[#111827] rounded-3xl p-8 text-center relative overflow-hidden" style="min-height:420px;">
-                        <!-- Background glow -->
-                        <div class="absolute inset-0 rounded-3xl opacity-20" style="background: radial-gradient(circle at 50% 60%, rgba(74,222,128,0.4) 0%, transparent 70%);"></div>
-
-                        <!-- Completed badge -->
-                        <div class="flex justify-center mb-4">
-                            <span class="badge-pop inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider" style="background:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.3);">
-                                <span>✓</span> Completado
-                            </span>
-                        </div>
-
-                        <!-- Planet -->
-                        <div class="flex justify-center mb-6 relative">
-                            <div class="relative w-32 h-32 md:w-40 md:h-40">
-                                <!-- Orbit rings -->
-                                <div class="orbit-ring" style="width:160px; height:160px; top:-10px; left:-10px; animation-duration:12s;"></div>
-                                <div class="orbit-ring" style="width:190px; height:190px; top:-25px; left:-25px; animation-duration:20s; animation-direction:reverse;"></div>
-                                <!-- Planet -->
-                                <div class="planet w-full h-full rounded-full relative">
-                                    <div class="absolute inset-0 rounded-full" style="background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);"></div>
-                                    <div class="absolute inset-0 rounded-full flex items-center justify-center">
-                                        <span class="text-5xl">🌿</span>
+            <!-- ===== PISO 1: GÉNESIS — COMPLETED ===== -->
+            <div class="floor-wrapper">
+                <div class="w-full">
+                    <div class="world-floor relative rounded-3xl overflow-hidden" onclick="enterWorld('niveles-novato.html','⚒️','GÉNESIS: LA FORJA','Bóveda subterránea de alta seguridad')">
+                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #1a1207 0%, #111827 50%, #1a1207 100%); border:2px solid rgba(212,175,55,0.5); box-shadow: 0 0 30px rgba(212,175,55,0.2);">
+                            <div class="completed-shimmer rounded-3xl"></div>
+                            <div class="floor-number" style="background:linear-gradient(135deg,#D4AF37,#b8860b); color:#0a0f1a;">1</div>
+                            <div class="flex items-center gap-4 md:gap-6">
+                                <div class="shrink-0">
+                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #D4AF37 0%, #b8860b 50%, #5a3e0a 100%); box-shadow: 0 0 30px rgba(212,175,55,0.4); border:3px solid rgba(212,175,55,0.6);">
+                                        <div class="orbit-ring" style="width:100px;height:100px;top:-10px;left:-10px;animation-duration:12s;border-color:rgba(212,175,55,0.2);"></div>
+                                        ⚒️
                                     </div>
                                 </div>
-                                <!-- Stars around planet -->
-                                <div class="absolute -top-2 -right-2 text-yellow-400 text-xl animate-pulse">⭐</div>
-                                <div class="absolute -bottom-2 -left-2 text-yellow-400 text-sm animate-pulse" style="animation-delay:0.5s;">⭐</div>
-                                <div class="absolute top-1/2 -right-6 text-yellow-300 text-xs animate-pulse" style="animation-delay:1s;">✦</div>
+                                <div class="flex-1 min-w-0">
+                                    <span class="badge-pop inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider mb-1" style="background:rgba(212,175,55,0.2); color:#D4AF37; border:1px solid rgba(212,175,55,0.4);">🏴 Conquistado</span>
+                                    <p class="text-[9px] font-black tracking-[4px] text-primary/60 uppercase">PISO 01</p>
+                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-white">GÉNESIS: LA FORJA</h3>
+                                    <p class="text-gray-400 text-[10px] mt-0.5 leading-relaxed hidden sm:block">Bóveda subterránea de alta seguridad, hornos de fundición de oro.</p>
+                                    <div class="flex items-center gap-3 mt-2">
+                                        <div class="h-1.5 flex-1 bg-gray-800 rounded-full overflow-hidden">
+                                            <div class="h-full rounded-full" style="width:100%; background:linear-gradient(90deg, #b8860b, #D4AF37);"></div>
+                                        </div>
+                                        <span class="text-[10px] font-black text-primary">12/12</span>
+                                        <span class="text-sm">⭐⭐⭐</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        <!-- World number -->
-                        <p class="text-[10px] font-black tracking-[4px] text-green-400/60 uppercase mb-1">MUNDO 01</p>
-                        <h3 class="text-3xl font-black uppercase tracking-tight text-white mb-2">NOVATO</h3>
-                        <p class="text-gray-400 text-xs mb-6 leading-relaxed">Fundamentos del trading & análisis de mercado. El primer paso hacia la libertad financiera.</p>
-
-                        <!-- Stars rating -->
-                        <div class="flex justify-center gap-1 mb-5">
-                            <span class="text-2xl">⭐</span><span class="text-2xl">⭐</span><span class="text-2xl">⭐</span>
-                        </div>
-
-                        <!-- Progress -->
-                        <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
-                            <span class="text-gray-500">Progreso</span>
-                            <span class="text-green-400">12/12 niveles</span>
-                        </div>
-                        <div class="h-2.5 w-full bg-gray-800 rounded-full overflow-hidden mb-5">
-                            <div class="h-full rounded-full" style="width:100%; background: linear-gradient(90deg, #16a34a, #4ade80);"></div>
-                        </div>
-
-                        <!-- CTA -->
-                        <button class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition-all duration-300 hover:scale-105" style="background:rgba(34,197,94,0.2); color:#4ade80; border:1px solid rgba(34,197,94,0.4);">
-                            REPASAR MUNDO
-                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- MUNDO 2: INTERMEDIO — ACTIVE -->
-            <div class="world-card world-intermedio active relative" onclick="window.location.href='niveles-intermedio.html'">
-                <div class="card-glow rounded-3xl p-1" style="border:2px solid rgba(212,175,55,0.7); box-shadow: 0 0 40px rgba(212,175,55,0.3), 0 0 80px rgba(212,175,55,0.1);">
-                    <div class="rounded-3xl p-8 text-center relative overflow-hidden" style="min-height:420px; background:linear-gradient(135deg, #1a1508 0%, #111827 50%, #1a1508 100%);">
-                        <!-- Background glow -->
-                        <div class="absolute inset-0 rounded-3xl" style="background: radial-gradient(circle at 50% 60%, rgba(212,175,55,0.25) 0%, transparent 70%);"></div>
+            <!-- Connector 1→2 -->
+            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M200 0 Q200 30, 400 30 Q400 60, 400 60" stroke="rgba(212,175,55,0.5)" stroke-width="3"/></svg></div>
 
-                        <!-- Active badge -->
-                        <div class="flex justify-center mb-4">
-                            <span class="badge-pop inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider" style="background:rgba(212,175,55,0.2); color:#D4AF37; border:1px solid rgba(212,175,55,0.5);">
-                                <span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse inline-block"></span> En Progreso
-                            </span>
-                        </div>
-
-                        <!-- Planet -->
-                        <div class="flex justify-center mb-6 relative">
-                            <div class="relative w-32 h-32 md:w-40 md:h-40">
-                                <div class="orbit-ring" style="width:160px; height:160px; top:-10px; left:-10px; animation-duration:8s; border-color:rgba(212,175,55,0.2);"></div>
-                                <div class="orbit-ring" style="width:200px; height:200px; top:-30px; left:-30px; animation-duration:14s; animation-direction:reverse; border-color:rgba(212,175,55,0.1);"></div>
-                                <div class="planet w-full h-full rounded-full relative">
-                                    <div class="absolute inset-0 rounded-full" style="background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);"></div>
-                                    <div class="absolute inset-0 rounded-full flex items-center justify-center">
-                                        <span class="text-5xl">📈</span>
+            <!-- ===== PISO 2: CARTOGRAFÍA — ACTIVE ===== -->
+            <div class="floor-wrapper">
+                <div class="w-full">
+                    <div class="world-floor floor-active relative rounded-3xl overflow-hidden" onclick="enterWorld('niveles-intermedio.html','🗺️','CARTOGRAFÍA: LABERINTO','Pantallas holográficas flotantes')">
+                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #0a1628 0%, #111827 50%, #0a1628 100%); border:2px solid rgba(59,130,246,0.6); box-shadow: 0 0 40px rgba(59,130,246,0.3), 0 0 80px rgba(59,130,246,0.1);">
+                            <div class="floor-number" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; box-shadow:0 0 20px rgba(59,130,246,0.5);">2</div>
+                            <div class="absolute inset-0 rounded-3xl" style="background:radial-gradient(circle at 50% 50%, rgba(59,130,246,0.1) 0%, transparent 70%);"></div>
+                            <div class="flex items-center gap-4 md:gap-6">
+                                <div class="shrink-0 relative">
+                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #60a5fa 0%, #3b82f6 50%, #1e3a5f 100%); box-shadow: 0 0 35px rgba(59,130,246,0.6); border:3px solid rgba(59,130,246,0.8); animation: beacon 2s ease-in-out infinite; color:rgba(59,130,246,1);">
+                                        <div class="orbit-ring" style="width:100px;height:100px;top:-10px;left:-10px;animation-duration:8s;border-color:rgba(59,130,246,0.3);"></div>
+                                        🗺️
+                                    </div>
+                                    <div class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-card border-2 border-blue-400 flex items-center justify-center text-sm shadow-lg" style="box-shadow:0 0 15px rgba(59,130,246,0.5);" title="AmigoTrade te espera">🤖</div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <span class="badge-pop inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider mb-1" style="background:rgba(59,130,246,0.2); color:#60a5fa; border:1px solid rgba(59,130,246,0.5);">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse inline-block"></span> Mundo Actual
+                                    </span>
+                                    <p class="text-[9px] font-black tracking-[4px] uppercase" style="color:rgba(59,130,246,0.6);">PISO 02</p>
+                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-white">CARTOGRAFÍA: LABERINTO</h3>
+                                    <p class="text-gray-400 text-[10px] mt-0.5 leading-relaxed hidden sm:block">Pantallas holográficas flotantes y mapas estelares de datos.</p>
+                                    <div class="flex items-center gap-3 mt-2">
+                                        <div class="h-1.5 flex-1 bg-gray-800 rounded-full overflow-hidden">
+                                            <div class="h-full rounded-full" style="width:42%; background:linear-gradient(90deg, #1d4ed8, #3b82f6, #60a5fa);"></div>
+                                        </div>
+                                        <span class="text-[10px] font-black" style="color:#60a5fa;">5/12</span>
+                                        <span class="text-sm">⭐⭐<span class="text-gray-600">⭐</span></span>
                                     </div>
                                 </div>
-                                <div class="absolute -top-3 -right-3 text-yellow-400 text-2xl" style="animation: shimmer 1.5s ease-in-out infinite;">✦</div>
-                                <div class="absolute -bottom-1 right-0 text-primary text-xl animate-pulse" style="animation-delay:0.7s;">⭐</div>
-                                <div class="absolute top-0 -left-4 text-yellow-300 text-sm animate-pulse" style="animation-delay:1.2s;">✦</div>
                             </div>
                         </div>
-
-                        <p class="text-[10px] font-black tracking-[4px] text-primary/70 uppercase mb-1">MUNDO 02</p>
-                        <h3 class="text-3xl font-black uppercase tracking-tight text-white mb-2">INTERMEDIO</h3>
-                        <p class="text-gray-400 text-xs mb-6 leading-relaxed">Análisis técnico avanzado & gestión de riesgo. Domina las estrategias del mercado.</p>
-
-                        <!-- Stars rating -->
-                        <div class="flex justify-center gap-1 mb-5">
-                            <span class="text-2xl">⭐</span><span class="text-2xl">⭐</span><span class="text-2xl text-gray-600">⭐</span>
-                        </div>
-
-                        <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
-                            <span class="text-gray-500">Progreso</span>
-                            <span style="color:#D4AF37;">5/12 niveles</span>
-                        </div>
-                        <div class="h-2.5 w-full bg-gray-800 rounded-full overflow-hidden mb-5">
-                            <div class="h-full rounded-full" style="width:42%; background: linear-gradient(90deg, #b8860b, #D4AF37);"></div>
-                        </div>
-
-                        <button class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition-all duration-300 hover:scale-105" style="background:linear-gradient(135deg, #b8860b, #D4AF37); color:#0a0f1a;">
-                            ▶ CONTINUAR
-                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- MUNDO 3: EXPERTO — AVAILABLE -->
-            <div class="world-card world-experto relative" onclick="window.location.href='niveles-experto.html'">
-                <div class="card-glow rounded-3xl p-1" style="border:2px solid rgba(99,102,241,0.2);">
-                    <div class="bg-gradient-to-b from-[#0d0d1f] to-[#111827] rounded-3xl p-8 text-center relative overflow-hidden" style="min-height:420px;">
-                        <div class="absolute inset-0 rounded-3xl" style="background: radial-gradient(circle at 50% 60%, rgba(99,102,241,0.1) 0%, transparent 70%);"></div>
+            <!-- Connector 2→3 -->
+            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M400 0 Q400 30, 200 30 Q200 60, 200 60" stroke="#1f2937" stroke-width="3"/></svg></div>
 
-                        <!-- New badge -->
-                        <div class="flex justify-center mb-4">
-                            <span class="badge-pop inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider" style="background:rgba(129,140,248,0.2); color:#818cf8; border:1px solid rgba(129,140,248,0.4);">
-                                <span class="w-1.5 h-1.5 rounded-full inline-block animate-pulse" style="background:#818cf8;"></span> Nuevo
-                            </span>
-                        </div>
-
-                        <!-- Planet -->
-                        <div class="flex justify-center mb-6 relative">
-                            <div class="relative w-32 h-32 md:w-40 md:h-40">
-                                <div class="orbit-ring" style="width:160px; height:160px; top:-10px; left:-10px; animation-duration:14s; border-color:rgba(129,140,248,0.15);"></div>
-                                <div class="planet w-full h-full rounded-full relative">
-                                    <div class="absolute inset-0 rounded-full" style="background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%);"></div>
-                                    <div class="absolute inset-0 rounded-full flex items-center justify-center">
-                                        <span class="text-5xl">🌌</span>
-                                    </div>
+            <!-- ===== PISO 3: ANATOMÍA — LOCKED ===== -->
+            <div class="floor-wrapper">
+                <div class="w-full">
+                    <div class="world-floor floor-locked relative rounded-3xl overflow-hidden" style="cursor:not-allowed;">
+                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #0d1117 0%, #111827 50%, #0d1117 100%); border:2px solid rgba(75,85,99,0.3);">
+                            <div class="floor-number" style="background:#1f2937; color:#6b7280; border:1px solid #374151;">3</div>
+                            <div class="locked-overlay rounded-3xl">
+                                <div class="chain-icon mb-1">⛓️</div>
+                                <p class="text-[10px] font-black uppercase tracking-[3px] text-gray-500">Bloqueado</p>
+                            </div>
+                            <div class="flex items-center gap-4 md:gap-6 opacity-30" style="filter:grayscale(1);">
+                                <div class="shrink-0">
+                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #22d3ee 0%, #06b6d4 50%, #0e4a5c 100%); border:3px solid rgba(6,182,212,0.4);">🔬</div>
                                 </div>
-                                <div class="absolute -top-2 -right-2 text-indigo-300 text-lg animate-pulse">✦</div>
-                                <div class="absolute -bottom-1 -left-2 text-indigo-400 text-sm animate-pulse" style="animation-delay:0.8s;">✦</div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-[9px] font-black tracking-[4px] text-gray-600 uppercase">PISO 03</p>
+                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-gray-500">ANATOMÍA: INGENIERÍA</h3>
+                                    <p class="text-gray-600 text-[10px] mt-0.5 hidden sm:block">Laboratorio limpio de alta tecnología.</p>
+                                </div>
                             </div>
                         </div>
-
-                        <p class="text-[10px] font-black tracking-[4px] uppercase mb-1" style="color:rgba(129,140,248,0.7);">MUNDO 03</p>
-                        <h3 class="text-3xl font-black uppercase tracking-tight text-white mb-2">EXPERTO</h3>
-                        <p class="text-gray-400 text-xs mb-6 leading-relaxed">Estrategias institucionales & psicología de trading. Solo para los mejores.</p>
-
-                        <div class="flex justify-center gap-1 mb-5">
-                            <span class="text-2xl text-gray-600">⭐</span><span class="text-2xl text-gray-600">⭐</span><span class="text-2xl text-gray-600">⭐</span>
-                        </div>
-
-                        <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
-                            <span class="text-gray-500">Progreso</span>
-                            <span style="color:#818cf8;">0/12 niveles</span>
-                        </div>
-                        <div class="h-2.5 w-full bg-gray-800 rounded-full overflow-hidden mb-5">
-                            <div class="h-full rounded-full" style="width:0%; background: linear-gradient(90deg, #4f46e5, #818cf8);"></div>
-                        </div>
-
-                        <button class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition-all duration-300 hover:scale-105" style="background:rgba(129,140,248,0.2); color:#818cf8; border:1px solid rgba(129,140,248,0.4);">
-                            ▶ COMENZAR
-                        </button>
                     </div>
                 </div>
             </div>
+
+            <!-- Connector 3→4 -->
+            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M200 0 Q200 30, 400 30 Q400 60, 400 60" stroke="#1f2937" stroke-width="3"/></svg></div>
+
+            <!-- ===== PISO 4: SINCRONÍA — LOCKED ===== -->
+            <div class="floor-wrapper">
+                <div class="w-full">
+                    <div class="world-floor floor-locked relative rounded-3xl overflow-hidden" style="cursor:not-allowed;">
+                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #0d0d1f 0%, #111827 50%, #0d0d1f 100%); border:2px solid rgba(75,85,99,0.3);">
+                            <div class="floor-number" style="background:#1f2937; color:#6b7280; border:1px solid #374151;">4</div>
+                            <div class="locked-overlay rounded-3xl">
+                                <div class="chain-icon mb-1">🔒</div>
+                                <p class="text-[10px] font-black uppercase tracking-[3px] text-gray-500">Bloqueado</p>
+                            </div>
+                            <div class="flex items-center gap-4 md:gap-6 opacity-30" style="filter:grayscale(1);">
+                                <div class="shrink-0">
+                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #a78bfa 0%, #7c3aed 50%, #3b1578 100%); border:3px solid rgba(124,58,237,0.4);">🤖</div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-[9px] font-black tracking-[4px] text-gray-600 uppercase">PISO 04</p>
+                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-gray-500">SINCRONÍA: ORÁCULO IA</h3>
+                                    <p class="text-gray-600 text-[10px] mt-0.5 hidden sm:block">Núcleo de energía pulsante, estética Matrix/Tron.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connector 4→5 -->
+            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M400 0 Q400 30, 200 30 Q200 60, 200 60" stroke="#1f2937" stroke-width="3"/></svg></div>
+
+            <!-- ===== PISO 5: ESTRATEGIA — LOCKED ===== -->
+            <div class="floor-wrapper">
+                <div class="w-full">
+                    <div class="world-floor floor-locked relative rounded-3xl overflow-hidden" style="cursor:not-allowed;">
+                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #111a0d 0%, #111827 50%, #111a0d 100%); border:2px solid rgba(75,85,99,0.3);">
+                            <div class="floor-number" style="background:#1f2937; color:#6b7280; border:1px solid #374151;">5</div>
+                            <div class="locked-overlay rounded-3xl">
+                                <div class="chain-icon mb-1">⛓️</div>
+                                <p class="text-[10px] font-black uppercase tracking-[3px] text-gray-500">Bloqueado</p>
+                            </div>
+                            <div class="flex items-center gap-4 md:gap-6 opacity-30" style="filter:grayscale(1);">
+                                <div class="shrink-0">
+                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #34d399 0%, #059669 50%, #064e3b 100%); border:3px solid rgba(5,150,105,0.4);">♟️</div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-[9px] font-black tracking-[4px] text-gray-600 uppercase">PISO 05</p>
+                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-gray-500">ESTRATEGIA: TABLERO GLOBAL</h3>
+                                    <p class="text-gray-600 text-[10px] mt-0.5 hidden sm:block">Penthouse con mapamundi holográfico gigante.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connector 5→6 -->
+            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M200 0 Q200 30, 400 30 Q400 60, 400 60" stroke="#1f2937" stroke-width="3"/></svg></div>
+
+            <!-- ===== PISO 6: SOBERANÍA — LOCKED ===== -->
+            <div class="floor-wrapper">
+                <div class="w-full">
+                    <div class="world-floor floor-locked relative rounded-3xl overflow-hidden" style="cursor:not-allowed;">
+                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #0d0a14 0%, #111827 50%, #0d0a14 100%); border:2px solid rgba(75,85,99,0.3);">
+                            <div class="floor-number" style="background:#1f2937; color:#6b7280; border:1px solid #374151;">6</div>
+                            <div class="locked-overlay rounded-3xl">
+                                <div class="chain-icon mb-1">🔒</div>
+                                <p class="text-[10px] font-black uppercase tracking-[3px] text-gray-500">Bloqueado</p>
+                            </div>
+                            <div class="flex items-center gap-4 md:gap-6 opacity-30" style="filter:grayscale(1);">
+                                <div class="shrink-0">
+                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #c084fc 0%, #9333ea 50%, #581c87 100%); border:3px solid rgba(147,51,234,0.4);">🏛️</div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-[9px] font-black tracking-[4px] text-gray-600 uppercase">PISO 06</p>
+                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-gray-500">SOBERANÍA: INSTITUCIONAL</h3>
+                                    <p class="text-gray-600 text-[10px] mt-0.5 hidden sm:block">Club privado de banqueros, flujos de liquidez.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connector 6→7 -->
+            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M400 0 Q400 30, 200 30 Q200 60, 200 60" stroke="#1f2937" stroke-width="3"/></svg></div>
+
+            <!-- ===== PISO 7: LEGADO — LOCKED (THE APEX) ===== -->
+            <div class="floor-wrapper">
+                <div class="w-full">
+                    <div class="world-floor floor-locked relative rounded-3xl overflow-hidden" style="cursor:not-allowed;">
+                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #1a1508 0%, #111827 50%, #1a1508 100%); border:2px solid rgba(75,85,99,0.3);">
+                            <div class="floor-number" style="background:#1f2937; color:#6b7280; border:1px solid #374151;">7</div>
+                            <div class="locked-overlay rounded-3xl">
+                                <div class="chain-icon mb-1">👑</div>
+                                <p class="text-[10px] font-black uppercase tracking-[3px] text-gray-500">La Cúspide</p>
+                            </div>
+                            <div class="flex items-center gap-4 md:gap-6 opacity-30" style="filter:grayscale(1);">
+                                <div class="shrink-0">
+                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #fbbf24 0%, #D4AF37 50%, #92400e 100%); border:3px solid rgba(212,175,55,0.4);">🏔️</div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-[9px] font-black tracking-[4px] text-gray-600 uppercase">PISO 07 — THE APEX</p>
+                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-gray-500">LEGADO: LA CÚSPIDE</h3>
+                                    <p class="text-gray-600 text-[10px] mt-0.5 hidden sm:block">Helipuerto privado con vista infinita. Todo dorado y brillante.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
 
         <!-- STATS ROW -->
@@ -482,8 +653,8 @@
                 <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Días en racha</div>
             </div>
             <div class="bg-card border border-card-border rounded-2xl p-5 text-center">
-                <div class="text-3xl font-black text-yellow-400 mb-1">3</div>
-                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Trofeos ganados</div>
+                <div class="text-3xl font-black text-yellow-400 mb-1">1 / 7</div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Pisos Conquistados</div>
             </div>
         </div>
 
@@ -519,6 +690,111 @@ function toggleSideMenu() {
         overlay.classList.add('opacity-0', 'pointer-events-none');
         if (hamburger) hamburger.classList.remove('hamburger-open');
     }
+}
+
+// Sound effects using Web Audio API
+function playZoomSound() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        // Whoosh
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(800, ctx.currentTime);
+        osc1.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.4);
+        gain1.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+        osc1.connect(gain1).connect(ctx.destination);
+        osc1.start(); osc1.stop(ctx.currentTime + 0.5);
+
+        // Impact
+        setTimeout(() => {
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.type = 'square';
+            osc2.frequency.setValueAtTime(120, ctx.currentTime);
+            osc2.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.3);
+            gain2.gain.setValueAtTime(0.1, ctx.currentTime);
+            gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+            osc2.connect(gain2).connect(ctx.destination);
+            osc2.start(); osc2.stop(ctx.currentTime + 0.3);
+        }, 200);
+
+        // Chime
+        setTimeout(() => {
+            const osc3 = ctx.createOscillator();
+            const gain3 = ctx.createGain();
+            osc3.type = 'sine';
+            osc3.frequency.setValueAtTime(1200, ctx.currentTime);
+            osc3.frequency.exponentialRampToValueAtTime(1600, ctx.currentTime + 0.3);
+            gain3.gain.setValueAtTime(0.08, ctx.currentTime);
+            gain3.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+            osc3.connect(gain3).connect(ctx.destination);
+            osc3.start(); osc3.stop(ctx.currentTime + 0.4);
+        }, 400);
+    } catch(e) {}
+}
+
+// Explosion particles from center
+function spawnExplosion() {
+    const colors = ['#D4AF37','#fbbf24','#fff','#60a5fa','#a78bfa','#f97316'];
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
+    for (let i = 0; i < 40; i++) {
+        const p = document.createElement('div');
+        p.className = 'explosion-particle';
+        const size = Math.random() * 8 + 3;
+        const angle = (Math.PI * 2 / 40) * i + (Math.random() - 0.5) * 0.5;
+        const dist = Math.random() * 350 + 150;
+        const tx = Math.cos(angle) * dist;
+        const ty = Math.sin(angle) * dist;
+        const dur = Math.random() * 0.6 + 0.4;
+        p.style.cssText = `
+            left:${cx}px; top:${cy}px; width:${size}px; height:${size}px;
+            background:${colors[Math.floor(Math.random()*colors.length)]};
+            box-shadow: 0 0 ${size*2}px ${colors[Math.floor(Math.random()*colors.length)]};
+            animation: explode-particle ${dur}s cubic-bezier(0,.6,.6,1) forwards;
+        `;
+        // Custom trajectory via inline keyframes
+        p.animate([
+            { transform:'translate(0,0) scale(1)', opacity:1 },
+            { transform:`translate(${tx}px,${ty}px) scale(0)`, opacity:0 }
+        ], { duration: dur * 1000, easing:'cubic-bezier(0,.5,.5,1)', fill:'forwards' });
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), dur * 1000 + 100);
+    }
+}
+
+// ZOOM dramatic transition with explosion, flash & sound
+function enterWorld(url, icon, title, sub) {
+    const overlay = document.getElementById('zoom-overlay');
+    const flash = document.getElementById('zoom-flash');
+    const ring = document.getElementById('shockwave-ring');
+
+    // Sound
+    playZoomSound();
+
+    // Flash
+    flash.classList.add('active');
+    setTimeout(() => flash.classList.remove('active'), 300);
+
+    // Explosion particles
+    setTimeout(() => spawnExplosion(), 100);
+
+    // Shockwave ring
+    ring.style.animation = 'none';
+    ring.offsetHeight; // reflow
+    ring.style.animation = 'shockwave 0.8s ease-out forwards';
+
+    // Zoom overlay
+    document.getElementById('zoom-icon').textContent = icon;
+    document.getElementById('zoom-title').textContent = title;
+    document.getElementById('zoom-sub').textContent = sub;
+    setTimeout(() => overlay.classList.add('active'), 200);
+
+    setTimeout(function() {
+        window.location.href = url;
+    }, 1500);
 }
 
 // Generate floating particles

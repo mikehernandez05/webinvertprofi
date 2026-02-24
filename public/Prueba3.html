@@ -3,11 +3,12 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>InvertProfit — Mundo Intermedio</title>
+    <title>InvertProfit — La Torre del Conocimiento</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="auth.js"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -27,67 +28,219 @@
         }
     </script>
     <style>
-        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
         ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
 
         .logo-glow { filter: drop-shadow(0 0 10px rgba(212,175,55,0.3)); }
 
-        /* World background: gold/amber theme */
-        .world-bg {
-            background:
-                radial-gradient(ellipse at 20% 40%, rgba(212,175,55,0.1) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 70%, rgba(180,140,30,0.08) 0%, transparent 50%),
-                #0a0f1a;
+        /* Stars background */
+        .stars-bg {
+            background-image:
+                radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.6) 0%, transparent 100%),
+                radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 50% 10%, rgba(255,255,255,0.7) 0%, transparent 100%),
+                radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.5) 0%, transparent 100%),
+                radial-gradient(1px 1px at 85% 30%, rgba(255,255,255,0.4) 0%, transparent 100%),
+                radial-gradient(1px 1px at 20% 85%, rgba(255,255,255,0.3) 0%, transparent 100%),
+                radial-gradient(1px 1px at 60% 45%, rgba(212,175,55,0.3) 0%, transparent 100%),
+                radial-gradient(1px 1px at 90% 65%, rgba(255,255,255,0.5) 0%, transparent 100%),
+                radial-gradient(1px 1px at 40% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 75% 15%, rgba(212,175,55,0.4) 0%, transparent 100%);
         }
 
-        .level-node { position: relative; z-index: 10; cursor: pointer; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .level-node:hover .node-btn { transform: scale(1.15); }
-        .level-node.locked { cursor: not-allowed; opacity: 0.4; }
-
-        .node-btn {
-            width: 72px; height: 72px;
+        /* Floating particles */
+        @keyframes particle-float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-120px) rotate(360deg); opacity: 0; }
+        }
+        .particle {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: #D4AF37;
             border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; font-weight: 900;
-            transition: all 0.3s ease;
+            animation: particle-float linear infinite;
+            pointer-events: none;
+        }
+
+        /* Shooting stars */
+        @keyframes shoot { 0%{transform:translateX(-200px) translateY(-200px) rotate(45deg); opacity:1; width:100px;} 100%{transform:translateX(400px) translateY(400px) rotate(45deg); opacity:0; width:0;} }
+        .shooting-star {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+            animation: shoot 3s linear infinite;
+        }
+
+        /* Animations */
+        @keyframes title-glow { 0%,100%{text-shadow:0 0 20px rgba(212,175,55,0.5)} 50%{text-shadow:0 0 40px rgba(212,175,55,1), 0 0 80px rgba(212,175,55,0.5)} }
+        @keyframes float-card { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+        @keyframes pulse-glow-gold { 0%,100%{box-shadow: 0 0 20px rgba(212,175,55,0.3)} 50%{box-shadow: 0 0 50px rgba(212,175,55,0.6), 0 0 80px rgba(212,175,55,0.2)} }
+        @keyframes spin-slow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+        @keyframes shimmer { 0%{opacity:0.5} 50%{opacity:1} 100%{opacity:0.5} }
+        @keyframes chain-pulse { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
+        @keyframes beacon { 0%,100%{box-shadow:0 0 15px currentColor} 50%{box-shadow:0 0 40px currentColor, 0 0 70px currentColor} }
+        @keyframes badge-pop { 0%{transform:scale(0.8); opacity:0} 100%{transform:scale(1); opacity:1} }
+        @keyframes coin-bounce { 0%,100%{transform:scale(1) rotate(0deg)} 25%{transform:scale(1.1) rotate(-5deg)} 75%{transform:scale(1.1) rotate(5deg)} }
+
+        .title-glow { animation: title-glow 2.5s ease-in-out infinite; }
+        .badge-pop { animation: badge-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+        .coin-bounce { animation: coin-bounce 3s ease-in-out infinite; }
+
+        /* Tower connector line */
+        .tower-connector {
+            width: 3px;
+            margin: 0 auto;
             position: relative;
         }
-        .node-btn.completed {
-            background: radial-gradient(circle at 35% 35%, #D4AF37 0%, #b8860b 60%, #3d2d05 100%);
-            box-shadow: 0 0 20px rgba(212,175,55,0.5), 0 4px 15px rgba(0,0,0,0.5);
-            border: 3px solid rgba(212,175,55,0.7);
-        }
-        .node-btn.active {
-            background: radial-gradient(circle at 35% 35%, #fbbf24 0%, #D4AF37 40%, #92400e 100%);
-            box-shadow: 0 0 30px rgba(212,175,55,0.8), 0 4px 15px rgba(0,0,0,0.5);
-            border: 3px solid #D4AF37;
-            animation: active-pulse 2s ease-in-out infinite;
-        }
-        .node-btn.locked-node {
-            background: radial-gradient(circle at 35% 35%, #374151 0%, #1f2937 60%, #111827 100%);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            border: 3px solid rgba(75,85,99,0.4);
-        }
-        @keyframes active-pulse {
-            0%,100% { box-shadow: 0 0 30px rgba(212,175,55,0.8), 0 4px 15px rgba(0,0,0,0.5); transform:scale(1); }
-            50% { box-shadow: 0 0 50px rgba(212,175,55,1), 0 0 80px rgba(212,175,55,0.4), 0 4px 15px rgba(0,0,0,0.5); transform:scale(1.07); }
-        }
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-        .float-anim { animation: float 3s ease-in-out infinite; }
-        .star-row { font-size: 0.75rem; line-height: 1; }
-        @keyframes path-dot { 0%,100%{opacity:0.3} 50%{opacity:1} }
-        .path-dot { animation: path-dot 1.5s ease-in-out infinite; }
-        .path-dot:nth-child(2) { animation-delay: 0.3s; }
-        .path-dot:nth-child(3) { animation-delay: 0.6s; }
-        .path-dot:nth-child(4) { animation-delay: 0.9s; }
+        .tower-connector.completed { background: linear-gradient(180deg, #D4AF37, #b8860b); box-shadow: 0 0 10px rgba(212,175,55,0.4); }
+        .tower-connector.active { background: linear-gradient(180deg, #D4AF37 0%, #374151 100%); }
+        .tower-connector.locked { background: #1f2937; }
 
-        /* Gold path dots (completed) vs grey (locked) */
-        .dot-completed { background:#D4AF37; box-shadow:0 0 6px rgba(212,175,55,0.6); }
-        .dot-active { background:#D4AF37; box-shadow:0 0 8px rgba(212,175,55,0.8); animation: path-dot 1s ease-in-out infinite; }
-        .dot-locked { background:#374151; }
+        /* World floor card */
+        .world-floor {
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+        }
+        .world-floor:hover:not(.floor-locked) { transform: scale(1.03); }
+        .world-floor.floor-active { animation: float-card 4s ease-in-out infinite; }
 
+        /* Locked overlay */
+        .locked-overlay {
+            position: absolute; inset: 0;
+            background: rgba(10,15,26,0.75);
+            border-radius: inherit;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            backdrop-filter: blur(3px);
+            z-index: 10;
+        }
+        .chain-icon { animation: chain-pulse 2s ease-in-out infinite; font-size: 2rem; }
+
+        /* Zoom transition overlay */
+        #zoom-overlay {
+            position: fixed; inset: 0; z-index: 100;
+            background: radial-gradient(circle, transparent 0%, rgba(10,15,26,0.98) 100%);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        #zoom-overlay.active { opacity: 1; pointer-events: all; }
+        #zoom-overlay .zoom-content {
+            transform: scale(0.5); opacity: 0;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        #zoom-overlay.active .zoom-content {
+            transform: scale(1); opacity: 1;
+        }
+
+        /* Flash effect */
+        #zoom-flash {
+            position: fixed; inset: 0; z-index: 99;
+            background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(212,175,55,0.4) 40%, transparent 70%);
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.15s ease;
+        }
+        #zoom-flash.active { opacity: 1; }
+
+        /* Explosion particles */
+        @keyframes explode-particle {
+            0% { transform: translate(0,0) scale(1); opacity:1; }
+            100% { opacity:0; }
+        }
+        .explosion-particle {
+            position: fixed; z-index: 101;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Shockwave ring */
+        @keyframes shockwave {
+            0% { transform: translate(-50%,-50%) scale(0); opacity:0.8; border-width:4px; }
+            100% { transform: translate(-50%,-50%) scale(1); opacity:0; border-width:1px; }
+        }
+        #shockwave-ring {
+            position: fixed; z-index: 101;
+            width: 500px; height: 500px;
+            border: 4px solid rgba(212,175,55,0.6);
+            border-radius: 50%;
+            top: 50%; left: 50%;
+            transform: translate(-50%,-50%) scale(0);
+            pointer-events: none; opacity:0;
+        }
+
+        /* Candy Crush serpentine path */
+        .tower-path {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            position: relative;
+        }
+        .floor-wrapper {
+            width: 100%;
+            max-width: 600px;
+            display: flex;
+            transition: all 0.3s ease;
+        }
+        .floor-wrapper:nth-child(odd) { justify-content: flex-start; padding-left: 0; padding-right: 20%; }
+        .floor-wrapper:nth-child(even) { justify-content: flex-end; padding-left: 20%; padding-right: 0; }
+        @media (max-width: 640px) {
+            .floor-wrapper:nth-child(odd) { padding-right: 8%; }
+            .floor-wrapper:nth-child(even) { padding-left: 8%; }
+        }
+
+        /* SVG path connector */
+        .path-connector {
+            width: 100%; max-width: 600px;
+            height: 60px;
+            position: relative;
+        }
+        .path-connector svg { width: 100%; height: 100%; }
+        .path-line { stroke-dasharray: 8,6; stroke-linecap: round; fill: none; }
+
+        /* Planet / Icon for each world */
+        .world-icon-container {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.8rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* Orbit ring */
+        .orbit-ring {
+            position: absolute;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 50%;
+            animation: spin-slow 15s linear infinite;
+        }
+        .orbit-ring::after {
+            content: '';
+            position: absolute;
+            width: 5px; height: 5px;
+            background: #D4AF37;
+            border-radius: 50%;
+            top: -2.5px;
+            left: calc(50% - 2.5px);
+            box-shadow: 0 0 8px #D4AF37;
+        }
+
+        /* Completed golden shimmer */
+        .completed-shimmer {
+            position: absolute; inset: -4px;
+            border-radius: inherit;
+            background: conic-gradient(from 0deg, transparent, rgba(212,175,55,0.4), transparent, rgba(212,175,55,0.2), transparent);
+            animation: spin-slow 6s linear infinite;
+            z-index: -1;
+        }
+
+        /* Sidebar */
         .sidebar-link { transition: all 0.2s ease; }
         .sidebar-link:hover { background: rgba(255,255,255,0.04); color: #fff; }
         .sidebar-link.active { background: rgba(212,175,55,0.15); color: #D4AF37; border: 1px solid rgba(212,175,55,0.2); }
@@ -95,26 +248,68 @@
         .hamburger-open .hamburger-line-2 { opacity: 0; }
         .hamburger-open .hamburger-line-3 { transform: rotate(-45deg) translateY(-8px); }
 
-        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:200; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
-        .modal-box { background:#111827; border:1px solid rgba(212,175,55,0.3); border-radius:24px; padding:32px; max-width:420px; width:calc(100% - 2rem); box-shadow: 0 0 60px rgba(212,175,55,0.15); }
+        /* XP Bar */
+        @keyframes xp-fill { from{width:0} to{width:var(--xp-w)} }
+        .xp-bar { animation: xp-fill 1.5s ease-out 0.5s both; }
 
-        @keyframes chart-float { 0%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-15px) rotate(2deg)} 100%{transform:translateY(0) rotate(-2deg)} }
-        .chart-float { position:absolute; animation: chart-float 7s ease-in-out infinite; font-size:1.5rem; pointer-events:none; opacity:0.4; }
+        .nav-arrow { transition: all 0.2s; }
+        .nav-arrow:hover { background: #D4AF37; color: #0a0f1a; border-color: #D4AF37; }
 
-        @keyframes title-in { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
-        .title-in { animation: title-in 0.6s ease-out forwards; }
+        /* Floor number badge */
+        .floor-number {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 0.85rem;
+            position: absolute;
+            top: -18px; left: 50%; transform: translateX(-50%);
+            z-index: 20;
+        }
     </style>
 </head>
-<body class="world-bg text-white font-sans min-h-screen flex flex-col overflow-x-hidden">
+<body class="bg-bg-dark text-white font-sans min-h-screen flex flex-col overflow-x-hidden">
+
+<!-- PARTICLES -->
+<div id="particles-container" class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="shooting-star" style="top:15%; left:10%; animation-delay:0s;"></div>
+    <div class="shooting-star" style="top:40%; left:5%; animation-delay:1.5s;"></div>
+    <div class="shooting-star" style="top:70%; left:20%; animation-delay:3s;"></div>
+</div>
+
+<!-- ZOOM FLASH -->
+<div id="zoom-flash"></div>
+<!-- SHOCKWAVE -->
+<div id="shockwave-ring"></div>
+
+<!-- ZOOM OVERLAY -->
+<div id="zoom-overlay">
+    <div class="zoom-content text-center">
+        <div id="zoom-icon" class="text-8xl mb-6" style="filter:drop-shadow(0 0 40px rgba(212,175,55,0.8));"></div>
+        <h2 id="zoom-title" class="text-4xl font-black uppercase tracking-tight mb-2" style="text-shadow:0 0 30px rgba(212,175,55,0.6);"></h2>
+        <p id="zoom-sub" class="text-gray-400 text-sm mb-4"></p>
+        <div class="flex items-center justify-center gap-2">
+            <div class="w-3 h-3 rounded-full bg-primary animate-bounce" style="animation-delay:0s;"></div>
+            <div class="w-3 h-3 rounded-full bg-primary animate-bounce" style="animation-delay:0.15s;"></div>
+            <div class="w-3 h-3 rounded-full bg-primary animate-bounce" style="animation-delay:0.3s;"></div>
+        </div>
+    </div>
+</div>
 
 <!-- HEADER -->
 <header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-[60] shrink-0">
     <div class="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
         <div class="flex items-center gap-2 md:gap-3">
             <img src="images/logo_azul.png" alt="InvertProfit" class="h-8 md:h-10 w-auto logo-glow object-contain" id="logo-img"/>
-            <span class="text-lg md:text-xl font-bold text-white" id="logo-text" style="display:none;"><span style="color:#D4AF37;">INVERT</span>PROFIT</span>
+            <span class="text-lg md:text-xl font-bold text-white" id="logo-text" style="display:none;">
+                <span style="color:#D4AF37;">INVERT</span>PROFIT
+            </span>
         </div>
-        <script>document.getElementById('logo-img').onerror=function(){this.style.display='none';document.getElementById('logo-text').style.display='inline';};</script>
+        <script>
+            document.getElementById('logo-img').onerror = function() {
+                this.style.display = 'none';
+                document.getElementById('logo-text').style.display = 'inline';
+            };
+        </script>
         <nav class="hidden lg:flex items-center gap-10">
             <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="index.html">INICIO</a>
             <a class="font-black border-b-2 border-primary pb-1 text-sm tracking-widest uppercase" style="color:#D4AF37;" href="portadanivelesacademia.html">ACADEMIA</a>
@@ -122,8 +317,15 @@
             <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="#">PORTAFOLIO</a>
         </nav>
         <div class="flex items-center gap-2 md:gap-4">
-            <button class="shrink-0 bg-primary font-bold h-10 px-6 rounded-full inline-flex items-center gap-2 whitespace-nowrap hover:bg-primary/90 transition text-xs tracking-wide" style="color:#0a0f1a;">⚡ CONECTAR BROKER</button>
+            <button class="shrink-0 bg-primary text-bg-dark font-bold h-10 px-6 rounded-full inline-flex items-center gap-2 whitespace-nowrap hover:bg-primary/90 transition text-xs sm:text-sm tracking-wide leading-none">
+                <span class="leading-none">⚡</span>
+                <span class="leading-none" style="color:#0a0f1a;">CONECTAR BROKER</span>
+            </button>
             <div class="hidden md:flex items-center gap-3">
+                <button class="w-9 h-9 rounded-full bg-card border border-card-border flex items-center justify-center text-gray-400 hover:text-primary transition relative">
+                    <span class="material-symbols-outlined text-[20px]">notifications</span>
+                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-bg-dark"></span>
+                </button>
                 <div class="w-9 h-9 bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 rounded-full flex items-center justify-center text-xs font-black text-primary">AT</div>
             </div>
             <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="lg:hidden text-gray-400 hover:text-white p-2">
@@ -135,6 +337,7 @@
         <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="index.html">INICIO</a>
         <a class="block font-bold py-2 border-l-2 border-primary pl-3 text-sm" style="color:#D4AF37;" href="portadanivelesacademia.html">ACADEMIA</a>
         <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="mercado.html">MERCADOS</a>
+        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="#">PORTAFOLIO</a>
     </nav>
 </header>
 
@@ -145,15 +348,26 @@
             <p class="text-[10px] font-black text-primary/80 uppercase tracking-[4px] leading-none mb-2">Menú</p>
             <div class="h-[2px] w-10 bg-gradient-to-r from-primary/60 to-transparent rounded-full"></div>
         </div>
-        <a href="dashboard.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400"><span class="material-symbols-outlined text-[22px]">grid_view</span> Dashboard</a>
-        <a href="portadanivelesacademia.html" class="sidebar-link active flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold"><span class="material-symbols-outlined text-[22px]">school</span> Academia</a>
-        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400"><span class="material-symbols-outlined text-[22px]">emoji_events</span> Logros</a>
-        <a href="mercado.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400"><span class="material-symbols-outlined text-[22px]">monitoring</span> Mercados</a>
+        <a href="dashboard.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
+            <span class="material-symbols-outlined text-[22px]">grid_view</span> Dashboard
+        </a>
+        <a href="portadanivelesacademia.html" class="sidebar-link active flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold">
+            <span class="material-symbols-outlined text-[22px]">school</span> Academia
+        </a>
+        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
+            <span class="material-symbols-outlined text-[22px]">emoji_events</span> Logros
+        </a>
+        <a href="mercado.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
+            <span class="material-symbols-outlined text-[22px]">monitoring</span> Mercados
+        </a>
     </nav>
     <div class="p-6 border-t border-gray-700">
         <div class="flex items-center gap-3">
             <div class="w-12 h-12 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-extrabold text-primary text-sm">AT</div>
-            <div class="flex-1 min-w-0"><p class="text-sm font-bold truncate">Alex Trader</p><p class="text-[10px] text-primary font-bold uppercase tracking-wider">Pro Member</p></div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold truncate">Alex Trader</p>
+                <p class="text-[10px] text-primary font-bold uppercase tracking-wider">Pro Member</p>
+            </div>
             <a href="Login.html" class="text-gray-500 hover:text-red-400 transition"><span class="material-symbols-outlined text-[22px]">logout</span></a>
         </div>
     </div>
@@ -161,338 +375,445 @@
 <div id="menu-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleSideMenu()"></div>
 
 <!-- MAIN -->
-<main class="flex-1 overflow-y-auto">
+<main class="flex-1 overflow-y-auto relative z-10">
+    <div class="stars-bg absolute inset-0 pointer-events-none"></div>
 
-    <!-- World banner — Gold theme -->
-    <div class="relative overflow-hidden" style="background:linear-gradient(180deg, rgba(212,175,55,0.12) 0%, rgba(10,15,26,0) 100%); border-bottom:1px solid rgba(212,175,55,0.2);">
-        <!-- Decorative chart icons -->
-        <div class="chart-float" style="top:15px; left:5%; animation-delay:0s;">📈</div>
-        <div class="chart-float" style="top:10px; left:18%; animation-delay:1.2s; font-size:1rem;">📊</div>
-        <div class="chart-float" style="top:20px; right:8%; animation-delay:2s;">💹</div>
-        <div class="chart-float" style="top:8px; right:22%; animation-delay:0.5s; font-size:1rem;">🕯️</div>
-        <div class="chart-float" style="top:5px; left:50%; animation-delay:1.7s; font-size:0.9rem;">⚡</div>
+    <div class="p-6 md:p-10 pb-20 max-w-4xl mx-auto">
 
-        <div class="max-w-5xl mx-auto px-6 py-8">
-            <div class="flex items-center gap-3 mb-3">
-                <a href="portadanivelesacademia.html" class="flex items-center gap-1.5 text-gray-500 hover:text-primary transition text-sm font-semibold">
-                    <span class="material-symbols-outlined text-[18px]">arrow_back</span> Mundos
-                </a>
-                <span class="text-gray-700">/</span>
-                <span class="text-sm font-semibold" style="color:#D4AF37;">Mundo 02 — Intermedio</span>
+        <!-- Top bar -->
+        <div class="flex items-center justify-between mb-10">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSideMenu()" id="hamburger-btn-inline" class="w-11 h-11 rounded-lg bg-card border border-card-border flex items-center justify-center shadow-lg hover:border-primary transition-all duration-300 hover:bg-card/80 shrink-0">
+                    <div class="flex flex-col gap-1.5">
+                        <span class="w-5 h-0.5 bg-primary rounded-full transition-all duration-300 hamburger-line-1"></span>
+                        <span class="w-5 h-0.5 bg-primary rounded-full transition-all duration-300 hamburger-line-2"></span>
+                        <span class="w-5 h-0.5 bg-primary rounded-full transition-all duration-300 hamburger-line-3"></span>
+                    </div>
+                </button>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight">La Torre</h1>
+                    <p class="text-gray-500 text-sm mt-1">Escala la torre del conocimiento. Conquista cada piso.</p>
+                </div>
             </div>
-            <div class="flex items-center justify-between flex-wrap gap-4 title-in">
-                <div class="flex items-center gap-5">
-                    <div class="text-5xl float-anim">📈</div>
+            <!-- XP Player Bar -->
+            <div class="hidden sm:flex items-center gap-4">
+                <div class="flex items-center gap-3 bg-card border border-card-border px-4 py-2.5 rounded-2xl">
+                    <div class="coin-bounce text-xl">🪙</div>
                     <div>
-                        <p class="text-[10px] font-black tracking-[5px] uppercase" style="color:rgba(212,175,55,0.7);">MUNDO 02</p>
-                        <h1 class="text-3xl md:text-4xl font-black uppercase tracking-tight text-white">INTERMEDIO</h1>
-                        <p class="text-gray-400 text-sm">Análisis técnico avanzado & gestión de riesgo</p>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">XP Total</p>
+                        <p class="text-sm font-black text-primary">4,500 XP</p>
                     </div>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="text-center">
-                        <div class="text-2xl font-black" style="color:#D4AF37;">5/12</div>
-                        <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Completados</div>
+                    <div class="w-px h-8 bg-card-border mx-1"></div>
+                    <div>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Piso</p>
+                        <p class="text-sm font-black text-white">2 / 7</p>
                     </div>
-                    <div class="w-px h-10 bg-card-border"></div>
-                    <div class="text-center">
-                        <div class="flex gap-1">⭐⭐<span style="color:#374151">⭐</span></div>
-                        <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Estrellas</div>
-                    </div>
-                    <div class="w-px h-10 bg-card-border"></div>
-                    <div class="text-center">
-                        <div class="text-2xl font-black text-primary">1,000</div>
-                        <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">XP ganada</div>
-                    </div>
-                </div>
-            </div>
-            <!-- Progress bar -->
-            <div class="mt-4 h-3 w-full rounded-full overflow-hidden bg-gray-800">
-                <div class="h-full rounded-full" style="width:42%; background:linear-gradient(90deg, #b8860b, #D4AF37, #fbbf24);"></div>
-            </div>
-        </div>
-    </div>
-
-    <!-- LEVEL MAP -->
-    <div class="max-w-3xl mx-auto px-4 py-10 pb-20">
-        <p class="text-center text-[11px] font-black tracking-[5px] text-gray-600 uppercase mb-10">— MAPA DE NIVELES —</p>
-
-        <div class="relative flex flex-col items-center gap-0" id="level-map">
-
-            <!-- ROW 1 — Left to Right: Levels 1,2,3 -->
-            <div class="flex justify-start w-full">
-                <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8">
-
-                    <!-- Level 1 — completed -->
-                    <div class="level-node text-center" onclick="openModal(1,'Patrones de Velas','Doji, martillo, estrella fugaz. Domina los patrones de velas japonesas y lo que predicen.','completed',200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 1</div>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                    </div>
-
-                    <!-- Level 2 — completed -->
-                    <div class="level-node text-center" onclick="openModal(2,'Fibonacci Retracements','La herramienta mágica. Aprende a trazar niveles de Fibonacci y encontrar puntos de entrada.','completed',200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 2</div>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                    </div>
-
-                    <!-- Level 3 — completed -->
-                    <div class="level-node text-center" onclick="openModal(3,'RSI & MACD Avanzado','Divergencias, señales de sobrecompra/sobreventa. El análisis que separa novatos de pros.','completed',200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 3</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vertical down-right -->
-            <div class="self-end mr-16 md:mr-24 flex flex-col items-center gap-2 my-1">
-                <div class="w-2.5 h-2.5 rounded-full dot-completed"></div>
-                <div class="w-2.5 h-2.5 rounded-full dot-completed"></div>
-            </div>
-
-            <!-- ROW 2 — Right to Left: Levels 4,5,6 -->
-            <div class="flex justify-end w-full">
-                <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8 flex-row-reverse">
-
-                    <!-- Level 4 — completed -->
-                    <div class="level-node text-center" onclick="openModal(4,'Zonas de Oferta y Demanda','Supply & demand. Las zonas donde los grandes players mueven el mercado.','completed',200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 4</div>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-completed path-dot"></div>
-                    </div>
-
-                    <!-- Level 5 — completed -->
-                    <div class="level-node text-center" onclick="openModal(5,'Stop Loss Profesional','No es cuánto ganas, es cuánto no pierdes. Domina el arte del stop loss estratégico.','completed',200)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn completed">✓</div>
-                            <div class="star-row">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-400 uppercase tracking-wider">NIV 5</div>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-active path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-active path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-active path-dot"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-active path-dot"></div>
-                    </div>
-
-                    <!-- Level 6 BOSS — ACTIVE -->
-                    <div class="level-node text-center" onclick="openModal(6,'⚡ BOSS: Análisis Multi-Timeframe','El gran desafío: analiza un activo en 4 timeframes distintos y determina la dirección. ¡Es tu momento!','active',400)">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn active relative" style="width:84px; height:84px; font-size:1.75rem;">
-                                <span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:#D4AF37;color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">BOSS</span>
-                                ⚡
-                            </div>
-                            <div class="star-row text-gray-600">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-primary uppercase tracking-wider">NIV 6</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vertical down-left -->
-            <div class="self-start ml-16 md:ml-24 flex flex-col items-center gap-2 my-1">
-                <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-            </div>
-
-            <!-- ROW 3 — Left to Right: Levels 7,8,9 — LOCKED -->
-            <div class="flex justify-start w-full">
-                <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8">
-
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 7</div>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                    </div>
-
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 8</div>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                    </div>
-
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 9</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Vertical down-right -->
-            <div class="self-end mr-16 md:mr-24 flex flex-col items-center gap-2 my-1">
-                <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-            </div>
-
-            <!-- ROW 4 — Right to Left: Levels 10,11,12 — LOCKED -->
-            <div class="flex justify-end w-full">
-                <div class="flex items-center gap-0 relative w-full justify-between px-4 md:px-8 flex-row-reverse">
-
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 10</div>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                    </div>
-
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node"><span class="material-symbols-outlined text-gray-500 text-2xl">lock</span></div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 11</div>
-                        </div>
-                    </div>
-                    <div class="flex-1 flex items-center justify-center gap-3 px-3 flex-row-reverse" style="margin-bottom:24px;">
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                        <div class="w-2.5 h-2.5 rounded-full dot-locked"></div>
-                    </div>
-
-                    <!-- Final Boss — LOCKED -->
-                    <div class="level-node locked text-center">
-                        <div class="flex flex-col items-center gap-2">
-                            <div class="node-btn locked-node relative" style="width:84px; height:84px; font-size:1.75rem; opacity:0.5;">
-                                <span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:#374151;color:#6b7280;border-radius:999px;padding:2px 7px;font-weight:900;">FINAL</span>
-                                <span class="material-symbols-outlined text-gray-600 text-3xl">lock</span>
-                            </div>
-                            <div class="star-row text-gray-700">⭐⭐⭐</div>
-                            <div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">NIV 12</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Current quest indicator -->
-            <div class="w-full mt-10">
-                <div class="mx-4 rounded-2xl p-5 flex items-center gap-4" style="background:linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.05) 100%); border:1px solid rgba(212,175,55,0.3);">
-                    <div class="text-3xl float-anim">⚡</div>
-                    <div class="flex-1">
-                        <p class="text-[10px] font-black tracking-[4px] text-primary/70 uppercase mb-1">NIVEL ACTUAL</p>
-                        <p class="font-black text-white text-sm">Completa el Boss "Análisis Multi-Timeframe" para desbloquear los niveles 7-12.</p>
-                    </div>
-                    <button onclick="openModal(6,'⚡ BOSS: Análisis Multi-Timeframe','El gran desafío: analiza un activo en 4 timeframes distintos y determina la dirección.','active',400)" class="shrink-0 px-5 py-2.5 rounded-xl font-black uppercase tracking-wider text-xs transition hover:scale-105 whitespace-nowrap" style="background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;">
-                        ▶ JUGAR
-                    </button>
                 </div>
             </div>
         </div>
+
+        <!-- TITLE -->
+        <div class="text-center mb-14">
+            <p class="text-[11px] font-black tracking-[6px] text-primary/70 uppercase mb-4">— ACADEMY MODE —</p>
+            <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tight title-glow mb-4">
+                LA TORRE DEL <span style="color:#D4AF37;">CONOCIMIENTO</span>
+            </h2>
+            <p class="text-gray-400 text-base max-w-lg mx-auto">Asciende desde La Forja hasta La Cúspide. Cada piso es un universo de conocimiento que te acerca a la maestría total.</p>
+        </div>
+
+        <!-- ========== TOWER — CANDY CRUSH PATH ========== -->
+        <div class="tower-path mb-16" id="tower-container">
+
+            <!-- ===== PISO 1: GÉNESIS — COMPLETED ===== -->
+            <div class="floor-wrapper">
+                <div class="w-full">
+                    <div class="world-floor relative rounded-3xl overflow-hidden" onclick="enterWorld('niveles-novato.html','⚒️','GÉNESIS: LA FORJA','Bóveda subterránea de alta seguridad')">
+                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #1a1207 0%, #111827 50%, #1a1207 100%); border:2px solid rgba(212,175,55,0.5); box-shadow: 0 0 30px rgba(212,175,55,0.2);">
+                            <div class="completed-shimmer rounded-3xl"></div>
+                            <div class="floor-number" style="background:linear-gradient(135deg,#D4AF37,#b8860b); color:#0a0f1a;">1</div>
+                            <div class="flex items-center gap-4 md:gap-6">
+                                <div class="shrink-0">
+                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #D4AF37 0%, #b8860b 50%, #5a3e0a 100%); box-shadow: 0 0 30px rgba(212,175,55,0.4); border:3px solid rgba(212,175,55,0.6);">
+                                        <div class="orbit-ring" style="width:100px;height:100px;top:-10px;left:-10px;animation-duration:12s;border-color:rgba(212,175,55,0.2);"></div>
+                                        ⚒️
+                                    </div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <span class="badge-pop inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider mb-1" style="background:rgba(212,175,55,0.2); color:#D4AF37; border:1px solid rgba(212,175,55,0.4);">🏴 Conquistado</span>
+                                    <p class="text-[9px] font-black tracking-[4px] text-primary/60 uppercase">PISO 01</p>
+                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-white">GÉNESIS: LA FORJA</h3>
+                                    <p class="text-gray-400 text-[10px] mt-0.5 leading-relaxed hidden sm:block">Bóveda subterránea de alta seguridad, hornos de fundición de oro.</p>
+                                    <div class="flex items-center gap-3 mt-2">
+                                        <div class="h-1.5 flex-1 bg-gray-800 rounded-full overflow-hidden">
+                                            <div class="h-full rounded-full" style="width:100%; background:linear-gradient(90deg, #b8860b, #D4AF37);"></div>
+                                        </div>
+                                        <span class="text-[10px] font-black text-primary">12/12</span>
+                                        <span class="text-sm">⭐⭐⭐</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connector 1→2 -->
+            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M200 0 Q200 30, 400 30 Q400 60, 400 60" stroke="rgba(212,175,55,0.5)" stroke-width="3"/></svg></div>
+
+            <!-- ===== PISO 2: CARTOGRAFÍA — ACTIVE ===== -->
+            <div class="floor-wrapper">
+                <div class="w-full">
+                    <div class="world-floor floor-active relative rounded-3xl overflow-hidden" onclick="enterWorld('niveles-intermedio.html','🗺️','CARTOGRAFÍA: LABERINTO','Pantallas holográficas flotantes')">
+                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #0a1628 0%, #111827 50%, #0a1628 100%); border:2px solid rgba(59,130,246,0.6); box-shadow: 0 0 40px rgba(59,130,246,0.3), 0 0 80px rgba(59,130,246,0.1);">
+                            <div class="floor-number" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; box-shadow:0 0 20px rgba(59,130,246,0.5);">2</div>
+                            <div class="absolute inset-0 rounded-3xl" style="background:radial-gradient(circle at 50% 50%, rgba(59,130,246,0.1) 0%, transparent 70%);"></div>
+                            <div class="flex items-center gap-4 md:gap-6">
+                                <div class="shrink-0 relative">
+                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #60a5fa 0%, #3b82f6 50%, #1e3a5f 100%); box-shadow: 0 0 35px rgba(59,130,246,0.6); border:3px solid rgba(59,130,246,0.8); animation: beacon 2s ease-in-out infinite; color:rgba(59,130,246,1);">
+                                        <div class="orbit-ring" style="width:100px;height:100px;top:-10px;left:-10px;animation-duration:8s;border-color:rgba(59,130,246,0.3);"></div>
+                                        🗺️
+                                    </div>
+                                    <div class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-card border-2 border-blue-400 flex items-center justify-center text-sm shadow-lg" style="box-shadow:0 0 15px rgba(59,130,246,0.5);" title="AmigoTrade te espera">🤖</div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <span class="badge-pop inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider mb-1" style="background:rgba(59,130,246,0.2); color:#60a5fa; border:1px solid rgba(59,130,246,0.5);">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse inline-block"></span> Mundo Actual
+                                    </span>
+                                    <p class="text-[9px] font-black tracking-[4px] uppercase" style="color:rgba(59,130,246,0.6);">PISO 02</p>
+                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-white">CARTOGRAFÍA: LABERINTO</h3>
+                                    <p class="text-gray-400 text-[10px] mt-0.5 leading-relaxed hidden sm:block">Pantallas holográficas flotantes y mapas estelares de datos.</p>
+                                    <div class="flex items-center gap-3 mt-2">
+                                        <div class="h-1.5 flex-1 bg-gray-800 rounded-full overflow-hidden">
+                                            <div class="h-full rounded-full" style="width:42%; background:linear-gradient(90deg, #1d4ed8, #3b82f6, #60a5fa);"></div>
+                                        </div>
+                                        <span class="text-[10px] font-black" style="color:#60a5fa;">5/12</span>
+                                        <span class="text-sm">⭐⭐<span class="text-gray-600">⭐</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connector 2→3 -->
+            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M400 0 Q400 30, 200 30 Q200 60, 200 60" stroke="#1f2937" stroke-width="3"/></svg></div>
+
+            <!-- ===== PISO 3: ANATOMÍA — LOCKED ===== -->
+            <div class="floor-wrapper">
+                <div class="w-full">
+                    <div class="world-floor floor-locked relative rounded-3xl overflow-hidden" style="cursor:not-allowed;">
+                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #0d1117 0%, #111827 50%, #0d1117 100%); border:2px solid rgba(75,85,99,0.3);">
+                            <div class="floor-number" style="background:#1f2937; color:#6b7280; border:1px solid #374151;">3</div>
+                            <div class="locked-overlay rounded-3xl">
+                                <div class="chain-icon mb-1">⛓️</div>
+                                <p class="text-[10px] font-black uppercase tracking-[3px] text-gray-500">Bloqueado</p>
+                            </div>
+                            <div class="flex items-center gap-4 md:gap-6 opacity-30" style="filter:grayscale(1);">
+                                <div class="shrink-0">
+                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #22d3ee 0%, #06b6d4 50%, #0e4a5c 100%); border:3px solid rgba(6,182,212,0.4);">🔬</div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-[9px] font-black tracking-[4px] text-gray-600 uppercase">PISO 03</p>
+                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-gray-500">ANATOMÍA: INGENIERÍA</h3>
+                                    <p class="text-gray-600 text-[10px] mt-0.5 hidden sm:block">Laboratorio limpio de alta tecnología.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connector 3→4 -->
+            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M200 0 Q200 30, 400 30 Q400 60, 400 60" stroke="#1f2937" stroke-width="3"/></svg></div>
+
+            <!-- ===== PISO 4: SINCRONÍA — LOCKED ===== -->
+            <div class="floor-wrapper">
+                <div class="w-full">
+                    <div class="world-floor floor-locked relative rounded-3xl overflow-hidden" style="cursor:not-allowed;">
+                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #0d0d1f 0%, #111827 50%, #0d0d1f 100%); border:2px solid rgba(75,85,99,0.3);">
+                            <div class="floor-number" style="background:#1f2937; color:#6b7280; border:1px solid #374151;">4</div>
+                            <div class="locked-overlay rounded-3xl">
+                                <div class="chain-icon mb-1">🔒</div>
+                                <p class="text-[10px] font-black uppercase tracking-[3px] text-gray-500">Bloqueado</p>
+                            </div>
+                            <div class="flex items-center gap-4 md:gap-6 opacity-30" style="filter:grayscale(1);">
+                                <div class="shrink-0">
+                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #a78bfa 0%, #7c3aed 50%, #3b1578 100%); border:3px solid rgba(124,58,237,0.4);">🤖</div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-[9px] font-black tracking-[4px] text-gray-600 uppercase">PISO 04</p>
+                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-gray-500">SINCRONÍA: ORÁCULO IA</h3>
+                                    <p class="text-gray-600 text-[10px] mt-0.5 hidden sm:block">Núcleo de energía pulsante, estética Matrix/Tron.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connector 4→5 -->
+            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M400 0 Q400 30, 200 30 Q200 60, 200 60" stroke="#1f2937" stroke-width="3"/></svg></div>
+
+            <!-- ===== PISO 5: ESTRATEGIA — LOCKED ===== -->
+            <div class="floor-wrapper">
+                <div class="w-full">
+                    <div class="world-floor floor-locked relative rounded-3xl overflow-hidden" style="cursor:not-allowed;">
+                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #111a0d 0%, #111827 50%, #111a0d 100%); border:2px solid rgba(75,85,99,0.3);">
+                            <div class="floor-number" style="background:#1f2937; color:#6b7280; border:1px solid #374151;">5</div>
+                            <div class="locked-overlay rounded-3xl">
+                                <div class="chain-icon mb-1">⛓️</div>
+                                <p class="text-[10px] font-black uppercase tracking-[3px] text-gray-500">Bloqueado</p>
+                            </div>
+                            <div class="flex items-center gap-4 md:gap-6 opacity-30" style="filter:grayscale(1);">
+                                <div class="shrink-0">
+                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #34d399 0%, #059669 50%, #064e3b 100%); border:3px solid rgba(5,150,105,0.4);">♟️</div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-[9px] font-black tracking-[4px] text-gray-600 uppercase">PISO 05</p>
+                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-gray-500">ESTRATEGIA: TABLERO GLOBAL</h3>
+                                    <p class="text-gray-600 text-[10px] mt-0.5 hidden sm:block">Penthouse con mapamundi holográfico gigante.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connector 5→6 -->
+            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M200 0 Q200 30, 400 30 Q400 60, 400 60" stroke="#1f2937" stroke-width="3"/></svg></div>
+
+            <!-- ===== PISO 6: SOBERANÍA — LOCKED ===== -->
+            <div class="floor-wrapper">
+                <div class="w-full">
+                    <div class="world-floor floor-locked relative rounded-3xl overflow-hidden" style="cursor:not-allowed;">
+                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #0d0a14 0%, #111827 50%, #0d0a14 100%); border:2px solid rgba(75,85,99,0.3);">
+                            <div class="floor-number" style="background:#1f2937; color:#6b7280; border:1px solid #374151;">6</div>
+                            <div class="locked-overlay rounded-3xl">
+                                <div class="chain-icon mb-1">🔒</div>
+                                <p class="text-[10px] font-black uppercase tracking-[3px] text-gray-500">Bloqueado</p>
+                            </div>
+                            <div class="flex items-center gap-4 md:gap-6 opacity-30" style="filter:grayscale(1);">
+                                <div class="shrink-0">
+                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #c084fc 0%, #9333ea 50%, #581c87 100%); border:3px solid rgba(147,51,234,0.4);">🏛️</div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-[9px] font-black tracking-[4px] text-gray-600 uppercase">PISO 06</p>
+                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-gray-500">SOBERANÍA: INSTITUCIONAL</h3>
+                                    <p class="text-gray-600 text-[10px] mt-0.5 hidden sm:block">Club privado de banqueros, flujos de liquidez.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Connector 6→7 -->
+            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M400 0 Q400 30, 200 30 Q200 60, 200 60" stroke="#1f2937" stroke-width="3"/></svg></div>
+
+            <!-- ===== PISO 7: LEGADO — LOCKED (THE APEX) ===== -->
+            <div class="floor-wrapper">
+                <div class="w-full">
+                    <div class="world-floor floor-locked relative rounded-3xl overflow-hidden" style="cursor:not-allowed;">
+                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #1a1508 0%, #111827 50%, #1a1508 100%); border:2px solid rgba(75,85,99,0.3);">
+                            <div class="floor-number" style="background:#1f2937; color:#6b7280; border:1px solid #374151;">7</div>
+                            <div class="locked-overlay rounded-3xl">
+                                <div class="chain-icon mb-1">👑</div>
+                                <p class="text-[10px] font-black uppercase tracking-[3px] text-gray-500">La Cúspide</p>
+                            </div>
+                            <div class="flex items-center gap-4 md:gap-6 opacity-30" style="filter:grayscale(1);">
+                                <div class="shrink-0">
+                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #fbbf24 0%, #D4AF37 50%, #92400e 100%); border:3px solid rgba(212,175,55,0.4);">🏔️</div>
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-[9px] font-black tracking-[4px] text-gray-600 uppercase">PISO 07 — THE APEX</p>
+                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-gray-500">LEGADO: LA CÚSPIDE</h3>
+                                    <p class="text-gray-600 text-[10px] mt-0.5 hidden sm:block">Helipuerto privado con vista infinita. Todo dorado y brillante.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- STATS ROW -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+            <div class="bg-card border border-card-border rounded-2xl p-5 text-center">
+                <div class="text-3xl font-black text-primary mb-1">12</div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Niveles Completados</div>
+            </div>
+            <div class="bg-card border border-card-border rounded-2xl p-5 text-center">
+                <div class="text-3xl font-black text-white mb-1">4,500</div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500">XP Acumulada</div>
+            </div>
+            <div class="bg-card border border-card-border rounded-2xl p-5 text-center">
+                <div class="text-3xl font-black text-green-400 mb-1">7</div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Días en racha</div>
+            </div>
+            <div class="bg-card border border-card-border rounded-2xl p-5 text-center">
+                <div class="text-3xl font-black text-yellow-400 mb-1">1 / 7</div>
+                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Pisos Conquistados</div>
+            </div>
+        </div>
+
+        <!-- Daily Quest Banner -->
+        <div class="rounded-2xl p-6 flex items-center gap-5 mb-8" style="background:linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.05) 100%); border:1px solid rgba(212,175,55,0.25);">
+            <div class="text-4xl shrink-0">🎯</div>
+            <div class="flex-1">
+                <p class="text-[10px] font-black tracking-[4px] text-primary/70 uppercase mb-1">Quest diaria</p>
+                <p class="font-bold text-white text-sm">Completa 2 lecciones hoy para obtener <span class="text-primary font-black">+300 XP</span> y una recompensa especial.</p>
+            </div>
+            <div class="shrink-0">
+                <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 text-right">1/2 completadas</div>
+                <div class="w-32 h-2 bg-gray-800 rounded-full overflow-hidden">
+                    <div class="h-full rounded-full" style="width:50%; background:linear-gradient(90deg, #b8860b, #D4AF37);"></div>
+                </div>
+            </div>
+        </div>
+
     </div>
 </main>
-
-<!-- LEVEL MODAL -->
-<div id="level-modal" class="modal-overlay hidden" onclick="if(event.target===this)closeModal()">
-    <div class="modal-box">
-        <div class="flex items-center justify-between mb-5">
-            <span id="modal-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"></span>
-            <button onclick="closeModal()" class="text-gray-500 hover:text-white transition"><span class="material-symbols-outlined">close</span></button>
-        </div>
-        <div class="text-5xl text-center mb-4" id="modal-icon">📚</div>
-        <h3 class="text-xl font-black text-center uppercase tracking-tight mb-2" id="modal-title">Título</h3>
-        <p class="text-gray-400 text-sm text-center mb-5 leading-relaxed" id="modal-desc">Descripción</p>
-        <div class="flex justify-center gap-1 mb-5" id="modal-stars">⭐⭐⭐</div>
-        <div class="flex items-center justify-between mb-5 bg-card rounded-xl px-4 py-3" style="border:1px solid rgba(212,175,55,0.15);">
-            <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">XP a ganar</span>
-            <span class="font-black text-primary" id="modal-xp">+200 XP</span>
-        </div>
-        <button id="modal-cta" onclick="closeModal()" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;">
-            JUGAR NIVEL
-        </button>
-    </div>
-</div>
 
 <script>
 function toggleSideMenu() {
     const menu = document.getElementById('side-menu');
     const overlay = document.getElementById('menu-overlay');
+    const hamburger = document.getElementById('hamburger-btn-inline');
     if (menu.classList.contains('-translate-x-full')) {
         menu.classList.remove('-translate-x-full');
         overlay.classList.remove('opacity-0', 'pointer-events-none');
+        if (hamburger) hamburger.classList.add('hamburger-open');
     } else {
         menu.classList.add('-translate-x-full');
         overlay.classList.add('opacity-0', 'pointer-events-none');
+        if (hamburger) hamburger.classList.remove('hamburger-open');
     }
 }
 
-const icons = ['🕯️','📐','📡','📊','🛡️','⚡','📈','🔮','💼','🧠','📝','🏆'];
-function openModal(num, title, desc, status, xp) {
-    const badge = document.getElementById('modal-badge');
-    const cta = document.getElementById('modal-cta');
-    if (status === 'completed') {
-        badge.textContent = '✓ Completado';
-        badge.style.cssText = 'background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);';
-        document.getElementById('modal-stars').textContent = '⭐⭐⭐';
-        cta.style.cssText = 'background:linear-gradient(135deg,#16a34a,#4ade80);color:#0a0f1a;';
-        cta.textContent = 'REPASAR NIVEL';
-    } else {
-        badge.innerHTML = '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#D4AF37;animation:blink 1s ease-in-out infinite;margin-right:4px;"></span> En Progreso';
-        badge.style.cssText = 'background:rgba(212,175,55,0.2);color:#D4AF37;border:1px solid rgba(212,175,55,0.5);';
-        document.getElementById('modal-stars').textContent = '⭐⭐⭐ (por ganar)';
-        cta.style.cssText = 'background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;';
-        cta.textContent = '▶ JUGAR NIVEL';
-    }
-    document.getElementById('modal-title').textContent = 'Nivel ' + num + ': ' + title;
-    document.getElementById('modal-desc').textContent = desc;
-    document.getElementById('modal-xp').textContent = '+' + xp + ' XP';
-    document.getElementById('modal-icon').textContent = icons[num-1] || '📚';
-    document.getElementById('level-modal').classList.remove('hidden');
+// Sound effects using Web Audio API
+function playZoomSound() {
+    try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        // Whoosh
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(800, ctx.currentTime);
+        osc1.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.4);
+        gain1.gain.setValueAtTime(0.15, ctx.currentTime);
+        gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
+        osc1.connect(gain1).connect(ctx.destination);
+        osc1.start(); osc1.stop(ctx.currentTime + 0.5);
+
+        // Impact
+        setTimeout(() => {
+            const osc2 = ctx.createOscillator();
+            const gain2 = ctx.createGain();
+            osc2.type = 'square';
+            osc2.frequency.setValueAtTime(120, ctx.currentTime);
+            osc2.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.3);
+            gain2.gain.setValueAtTime(0.1, ctx.currentTime);
+            gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
+            osc2.connect(gain2).connect(ctx.destination);
+            osc2.start(); osc2.stop(ctx.currentTime + 0.3);
+        }, 200);
+
+        // Chime
+        setTimeout(() => {
+            const osc3 = ctx.createOscillator();
+            const gain3 = ctx.createGain();
+            osc3.type = 'sine';
+            osc3.frequency.setValueAtTime(1200, ctx.currentTime);
+            osc3.frequency.exponentialRampToValueAtTime(1600, ctx.currentTime + 0.3);
+            gain3.gain.setValueAtTime(0.08, ctx.currentTime);
+            gain3.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
+            osc3.connect(gain3).connect(ctx.destination);
+            osc3.start(); osc3.stop(ctx.currentTime + 0.4);
+        }, 400);
+    } catch(e) {}
 }
-function closeModal() { document.getElementById('level-modal').classList.add('hidden'); }
+
+// Explosion particles from center
+function spawnExplosion() {
+    const colors = ['#D4AF37','#fbbf24','#fff','#60a5fa','#a78bfa','#f97316'];
+    const cx = window.innerWidth / 2;
+    const cy = window.innerHeight / 2;
+    for (let i = 0; i < 40; i++) {
+        const p = document.createElement('div');
+        p.className = 'explosion-particle';
+        const size = Math.random() * 8 + 3;
+        const angle = (Math.PI * 2 / 40) * i + (Math.random() - 0.5) * 0.5;
+        const dist = Math.random() * 350 + 150;
+        const tx = Math.cos(angle) * dist;
+        const ty = Math.sin(angle) * dist;
+        const dur = Math.random() * 0.6 + 0.4;
+        p.style.cssText = `
+            left:${cx}px; top:${cy}px; width:${size}px; height:${size}px;
+            background:${colors[Math.floor(Math.random()*colors.length)]};
+            box-shadow: 0 0 ${size*2}px ${colors[Math.floor(Math.random()*colors.length)]};
+            animation: explode-particle ${dur}s cubic-bezier(0,.6,.6,1) forwards;
+        `;
+        // Custom trajectory via inline keyframes
+        p.animate([
+            { transform:'translate(0,0) scale(1)', opacity:1 },
+            { transform:`translate(${tx}px,${ty}px) scale(0)`, opacity:0 }
+        ], { duration: dur * 1000, easing:'cubic-bezier(0,.5,.5,1)', fill:'forwards' });
+        document.body.appendChild(p);
+        setTimeout(() => p.remove(), dur * 1000 + 100);
+    }
+}
+
+// ZOOM dramatic transition with explosion, flash & sound
+function enterWorld(url, icon, title, sub) {
+    const overlay = document.getElementById('zoom-overlay');
+    const flash = document.getElementById('zoom-flash');
+    const ring = document.getElementById('shockwave-ring');
+
+    // Sound
+    playZoomSound();
+
+    // Flash
+    flash.classList.add('active');
+    setTimeout(() => flash.classList.remove('active'), 300);
+
+    // Explosion particles
+    setTimeout(() => spawnExplosion(), 100);
+
+    // Shockwave ring
+    ring.style.animation = 'none';
+    ring.offsetHeight; // reflow
+    ring.style.animation = 'shockwave 0.8s ease-out forwards';
+
+    // Zoom overlay
+    document.getElementById('zoom-icon').textContent = icon;
+    document.getElementById('zoom-title').textContent = title;
+    document.getElementById('zoom-sub').textContent = sub;
+    setTimeout(() => overlay.classList.add('active'), 200);
+
+    setTimeout(function() {
+        window.location.href = url;
+    }, 1500);
+}
+
+// Generate floating particles
+(function() {
+    const container = document.getElementById('particles-container');
+    for (let i = 0; i < 15; i++) {
+        const p = document.createElement('div');
+        p.classList.add('particle');
+        p.style.left = Math.random() * 100 + '%';
+        p.style.top = Math.random() * 100 + '%';
+        p.style.width = (Math.random() * 3 + 1) + 'px';
+        p.style.height = p.style.width;
+        p.style.animationDuration = (Math.random() * 8 + 5) + 's';
+        p.style.animationDelay = (Math.random() * 5) + 's';
+        p.style.opacity = Math.random() * 0.5 + 0.2;
+        if (Math.random() > 0.7) p.style.background = '#fff';
+        container.appendChild(p);
+    }
+})();
 </script>
 </body>
 </html>
