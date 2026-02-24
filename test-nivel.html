@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>InvertProfit — Test de Nivel</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="auth.js"></script>
+    <script>
+        tailwind.config={darkMode:"class",theme:{extend:{colors:{"primary":"#D4AF37","bg-dark":"#0a0f1a","card":"#111827","card-border":"#1f2937"},fontFamily:{"sans":["Inter","sans-serif"],"mono":["Share Tech Mono","monospace"]}}}}
+    </script>
+    <style>
+        ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#374151;border-radius:2px}
+        body{background:#060c16;font-family:'Inter',sans-serif}
+
+        /* ══ PROGRESS BAR ══ */
+        .test-progress-track{height:6px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden}
+        .test-progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#D4AF37,#f0d060);box-shadow:0 0 10px rgba(212,175,55,0.4);transition:width 0.6s cubic-bezier(.4,0,.2,1)}
+
+        /* ══ SCREENS ══ */
+        .screen{animation:screen-in 0.5s ease-out}
+        @keyframes screen-in{from{opacity:0;transform:translateY(30px) scale(0.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+        @keyframes screen-out{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-30px)}}
+        .screen-exit{animation:screen-out 0.3s ease-in forwards}
+
+        /* ══ OPTION CARDS ══ */
+        .opt-card{
+            background:rgba(255,255,255,0.03);border:2px solid rgba(255,255,255,0.08);
+            border-radius:20px;padding:20px 24px;cursor:pointer;transition:all 0.3s;position:relative;overflow:hidden;
+        }
+        .opt-card:hover:not(.selected):not(.disabled){background:rgba(255,255,255,0.06);border-color:rgba(255,255,255,0.2);transform:translateY(-3px)}
+        .opt-card.selected{border-color:#D4AF37;background:rgba(212,175,55,0.08);transform:scale(1.02)}
+        .opt-card.correct{border-color:#22c55e!important;background:rgba(34,197,94,0.12)!important;animation:correct-pulse 0.6s ease}
+        .opt-card.incorrect{border-color:#ef4444!important;background:rgba(239,68,68,0.08)!important;animation:shake 0.5s ease}
+        .opt-card.disabled{cursor:default;opacity:0.5}.opt-card.correct.disabled{opacity:1}
+        @keyframes correct-pulse{0%{transform:scale(1)}30%{transform:scale(1.03)}60%{transform:scale(0.98)}100%{transform:scale(1)}}
+        @keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-4px)}80%{transform:translateX(4px)}}
+
+        /* ══ BUTTONS ══ */
+        .btn-gold{
+            background:linear-gradient(135deg,#D4AF37,#b8960b);color:#060c16;
+            font-weight:900;font-size:15px;letter-spacing:2px;text-transform:uppercase;
+            padding:16px 40px;border-radius:16px;border:none;cursor:pointer;
+            box-shadow:0 0 25px rgba(212,175,55,0.3),0 4px 15px rgba(0,0,0,0.3);
+            transition:all 0.3s;font-family:'Share Tech Mono',monospace;
+        }
+        .btn-gold:hover{box-shadow:0 0 40px rgba(212,175,55,0.5);transform:translateY(-2px)}
+        .btn-gold:active{transform:translateY(0)}
+        .btn-gold.green{background:linear-gradient(135deg,#22c55e,#16a34a);box-shadow:0 0 25px rgba(34,197,94,0.3)}
+        .btn-outline{
+            background:transparent;border:2px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.7);
+            font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;
+            padding:14px 30px;border-radius:16px;cursor:pointer;transition:all 0.3s;
+            font-family:'Share Tech Mono',monospace;
+        }
+        .btn-outline:hover{border-color:rgba(255,255,255,0.4);color:#fff;background:rgba(255,255,255,0.04)}
+
+        /* ══ EXPLANATION ══ */
+        .explain-box{animation:slide-up 0.4s ease-out;border-radius:16px;padding:14px 18px;margin-top:12px}
+        .explain-correct{background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.3);color:#86efac}
+        .explain-incorrect{background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:#fca5a5}
+        @keyframes slide-up{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+        /* ══ XP POPUP ══ */
+        .xp-fly{
+            position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);
+            font-size:2.5rem;font-weight:900;color:#D4AF37;
+            text-shadow:0 0 30px rgba(212,175,55,0.8);z-index:500;pointer-events:none;
+            animation:xp-anim 1.2s ease-out forwards;
+        }
+        @keyframes xp-anim{0%{opacity:0;transform:translate(-50%,-50%) scale(0.3)}20%{opacity:1;transform:translate(-50%,-60%) scale(1.2)}50%{transform:translate(-50%,-80%) scale(1)}100%{opacity:0;transform:translate(-50%,-120%) scale(0.7)}}
+
+        /* ══ RESULT CARD ══ */
+        .result-stat{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:16px;padding:20px;text-align:center}
+        .level-badge{
+            display:inline-flex;align-items:center;gap:8px;padding:12px 28px;border-radius:999px;
+            font-weight:900;font-size:1.1rem;text-transform:uppercase;letter-spacing:3px;
+            font-family:'Share Tech Mono',monospace;animation:badge-in 0.6s ease-out;
+        }
+        @keyframes badge-in{from{opacity:0;transform:scale(0.5)}to{opacity:1;transform:scale(1)}}
+        .level-basico{background:rgba(34,197,94,0.15);border:2px solid rgba(34,197,94,0.5);color:#22c55e}
+        .level-intermedio{background:rgba(59,130,246,0.15);border:2px solid rgba(59,130,246,0.5);color:#3b82f6}
+        .level-avanzado{background:rgba(212,175,55,0.15);border:2px solid rgba(212,175,55,0.5);color:#D4AF37}
+
+        /* ══ PARTICLES ══ */
+        .particle{position:fixed;width:3px;height:3px;border-radius:50%;background:rgba(212,175,55,0.15);pointer-events:none;animation:drift linear infinite}
+        @keyframes drift{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-20px) scale(1);opacity:0}}
+
+        /* ══ FLOATING EMOJI ══ */
+        .float-emoji{font-size:5rem;animation:float 3s ease-in-out infinite}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+
+        /* ══ CONFETTI ══ */
+        .confetti-container{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+        .confetti-piece{position:absolute;top:-20px;animation:confetti-fall linear forwards}
+        @keyframes confetti-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}70%{opacity:1}100%{transform:translateY(110vh) rotate(var(--rot));opacity:0}}
+        .golden-burst{position:fixed;top:50%;left:50%;width:0;height:0;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,0.6) 0%,rgba(212,175,55,0) 70%);transform:translate(-50%,-50%);z-index:9998;pointer-events:none;animation:burst-expand 0.8s ease-out forwards}
+        @keyframes burst-expand{0%{width:0;height:0;opacity:1}100%{width:800px;height:800px;opacity:0}}
+    </style>
+</head>
+<body class="min-h-screen text-white overflow-x-hidden flex flex-col">
+
+<!-- ══ HEADER ══ -->
+<header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-[60] shrink-0">
+    <div class="flex items-center justify-between px-4 md:px-8 py-3">
+        <div class="flex items-center gap-3">
+            <img src="images/logo_azul.png" alt="InvertProfit" class="h-10 w-auto object-contain shrink-0" style="filter:drop-shadow(0 0 10px rgba(212,175,55,0.4));" onerror="this.outerHTML='<span style=\'color:#D4AF37;font-weight:900;font-size:1.2rem;\'>IP</span>'">
+            <div>
+                <div class="text-sm font-black tracking-wider" style="color:#D4AF37;">INVERT<span class="text-white">PROFIT</span></div>
+                <div class="text-[9px] font-black tracking-[3px] text-gray-600 uppercase">Test de Nivel</div>
+            </div>
+        </div>
+        <div class="text-sm font-black" style="color:#D4AF37;" id="score-display">0 pts</div>
+    </div>
+    <!-- Progress -->
+    <div class="px-4 md:px-8 pb-3">
+        <div class="test-progress-track">
+            <div class="test-progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+    </div>
+</header>
+
+<!-- ══ MAIN ══ -->
+<main class="flex-1 flex flex-col items-center justify-center px-4 py-8 relative">
+    <div id="particles-bg"></div>
+    <div id="screen-container" class="w-full max-w-lg"></div>
+    <div class="w-full max-w-lg mt-6" id="bottom-bar" style="display:none">
+        <button class="btn-gold w-full" id="next-btn" onclick="nextScreen()">CONTINUAR</button>
+    </div>
+</main>
+
+<script>
+// ══ PARTICLES ══
+(function(){var bg=document.getElementById('particles-bg');for(var i=0;i<12;i++){var p=document.createElement('div');p.className='particle';p.style.left=Math.random()*100+'%';p.style.animationDuration=(8+Math.random()*12)+'s';p.style.animationDelay=Math.random()*10+'s';p.style.width=p.style.height=(2+Math.random()*3)+'px';bg.appendChild(p)}})();
+
+// ══ SOUND ══
+function playSound(type){
+    try{var ctx=new(window.AudioContext||window.webkitAudioContext)();
+    if(type==='correct'){[[523.25,0],[659.25,0.1],[783.99,0.2]].forEach(function(n){var o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=n[0];o.type='sine';g.gain.setValueAtTime(0,ctx.currentTime+n[1]);g.gain.linearRampToValueAtTime(0.2,ctx.currentTime+n[1]+0.04);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+n[1]+0.3);o.start(ctx.currentTime+n[1]);o.stop(ctx.currentTime+n[1]+0.3)})}
+    else if(type==='incorrect'){var o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=200;o.type='sawtooth';g.gain.setValueAtTime(0.15,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.4);o.start(ctx.currentTime);o.stop(ctx.currentTime+0.4)}
+    else if(type==='click'){var o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=800;o.type='sine';g.gain.setValueAtTime(0.1,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+0.08);o.start(ctx.currentTime);o.stop(ctx.currentTime+0.08)}
+    else if(type==='victory'){[523.25,659.25,783.99,1046.50].forEach(function(f,i){var o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(0,ctx.currentTime+i*0.15);g.gain.linearRampToValueAtTime(0.25,ctx.currentTime+i*0.15+0.05);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+i*0.15+0.6);o.start(ctx.currentTime+i*0.15);o.stop(ctx.currentTime+i*0.15+0.6)});setTimeout(function(){[1046.50,1318.51,1567.98].forEach(function(f){var o=ctx.createOscillator(),g=ctx.createGain();o.connect(g);g.connect(ctx.destination);o.frequency.value=f;o.type='triangle';g.gain.setValueAtTime(0.15,ctx.currentTime);g.gain.exponentialRampToValueAtTime(0.001,ctx.currentTime+1.2);o.start(ctx.currentTime);o.stop(ctx.currentTime+1.2)})},600)}
+    }catch(e){}
+}
+
+function showXP(amount){
+    score+=amount;document.getElementById('score-display').textContent=score+' pts';
+    var el=document.createElement('div');el.className='xp-fly';el.textContent='+'+amount;
+    document.body.appendChild(el);setTimeout(function(){el.remove()},1300);
+}
+
+// ══ SCREENS DATA ══
+var screens = [
+    // 0: Welcome
+    {type:'welcome'},
+    // 1-8: Quiz questions (mix of difficulties)
+    {type:'quiz',q:'¿Qué es un "pip" en Forex?',opts:['Un tipo de orden','La mínima variación del precio','Una comisión del broker','Un indicador técnico'],correct:1,explain:'Un pip es la mínima unidad de cambio en el precio de un par de divisas.',diff:1,pts:10},
+    {type:'quiz',q:'¿Qué significa "ir en largo" (long)?',opts:['Vender un activo','Comprar esperando que suba','Mantener por años','Operar con apalancamiento'],correct:1,explain:'Ir en largo = comprar un activo esperando que su precio suba.',diff:1,pts:10},
+    {type:'quiz',q:'¿Qué indicador mide la sobrecompra/sobreventa?',opts:['Media Móvil','Volumen','RSI','Fibonacci'],correct:2,explain:'El RSI (Relative Strength Index) mide condiciones de sobrecompra (>70) y sobreventa (<30).',diff:2,pts:20},
+    {type:'quiz',q:'¿Qué es un "order block" en Smart Money Concepts?',opts:['Una orden pendiente','Zona donde las instituciones colocaron órdenes masivas','Un bloqueo de la plataforma','Un tipo de stop loss'],correct:1,explain:'Un order block es una zona en el gráfico donde las instituciones acumularon o distribuyeron posiciones.',diff:2,pts:20},
+    {type:'quiz',q:'Si el DXY (índice dólar) sube fuertemente, ¿qué esperas del EUR/USD?',opts:['Que suba también','Que se mantenga igual','Que baje (correlación inversa)','No tienen relación'],correct:2,explain:'El EUR/USD tiene correlación inversa con el DXY. Si el dólar se fortalece, el EUR/USD baja.',diff:3,pts:30},
+    {type:'quiz',q:'En la metodología Wyckoff, ¿qué fase precede a un markup (subida)?',opts:['Distribución','Markdown','Acumulación','Re-acumulación'],correct:2,explain:'La fase de acumulación precede al markup. Es cuando las instituciones compran antes de que el precio suba.',diff:3,pts:30},
+    {type:'quiz',q:'¿Qué es un "Fair Value Gap" (FVG)?',opts:['Un gap de apertura del mercado','Un vacío de liquidez entre velas por movimiento agresivo','La diferencia entre bid y ask','El valor justo de una acción'],correct:1,explain:'Un FVG es un imbalance o vacío de liquidez creado por un movimiento agresivo del precio.',diff:3,pts:30},
+    {type:'quiz',q:'¿Cuál es el ratio riesgo/beneficio mínimo recomendado?',opts:['1:0.5','1:1','1:2 o mayor','No importa el ratio'],correct:2,explain:'Un ratio mínimo de 1:2 asegura que tus ganancias superen tus pérdidas a largo plazo.',diff:2,pts:20},
+    // 9: Result
+    {type:'result'}
+];
+
+var currentScreen = 0;
+var score = 0;
+var correctCount = 0;
+var totalQuestions = screens.filter(function(s){return s.type==='quiz'}).length;
+
+// ══ RENDER SCREEN ══
+function renderScreen(){
+    var container = document.getElementById('screen-container');
+    var bottomBar = document.getElementById('bottom-bar');
+    var nextBtn = document.getElementById('next-btn');
+    var s = screens[currentScreen];
+
+    // Progress
+    var pct = (currentScreen / (screens.length - 1)) * 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+
+    var old = container.querySelector('.screen');
+    if(old){old.classList.add('screen-exit');setTimeout(build,300);}else{build();}
+
+    function build(){
+        var h = '';
+
+        if(s.type === 'welcome'){
+            h = '<div class="screen text-center py-8">' +
+                '<div class="float-emoji mb-6">🎯</div>' +
+                '<h1 class="text-3xl md:text-4xl font-black uppercase tracking-tight mb-3">Test de Nivel</h1>' +
+                '<p class="text-gray-400 text-lg leading-relaxed max-w-md mx-auto mb-6">Responde estas preguntas para determinar tu nivel de trading y personalizar tu experiencia.</p>' +
+                '<div class="flex items-center justify-center gap-8 text-sm mb-4">' +
+                    '<div class="text-center"><div class="text-2xl mb-1">📊</div><span class="text-gray-500">8 Preguntas</span></div>' +
+                    '<div class="text-center"><div class="text-2xl mb-1">⏱️</div><span class="text-gray-500">~2 min</span></div>' +
+                    '<div class="text-center"><div class="text-2xl mb-1">🏆</div><span class="text-gray-500">3 Niveles</span></div>' +
+                '</div>' +
+                '<div class="grid grid-cols-3 gap-3 mt-6">' +
+                    '<div class="rounded-2xl p-4 text-center" style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2)"><div class="text-xs font-black uppercase tracking-wider" style="color:#22c55e">Básico</div><div class="text-[10px] text-gray-500 mt-1">Mundos 1-2</div></div>' +
+                    '<div class="rounded-2xl p-4 text-center" style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.2)"><div class="text-xs font-black uppercase tracking-wider" style="color:#3b82f6">Intermedio</div><div class="text-[10px] text-gray-500 mt-1">Mundos 3-5</div></div>' +
+                    '<div class="rounded-2xl p-4 text-center" style="background:rgba(212,175,55,0.08);border:1px solid rgba(212,175,55,0.2)"><div class="text-xs font-black uppercase tracking-wider" style="color:#D4AF37">Avanzado</div><div class="text-[10px] text-gray-500 mt-1">Mundos 6-7</div></div>' +
+                '</div>' +
+                '</div>';
+            bottomBar.style.display='block';
+            nextBtn.textContent='¡COMENZAR TEST!';
+            nextBtn.className='btn-gold w-full';
+
+        } else if(s.type === 'quiz'){
+            var diffLabel = s.diff===1?'BÁSICA':s.diff===2?'INTERMEDIA':'AVANZADA';
+            var diffColor = s.diff===1?'#22c55e':s.diff===2?'#3b82f6':'#D4AF37';
+            h = '<div class="screen">' +
+                '<div class="flex items-center justify-between mb-6">' +
+                    '<span class="text-xs font-black uppercase tracking-widest" style="color:'+diffColor+'">PREGUNTA '+diffLabel+'</span>' +
+                    '<span class="text-xs font-bold text-gray-600">'+s.pts+' pts</span>' +
+                '</div>' +
+                '<h2 class="text-xl md:text-2xl font-black mb-8 text-white leading-snug">'+s.q+'</h2>' +
+                '<div class="flex flex-col gap-3" id="quiz-opts">';
+            s.opts.forEach(function(opt,i){
+                h += '<div class="opt-card flex items-center gap-3" onclick="answerQuiz('+i+','+s.correct+','+s.pts+')" data-idx="'+i+'">' +
+                    '<div class="w-9 h-9 rounded-full flex items-center justify-center text-sm font-black flex-shrink-0" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.6)">'+String.fromCharCode(65+i)+'</div>' +
+                    '<span class="text-white font-semibold text-sm">'+opt+'</span>' +
+                '</div>';
+            });
+            h += '</div><div id="explain-area"></div></div>';
+            bottomBar.style.display='none';
+
+        } else if(s.type === 'result'){
+            var pctCorrect = Math.round((correctCount/totalQuestions)*100);
+            var level, levelClass, levelEmoji, levelDesc, startWorld;
+            if(score >= 120){
+                level='AVANZADO';levelClass='level-avanzado';levelEmoji='🏆';
+                levelDesc='Dominas los conceptos institucionales. Tienes acceso a los mundos avanzados.';
+                startWorld=6;
+            } else if(score >= 60){
+                level='INTERMEDIO';levelClass='level-intermedio';levelEmoji='⚡';
+                levelDesc='Tienes buena base técnica. Empieza por el análisis avanzado.';
+                startWorld=3;
+            } else {
+                level='BÁSICO';levelClass='level-basico';levelEmoji='🌱';
+                levelDesc='Perfecto punto de partida. Construiremos tu base desde cero.';
+                startWorld=1;
+            }
+
+            h = '<div class="screen text-center py-4">' +
+                '<div class="text-6xl mb-4">'+levelEmoji+'</div>' +
+                '<h2 class="text-3xl font-black uppercase tracking-wide mb-3 text-white">Tu Nivel</h2>' +
+                '<div class="level-badge '+levelClass+' mx-auto mb-4">'+level+'</div>' +
+                '<p class="text-gray-400 text-sm mb-8 max-w-sm mx-auto">'+levelDesc+'</p>' +
+                '<div class="grid grid-cols-3 gap-3 mb-8">' +
+                    '<div class="result-stat"><div class="text-[10px] text-gray-500 mb-2 font-mono uppercase tracking-wider">PUNTOS</div><div class="text-2xl font-black" style="color:#D4AF37">'+score+'</div></div>' +
+                    '<div class="result-stat"><div class="text-[10px] text-gray-500 mb-2 font-mono uppercase tracking-wider">ACIERTOS</div><div class="text-2xl font-black" style="color:#22c55e">'+correctCount+'/'+totalQuestions+'</div></div>' +
+                    '<div class="result-stat"><div class="text-[10px] text-gray-500 mb-2 font-mono uppercase tracking-wider">PRECISIÓN</div><div class="text-2xl font-black text-white">'+pctCorrect+'%</div></div>' +
+                '</div>' +
+                '<div class="flex flex-col gap-3">' +
+                    '<button class="btn-gold w-full" onclick="goToAcademy('+startWorld+')">ENTRAR A LA ACADEMIA '+levelEmoji+'</button>' +
+                    '<button class="btn-outline w-full" onclick="goToAcademy(1)">EMPEZAR DESDE EL INICIO</button>' +
+                '</div>' +
+                '</div>';
+            bottomBar.style.display='none';
+
+            // Save level
+            localStorage.setItem('ip_level_test_done','1');
+            localStorage.setItem('ip_user_level',level.toLowerCase());
+            localStorage.setItem('ip_start_world',startWorld.toString());
+
+            // Celebration
+            setTimeout(function(){playSound('victory');launchCelebration();},400);
+        }
+
+        container.innerHTML = h;
+        if(s.type==='welcome') playSound('click');
+    }
+}
+
+// ══ ANSWER ══
+function answerQuiz(selected,correct,pts){
+    var opts = document.querySelectorAll('.opt-card');
+    if(opts[0]&&opts[0].classList.contains('disabled')) return;
+
+    var s = screens[currentScreen];
+    var isCorrect = selected === correct;
+
+    opts.forEach(function(o){o.classList.add('disabled')});
+    opts[selected].classList.add('selected');
+
+    if(isCorrect){
+        opts[selected].classList.add('correct');
+        correctCount++;
+        playSound('correct');
+        showXP(pts);
+        document.getElementById('explain-area').innerHTML='<div class="explain-box explain-correct"><span class="font-black text-sm">✅ ¡Correcto!</span><p class="text-sm opacity-90 mt-1">'+s.explain+'</p></div>';
+    } else {
+        opts[selected].classList.add('incorrect');
+        opts[correct].classList.add('correct');opts[correct].classList.remove('disabled');
+        playSound('incorrect');
+        document.getElementById('explain-area').innerHTML='<div class="explain-box explain-incorrect"><span class="font-black text-sm">❌ Incorrecto</span><p class="text-sm opacity-90 mt-1">'+s.explain+'</p></div>';
+    }
+
+    setTimeout(function(){
+        document.getElementById('bottom-bar').style.display='block';
+        document.getElementById('next-btn').className='btn-gold w-full'+(isCorrect?' green':'');
+        document.getElementById('next-btn').textContent='CONTINUAR';
+    },800);
+}
+
+// ══ NEXT ══
+function nextScreen(){
+    playSound('click');
+    currentScreen++;
+    if(currentScreen<screens.length) renderScreen();
+}
+
+// ══ NAVIGATION ══
+function goToAcademy(world){
+    // Unlock levels up to start world if needed
+    if(world > 1){
+        // Mark earlier worlds' first levels as accessible by completing prior boss levels
+        var completed = JSON.parse(localStorage.getItem('ip_completed_levels')||'[]');
+        // We don't auto-complete levels, just save the recommended start
+        localStorage.setItem('ip_recommended_world',world.toString());
+    }
+    window.location.href = 'portadanivelesacademia.html';
+}
+
+// ══ CELEBRATION ══
+function launchCelebration(){
+    var burst=document.createElement('div');burst.className='golden-burst';document.body.appendChild(burst);setTimeout(function(){burst.remove()},900);
+    var c=document.createElement('div');c.className='confetti-container';document.body.appendChild(c);
+    var cols=['#D4AF37','#f0d060','#FFD700','#22c55e','#3b82f6','#a78bfa','#fb7185','#fbbf24'];
+    var shapes=['■','●','◆','★'];
+    for(var i=0;i<60;i++){(function(idx){setTimeout(function(){var p=document.createElement('div');p.className='confetti-piece';p.style.left=Math.random()*100+'%';p.style.setProperty('--rot',(Math.random()*1080-540)+'deg');p.style.animationDuration=(2+Math.random()*2)+'s';p.style.fontSize=(10+Math.random()*14)+'px';p.style.color=cols[Math.floor(Math.random()*cols.length)];p.textContent=shapes[Math.floor(Math.random()*shapes.length)];c.appendChild(p)},idx*15)})(i)}
+    setTimeout(function(){c.remove()},5000);
+}
+
+// ══ CHECK IF ALREADY DONE ══
+if(localStorage.getItem('ip_level_test_done')==='1'){
+    // Already classified, skip to academy
+    window.location.replace('portadanivelesacademia.html');
+} else {
+    renderScreen();
+}
+</script>
+</body>
+</html>
