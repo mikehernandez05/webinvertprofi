@@ -8,6 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="auth.js"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -21,15 +22,12 @@
                         "positive": "#22c55e",
                         "negative": "#ef4444"
                     },
-                    fontFamily: {
-                        "sans": ["Inter", "sans-serif"]
-                    }
+                    fontFamily: { "sans": ["Inter", "sans-serif"] }
                 }
             }
         }
     </script>
     <style>
-        /* Scrollbar */
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
@@ -37,61 +35,227 @@
 
         .logo-glow { filter: drop-shadow(0 0 10px rgba(212,175,55,0.3)); }
 
-        /* Card glow for active level */
+        .stars-bg {
+            background-image:
+                radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.6) 0%, transparent 100%),
+                radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 50% 10%, rgba(255,255,255,0.7) 0%, transparent 100%),
+                radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.5) 0%, transparent 100%),
+                radial-gradient(1px 1px at 85% 30%, rgba(255,255,255,0.4) 0%, transparent 100%),
+                radial-gradient(1px 1px at 20% 85%, rgba(255,255,255,0.3) 0%, transparent 100%),
+                radial-gradient(1px 1px at 60% 45%, rgba(212,175,55,0.3) 0%, transparent 100%),
+                radial-gradient(1px 1px at 90% 65%, rgba(255,255,255,0.5) 0%, transparent 100%),
+                radial-gradient(1px 1px at 40% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
+                radial-gradient(1.5px 1.5px at 75% 15%, rgba(212,175,55,0.4) 0%, transparent 100%);
+        }
+
+        @keyframes particle-float {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-120px) rotate(360deg); opacity: 0; }
+        }
+        .particle {
+            position: absolute; width: 4px; height: 4px;
+            background: #D4AF37; border-radius: 50%;
+            animation: particle-float linear infinite; pointer-events: none;
+        }
+
+        @keyframes shoot { 0%{transform:translateX(-200px) translateY(-200px) rotate(45deg); opacity:1; width:100px;} 100%{transform:translateX(400px) translateY(400px) rotate(45deg); opacity:0; width:0;} }
+        .shooting-star {
+            position: absolute; height: 1px;
+            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+            animation: shoot 3s linear infinite;
+        }
+
+        @keyframes title-glow { 0%,100%{text-shadow:0 0 20px rgba(212,175,55,0.5)} 50%{text-shadow:0 0 40px rgba(212,175,55,1), 0 0 80px rgba(212,175,55,0.5)} }
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+        @keyframes coin-rotate { 0%,100%{transform:rotateY(0deg)} 50%{transform:rotateY(15deg)} }
+        @keyframes pulse-glow-gold { 0%,100%{box-shadow: 0 0 20px rgba(212,175,55,0.3)} 50%{box-shadow: 0 0 50px rgba(212,175,55,0.6), 0 0 80px rgba(212,175,55,0.2)} }
+        @keyframes spin-slow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
+        @keyframes coin-bounce { 0%,100%{transform:scale(1) rotate(0deg)} 25%{transform:scale(1.1) rotate(-5deg)} 75%{transform:scale(1.1) rotate(5deg)} }
+        @keyframes beacon { 0%,100%{box-shadow:0 0 15px currentColor} 50%{box-shadow:0 0 40px currentColor, 0 0 70px currentColor} }
+
+        .title-glow { animation: title-glow 2.5s ease-in-out infinite; }
+        .float-anim { animation: float 4s ease-in-out infinite; }
+        .coin-anim { animation: coin-rotate 6s ease-in-out infinite; perspective: 600px; }
+        .coin-bounce { animation: coin-bounce 3s ease-in-out infinite; }
+
+        /* Card styles */
         .level-active {
             border: 2px solid rgba(59,130,246,0.5);
             box-shadow: 0 0 30px rgba(59,130,246,0.12), 0 0 60px rgba(59,130,246,0.06), inset 0 1px 0 rgba(59,130,246,0.1);
             background: linear-gradient(135deg, #111827 0%, #131d30 50%, #111827 100%);
         }
+        .badge-completed { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.25); }
+        .badge-progress { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+        .badge-locked { background: rgba(107,114,128,0.15); color: #6b7280; border: 1px solid rgba(107,114,128,0.2); }
 
-        /* Animations */
-        @keyframes coin-rotate { 0%,100%{transform:rotateY(0deg)} 50%{transform:rotateY(15deg)} }
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
-        .float-anim { animation: float 4s ease-in-out infinite; }
-        .coin-anim { animation: coin-rotate 6s ease-in-out infinite; perspective: 600px; }
-
-        /* Reward card hover */
         .reward-card { transition: all 0.3s ease; }
         .reward-card:hover { transform: translateY(-4px); border-color: rgba(212,175,55,0.3); }
 
-        /* Resume widget */
         .resume-widget {
             background: linear-gradient(135deg, #1a1f2e 0%, #111827 100%);
             border: 1px solid #1f2937;
             box-shadow: 0 -10px 40px rgba(0,0,0,0.4);
         }
 
-        /* Sidebar link */
         .sidebar-link { transition: all 0.2s ease; }
         .sidebar-link:hover { background: rgba(255,255,255,0.04); color: #fff; }
         .sidebar-link.active { background: rgba(212,175,55,0.15); color: #D4AF37; border: 1px solid rgba(212,175,55,0.2); }
 
-        /* Level card badges */
-        .badge-completed { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.25); }
-        .badge-progress { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
-        .badge-locked { background: rgba(107,114,128,0.15); color: #6b7280; border: 1px solid rgba(107,114,128,0.2); }
-
-        /* No-scrollbar for rewards */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Nav arrow hover */
         .nav-arrow { transition: all 0.2s; }
         .nav-arrow:hover { background: #D4AF37; color: #0a0f1a; border-color: #D4AF37; }
 
-        /* Hamburger animation */
         .hamburger-open .hamburger-line-1 { transform: rotate(45deg) translateY(8px); }
         .hamburger-open .hamburger-line-2 { opacity: 0; }
         .hamburger-open .hamburger-line-3 { transform: rotate(-45deg) translateY(-8px); }
+
+        @keyframes xp-fill { from{width:0} to{width:var(--xp-w)} }
+        .xp-bar { animation: xp-fill 1.5s ease-out 0.5s both; }
+
+        .hud-corner { position: relative; }
+        .hud-corner::before, .hud-corner::after {
+            content: ''; position: absolute; width: 12px; height: 12px; border-color: rgba(212,175,55,0.3); pointer-events: none;
+        }
+        .hud-corner::before { top: 0; left: 0; border-top: 2px solid; border-left: 2px solid; }
+        .hud-corner::after { bottom: 0; right: 0; border-bottom: 2px solid; border-right: 2px solid; }
+
+        /* ===== DRAMATIC ZOOM TRANSITION ===== */
+        .zoom-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            pointer-events: none; opacity: 0;
+        }
+        .zoom-overlay.active { pointer-events: all; opacity: 1; }
+
+        .zoom-flash {
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at var(--cx, 50%) var(--cy, 50%), var(--flash-color, rgba(212,175,55,0.8)) 0%, transparent 70%);
+            opacity: 0;
+        }
+        .zoom-flash.fire { animation: flash-burst 0.6s ease-out forwards; }
+        @keyframes flash-burst { 0%{opacity:0; transform:scale(0.5)} 30%{opacity:1; transform:scale(1)} 100%{opacity:0; transform:scale(2)} }
+
+        .zoom-shockwave {
+            position: absolute; border-radius: 50%;
+            border: 3px solid var(--shock-color, rgba(212,175,55,0.6));
+            width: 0; height: 0; opacity: 0;
+            top: var(--cy, 50%); left: var(--cx, 50%);
+            transform: translate(-50%, -50%);
+        }
+        .zoom-shockwave.fire { animation: shockwave-expand 0.8s ease-out forwards; }
+        @keyframes shockwave-expand { 0%{width:0;height:0;opacity:1} 100%{width:600px;height:600px;opacity:0} }
+
+        .zoom-vignette {
+            position: absolute; inset: 0;
+            background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.95) 100%);
+            opacity: 0;
+        }
+        .zoom-vignette.fire { animation: vignette-close 1.2s ease-in-out forwards; }
+        @keyframes vignette-close { 0%{opacity:0} 40%{opacity:1} 100%{opacity:1} }
+
+        .zoom-particles-container {
+            position: absolute; inset: 0; overflow: hidden;
+        }
+        .zoom-particle {
+            position: absolute; border-radius: 50%; pointer-events: none;
+        }
+
+        /* Level card interactivity */
+        .level-card-interactive {
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .level-card-interactive:hover {
+            transform: translateY(-8px) scale(1.03);
+        }
+        .level-card-interactive:active {
+            transform: scale(0.97);
+        }
+        .level-card-interactive.locked-card {
+            cursor: not-allowed;
+        }
+        .level-card-interactive.locked-card:hover {
+            transform: none;
+        }
+
+        /* Orb glow animations per level */
+        @keyframes orb-basico {
+            0%,100% { box-shadow: 0 8px 30px rgba(34,197,94,0.3), 0 0 60px rgba(34,197,94,0.1); }
+            50% { box-shadow: 0 8px 50px rgba(34,197,94,0.5), 0 0 100px rgba(34,197,94,0.2); }
+        }
+        @keyframes orb-intermedio {
+            0%,100% { box-shadow: 0 8px 30px rgba(59,130,246,0.3), 0 0 60px rgba(59,130,246,0.1); }
+            50% { box-shadow: 0 8px 50px rgba(59,130,246,0.5), 0 0 100px rgba(59,130,246,0.2); }
+        }
+        @keyframes orb-avanzado {
+            0%,100% { box-shadow: 0 8px 30px rgba(168,85,247,0.3), 0 0 60px rgba(168,85,247,0.1); }
+            50% { box-shadow: 0 8px 50px rgba(168,85,247,0.5), 0 0 100px rgba(168,85,247,0.2); }
+        }
+        .orb-basico-glow { animation: orb-basico 3s ease-in-out infinite; }
+        .orb-intermedio-glow { animation: orb-intermedio 3s ease-in-out infinite; }
+        .orb-avanzado-glow { animation: orb-avanzado 3s ease-in-out infinite; }
+
+        /* Entrance animations */
+        @keyframes card-entrance {
+            0% { opacity: 0; transform: translateY(60px) scale(0.8) rotateX(15deg); }
+            100% { opacity: 1; transform: translateY(0) scale(1) rotateX(0); }
+        }
+        .card-entrance { animation: card-entrance 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
+        .card-entrance-1 { animation-delay: 0.2s; }
+        .card-entrance-2 { animation-delay: 0.4s; }
+        .card-entrance-3 { animation-delay: 0.6s; }
+
+        @keyframes title-entrance {
+            0% { opacity: 0; transform: translateY(-30px); letter-spacing: 0.5em; }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .title-entrance { animation: title-entrance 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; animation-delay: 0.1s; }
+
+        /* Hover ring pulse */
+        .hover-ring {
+            position: absolute; inset: -4px; border-radius: 1.5rem;
+            border: 2px solid transparent; transition: border-color 0.3s;
+            pointer-events: none;
+        }
+        .level-card-interactive:hover .hover-ring {
+            border-color: var(--ring-color, rgba(212,175,55,0.4));
+            animation: ring-pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes ring-pulse {
+            0%,100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.02); }
+        }
     </style>
 </head>
 <body class="bg-bg-dark text-white font-sans min-h-screen flex flex-col overflow-x-hidden">
 
+<!-- ZOOM OVERLAY -->
+<div class="zoom-overlay" id="zoom-overlay">
+    <div class="zoom-flash" id="zoom-flash"></div>
+    <div class="zoom-shockwave" id="zoom-shockwave"></div>
+    <div class="zoom-vignette" id="zoom-vignette"></div>
+    <div class="zoom-particles-container" id="zoom-particles"></div>
+</div>
+
+<!-- PARTICLES -->
+<div id="particles-container" class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="shooting-star" style="top:15%; left:10%; animation-delay:0s;"></div>
+    <div class="shooting-star" style="top:40%; left:5%; animation-delay:1.5s;"></div>
+    <div class="shooting-star" style="top:70%; left:20%; animation-delay:3s;"></div>
+</div>
+
+<!-- HEADER -->
 <header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-[60] shrink-0">
     <div class="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
         <div class="flex items-center gap-2 md:gap-3">
             <img src="images/logo_azul.png" alt="InvertProfit" class="h-8 md:h-10 w-auto logo-glow object-contain" id="logo-img"/>
-            <span class="text-lg md:text-xl font-bold text-white" id="logo-text" style="display:none;">InvertProfit</span>
+            <span class="text-lg md:text-xl font-bold text-white" id="logo-text" style="display:none;">
+                <span style="color:#D4AF37;">INVERT</span>PROFIT
+            </span>
         </div>
         <script>
             document.getElementById('logo-img').onerror = function() {
@@ -100,259 +264,544 @@
             };
         </script>
         <nav class="hidden lg:flex items-center gap-10">
-            <a class="text-gray-400 hover:text-white transition text-lg" href="index.html">INICIO</a>
-            <a class="text-white font-semibold border-b-2 border-primary pb-1 text-lg" href="portadanivelesacademia.html">ACADEMIA</a>
-            <a class="text-gray-400 hover:text-white transition text-lg" href="mercado.html">MERCADOS</a>
-            <a class="text-gray-400 hover:text-white transition text-lg" href="#">PORTAFOLIO</a>
+            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="index.html">INICIO</a>
+            <a class="font-black border-b-2 border-primary pb-1 text-sm tracking-widest uppercase" style="color:#D4AF37;" href="dashboard.html">ACADEMIA</a>
+            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="mercado.html">MERCADOS</a>
+            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="#">PORTAFOLIO</a>
         </nav>
         <div class="flex items-center gap-2 md:gap-4">
-            <button class="shrink-0 bg-primary text-bg- font-bold h-10 px-6 rounded-full inline-flex items-center gap-2 whitespace-nowrap hover:bg-primary/90 transition text-xs sm:text-sm tracking-wide leading-none">
+            <button class="shrink-0 bg-primary text-bg-dark font-bold h-10 px-6 rounded-full inline-flex items-center gap-2 whitespace-nowrap hover:bg-primary/90 transition text-xs sm:text-sm tracking-wide leading-none">
                 <span class="leading-none">⚡</span>
-                <span class="leading-none">CONECTAR BROKER</span>
+                <span class="leading-none" style="color:#0a0f1a;">CONECTAR BROKER</span>
             </button>
             <div class="hidden md:flex items-center gap-3">
-                <span class="text-gray-400 text-xl">🔔</span>
-                <div class="w-10 h-10 bg-gray-600 rounded-full"></div>
+                <button class="w-9 h-9 rounded-full bg-card border border-card-border flex items-center justify-center text-gray-400 hover:text-primary transition relative">
+                    <span class="material-symbols-outlined text-[20px]">notifications</span>
+                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-bg-dark"></span>
+                </button>
+                <div class="w-9 h-9 bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 rounded-full flex items-center justify-center text-xs font-black text-primary">AT</div>
             </div>
             <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="lg:hidden text-gray-400 hover:text-white p-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
             </button>
         </div>
     </div>
     <nav id="mobile-menu" class="hidden lg:hidden border-t border-card-border bg-card px-4 py-3 space-y-2">
-        <a class="block text-gray-400 hover:text-white py-2 pl-3" href="index.html">INICIO</a>
-        <a class="block text-white font-semibold py-2 border-l-2 border-primary pl-3" href="portadanivelesacademia.html">ACADEMIA</a>
-        <a class="block text-gray-400 hover:text-white py-2 pl-3" href="mercado.html">MERCADOS</a>
-        <a class="block text-gray-400 hover:text-white py-2 pl-3" href="#">PORTAFOLIO</a>
-        <div class="flex items-center gap-3 pt-2 border-t border-card-border mt-2">
-            <span class="text-gray-400 text-xl">🔔</span>
-            <div class="w-8 h-8 bg-gray-600 rounded-full"></div>
-        </div>
+        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="index.html">INICIO</a>
+        <a class="block font-bold py-2 border-l-2 border-primary pl-3 text-sm" style="color:#D4AF37;" href="dashboard.html">ACADEMIA</a>
+        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="mercado.html">MERCADOS</a>
+        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="#">PORTAFOLIO</a>
     </nav>
 </header>
 
-<div class="flex flex-1 overflow-hidden">
-
-    <aside id="side-menu" class="fixed top-0 left-0 h-full w-80 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 border-r border-gray-700 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out z-[65] flex flex-col">
-        <nav class="flex-1 p-6 space-y-2 pt-24">
-            
-            <div class="mb-8 px-3">
-                <p class="text-[10px] font-black text-primary/80 uppercase tracking-[4px] leading-none mb-2">Menú</p>
-                <div class="h-[2px] w-10 bg-gradient-to-r from-primary/60 to-transparent rounded-full"></div>
-            </div>
-
-            <a href="#" class="sidebar-link active flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold">
-                <span class="material-symbols-outlined text-[22px]">grid_view</span> Dashboard
-            </a>
-            <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
-                <span class="material-symbols-outlined text-[22px]">school</span> Courses
-            </a>
-            <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
-                <span class="material-symbols-outlined text-[22px]">emoji_events</span> Achievements
-            </a>
-            <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
-                <span class="material-symbols-outlined text-[22px]">monitoring</span> Analysis
-            </a>
-            <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
-                <span class="material-symbols-outlined text-[22px]">forum</span> Community
-            </a>
-        </nav>
-        <div class="p-6 border-t border-gray-700">
-            <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-extrabold text-primary text-sm">AT</div>
-                <div class="flex-1 min-w-0">
-                    <p class="text-sm font-bold truncate">Alex Trader</p>
-                    <p class="text-[10px] text-primary font-bold uppercase tracking-wider">Pro Member</p>
-                </div>
-                <a href="Login.html" class="text-gray-500 hover:text-red-400 transition" title="Cerrar Sesión">
-                    <span class="material-symbols-outlined text-[22px]">logout</span>
-                </a>
-            </div>
+<!-- SIDEBAR -->
+<aside id="side-menu" class="fixed top-0 left-0 h-full w-80 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 border-r border-gray-700 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out z-[65] flex flex-col">
+    <nav class="flex-1 p-6 space-y-2 pt-24">
+        <div class="mb-8 px-3">
+            <p class="text-[10px] font-black text-primary/80 uppercase tracking-[4px] leading-none mb-2">Menú</p>
+            <div class="h-[2px] w-10 bg-gradient-to-r from-primary/60 to-transparent rounded-full"></div>
         </div>
-    </aside>
-
-    <div id="menu-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleSideMenu()"></div>
-
-    <main class="flex-1 overflow-y-auto relative">
-        <div class="p-6 md:p-10 pb-32">
-
-            <div class="flex items-start justify-between mb-10">
-                <div class="flex items-center gap-4">
-                    <button onclick="toggleSideMenu()" id="hamburger-btn-inline" class="w-11 h-11 rounded-lg bg-card border border-card-border flex items-center justify-center shadow-lg hover:border-primary transition-all duration-300 hover:bg-card/80 shrink-0">
-                        <div class="flex flex-col gap-1.5">
-                            <span class="w-5 h-0.5 bg-primary rounded-full transition-all duration-300 hamburger-line-1"></span>
-                            <span class="w-5 h-0.5 bg-primary rounded-full transition-all duration-300 hamburger-line-2"></span>
-                            <span class="w-5 h-0.5 bg-primary rounded-full transition-all duration-300 hamburger-line-3"></span>
-                        </div>
-                    </button>
-                    <div>
-                        <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight">Academy Dashboard</h1>
-                        <p class="text-gray-500 text-sm mt-1">Welcome back! Continue your journey to financial freedom.</p>
-                    </div>
-                </div>
-                <div class="hidden sm:flex items-center gap-3">
-                    <div class="flex items-center gap-2 bg-card border border-card-border px-4 py-2 rounded-full">
-                        <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-                        <span class="text-[11px] font-bold uppercase tracking-wider">Live Market</span>
-                    </div>
-                    <button class="w-10 h-10 rounded-full bg-card border border-card-border flex items-center justify-center text-gray-400 hover:text-white transition">
-                        <span class="material-symbols-outlined text-[20px]">notifications</span>
-                    </button>
-                </div>
+        <a href="dashboard.html" class="sidebar-link active flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold">
+            <span class="material-symbols-outlined text-[22px]">grid_view</span> Dashboard
+        </a>
+        <a href="portadanivelesacademia.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
+            <span class="material-symbols-outlined text-[22px]">school</span> Academia
+        </a>
+        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
+            <span class="material-symbols-outlined text-[22px]">emoji_events</span> Logros
+        </a>
+        <a href="mercado.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
+            <span class="material-symbols-outlined text-[22px]">monitoring</span> Mercados
+        </a>
+    </nav>
+    <div class="p-6 border-t border-gray-700">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-extrabold text-primary text-sm">AT</div>
+            <div class="flex-1 min-w-0">
+                <p class="text-sm font-bold truncate">Alex Trader</p>
+                <p class="text-[10px] text-primary font-bold uppercase tracking-wider">Pro Member</p>
             </div>
-
-            <div class="flex items-center justify-between mb-8">
-                <h2 class="text-lg font-black uppercase tracking-tight flex items-center gap-3">
-                    <span class="w-1 h-7 bg-primary rounded-full"></span>
-                    Select Your Level
-                </h2>
-                <div class="flex items-center gap-2">
-                    <button onclick="scrollLevels(-1)" class="nav-arrow w-10 h-10 rounded-full border border-card-border bg-card flex items-center justify-center text-gray-400">
-                        <span class="material-symbols-outlined text-[18px]">chevron_left</span>
-                    </button>
-                    <button onclick="scrollLevels(1)" class="nav-arrow w-10 h-10 rounded-full border-2 border-primary bg-primary text-bg-dark flex items-center justify-center font-bold">
-                        <span class="material-symbols-outlined text-[18px]">chevron_right</span>
-                    </button>
-                </div>
-            </div>
-
-            <div id="levels-scroll" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-14">
-
-                <div class="bg-card border border-card-border rounded-3xl p-6 relative group hover:border-green-500/20 transition-all duration-300">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="badge-completed text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">Completed</span>
-                        <span class="text-green-500 text-lg">✓</span>
-                    </div>
-                    <div class="py-8 flex justify-center">
-                        <div class="coin-anim w-28 h-28 rounded-full flex items-center justify-center" style="background: radial-gradient(circle at 35% 35%, #f5d060 0%, #c9952b 40%, #8a6914 80%, #6b5311 100%); box-shadow: 0 8px 30px rgba(212,175,55,0.3), inset 0 2px 4px rgba(255,255,255,0.3);">
-                            <span class="text-5xl font-black text-white/90" style="text-shadow: 0 2px 4px rgba(0,0,0,0.3);">$</span>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-black text-center uppercase tracking-tight text-gray-300 mb-1">Básico</h3>
-                    <p class="text-center text-xs text-gray-500 mb-6">Foundations of trading &amp; market analysis.</p>
-                    <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
-                        <span class="text-gray-500">Progress</span>
-                        <span class="text-green-500">100%</span>
-                    </div>
-                    <div class="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
-                        <div class="h-full bg-green-500 rounded-full w-full"></div>
-                    </div>
-                </div>
-
-                <div class="level-active rounded-3xl p-6 relative group transition-all duration-300">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="badge-progress text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span> In Progress
-                        </span>
-                        <span class="text-blue-400 text-lg">⚡</span>
-                    </div>
-                    <div class="py-8 flex justify-center">
-                        <div class="float-anim w-28 h-28 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #1e3a5f 0%, #0f2744 50%, #1a365d 100%); box-shadow: 0 8px 30px rgba(59,130,246,0.2), inset 0 1px 0 rgba(255,255,255,0.1);">
-                            <svg viewBox="0 0 60 60" width="56" height="56">
-                                <defs><linearGradient id="cg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#60a5fa"/><stop offset="100%" style="stop-color:#3b82f6"/></linearGradient></defs>
-                                <polygon points="30,8 52,20 52,40 30,52 8,40 8,20" fill="none" stroke="url(#cg)" stroke-width="1.5" opacity="0.6"/>
-                                <polygon points="30,8 52,20 30,32 8,20" fill="rgba(59,130,246,0.15)" stroke="url(#cg)" stroke-width="1"/>
-                                <polygon points="30,32 52,20 52,40 30,52" fill="rgba(59,130,246,0.1)" stroke="url(#cg)" stroke-width="1"/>
-                                <polygon points="30,32 8,20 8,40 30,52" fill="rgba(59,130,246,0.2)" stroke="url(#cg)" stroke-width="1"/>
-                            </svg>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-black text-center uppercase tracking-tight text-white mb-1">Intermedio</h3>
-                    <p class="text-center text-xs text-gray-400 mb-6">Technical analysis &amp; risk management strategies.</p>
-                    <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
-                        <span class="text-gray-500">Progress</span>
-                        <span class="text-blue-400">45%</span>
-                    </div>
-                    <div class="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
-                        <div class="h-full bg-blue-500 rounded-full" style="width:45%"></div>
-                    </div>
-                </div>
-
-                <div class="bg-card border border-card-border rounded-3xl p-6 relative opacity-50 grayscale-[60%]">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="badge-locked text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[12px]">lock</span> Locked
-                        </span>
-                    </div>
-                    <div class="py-8 flex justify-center">
-                        <div class="w-28 h-28 rounded-full flex items-center justify-center relative" style="background: radial-gradient(circle at 40% 30%, #4b5563 0%, #1f2937 60%, #111827 100%);">
-                            <span class="material-symbols-outlined text-gray-500 text-2xl">lock</span>
-                        </div>
-                    </div>
-                    <h3 class="text-2xl font-black text-center uppercase tracking-tight text-gray-500 mb-1">Avanzado</h3>
-                    <p class="text-center text-xs text-gray-600 mb-4">Institutional strategies &amp; psychology.</p>
-                </div>
-            </div>
-
-            <div class="mb-14 flex justify-center">
-                <a href="portadanivelesacademia.html" class="group relative inline-flex items-center gap-3 bg-gradient-to-r from-amber-600 to-yellow-500 hover:from-amber-500 hover:to-yellow-400 px-8 py-4 rounded-2xl font-bold text-base transition-all duration-300 hover:shadow-2xl hover:shadow-primary/30 hover:scale-105">
-                    <span class="text-2xl">📚</span>
-                    <span class="text-bg-dark">Ver todas las lecciones</span>
-                    <span class="material-symbols-outlined text-bg-dark group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                </a>
-            </div>
-
-            <div class="flex items-center justify-between mb-6">
-                <h2 class="text-lg font-black uppercase tracking-tight flex items-center gap-3">
-                    <span class="w-1 h-7 bg-primary rounded-full"></span>
-                    Rewards &amp; Milestones
-                </h2>
-                <a href="#" class="text-primary text-sm font-bold hover:underline transition">View All Rewards</a>
-            </div>
-
-            <div class="flex gap-5 overflow-x-auto no-scrollbar pb-4">
-                <div class="reward-card bg-card border border-card-border rounded-2xl p-5 min-w-[200px] flex-shrink-0">
-                    <div class="h-28 flex items-center justify-center mb-4">
-                        <div class="w-20 h-20 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #92702d 0%, #d4af37 50%, #92702d 100%);">
-                            <span class="text-4xl">🏆</span>
-                        </div>
-                    </div>
-                    <h4 class="font-black text-center text-sm mb-1">First Victory</h4>
-                </div>
-                <div class="reward-card bg-card border border-card-border rounded-2xl p-5 min-w-[200px] flex-shrink-0">
-                    <div class="h-28 flex items-center justify-center mb-4">
-                        <div class="w-20 h-20 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #7c3aed 100%);">
-                            <span class="text-4xl">💎</span>
-                        </div>
-                    </div>
-                    <h4 class="font-black text-center text-sm mb-1">Risk Master</h4>
-                </div>
-            </div>
+            <a href="Login.html" class="text-gray-500 hover:text-red-400 transition" title="Cerrar Sesión">
+                <span class="material-symbols-outlined text-[22px]">logout</span>
+            </a>
         </div>
+    </div>
+</aside>
+<div id="menu-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleSideMenu()"></div>
 
-        <div class="resume-widget fixed bottom-6 right-6 w-[380px] max-w-[calc(100vw-3rem)] rounded-2xl p-4 z-50 hidden sm:block" id="resume-widget">
-            <div class="flex items-start gap-3">
-                <div class="w-12 h-12 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center shrink-0">
-                    <span class="material-symbols-outlined text-white text-2xl">play_arrow</span>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <h4 class="text-sm font-bold text-white mb-0.5 truncate">Candle Patterns 101</h4>
-                    <div class="flex items-center gap-2">
-                        <div class="flex-1 h-1.5 bg-gray-700 rounded-full overflow-hidden">
-                            <div class="h-full bg-orange-400 rounded-full" style="width:75%"></div>
-                        </div>
+<!-- MAIN -->
+<main class="flex-1 overflow-y-auto relative z-10">
+    <div class="stars-bg absolute inset-0 pointer-events-none"></div>
+
+    <div class="p-6 md:p-10 pb-32 max-w-5xl mx-auto relative">
+
+        <!-- Top bar -->
+        <div class="flex items-center justify-between mb-10">
+            <div class="flex items-center gap-4">
+                <button onclick="toggleSideMenu()" id="hamburger-btn-inline" class="w-11 h-11 rounded-lg bg-card border border-card-border flex items-center justify-center shadow-lg hover:border-primary transition-all duration-300 hover:bg-card/80 shrink-0">
+                    <div class="flex flex-col gap-1.5">
+                        <span class="w-5 h-0.5 bg-primary rounded-full transition-all duration-300 hamburger-line-1"></span>
+                        <span class="w-5 h-0.5 bg-primary rounded-full transition-all duration-300 hamburger-line-2"></span>
+                        <span class="w-5 h-0.5 bg-primary rounded-full transition-all duration-300 hamburger-line-3"></span>
                     </div>
-                </div>
-                <button onclick="document.getElementById('resume-widget').style.display='none'" class="text-gray-500 hover:text-white">
-                    <span class="material-symbols-outlined text-[16px]">close</span>
                 </button>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight title-glow">Panel de Control</h1>
+                    <p class="text-gray-500 text-sm mt-1">Bienvenido de nuevo. Continúa tu camino hacia la libertad financiera.</p>
+                </div>
+            </div>
+            <div class="hidden sm:flex items-center gap-4">
+                <div class="flex items-center gap-3 bg-card border border-card-border px-4 py-2.5 rounded-2xl hud-corner">
+                    <div class="coin-bounce text-xl">🪙</div>
+                    <div>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">XP Total</p>
+                        <p class="text-sm font-black text-primary">0 XP</p>
+                    </div>
+                    <div class="w-px h-8 bg-card-border mx-1"></div>
+                    <div>
+                        <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Nivel</p>
+                        <p class="text-sm font-black text-white" id="xp-level">—</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-    </main>
-</div>
+        <!-- TITLE -->
+        <div class="text-center mb-12 title-entrance">
+            <p class="text-[11px] font-black tracking-[6px] text-primary/70 uppercase mb-4">— VOID ACADEMY —</p>
+            <h2 class="text-3xl md:text-5xl font-black uppercase tracking-tight title-glow mb-4">
+                SELECCIONA TU <span style="color:#D4AF37;">NIVEL</span>
+            </h2>
+            <p class="text-gray-400 text-sm max-w-md mx-auto">Tu nivel fue asignado según tu desempeño en el test inicial. Domina cada fase para desbloquear la siguiente.</p>
+        </div>
+
+        <!-- LEVEL CARDS -->
+        <div id="levels-scroll" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
+
+            <!-- BÁSICO -->
+            <div class="bg-card border border-card-border rounded-3xl p-6 relative group hover:border-green-500/20 transition-all duration-300 hud-corner level-card-interactive card-entrance card-entrance-1"
+                 id="card-basico" data-level="basico" data-href="niveles-novato.html" data-color-r="34" data-color-g="197" data-color-b="94"
+                 onmouseenter="SFX.hover('basico')" onclick="handleCardClick(this)">
+                <div class="hover-ring" style="--ring-color: rgba(34,197,94,0.4);"></div>
+                <div class="flex items-center justify-between mb-2">
+                    <span class="badge-completed text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">Completado</span>
+                    <span class="text-green-500 text-lg">✓</span>
+                </div>
+                <div class="py-8 flex justify-center">
+                    <div class="coin-anim orb-basico-glow w-28 h-28 rounded-full flex items-center justify-center" style="background: radial-gradient(circle at 35% 35%, #f5d060 0%, #c9952b 40%, #8a6914 80%, #6b5311 100%); box-shadow: 0 8px 30px rgba(212,175,55,0.3), inset 0 2px 4px rgba(255,255,255,0.3);">
+                        <span class="text-5xl font-black text-white/90" style="text-shadow: 0 2px 4px rgba(0,0,0,0.3);">$</span>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-black text-center uppercase tracking-tight text-gray-300 mb-1">Básico</h3>
+                <p class="text-center text-xs text-gray-500 mb-6">Fundamentos del trading y análisis de mercado.</p>
+                <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
+                    <span class="text-gray-500">Progreso</span>
+                    <span class="text-green-500">100%</span>
+                </div>
+                <div class="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
+                    <div class="h-full bg-green-500 rounded-full w-full"></div>
+                </div>
+                <div class="mt-4 block text-center text-xs font-bold text-primary hover:underline uppercase tracking-wider">Repasar →</div>
+            </div>
+
+            <!-- INTERMEDIO -->
+            <div class="level-active rounded-3xl p-6 relative group transition-all duration-300 hud-corner level-card-interactive card-entrance card-entrance-2"
+                 id="card-intermedio" data-level="intermedio" data-href="niveles-intermedio.html" data-color-r="59" data-color-g="130" data-color-b="246"
+                 onmouseenter="SFX.hover('intermedio')" onclick="handleCardClick(this)">
+                <div class="hover-ring" style="--ring-color: rgba(59,130,246,0.4);"></div>
+                <div class="flex items-center justify-between mb-2">
+                    <span class="badge-progress text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1">
+                        <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span> En Progreso
+                    </span>
+                    <span class="text-blue-400 text-lg">⚡</span>
+                </div>
+                <div class="py-8 flex justify-center">
+                    <div class="float-anim orb-intermedio-glow w-28 h-28 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #1e3a5f 0%, #0f2744 50%, #1a365d 100%); box-shadow: 0 8px 30px rgba(59,130,246,0.2), inset 0 1px 0 rgba(255,255,255,0.1);">
+                        <svg viewBox="0 0 60 60" width="56" height="56">
+                            <defs><linearGradient id="cg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#60a5fa"/><stop offset="100%" style="stop-color:#3b82f6"/></linearGradient></defs>
+                            <polygon points="30,8 52,20 52,40 30,52 8,40 8,20" fill="none" stroke="url(#cg)" stroke-width="1.5" opacity="0.6"/>
+                            <polygon points="30,8 52,20 30,32 8,20" fill="rgba(59,130,246,0.15)" stroke="url(#cg)" stroke-width="1"/>
+                            <polygon points="30,32 52,20 52,40 30,52" fill="rgba(59,130,246,0.1)" stroke="url(#cg)" stroke-width="1"/>
+                            <polygon points="30,32 8,20 8,40 30,52" fill="rgba(59,130,246,0.2)" stroke="url(#cg)" stroke-width="1"/>
+                        </svg>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-black text-center uppercase tracking-tight text-white mb-1">Intermedio</h3>
+                <p class="text-center text-xs text-gray-400 mb-6">Análisis técnico y gestión de riesgo.</p>
+                <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
+                    <span class="text-gray-500">Progreso</span>
+                    <span class="text-blue-400">0%</span>
+                </div>
+                <div class="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
+                    <div class="h-full bg-blue-500 rounded-full" style="width:0%"></div>
+                </div>
+                <div class="mt-4 block text-center text-xs font-bold text-blue-400 hover:underline uppercase tracking-wider">Continuar →</div>
+            </div>
+
+            <!-- AVANZADO -->
+            <div class="bg-card border border-card-border rounded-3xl p-6 relative opacity-50 grayscale-[60%] hud-corner level-card-interactive card-entrance card-entrance-3"
+                 id="card-avanzado" data-level="avanzado" data-href="niveles-experto.html" data-color-r="168" data-color-g="85" data-color-b="247"
+                 onmouseenter="SFX.hover('avanzado')" onclick="handleCardClick(this)">
+                <div class="hover-ring" style="--ring-color: rgba(168,85,247,0.4);"></div>
+                <div class="flex items-center justify-between mb-2">
+                    <span class="badge-locked text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[12px]">lock</span> Bloqueado
+                    </span>
+                </div>
+                <div class="py-8 flex justify-center">
+                    <div class="w-28 h-28 rounded-full flex items-center justify-center relative" style="background: radial-gradient(circle at 40% 30%, #4b5563 0%, #1f2937 60%, #111827 100%);">
+                        <span class="material-symbols-outlined text-gray-500 text-2xl">lock</span>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-black text-center uppercase tracking-tight text-gray-500 mb-1">Avanzado</h3>
+                <p class="text-center text-xs text-gray-600 mb-6">Estrategias institucionales y psicología.</p>
+                <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
+                    <span class="text-gray-600">Progreso</span>
+                    <span class="text-gray-600">0%</span>
+                </div>
+                <div class="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
+                    <div class="h-full bg-gray-700 rounded-full" style="width:0%"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="mb-14 flex justify-center">
+            <a href="portadanivelesacademia.html" id="cta-tower" class="group relative inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-base transition-all duration-300 hover:shadow-2xl hover:scale-105 hud-corner" style="background: linear-gradient(135deg, #b8860b 0%, #D4AF37 50%, #f5d060 100%); box-shadow: 0 0 30px rgba(212,175,55,0.3);" onmouseenter="SFX.uiHover()">
+                <span class="text-2xl">🏰</span>
+                <span style="color:#0a0f1a;" class="font-black uppercase tracking-wider text-sm">Ver todas las lecciones</span>
+                <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" style="color:#0a0f1a;">arrow_forward</span>
+            </a>
+        </div>
+
+        <!-- REWARDS -->
+        <div class="flex items-center justify-between mb-6">
+            <h2 class="text-lg font-black uppercase tracking-tight flex items-center gap-3">
+                <span class="w-1 h-7 bg-primary rounded-full"></span>
+                Recompensas y Logros
+            </h2>
+        </div>
+
+        <div class="flex gap-5 overflow-x-auto no-scrollbar pb-4">
+            <div class="reward-card bg-card border border-card-border rounded-2xl p-5 min-w-[200px] flex-shrink-0 hud-corner" onmouseenter="SFX.uiHover()">
+                <div class="h-28 flex items-center justify-center mb-4">
+                    <div class="w-20 h-20 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #92702d 0%, #d4af37 50%, #92702d 100%); box-shadow: 0 0 20px rgba(212,175,55,0.3);">
+                        <span class="text-4xl">🏆</span>
+                    </div>
+                </div>
+                <h4 class="font-black text-center text-sm mb-1">Primera Victoria</h4>
+                <p class="text-center text-[10px] text-gray-500">Completa tu primer nivel</p>
+            </div>
+            <div class="reward-card bg-card border border-card-border rounded-2xl p-5 min-w-[200px] flex-shrink-0 hud-corner" onmouseenter="SFX.uiHover()">
+                <div class="h-28 flex items-center justify-center mb-4">
+                    <div class="w-20 h-20 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #7c3aed 100%); box-shadow: 0 0 20px rgba(168,85,247,0.3);">
+                        <span class="text-4xl">💎</span>
+                    </div>
+                </div>
+                <h4 class="font-black text-center text-sm mb-1">Maestro del Riesgo</h4>
+                <p class="text-center text-[10px] text-gray-500">Domina la gestión de riesgo</p>
+            </div>
+            <div class="reward-card bg-card border border-card-border rounded-2xl p-5 min-w-[200px] flex-shrink-0 hud-corner" onmouseenter="SFX.uiHover()">
+                <div class="h-28 flex items-center justify-center mb-4">
+                    <div class="w-20 h-20 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #0e7490 0%, #06b6d4 50%, #0e7490 100%); box-shadow: 0 0 20px rgba(6,182,212,0.3);">
+                        <span class="text-4xl">🔮</span>
+                    </div>
+                </div>
+                <h4 class="font-black text-center text-sm mb-1">Visionario</h4>
+                <p class="text-center text-[10px] text-gray-500">Alcanza el nivel Avanzado</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Resume Widget -->
+    <div class="resume-widget fixed bottom-6 right-6 w-[380px] max-w-[calc(100vw-3rem)] rounded-2xl p-4 z-50 hidden sm:block" id="resume-widget">
+        <div class="flex items-start gap-3">
+            <div class="w-12 h-12 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center shrink-0">
+                <span class="material-symbols-outlined text-white text-2xl">play_arrow</span>
+            </div>
+            <div class="flex-1 min-w-0">
+                <h4 class="text-sm font-bold text-white mb-0.5 truncate">Continúa donde lo dejaste</h4>
+                <p class="text-[10px] text-gray-400" id="resume-lesson-name">Patrones de Velas 101</p>
+                <div class="flex items-center gap-2 mt-1">
+                    <div class="flex-1 h-1.5 bg-gray-700 rounded-full overflow-hidden">
+                        <div class="h-full bg-primary rounded-full" style="width:75%"></div>
+                    </div>
+                </div>
+            </div>
+            <button onclick="document.getElementById('resume-widget').style.display='none'" class="text-gray-500 hover:text-white">
+                <span class="material-symbols-outlined text-[16px]">close</span>
+            </button>
+        </div>
+    </div>
+</main>
 
 <script>
-function scrollLevels(dir) {
-    var el = document.getElementById('levels-scroll');
-    if (el) el.scrollBy({ left: dir * 340, behavior: 'smooth' });
+// ===== WEB AUDIO API SOUND ENGINE =====
+const SFX = (() => {
+    let ctx;
+    function getCtx() {
+        if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+        return ctx;
+    }
+
+    function playTone(freq, duration, type = 'sine', volume = 0.15, detune = 0) {
+        const c = getCtx();
+        const osc = c.createOscillator();
+        const gain = c.createGain();
+        osc.type = type;
+        osc.frequency.value = freq;
+        osc.detune.value = detune;
+        gain.gain.setValueAtTime(volume, c.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + duration);
+        osc.connect(gain).connect(c.destination);
+        osc.start(); osc.stop(c.currentTime + duration);
+    }
+
+    function playNoise(duration, volume = 0.05) {
+        const c = getCtx();
+        const bufSize = c.sampleRate * duration;
+        const buf = c.createBuffer(1, bufSize, c.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * 0.5;
+        const src = c.createBufferSource();
+        src.buffer = buf;
+        const gain = c.createGain();
+        const filter = c.createBiquadFilter();
+        filter.type = 'lowpass'; filter.frequency.value = 800;
+        gain.gain.setValueAtTime(volume, c.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + duration);
+        src.connect(filter).connect(gain).connect(c.destination);
+        src.start(); src.stop(c.currentTime + duration);
+    }
+
+    return {
+        // Hover sounds - unique per level
+        hover(level) {
+            const c = getCtx();
+            if (level === 'basico') {
+                // Warm coin chime - ascending 2 notes
+                playTone(523, 0.15, 'sine', 0.08);
+                setTimeout(() => playTone(659, 0.2, 'sine', 0.06), 80);
+            } else if (level === 'intermedio') {
+                // Digital scanner sweep
+                const osc = c.createOscillator();
+                const gain = c.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(300, c.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1200, c.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.04, c.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.2);
+                osc.connect(gain).connect(c.destination);
+                osc.start(); osc.stop(c.currentTime + 0.2);
+            } else if (level === 'avanzado') {
+                // Mysterious deep pulse
+                playTone(110, 0.3, 'sine', 0.06);
+                playTone(165, 0.25, 'triangle', 0.03, 5);
+            }
+        },
+
+        // Click sounds - dramatic per level
+        clickBasico() {
+            // Victory fanfare - bright ascending arpeggio
+            const notes = [523, 659, 784, 1047];
+            notes.forEach((f, i) => {
+                setTimeout(() => {
+                    playTone(f, 0.3, 'sine', 0.12 - i * 0.02);
+                    playTone(f * 1.5, 0.2, 'triangle', 0.04);
+                }, i * 80);
+            });
+            playNoise(0.1, 0.03);
+        },
+
+        clickIntermedio() {
+            // Power-up: rising synth sweep + impact
+            const c = getCtx();
+            const osc = c.createOscillator();
+            const osc2 = c.createOscillator();
+            const gain = c.createGain();
+            const gain2 = c.createGain();
+            osc.type = 'sawtooth';
+            osc2.type = 'sine';
+            osc.frequency.setValueAtTime(200, c.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(2000, c.currentTime + 0.4);
+            osc2.frequency.setValueAtTime(100, c.currentTime);
+            osc2.frequency.exponentialRampToValueAtTime(800, c.currentTime + 0.3);
+            gain.gain.setValueAtTime(0.08, c.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.5);
+            gain2.gain.setValueAtTime(0.1, c.currentTime);
+            gain2.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.4);
+            osc.connect(gain).connect(c.destination);
+            osc2.connect(gain2).connect(c.destination);
+            osc.start(); osc.stop(c.currentTime + 0.5);
+            osc2.start(); osc2.stop(c.currentTime + 0.4);
+            // Impact hit
+            setTimeout(() => {
+                playTone(80, 0.3, 'sine', 0.15);
+                playNoise(0.15, 0.06);
+            }, 100);
+        },
+
+        clickAvanzado() {
+            // Dark forbidden gate - deep rumble + dissonant chord
+            playTone(55, 0.6, 'sine', 0.12);
+            playTone(82, 0.5, 'triangle', 0.08);
+            playTone(62, 0.5, 'sawtooth', 0.03);
+            setTimeout(() => playNoise(0.3, 0.04), 100);
+            setTimeout(() => {
+                playTone(110, 0.3, 'sine', 0.06);
+                playTone(147, 0.25, 'triangle', 0.04);
+            }, 200);
+        },
+
+        // Locked card denied sound
+        denied() {
+            playTone(200, 0.15, 'square', 0.08);
+            setTimeout(() => playTone(150, 0.2, 'square', 0.06), 120);
+            playNoise(0.1, 0.03);
+        },
+
+        // UI hover (for buttons/rewards)
+        uiHover() {
+            playTone(800, 0.08, 'sine', 0.03);
+        },
+
+        // Whoosh for transition
+        whoosh() {
+            const c = getCtx();
+            const osc = c.createOscillator();
+            const gain = c.createGain();
+            const filter = c.createBiquadFilter();
+            osc.type = 'sawtooth';
+            filter.type = 'bandpass';
+            filter.frequency.setValueAtTime(200, c.currentTime);
+            filter.frequency.exponentialRampToValueAtTime(3000, c.currentTime + 0.3);
+            filter.Q.value = 2;
+            gain.gain.setValueAtTime(0.08, c.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.4);
+            osc.connect(filter).connect(gain).connect(c.destination);
+            osc.start(); osc.stop(c.currentTime + 0.4);
+            playNoise(0.3, 0.05);
+        },
+
+        // Epic chime on arrival
+        chime() {
+            setTimeout(() => {
+                playTone(880, 0.4, 'sine', 0.06);
+                playTone(1320, 0.3, 'triangle', 0.03);
+            }, 300);
+        }
+    };
+})();
+
+// ===== DRAMATIC ZOOM CLICK HANDLER =====
+let isTransitioning = false;
+
+function handleCardClick(card) {
+    if (isTransitioning) return;
+    const isLocked = card.classList.contains('locked-card');
+    const href = card.dataset.href;
+    const r = parseInt(card.dataset.colorR);
+    const g = parseInt(card.dataset.colorG);
+    const b = parseInt(card.dataset.colorB);
+    const level = card.dataset.level;
+
+    if (isLocked) {
+        SFX.denied();
+        card.style.animation = 'none';
+        card.offsetHeight; // reflow
+        card.style.animation = '';
+        // Shake effect
+        card.style.transform = 'translateX(-6px)';
+        setTimeout(() => card.style.transform = 'translateX(6px)', 50);
+        setTimeout(() => card.style.transform = 'translateX(-4px)', 100);
+        setTimeout(() => card.style.transform = 'translateX(4px)', 150);
+        setTimeout(() => card.style.transform = '', 200);
+        return;
+    }
+
+    isTransitioning = true;
+
+    // Play level-specific click sound
+    if (level === 'basico') SFX.clickBasico();
+    else if (level === 'intermedio') SFX.clickIntermedio();
+    else SFX.clickAvanzado();
+
+    // Get card center for effects
+    const rect = card.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const cxP = (cx / window.innerWidth * 100) + '%';
+    const cyP = (cy / window.innerHeight * 100) + '%';
+
+    const overlay = document.getElementById('zoom-overlay');
+    const flash = document.getElementById('zoom-flash');
+    const shockwave = document.getElementById('zoom-shockwave');
+    const vignette = document.getElementById('zoom-vignette');
+    const particles = document.getElementById('zoom-particles');
+
+    // Set colors
+    const color = `rgba(${r},${g},${b}`;
+    flash.style.setProperty('--cx', cxP);
+    flash.style.setProperty('--cy', cyP);
+    flash.style.setProperty('--flash-color', color + ',0.8)');
+    shockwave.style.setProperty('--cx', cxP);
+    shockwave.style.setProperty('--cy', cyP);
+    shockwave.style.setProperty('--shock-color', color + ',0.6)');
+
+    // Card zoom effect
+    card.style.transition = 'transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s';
+    card.style.transform = 'scale(1.15)';
+    card.style.zIndex = '100';
+
+    // Activate overlay
+    overlay.classList.add('active');
+
+    // Spawn explosion particles
+    particles.innerHTML = '';
+    for (let i = 0; i < 30; i++) {
+        const p = document.createElement('div');
+        p.className = 'zoom-particle';
+        const size = 3 + Math.random() * 6;
+        const angle = Math.random() * Math.PI * 2;
+        const dist = 100 + Math.random() * 300;
+        const dx = Math.cos(angle) * dist;
+        const dy = Math.sin(angle) * dist;
+        p.style.cssText = `
+            left:${cx}px; top:${cy}px; width:${size}px; height:${size}px;
+            background: rgba(${r},${g},${b},${0.6 + Math.random() * 0.4});
+            box-shadow: 0 0 ${size * 2}px rgba(${r},${g},${b},0.6);
+            transition: all ${0.4 + Math.random() * 0.4}s cubic-bezier(0.165, 0.84, 0.44, 1);
+            opacity: 1;
+        `;
+        particles.appendChild(p);
+        requestAnimationFrame(() => {
+            p.style.transform = `translate(${dx}px, ${dy}px)`;
+            p.style.opacity = '0';
+        });
+    }
+
+    // Fire effects sequentially
+    setTimeout(() => { flash.classList.add('fire'); }, 50);
+    setTimeout(() => { shockwave.classList.add('fire'); SFX.whoosh(); }, 150);
+    setTimeout(() => { vignette.classList.add('fire'); }, 300);
+
+    // Zoom the card into the screen
+    setTimeout(() => {
+        card.style.transform = 'scale(3)';
+        card.style.opacity = '0';
+    }, 500);
+
+    // Navigate
+    setTimeout(() => {
+        window.location.href = href;
+    }, 1000);
 }
 
+// ===== SIDEBAR TOGGLE =====
 function toggleSideMenu() {
     const menu = document.getElementById('side-menu');
     const overlay = document.getElementById('menu-overlay');
     const hamburger = document.getElementById('hamburger-btn-inline');
-    
     if (menu.classList.contains('-translate-x-full')) {
         menu.classList.remove('-translate-x-full');
         overlay.classList.remove('opacity-0', 'pointer-events-none');
@@ -364,39 +813,65 @@ function toggleSideMenu() {
     }
 }
 
-// Dynamic level states based on test result
+// ===== DYNAMIC PARTICLES =====
+(function() {
+    const container = document.getElementById('particles-container');
+    for (let i = 0; i < 15; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.bottom = Math.random() * 30 + '%';
+        p.style.animationDuration = (4 + Math.random() * 6) + 's';
+        p.style.animationDelay = Math.random() * 5 + 's';
+        p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
+        p.style.opacity = 0.3 + Math.random() * 0.5;
+        container.appendChild(p);
+    }
+})();
+
+// ===== DYNAMIC LEVEL STATES =====
 (function() {
     const level = (localStorage.getItem('ip_user_level') || 'basico').toLowerCase();
-    const cards = document.querySelectorAll('#levels-scroll > div');
-    if (cards.length < 3) return;
-
-    const basico = cards[0], intermedio = cards[1], avanzado = cards[2];
+    const basico = document.getElementById('card-basico');
+    const intermedio = document.getElementById('card-intermedio');
+    const avanzado = document.getElementById('card-avanzado');
+    const xpLevel = document.getElementById('xp-level');
 
     function setCompleted(card) {
-        card.className = 'bg-card border border-card-border rounded-3xl p-6 relative group hover:border-green-500/20 transition-all duration-300';
+        card.classList.remove('level-active', 'opacity-50', 'grayscale-[60%]', 'locked-card');
+        card.classList.add('bg-card', 'border', 'border-card-border');
         card.style.opacity = '1'; card.style.filter = '';
         const badge = card.querySelector('span[class*="badge"]');
-        if (badge) { badge.className = 'badge-completed text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full'; badge.innerHTML = 'Completed'; }
+        if (badge) { badge.className = 'badge-completed text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full'; badge.innerHTML = 'Completado'; }
     }
     function setActive(card) {
-        card.className = 'level-active rounded-3xl p-6 relative group transition-all duration-300';
+        card.classList.remove('bg-card', 'opacity-50', 'grayscale-[60%]', 'locked-card');
+        card.classList.add('level-active');
         card.style.opacity = '1'; card.style.filter = '';
         const badge = card.querySelector('span[class*="badge"]');
-        if (badge) { badge.className = 'badge-progress text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1'; badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span> In Progress'; }
+        if (badge) { badge.className = 'badge-progress text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1'; badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span> En Progreso'; }
     }
     function setLocked(card) {
-        card.className = 'bg-card border border-card-border rounded-3xl p-6 relative opacity-50 grayscale-[60%]';
+        card.classList.remove('level-active');
+        card.classList.add('bg-card', 'border', 'border-card-border', 'opacity-50', 'locked-card');
+        card.style.filter = 'grayscale(60%)';
         const badge = card.querySelector('span[class*="badge"]');
-        if (badge) { badge.className = 'badge-locked text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1'; badge.innerHTML = '<span class="material-symbols-outlined text-[12px]">lock</span> Locked'; }
+        if (badge) { badge.className = 'badge-locked text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1'; badge.innerHTML = '<span class="material-symbols-outlined text-[12px]">lock</span> Bloqueado'; }
     }
 
     if (level === 'basico') {
         setActive(basico); setLocked(intermedio); setLocked(avanzado);
+        if (xpLevel) xpLevel.textContent = 'Básico';
     } else if (level === 'intermedio') {
         setCompleted(basico); setActive(intermedio); setLocked(avanzado);
+        if (xpLevel) xpLevel.textContent = 'Intermedio';
     } else {
         setCompleted(basico); setCompleted(intermedio); setActive(avanzado);
+        if (xpLevel) xpLevel.textContent = 'Avanzado';
     }
+
+    // Entrance chime
+    setTimeout(() => SFX.chime(), 800);
 })();
 </script>
 
