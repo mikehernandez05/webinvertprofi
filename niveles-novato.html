@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8"/>
     <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>InvertProfit — Mundo Novato</title>
+    <title>InvertProfit — Mundo 1: Génesis</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -12,122 +12,26 @@
     <script>
         tailwind.config = {
             darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#D4AF37",
-                        "bg-dark": "#0a0f1a",
-                        "card": "#111827",
-                        "card-border": "#1f2937",
-                        "positive": "#22c55e",
-                        "negative": "#ef4444"
-                    },
-                    fontFamily: { "sans": ["Inter", "sans-serif"] }
-                }
-            }
+            theme: { extend: { colors: { "primary":"#D4AF37","bg-dark":"#0a0f1a","card":"#111827","card-border":"#1f2937","positive":"#22c55e","negative":"#ef4444" }, fontFamily: { "sans":["Inter","sans-serif"] } } }
         }
     </script>
     <style>
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
-        ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
-
-        .logo-glow { filter: drop-shadow(0 0 10px rgba(212,175,55,0.3)); }
-
-        /* World background: forest/green theme */
-        .world-bg {
-            background:
-                radial-gradient(ellipse at 20% 50%, rgba(16,185,129,0.08) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 30%, rgba(34,197,94,0.06) 0%, transparent 50%),
-                #0a0f1a;
-        }
-
-        /* Path between nodes — SVG based */
-        .level-path {
-            position: absolute;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        /* Level node */
-        .level-node {
-            position: relative;
-            z-index: 10;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .level-node:hover .node-btn { transform: scale(1.15); }
-        .level-node.locked { cursor: not-allowed; opacity: 0.45; }
-
-        .node-btn {
-            width: 72px; height: 72px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; font-weight: 900;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        .node-btn.completed {
-            background: radial-gradient(circle at 35% 35%, #4ade80 0%, #16a34a 60%, #052e16 100%);
-            box-shadow: 0 0 20px rgba(74,222,128,0.5), 0 4px 15px rgba(0,0,0,0.5);
-            border: 3px solid rgba(74,222,128,0.6);
-        }
-        .node-btn.active {
-            background: radial-gradient(circle at 35% 35%, #D4AF37 0%, #b8860b 60%, #3d2d05 100%);
-            box-shadow: 0 0 25px rgba(212,175,55,0.7), 0 4px 15px rgba(0,0,0,0.5);
-            border: 3px solid rgba(212,175,55,0.9);
-            animation: active-pulse 2s ease-in-out infinite;
-        }
-        .node-btn.locked-node {
-            background: radial-gradient(circle at 35% 35%, #374151 0%, #1f2937 60%, #111827 100%);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            border: 3px solid rgba(75,85,99,0.4);
-        }
-
-        @keyframes active-pulse {
-            0%,100% { box-shadow: 0 0 25px rgba(212,175,55,0.7), 0 4px 15px rgba(0,0,0,0.5); transform: scale(1); }
-            50% { box-shadow: 0 0 45px rgba(212,175,55,0.9), 0 0 70px rgba(212,175,55,0.4), 0 4px 15px rgba(0,0,0,0.5); transform: scale(1.06); }
-        }
-
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-        .float-anim { animation: float 3s ease-in-out infinite; }
-
-        /* Stars rating on completed */
-        .star-row { font-size: 0.75rem; line-height: 1; }
-
-        /* Path dot animation */
-        @keyframes path-dot { 0%,100%{opacity:0.3} 50%{opacity:1} }
-        .path-dot { animation: path-dot 1.5s ease-in-out infinite; }
-        .path-dot:nth-child(2) { animation-delay: 0.3s; }
-        .path-dot:nth-child(3) { animation-delay: 0.6s; }
-        .path-dot:nth-child(4) { animation-delay: 0.9s; }
-
-        /* Sidebar */
-        .sidebar-link { transition: all 0.2s ease; }
-        .sidebar-link:hover { background: rgba(255,255,255,0.04); color: #fff; }
-        .sidebar-link.active { background: rgba(212,175,55,0.15); color: #D4AF37; border: 1px solid rgba(212,175,55,0.2); }
-        .hamburger-open .hamburger-line-1 { transform: rotate(45deg) translateY(8px); }
-        .hamburger-open .hamburger-line-2 { opacity: 0; }
-        .hamburger-open .hamburger-line-3 { transform: rotate(-45deg) translateY(-8px); }
-
-        /* Level modal */
-        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:200; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
-        .modal-box { background:#111827; border:1px solid rgba(212,175,55,0.3); border-radius:24px; padding:32px; max-width:420px; width:calc(100% - 2rem); box-shadow: 0 0 60px rgba(212,175,55,0.15); }
-
-        /* Floating decorations */
-        @keyframes leaf-float { 0%{transform:translateY(0) rotate(0deg); opacity:0.6} 50%{transform:translateY(-20px) rotate(10deg); opacity:0.8} 100%{transform:translateY(0) rotate(-5deg); opacity:0.6} }
-        .leaf { position:absolute; animation: leaf-float 6s ease-in-out infinite; font-size:1.5rem; pointer-events:none; }
-
-        /* Connector path */
-        .path-segment {
-            position: absolute;
-            z-index: 1;
-        }
-
-        /* World header */
-        @keyframes title-in { from{opacity:0; transform:translateY(-20px)} to{opacity:1; transform:translateY(0)} }
-        .title-in { animation: title-in 0.6s ease-out forwards; }
+        ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#374151;border-radius:2px}::-webkit-scrollbar-thumb:hover{background:#D4AF37}
+        .world-bg{background:radial-gradient(ellipse at 20% 50%,rgba(16,185,129,0.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 30%,rgba(34,197,94,0.06) 0%,transparent 50%),#0a0f1a}
+        .level-node{position:relative;z-index:10;cursor:pointer;transition:all .3s cubic-bezier(.175,.885,.32,1.275)}.level-node:hover .node-btn{transform:scale(1.15)}.level-node.locked{cursor:not-allowed;opacity:.45}
+        .node-btn{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;transition:all .3s;position:relative}
+        .node-btn.completed{background:radial-gradient(circle at 35% 35%,#4ade80 0%,#16a34a 60%,#052e16 100%);box-shadow:0 0 20px rgba(74,222,128,.5),0 4px 15px rgba(0,0,0,.5);border:3px solid rgba(74,222,128,.6)}
+        .node-btn.active{background:radial-gradient(circle at 35% 35%,#D4AF37 0%,#b8860b 60%,#3d2d05 100%);box-shadow:0 0 25px rgba(212,175,55,.7),0 4px 15px rgba(0,0,0,.5);border:3px solid rgba(212,175,55,.9);animation:active-pulse 2s ease-in-out infinite}
+        .node-btn.locked-node{background:radial-gradient(circle at 35% 35%,#374151 0%,#1f2937 60%,#111827 100%);box-shadow:0 4px 15px rgba(0,0,0,.5);border:3px solid rgba(75,85,99,.4)}
+        @keyframes active-pulse{0%,100%{box-shadow:0 0 25px rgba(212,175,55,.7),0 4px 15px rgba(0,0,0,.5);transform:scale(1)}50%{box-shadow:0 0 45px rgba(212,175,55,.9),0 0 70px rgba(212,175,55,.4),0 4px 15px rgba(0,0,0,.5);transform:scale(1.06)}}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}.float-anim{animation:float 3s ease-in-out infinite}
+        .star-row{font-size:.75rem;line-height:1}
+        @keyframes path-dot{0%,100%{opacity:.3}50%{opacity:1}}.path-dot{animation:path-dot 1.5s ease-in-out infinite}
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+        .modal-box{background:#111827;border:1px solid rgba(212,175,55,.3);border-radius:24px;padding:32px;max-width:420px;width:calc(100% - 2rem);box-shadow:0 0 60px rgba(212,175,55,.15)}
+        @keyframes leaf-float{0%{transform:translateY(0) rotate(0deg);opacity:.6}50%{transform:translateY(-20px) rotate(10deg);opacity:.8}100%{transform:translateY(0) rotate(-5deg);opacity:.6}}.leaf{position:absolute;animation:leaf-float 6s ease-in-out infinite;font-size:1.5rem;pointer-events:none}
+        @keyframes title-in{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}.title-in{animation:title-in .6s ease-out forwards}
+        .sidebar-link{transition:all .2s}.sidebar-link:hover{background:rgba(255,255,255,.04);color:#fff}.sidebar-link.active{background:rgba(212,175,55,.15);color:#D4AF37;border:1px solid rgba(212,175,55,.2)}
     </style>
 </head>
 <body class="world-bg text-white font-sans min-h-screen flex flex-col overflow-x-hidden">
@@ -136,22 +40,17 @@
 <header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-[60] shrink-0">
     <div class="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
         <div class="flex items-center gap-3">
-            <a href="portadanivelesacademia.html"
-               class="flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shrink-0"
-               style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.35); color:#D4AF37;">
+            <a href="portadanivelesacademia.html" class="flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shrink-0" style="background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.35);color:#D4AF37;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
                 <span class="hidden sm:inline">Volver</span>
             </a>
             <div class="flex items-center gap-2.5">
-                <img src="images/logo_azul.png" alt="InvertProfit" id="logo-img"
-                     class="h-10 w-auto object-contain shrink-0"
-                     style="filter:drop-shadow(0 0 10px rgba(212,175,55,0.4));"
-                     onerror="this.style.display='none'; document.getElementById('logo-badge').style.display='flex';">
-                <div id="logo-badge" class="w-11 h-11 rounded-xl items-center justify-center font-black text-lg shrink-0" style="display:none; background:linear-gradient(135deg,#D4AF37,#b8860b); color:#0a0f1a; box-shadow:0 0 30px rgba(212,175,55,0.4);">IP</div>
+                <img src="images/logo_azul.png" alt="InvertProfit" class="h-10 w-auto object-contain shrink-0" style="filter:drop-shadow(0 0 10px rgba(212,175,55,.4));" onerror="this.style.display='none';document.getElementById('logo-badge').style.display='flex';">
+                <div id="logo-badge" class="w-11 h-11 rounded-xl items-center justify-center font-black text-lg shrink-0" style="display:none;background:linear-gradient(135deg,#D4AF37,#b8860b);color:#0a0f1a;box-shadow:0 0 30px rgba(212,175,55,.4);">IP</div>
             </div>
         </div>
         <nav class="hidden lg:flex items-center gap-10">
-            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="index.html">INICO</a>
+            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="index.html">INICIO</a>
             <a class="font-black border-b-2 border-primary pb-1 text-sm tracking-widest uppercase" style="color:#D4AF37;" href="portadanivelesacademia.html">ACADEMIA</a>
             <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="mercado.html">MERCADOS</a>
             <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="#">PORTAFOLIO</a>
@@ -167,100 +66,59 @@
         </div>
     </div>
     <nav id="mobile-menu" class="hidden lg:hidden border-t border-card-border bg-card px-4 py-3 space-y-2">
-        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="portadanivelesacademia.html">ACADEMIA</a>
+        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="index.html">INICIO</a>
         <a class="block font-bold py-2 border-l-2 border-primary pl-3 text-sm" style="color:#D4AF37;" href="portadanivelesacademia.html">ACADEMIA</a>
         <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="mercado.html">MERCADOS</a>
     </nav>
 </header>
 
-<!-- SIDE MENU -->
-<aside id="side-menu" class="fixed top-0 left-0 h-full w-80 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 border-r border-gray-700 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out z-[65] flex flex-col">
-    <nav class="flex-1 p-6 space-y-2 pt-24">
-        <div class="mb-8 px-3">
-            <p class="text-[10px] font-black text-primary/80 uppercase tracking-[4px] leading-none mb-2">Menú</p>
-            <div class="h-[2px] w-10 bg-gradient-to-r from-primary/60 to-transparent rounded-full"></div>
-        </div>
-        <a href="portadanivelesacademia.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400"><span class="material-symbols-outlined text-[22px]">grid_view</span> Mundos</a>
-        <a href="portadanivelesacademia.html" class="sidebar-link active flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold"><span class="material-symbols-outlined text-[22px]">school</span> Academia</a>
-        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400"><span class="material-symbols-outlined text-[22px]">emoji_events</span> Logros</a>
-        <a href="mercado.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400"><span class="material-symbols-outlined text-[22px]">monitoring</span> Mercados</a>
-    </nav>
-    <div class="p-6 border-t border-gray-700">
-        <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-extrabold text-primary text-sm">AT</div>
-            <div class="flex-1 min-w-0"><p class="text-sm font-bold truncate">Alex Trader</p><p class="text-[10px] text-primary font-bold uppercase tracking-wider">Pro Member</p></div>
-            <a href="Login.html" class="text-gray-500 hover:text-red-400 transition"><span class="material-symbols-outlined text-[22px]">logout</span></a>
-        </div>
-    </div>
-</aside>
-<div id="menu-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleSideMenu()"></div>
-
-<!-- MAIN -->
 <main class="flex-1 overflow-y-auto">
-
     <!-- World banner -->
-    <div class="relative overflow-hidden" style="background:linear-gradient(180deg, rgba(16,185,129,0.12) 0%, rgba(10,15,26,0) 100%); border-bottom:1px solid rgba(34,197,94,0.15);">
-        <!-- Decorative leaves -->
-        <div class="leaf" style="top:20px; left:5%; animation-delay:0s;">🌿</div>
-        <div class="leaf" style="top:10px; left:15%; animation-delay:1s; font-size:1rem;">🍃</div>
-        <div class="leaf" style="top:30px; right:10%; animation-delay:2s;">🌱</div>
-        <div class="leaf" style="top:15px; right:25%; animation-delay:0.5s; font-size:1rem;">🍀</div>
-        <div class="leaf" style="top:5px; left:45%; animation-delay:1.5s; font-size:0.8rem;">✦</div>
-
+    <div class="relative overflow-hidden" style="background:linear-gradient(180deg,rgba(16,185,129,.12) 0%,rgba(10,15,26,0) 100%);border-bottom:1px solid rgba(34,197,94,.15);">
+        <div class="leaf" style="top:20px;left:5%;animation-delay:0s;">🌿</div>
+        <div class="leaf" style="top:10px;left:15%;animation-delay:1s;font-size:1rem;">🍃</div>
+        <div class="leaf" style="top:30px;right:10%;animation-delay:2s;">⚒️</div>
+        <div class="leaf" style="top:15px;right:25%;animation-delay:.5s;font-size:1rem;">🔥</div>
         <div class="max-w-5xl mx-auto px-6 py-8">
             <div class="flex items-center gap-3 mb-3">
                 <a href="portadanivelesacademia.html" class="flex items-center gap-1.5 text-gray-500 hover:text-green-400 transition text-sm font-semibold">
                     <span class="material-symbols-outlined text-[18px]">arrow_back</span> Mundos
                 </a>
                 <span class="text-gray-700">/</span>
-                <span class="text-green-400 text-sm font-semibold">Mundo 01 — Novato</span>
+                <span class="text-green-400 text-sm font-semibold">Mundo 01 — Génesis</span>
             </div>
             <div class="flex items-center justify-between flex-wrap gap-4 title-in">
                 <div class="flex items-center gap-5">
-                    <div class="text-5xl float-anim">🌿</div>
+                    <div class="text-5xl float-anim">⚒️</div>
                     <div>
-                        <p class="text-[10px] font-black tracking-[5px] text-green-400/70 uppercase">MUNDO 01</p>
-                        <h1 class="text-3xl md:text-4xl font-black uppercase tracking-tight text-white">NOVATO</h1>
-                        <p class="text-gray-400 text-sm">Fundamentos del trading & análisis de mercado</p>
+                        <p class="text-[10px] font-black tracking-[5px] text-green-400/70 uppercase">MUNDO 01 — RANGO: NOVATO</p>
+                        <h1 class="text-3xl md:text-4xl font-black uppercase tracking-tight text-white">LA GÉNESIS DEL CAPITAL</h1>
+                        <p class="text-gray-400 text-sm">Fundamentos e Introducción — Origen del dinero, acciones y manejo de la App.</p>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
-                    <div class="text-center">
-                        <div class="text-2xl font-black text-green-400">12/12</div>
-                        <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Completados</div>
-                    </div>
+                    <div class="text-center"><div class="text-2xl font-black text-green-400">10/10</div><div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Completados</div></div>
                     <div class="w-px h-10 bg-card-border"></div>
-                    <div class="text-center">
-                        <div class="flex gap-1">⭐⭐⭐</div>
-                        <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Estrellas</div>
-                    </div>
+                    <div class="text-center"><div class="flex gap-1">⭐⭐⭐</div><div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Estrellas</div></div>
                     <div class="w-px h-10 bg-card-border"></div>
-                    <div class="text-center">
-                        <div class="text-2xl font-black text-primary">2,400</div>
-                        <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">XP ganada</div>
-                    </div>
+                    <div class="text-center"><div class="text-2xl font-black text-primary">2,000</div><div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">XP ganada</div></div>
                 </div>
             </div>
-            <!-- Global progress bar -->
-            <div class="mt-4 h-3 w-full rounded-full overflow-hidden bg-gray-800">
-                <div class="h-full rounded-full" style="width:100%; background:linear-gradient(90deg, #16a34a, #4ade80, #86efac);"></div>
-            </div>
+            <div class="mt-4 h-3 w-full rounded-full overflow-hidden bg-gray-800"><div class="h-full rounded-full" style="width:100%;background:linear-gradient(90deg,#16a34a,#4ade80,#86efac);"></div></div>
         </div>
     </div>
 
-    <!-- LEVEL MAP - Candy Crush Long Winding Path -->
+    <!-- LEVEL MAP -->
     <div class="max-w-xl mx-auto px-4 py-10 pb-20">
         <p class="text-center text-[11px] font-black tracking-[5px] text-gray-600 uppercase mb-10">— MAPA DE NIVELES —</p>
         <div id="level-map" class="relative flex flex-col items-start gap-0"></div>
-
-        <!-- World Complete Banner -->
         <div class="mt-10">
-            <div class="mx-4 rounded-3xl p-8 text-center relative overflow-hidden" style="background:linear-gradient(135deg, rgba(34,197,94,0.15) 0%, rgba(16,185,129,0.1) 100%); border:1px solid rgba(34,197,94,0.3);">
+            <div class="mx-4 rounded-3xl p-8 text-center relative overflow-hidden" style="background:linear-gradient(135deg,rgba(34,197,94,.15) 0%,rgba(16,185,129,.1) 100%);border:1px solid rgba(34,197,94,.3);">
                 <div class="text-6xl mb-4">🏆</div>
                 <h3 class="text-2xl font-black uppercase tracking-tight text-green-400 mb-2">¡MUNDO COMPLETADO!</h3>
-                <p class="text-gray-400 text-sm mb-5">Has dominado todos los fundamentos del trading. Estás listo para el siguiente desafío.</p>
-                <a href="niveles-intermedio.html" class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-black uppercase tracking-wider text-sm transition-all hover:scale-105" style="background:linear-gradient(135deg, #b8860b, #D4AF37); color:#0a0f1a;">
-                    MUNDO INTERMEDIO <span class="material-symbols-outlined">arrow_forward</span>
+                <p class="text-gray-400 text-sm mb-5">Has obtenido el LOGRO: Pasaporte del Inversor 🎖️</p>
+                <a href="niveles-intermedio.html" class="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-black uppercase tracking-wider text-sm transition-all hover:scale-105" style="background:linear-gradient(135deg,#1d4ed8,#3b82f6);color:#fff;">
+                    MUNDO 2: CARTOGRAFÍA <span class="material-symbols-outlined">arrow_forward</span>
                 </a>
             </div>
         </div>
@@ -269,52 +127,79 @@
     <script>
     (function(){
         const levels = [
-            {n:1,t:'Introducción al Trading',d:'El primer paso en tu viaje financiero. Aprende qué es el trading y cómo funciona el mercado.',s:'completed',xp:200},
-            {n:2,t:'Tipos de Mercado',d:'Forex, acciones, cripto, commodities. Conoce los distintos mercados donde puedes operar.',s:'completed',xp:200},
-            {n:3,t:'Lectura de Gráficos',d:'Aprende a leer velas japonesas y gráficos de precios. La base del análisis técnico.',s:'completed',xp:200},
-            {n:4,t:'Órdenes de Compra/Venta',d:'Market, limit, stop. Domina todos los tipos de órdenes del mercado.',s:'completed',xp:200},
-            {n:5,t:'Gestión de Capital',d:'Aprende a gestionar tu dinero para sobrevivir en el mercado a largo plazo.',s:'completed',xp:200},
-            {n:6,t:'⚡ BOSS: Primer Trade Real',d:'El desafío final de la primera zona. Analiza un activo real y toma tu primera decisión de trading.',s:'completed',xp:400,boss:'BOSS'},
-            {n:7,t:'Soporte y Resistencia',d:'Los niveles más importantes del gráfico. Aprende a identificarlos y usarlos a tu favor.',s:'completed',xp:200},
-            {n:8,t:'Tendencias del Mercado',d:'Uptrend, downtrend, sideways. Identifica la dirección del mercado y opera a favor.',s:'completed',xp:200},
-            {n:9,t:'Indicadores Básicos',d:'Media móvil, RSI, MACD. Tus primeras herramientas de análisis técnico.',s:'completed',xp:200},
-            {n:10,t:'Psicología del Trader',d:'El 80% del éxito en trading es mental. Controla tus emociones y sesgos cognitivos.',s:'completed',xp:200},
-            {n:11,t:'Tu Plan de Trading',d:'Crea tu propio plan de trading personalizado con reglas claras de entrada y salida.',s:'completed',xp:200},
-            {n:12,t:'🏆 FINAL BOSS: El Examen Novato',d:'Demuestra todo lo aprendido. Un análisis completo de mercado. ¡Completa esto y desbloquea el Mundo Intermedio!',s:'completed',xp:600,boss:'FINAL'}
+            {n:1,t:'Filosofía InvertProfit y AmigoTrade',d:'Conoce la misión, visión y tu compañero de viaje: AmigoTrade.',s:'completed',xp:200},
+            {n:2,t:'Historia del Dinero y los Mercados',d:'Desde el trueque hasta Wall Street. Entiende cómo nació el sistema financiero moderno.',s:'completed',xp:200},
+            {n:3,t:'¿Qué es una Acción? El Origen del Equity',d:'Aprende qué significa ser dueño de una parte de una empresa.',s:'completed',xp:200},
+            {n:4,t:'Participantes del Mercado',d:'Retail vs Institucional. Descubre quiénes mueven el mercado y cómo.',s:'completed',xp:200},
+            {n:5,t:'Tipos de Activos: Divisas, Metales e Índices',d:'Forex, oro, S&P 500… Conoce los instrumentos del trader.',s:'completed',xp:200},
+            {n:6,t:'Tipos de Activos: Commodities y Criptomonedas',d:'Petróleo, gas, Bitcoin. El universo de activos alternativos.',s:'completed',xp:200},
+            {n:7,t:'Anatomía de una Orden: Market, Limit y Stop',d:'Domina todos los tipos de órdenes para entrar y salir del mercado.',s:'completed',xp:200},
+            {n:8,t:'El Lenguaje del Precio: Pips, Lotes y Spread',d:'Habla el idioma del trader. Pip a pip hacia la maestría.',s:'completed',xp:200},
+            {n:9,t:'Horarios y Sesiones (El Reloj del Dinero)',d:'Londres, Nueva York, Tokio. Aprende cuándo opera el mundo.',s:'completed',xp:200},
+            {n:10,t:'⚡ BOSS: El Primer Trade Simulado',d:'Examen de entrada. Ejecuta tu primer trade simulado y obtén el Pasaporte del Inversor.',s:'completed',xp:500,boss:'BOSS'}
         ];
-        const pos=[44,62,74,62,44,24,14,24,44,62,74,44];
-        const dpos=[[48,53,58],[65,69,72],[72,69,65],[58,53,48],[39,33,28],[21,18,15],[15,18,21],[28,33,39],[48,53,58],[65,69,72],[68,58,48]];
-        const ic=['📚','🌍','📊','🛒','💰','⚡','📐','📈','📡','🧠','📝','🏆'];
-        const dotC='background:#22c55e;box-shadow:0 0 6px #22c55e;';
+        const icons=['🎓','🏛️','📊','👥','💱','₿','🛒','📏','🕐','🏆'];
+        buildMap(levels, icons, '#22c55e', 'background:#22c55e;box-shadow:0 0 6px #22c55e;');
+    })();
 
-        let h='';
-        levels.forEach(function(lv,i){
-            var isBoss=!!lv.boss;
-            var sz=lv.boss==='FINAL'?'width:88px;height:88px;font-size:2rem;':'width:84px;height:84px;font-size:1.75rem;';
-            var bossGlow='box-shadow:0 0 30px rgba(212,175,55,0.6),0 0 60px rgba(212,175,55,0.3);background:radial-gradient(circle at 35% 35%,#fbbf24 0%,#D4AF37 40%,#92400e 80%);';
-            var nodeStyle=isBoss?sz+bossGlow:'';
-            var bossTag=isBoss?'<span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:linear-gradient(135deg,#D4AF37,#b8860b);color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>':'';
-            var tEsc=lv.t.replace(/'/g,"\\'");
-            var dEsc=lv.d.replace(/'/g,"\\'");
+    function buildMap(levels, icons, accentColor, dotStyle) {
+        const positions = [];
+        const pattern = [20, 40, 60, 70, 60, 40, 20, 10, 20, 40, 60, 70, 60, 40, 20, 10, 20, 40, 60, 70];
+        for (let i = 0; i < levels.length; i++) positions.push(pattern[i % pattern.length]);
 
-            h+='<div class="w-full" style="padding-left:'+pos[i]+'%">';
-            h+='<div class="level-node text-center inline-block" onclick="openModal('+lv.n+',\''+tEsc+'\',\''+dEsc+'\',\''+lv.s+'\','+lv.xp+')">';
-            h+='<div class="flex flex-col items-center gap-2">';
-            h+='<div class="node-btn completed'+(isBoss?' relative':'')+'" style="'+nodeStyle+'">'+bossTag+(isBoss?ic[i]:'✓')+'</div>';
-            h+='<div class="star-row">⭐⭐⭐</div>';
-            h+='<div class="text-[10px] font-black '+(isBoss?'text-primary':'text-gray-400')+' uppercase tracking-wider">NIV '+lv.n+'</div>';
-            h+='</div></div></div>';
+        let h = '';
+        levels.forEach(function(lv, i) {
+            const isBoss = !!lv.boss;
+            const sz = isBoss ? 'width:88px;height:88px;font-size:2rem;' : '';
+            const bossGlow = isBoss ? 'box-shadow:0 0 30px rgba(212,175,55,.6),0 0 60px rgba(212,175,55,.3);background:radial-gradient(circle at 35% 35%,#fbbf24 0%,#D4AF37 40%,#92400e 80%);' : '';
+            const nodeClass = lv.s === 'completed' ? 'completed' : lv.s === 'active' ? 'active' : 'locked-node';
+            const bossTag = isBoss ? '<span style="position:absolute;top:-8px;right:-8px;font-size:.65rem;background:linear-gradient(135deg,#D4AF37,#b8860b);color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>' : '';
+            const tEsc = lv.t.replace(/'/g, "\\'");
+            const dEsc = lv.d.replace(/'/g, "\\'");
+            const lockClass = lv.s === 'locked' ? ' locked' : '';
+            const icon = lv.s === 'completed' ? '✓' : (lv.s === 'locked' ? '🔒' : icons[i]);
+            const stars = lv.s === 'completed' ? '⭐⭐⭐' : (lv.s === 'active' ? '☆☆☆' : '');
 
-            if(i<levels.length-1){
-                h+='<div class="w-full flex flex-col gap-2.5 py-3">';
-                dpos[i].forEach(function(dp){
-                    h+='<div class="w-2.5 h-2.5 rounded-full" style="margin-left:'+dp+'%;'+dotC+'"></div>';
-                });
-                h+='</div>';
+            h += '<div class="w-full" style="padding-left:' + positions[i] + '%">';
+            h += '<div class="level-node' + lockClass + ' text-center inline-block" onclick="openModal(' + lv.n + ',\'' + tEsc + '\',\'' + dEsc + '\',\'' + lv.s + '\',' + lv.xp + ')">';
+            h += '<div class="flex flex-col items-center gap-2">';
+            h += '<div class="node-btn ' + nodeClass + (isBoss ? ' relative' : '') + '" style="' + sz + bossGlow + '">' + bossTag + (isBoss && lv.s === 'completed' ? '🏆' : icon) + '</div>';
+            if (stars) h += '<div class="star-row">' + stars + '</div>';
+            h += '<div class="text-[10px] font-black ' + (isBoss ? 'text-primary' : lv.s === 'completed' ? 'text-gray-400' : 'text-gray-600') + ' uppercase tracking-wider max-w-[120px] leading-tight">M' + lv.n + '</div>';
+            h += '</div></div></div>';
+
+            if (i < levels.length - 1) {
+                const nextPos = positions[i + 1];
+                const curCenter = positions[i] + 5;
+                const nextCenter = nextPos + 5;
+                h += '<div class="w-full flex flex-col gap-2 py-2">';
+                const steps = 3;
+                for (let s = 1; s <= steps; s++) {
+                    const pct = curCenter + (nextCenter - curCenter) * (s / (steps + 1));
+                    const nextCompleted = levels[i + 1].s === 'completed' || levels[i + 1].s === 'active';
+                    const ds = nextCompleted ? dotStyle : 'background:#374151;';
+                    h += '<div class="w-2.5 h-2.5 rounded-full" style="margin-left:' + pct + '%;' + ds + '"></div>';
+                }
+                h += '</div>';
             }
         });
-        document.getElementById('level-map').innerHTML=h;
-    })();
+        document.getElementById('level-map').innerHTML = h;
+    }
+
+    const icons = ['🎓','🏛️','📊','👥','💱','₿','🛒','📏','🕐','🏆'];
+    function openModal(num, title, desc, status, xp) {
+        document.getElementById('modal-title').textContent = 'M' + num + ': ' + title;
+        document.getElementById('modal-desc').textContent = desc;
+        document.getElementById('modal-xp').textContent = '+' + xp + ' XP';
+        document.getElementById('modal-icon').textContent = icons[num - 1] || '📚';
+        const badge = document.getElementById('modal-badge');
+        if (status === 'completed') { badge.textContent = '✓ Completado'; badge.style.background = 'rgba(34,197,94,.15)'; badge.style.color = '#22c55e'; badge.style.borderColor = 'rgba(34,197,94,.3)'; }
+        else if (status === 'active') { badge.textContent = '▶ En Progreso'; badge.style.background = 'rgba(212,175,55,.15)'; badge.style.color = '#D4AF37'; badge.style.borderColor = 'rgba(212,175,55,.3)'; }
+        else { badge.textContent = '🔒 Bloqueado'; badge.style.background = 'rgba(107,114,128,.15)'; badge.style.color = '#6b7280'; badge.style.borderColor = 'rgba(107,114,128,.3)'; }
+        document.getElementById('modal-btn').style.display = status === 'locked' ? 'none' : 'block';
+        document.getElementById('level-modal').classList.remove('hidden');
+    }
+    function closeModal() { document.getElementById('level-modal').classList.add('hidden'); }
     </script>
 </main>
 
@@ -322,52 +207,20 @@
 <div id="level-modal" class="modal-overlay hidden" onclick="if(event.target===this)closeModal()">
     <div class="modal-box">
         <div class="flex items-center justify-between mb-5">
-            <span id="modal-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider" style="background:rgba(34,197,94,0.15); color:#22c55e; border:1px solid rgba(34,197,94,0.3);">✓ Completado</span>
+            <span id="modal-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider" style="background:rgba(34,197,94,.15);color:#22c55e;border:1px solid rgba(34,197,94,.3);">✓ Completado</span>
             <button onclick="closeModal()" class="text-gray-500 hover:text-white transition"><span class="material-symbols-outlined">close</span></button>
         </div>
         <div class="text-5xl text-center mb-4" id="modal-icon">📚</div>
         <h3 class="text-xl font-black text-center uppercase tracking-tight mb-2" id="modal-title">Título</h3>
         <p class="text-gray-400 text-sm text-center mb-5 leading-relaxed" id="modal-desc">Descripción</p>
-        <div class="flex justify-center gap-1 mb-5" id="modal-stars">⭐⭐⭐</div>
-        <div class="flex items-center justify-between mb-5 bg-card rounded-xl px-4 py-3" style="border:1px solid rgba(212,175,55,0.15);">
+        <div class="flex items-center justify-between mb-5 bg-card rounded-xl px-4 py-3" style="border:1px solid rgba(212,175,55,.15);">
             <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">XP ganada</span>
             <span class="font-black text-primary" id="modal-xp">+200 XP</span>
         </div>
-        <button onclick="window.location.href='leccion.html'" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#16a34a,#4ade80); color:#0a0f1a;">
+        <button id="modal-btn" onclick="window.location.href='leccion.html'" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#16a34a,#4ade80);color:#0a0f1a;">
             ⚡ JUGAR NIVEL
-        </button>
-            JUGAR NIVEL
         </button>
     </div>
 </div>
-
-<script>
-function toggleSideMenu() {
-    const menu = document.getElementById('side-menu');
-    const overlay = document.getElementById('menu-overlay');
-    const hamburger = document.getElementById('hamburger-btn-inline');
-    if (menu.classList.contains('-translate-x-full')) {
-        menu.classList.remove('-translate-x-full');
-        overlay.classList.remove('opacity-0', 'pointer-events-none');
-        if (hamburger) hamburger.classList.add('hamburger-open');
-    } else {
-        menu.classList.add('-translate-x-full');
-        overlay.classList.add('opacity-0', 'pointer-events-none');
-        if (hamburger) hamburger.classList.remove('hamburger-open');
-    }
-}
-
-const icons = ['📊','📈','🕯️','📋','💰','⚡','📉','📐','📡','🧠','📝','🏆'];
-function openModal(num, title, desc, status, xp) {
-    document.getElementById('modal-title').textContent = 'Nivel ' + num + ': ' + title;
-    document.getElementById('modal-desc').textContent = desc;
-    document.getElementById('modal-xp').textContent = '+' + xp + ' XP';
-    document.getElementById('modal-icon').textContent = icons[num-1] || '📚';
-    document.getElementById('level-modal').classList.remove('hidden');
-}
-function closeModal() {
-    document.getElementById('level-modal').classList.add('hidden');
-}
-</script>
 </body>
 </html>

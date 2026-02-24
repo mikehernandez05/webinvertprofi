@@ -330,9 +330,14 @@
             <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">XP a ganar</span>
             <span class="font-black text-primary" id="modal-xp">+200 XP</span>
         </div>
-        <button id="modal-cta" onclick="window.location.href='leccion.html'" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;">
-            JUGAR NIVEL
-        </button>
+        <div id="modal-buttons" class="flex flex-col gap-2">
+            <button id="modal-cta" onclick="window.location.href='leccion.html'" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;">
+                JUGAR NIVEL
+            </button>
+            <button id="modal-next" onclick="" class="hidden w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;">
+                ▶ SIGUIENTE NIVEL
+            </button>
+        </div>
     </div>
 </div>
 
@@ -350,21 +355,57 @@ function toggleSideMenu() {
 }
 
 const icons = ['🕯️','📐','📡','📊','🛡️','⚡','📈','🔮','💼','🧠','📝','🏆'];
+const allLevels = [
+    {n:1,t:'Patrones de Velas',d:'Doji, martillo, estrella fugaz.',s:'completed',xp:200},
+    {n:2,t:'Fibonacci Retracements',d:'La herramienta mágica.',s:'completed',xp:200},
+    {n:3,t:'RSI & MACD Avanzado',d:'Divergencias, señales.',s:'completed',xp:200},
+    {n:4,t:'Zonas de Oferta y Demanda',d:'Supply & demand.',s:'completed',xp:200},
+    {n:5,t:'Stop Loss Profesional',d:'Domina el stop loss.',s:'completed',xp:200},
+    {n:6,t:'⚡ BOSS: Análisis Multi-Timeframe',d:'Analiza en 4 timeframes.',s:'active',xp:400,boss:'BOSS'},
+    {n:7,t:'Estructura de Mercado',d:'Break of structure.',s:'locked',xp:200},
+    {n:8,t:'Order Blocks Básicos',d:'Órdenes institucionales.',s:'locked',xp:200},
+    {n:9,t:'Liquidez del Mercado',d:'Cómo se mueve la liquidez.',s:'locked',xp:200},
+    {n:10,t:'Gestión Avanzada de Riesgo',d:'Risk/reward ratio.',s:'locked',xp:200},
+    {n:11,t:'Backtesting & Journaling',d:'Tu diario de trading.',s:'locked',xp:200},
+    {n:12,t:'🏆 FINAL: Examen Intermedio',d:'Demuestra tu dominio.',s:'locked',xp:600,boss:'FINAL'}
+];
+
 function openModal(num, title, desc, status, xp) {
     const badge = document.getElementById('modal-badge');
     const cta = document.getElementById('modal-cta');
+    const nextBtn = document.getElementById('modal-next');
+
+    // Find the next playable level
+    const nextLevel = allLevels.find(function(l){ return l.s === 'active'; }) || allLevels.find(function(l){ return l.s === 'locked'; });
+
     if (status === 'completed') {
         badge.textContent = '✓ Completado';
         badge.style.cssText = 'background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);';
         document.getElementById('modal-stars').textContent = '⭐⭐⭐';
-        cta.style.cssText = 'background:linear-gradient(135deg,#16a34a,#4ade80);color:#0a0f1a;';
-        cta.textContent = 'REPASAR NIVEL';
+        cta.style.cssText = 'background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);';
+        cta.textContent = '🔄 REPASAR NIVEL';
+        cta.onclick = function(){ window.location.href='leccion.html'; };
+
+        // Show "next level" button
+        if (nextLevel) {
+            nextBtn.classList.remove('hidden');
+            nextBtn.style.cssText = 'background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;';
+            nextBtn.textContent = '▶ SIGUIENTE NIVEL (M' + nextLevel.n + ')';
+            nextBtn.onclick = function(){
+                closeModal();
+                openModal(nextLevel.n, nextLevel.t, nextLevel.d, nextLevel.s, nextLevel.xp);
+            };
+        } else {
+            nextBtn.classList.add('hidden');
+        }
     } else {
         badge.innerHTML = '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#D4AF37;animation:blink 1s ease-in-out infinite;margin-right:4px;"></span> En Progreso';
         badge.style.cssText = 'background:rgba(212,175,55,0.2);color:#D4AF37;border:1px solid rgba(212,175,55,0.5);';
         document.getElementById('modal-stars').textContent = '⭐⭐⭐ (por ganar)';
         cta.style.cssText = 'background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;';
         cta.textContent = '▶ JUGAR NIVEL';
+        cta.onclick = function(){ window.location.href='leccion.html'; };
+        nextBtn.classList.add('hidden');
     }
     document.getElementById('modal-title').textContent = 'Nivel ' + num + ': ' + title;
     document.getElementById('modal-desc').textContent = desc;

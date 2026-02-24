@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>InvertProfit — Mundo 7: Legado</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="auth.js"></script>
+    <script>
+        tailwind.config={darkMode:"class",theme:{extend:{colors:{"primary":"#D4AF37","bg-dark":"#0a0f1a","card":"#111827","card-border":"#1f2937"},fontFamily:{"sans":["Inter","sans-serif"]}}}}
+    </script>
+    <style>
+        ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#374151;border-radius:2px}
+        .world-bg{background:radial-gradient(ellipse at 20% 50%,rgba(212,175,55,.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 30%,rgba(251,191,36,.06) 0%,transparent 50%),#0a0f1a}
+        .level-node{position:relative;z-index:10;cursor:pointer;transition:all .3s cubic-bezier(.175,.885,.32,1.275)}.level-node:hover .node-btn{transform:scale(1.15)}.level-node.locked{cursor:not-allowed;opacity:.45}
+        .node-btn{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;transition:all .3s;position:relative}
+        .node-btn.completed{background:radial-gradient(circle at 35% 35%,#fbbf24 0%,#D4AF37 60%,#92400e 100%);box-shadow:0 0 20px rgba(212,175,55,.5),0 4px 15px rgba(0,0,0,.5);border:3px solid rgba(251,191,36,.6)}
+        .node-btn.active{background:radial-gradient(circle at 35% 35%,#D4AF37 0%,#b8860b 60%,#3d2d05 100%);box-shadow:0 0 25px rgba(212,175,55,.7),0 4px 15px rgba(0,0,0,.5);border:3px solid rgba(212,175,55,.9);animation:active-pulse 2s ease-in-out infinite}
+        .node-btn.locked-node{background:radial-gradient(circle at 35% 35%,#374151 0%,#1f2937 60%,#111827 100%);box-shadow:0 4px 15px rgba(0,0,0,.5);border:3px solid rgba(75,85,99,.4)}
+        @keyframes active-pulse{0%,100%{transform:scale(1)}50%{box-shadow:0 0 45px rgba(212,175,55,.9);transform:scale(1.06)}}
+        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}.float-anim{animation:float 3s ease-in-out infinite}
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+        .modal-box{background:#111827;border:1px solid rgba(212,175,55,.4);border-radius:24px;padding:32px;max-width:420px;width:calc(100% - 2rem);box-shadow:0 0 80px rgba(212,175,55,.2)}
+        @keyframes title-in{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}.title-in{animation:title-in .6s ease-out forwards}
+        @keyframes golden-glow{0%,100%{text-shadow:0 0 20px rgba(212,175,55,.5)}50%{text-shadow:0 0 60px rgba(212,175,55,1),0 0 120px rgba(212,175,55,.4)}}.golden-glow{animation:golden-glow 3s ease-in-out infinite}
+    </style>
+</head>
+<body class="world-bg text-white font-sans min-h-screen flex flex-col overflow-x-hidden">
+<header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-[60] shrink-0">
+    <div class="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
+        <div class="flex items-center gap-3">
+            <a href="portadanivelesacademia.html" class="flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shrink-0" style="background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.35);color:#D4AF37;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span class="hidden sm:inline">Volver</span>
+            </a>
+            <img src="images/logo_azul.png" alt="InvertProfit" class="h-10 w-auto object-contain shrink-0" onerror="this.outerHTML='<span style=\'color:#D4AF37;font-weight:900;font-size:1.2rem;\'>IP</span>'">
+        </div>
+        <nav class="hidden lg:flex items-center gap-10">
+            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="index.html">INICIO</a>
+            <a class="font-black border-b-2 border-primary pb-1 text-sm tracking-widest uppercase" style="color:#D4AF37;" href="portadanivelesacademia.html">ACADEMIA</a>
+            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="mercado.html">MERCADOS</a>
+        </nav>
+        <div class="flex items-center gap-2 md:gap-4"><button class="shrink-0 bg-primary font-bold h-10 px-6 rounded-full inline-flex items-center gap-2 whitespace-nowrap hover:bg-primary/90 transition text-xs tracking-wide" style="color:#0a0f1a;">⚡ CONECTAR BROKER</button></div>
+    </div>
+</header>
+<main class="flex-1 overflow-y-auto">
+    <div class="relative overflow-hidden" style="background:linear-gradient(180deg,rgba(212,175,55,.15) 0%,rgba(10,15,26,0) 100%);border-bottom:1px solid rgba(212,175,55,.2);">
+        <div class="max-w-5xl mx-auto px-6 py-8">
+            <div class="flex items-center gap-3 mb-3">
+                <a href="portadanivelesacademia.html" class="flex items-center gap-1.5 text-gray-500 hover:text-yellow-400 transition text-sm font-semibold"><span class="material-symbols-outlined text-[18px]">arrow_back</span> Mundos</a>
+                <span class="text-gray-700">/</span>
+                <span class="text-yellow-400 text-sm font-semibold">Mundo 07 — Legado</span>
+            </div>
+            <div class="flex items-center justify-between flex-wrap gap-4 title-in">
+                <div class="flex items-center gap-5">
+                    <div class="text-5xl float-anim">🏔️</div>
+                    <div>
+                        <p class="text-[10px] font-black tracking-[5px] text-yellow-400/70 uppercase">MUNDO 07 — THE APEX — RANGO: MAESTRO DE CAPITAL</p>
+                        <h1 class="text-3xl md:text-4xl font-black uppercase tracking-tight golden-glow" style="color:#D4AF37;">LA CÚSPIDE DEL LEGADO</h1>
+                        <p class="text-gray-400 text-sm">Maestría Final — Estadística, Algoritmos, Portafolios y Graduación Grand Master.</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-center"><div class="text-2xl font-black text-yellow-400">0/10</div><div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Completados</div></div>
+                    <div class="w-px h-10 bg-card-border"></div>
+                    <div class="text-center"><div class="text-2xl font-black text-primary">0</div><div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">XP</div></div>
+                </div>
+            </div>
+            <div class="mt-4 h-3 w-full rounded-full overflow-hidden bg-gray-800"><div class="h-full rounded-full" style="width:0%;background:linear-gradient(90deg,#92400e,#D4AF37,#fbbf24);"></div></div>
+        </div>
+    </div>
+    <div class="max-w-xl mx-auto px-4 py-10 pb-20">
+        <p class="text-center text-[11px] font-black tracking-[5px] text-gray-600 uppercase mb-10">— MAPA DE NIVELES — THE APEX —</p>
+        <div id="level-map" class="relative flex flex-col items-start gap-0"></div>
+        <div class="mt-10">
+            <div class="mx-4 rounded-3xl p-8 text-center relative overflow-hidden" style="background:linear-gradient(135deg,rgba(212,175,55,.15) 0%,rgba(212,175,55,.05) 100%);border:2px solid rgba(212,175,55,.4);box-shadow:0 0 60px rgba(212,175,55,.1);">
+                <div class="text-6xl mb-4">👑</div>
+                <h3 class="text-2xl font-black uppercase tracking-tight mb-2 golden-glow" style="color:#D4AF37;">GRADUACIÓN GRAND MASTER</h3>
+                <p class="text-gray-400 text-sm mb-2">Completa los 100 módulos para obtener la Certificación Grand Master</p>
+                <p class="text-primary font-black text-lg">RANGO FINAL: SOCIO AMIGOTRADE 🏆</p>
+            </div>
+        </div>
+    </div>
+    <script>
+    (function(){
+        const levels = [
+            {n:91,t:'Estadística y Esperanza Matemática',d:'La base científica del trading rentable.',s:'locked',xp:250},
+            {n:92,t:'Teoría de Juegos Aplicada',d:'Estrategias competitivas en el mercado. Nash y más.',s:'locked',xp:250},
+            {n:93,t:'Ingeniería de Riesgo y Gestión de Drawdown',d:'Protege tu capital como un ingeniero financiero.',s:'locked',xp:300},
+            {n:94,t:'Introducción a Bots y Algoritmos (EA)',d:'Automatiza tu trading. Lógica de programación para traders.',s:'locked',xp:300},
+            {n:95,t:'Optimización de Portafolios Cuantitativos',d:'Ratios de Sharpe, Sortino. Portafolios eficientes.',s:'locked',xp:300},
+            {n:96,t:'Correlación Intermercado y Coeficiente Beta',d:'Cómo se conectan todos los mercados del mundo.',s:'locked',xp:250},
+            {n:97,t:'Creación de un Plan Maestro de Retiro',d:'Libertad financiera sistemática. El plan definitivo.',s:'locked',xp:250},
+            {n:98,t:'Auditoría Final: 100 Operaciones Reales',d:'Demuestra consistencia con un historial real.',s:'locked',xp:500},
+            {n:99,t:'Ética y Legado del Inversor Élite',d:'Trading como filosofía de vida. Tu legado financiero.',s:'locked',xp:250},
+            {n:100,t:'🏆 GRADUACIÓN: Certificación Grand Master',d:'El examen final. Acceso VIP y Certificación oficial. RANGO FINAL: SOCIO AMIGOTRADE.',s:'locked',xp:1000,boss:'FINAL'}
+        ];
+        const icons=['📊','♟️','🛡️','🤖','📈','🔗','🏖️','📋','⚖️','👑'];
+        const pattern=[20,40,60,70,60,40,20,10,20,40];
+        let h='';
+        levels.forEach(function(lv,i){
+            const isBoss=!!lv.boss;const sz=isBoss?'width:96px;height:96px;font-size:2.5rem;':'';
+            const bossGlow=isBoss?'box-shadow:0 0 50px rgba(212,175,55,.8),0 0 100px rgba(212,175,55,.3);background:radial-gradient(circle at 35% 35%,#fbbf24 0%,#D4AF37 40%,#92400e 80%);':'';
+            const bossTag=isBoss?'<span style="position:absolute;top:-10px;right:-10px;font-size:.7rem;background:linear-gradient(135deg,#D4AF37,#b8860b);color:#0a0f1a;border-radius:999px;padding:3px 10px;font-weight:900;">GRAND MASTER</span>':'';
+            const tEsc=lv.t.replace(/'/g,"\\'");const dEsc=lv.d.replace(/'/g,"\\'");
+            h+='<div class="w-full" style="padding-left:'+pattern[i%pattern.length]+'%">';
+            h+='<div class="level-node locked text-center inline-block" onclick="openModal('+lv.n+',\''+tEsc+'\',\''+dEsc+'\',\''+lv.s+'\','+lv.xp+')">';
+            h+='<div class="flex flex-col items-center gap-2"><div class="node-btn locked-node'+(isBoss?' relative':'')+'" style="'+sz+bossGlow+'">'+bossTag+'🔒</div>';
+            h+='<div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">M'+lv.n+'</div></div></div></div>';
+            if(i<levels.length-1){const curC=pattern[i%pattern.length]+5;const nextC=pattern[(i+1)%pattern.length]+5;h+='<div class="w-full flex flex-col gap-2 py-2">';for(let s=1;s<=3;s++){const pct=curC+(nextC-curC)*(s/4);h+='<div class="w-2.5 h-2.5 rounded-full" style="margin-left:'+pct+'%;background:#374151;"></div>';}h+='</div>';}
+        });
+        document.getElementById('level-map').innerHTML=h;
+    })();
+    function openModal(num,title,desc,status,xp){
+        document.getElementById('modal-title').textContent='M'+num+': '+title;document.getElementById('modal-desc').textContent=desc;document.getElementById('modal-xp').textContent='+'+xp+' XP';
+        document.getElementById('modal-badge').textContent='🔒 Bloqueado';document.getElementById('modal-btn').style.display='none';document.getElementById('level-modal').classList.remove('hidden');
+    }
+    function closeModal(){document.getElementById('level-modal').classList.add('hidden');}
+    </script>
+</main>
+<div id="level-modal" class="modal-overlay hidden" onclick="if(event.target===this)closeModal()">
+    <div class="modal-box">
+        <div class="flex items-center justify-between mb-5"><span id="modal-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider" style="background:rgba(107,114,128,.15);color:#6b7280;border:1px solid rgba(107,114,128,.3);">🔒 Bloqueado</span><button onclick="closeModal()" class="text-gray-500 hover:text-white transition"><span class="material-symbols-outlined">close</span></button></div>
+        <div class="text-5xl text-center mb-4" id="modal-icon">🏔️</div>
+        <h3 class="text-xl font-black text-center uppercase tracking-tight mb-2" id="modal-title">Título</h3>
+        <p class="text-gray-400 text-sm text-center mb-5 leading-relaxed" id="modal-desc">Descripción</p>
+        <div class="flex items-center justify-between mb-5 bg-card rounded-xl px-4 py-3" style="border:1px solid rgba(212,175,55,.2);"><span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">XP</span><span class="font-black text-primary" id="modal-xp">+200 XP</span></div>
+        <button id="modal-btn" onclick="window.location.href='leccion.html'" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="display:none;background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;">⚡ JUGAR NIVEL</button>
+    </div>
+</div>
+</body>
+</html>
