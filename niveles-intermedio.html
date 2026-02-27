@@ -95,6 +95,84 @@ body{background:#040608;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 .snd-btn{position:fixed;bottom:16px;right:16px;z-index:110;width:42px;height:42px;border-radius:50%;border:1px solid rgba(212,175,55,.3);background:rgba(10,15,26,.85);backdrop-filter:blur(8px);color:#D4AF37;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;box-shadow:0 0 12px rgba(212,175,55,.15)}
 .snd-btn:hover{box-shadow:0 0 22px rgba(212,175,55,.3)}
 .snd-btn.off{color:#444;border-color:rgba(255,255,255,.06)}
+
+/* ══════════════════════════════════════
+   RESPONSIVE — MOBILE FIRST
+   ══════════════════════════════════════ */
+
+/* ── Small phones (< 375px) ── */
+@media(max-width:374px){
+  .node-btn{width:56px;height:56px;font-size:1.15rem;border-width:2px}
+  .world-header-emoji{font-size:2.5rem!important}
+  .world-header-title{font-size:1.1rem!important}
+  .world-header-rank{font-size:7px!important;letter-spacing:2px!important}
+  .world-header-sub{font-size:11px!important}
+  .stat-num{font-size:1rem!important}
+  .stat-label{font-size:7px!important}
+  .modal-box{padding:20px;border-radius:18px}
+  .modal-box .text-5xl{font-size:2.5rem!important}
+  .modal-box h3{font-size:.9rem!important}
+  .level-map-wrap{padding-left:10px!important;padding-right:10px!important}
+  .snd-btn{width:36px;height:36px;font-size:13px;bottom:10px;right:10px}
+  .quest-wrap{margin-left:10px!important;margin-right:10px!important}
+}
+
+/* ── Standard phones (375px - 480px) ── */
+@media(min-width:375px) and (max-width:480px){
+  .node-btn{width:62px;height:62px;font-size:1.3rem}
+  .world-header-emoji{font-size:2.8rem!important}
+  .world-header-title{font-size:1.25rem!important}
+  .stat-num{font-size:1.1rem!important}
+  .modal-box{padding:24px}
+}
+
+/* ── Large phones / Small tablets (481px - 768px) ── */
+@media(min-width:481px) and (max-width:768px){
+  .node-btn{width:68px;height:68px;font-size:1.4rem}
+  .world-header-emoji{font-size:3rem!important}
+  .world-header-title{font-size:1.6rem!important}
+  .level-map-wrap{max-width:520px!important}
+}
+
+/* ── Tablets (769px - 1024px) ── */
+@media(min-width:769px) and (max-width:1024px){
+  .node-btn{width:74px;height:74px;font-size:1.5rem}
+  .world-header-title{font-size:1.8rem!important}
+  .level-map-wrap{max-width:580px!important}
+  .modal-box{max-width:460px}
+}
+
+/* ── Desktop (1025px+) ── */
+@media(min-width:1025px){
+  .node-btn{width:78px;height:78px;font-size:1.6rem}
+  .world-header-title{font-size:2rem!important}
+  .level-map-wrap{max-width:620px!important}
+  .modal-box{max-width:480px}
+}
+
+/* ── Boss node responsive overrides ── */
+@media(max-width:374px){.boss-node{width:68px!important;height:68px!important;font-size:1.4rem!important}}
+@media(min-width:375px) and (max-width:480px){.boss-node{width:76px!important;height:76px!important;font-size:1.6rem!important}}
+@media(min-width:481px) and (max-width:768px){.boss-node{width:82px!important;height:82px!important;font-size:1.7rem!important}}
+@media(min-width:769px){.boss-node{width:90px!important;height:90px!important;font-size:1.8rem!important}}
+
+/* ── Landscape phones ── */
+@media(max-height:500px) and (orientation:landscape){
+  .world-header-wrap{padding-top:8px!important;padding-bottom:8px!important}
+  .world-header-emoji{font-size:2rem!important}
+  .world-header-title{font-size:1.1rem!important}
+  .node-btn{width:54px;height:54px;font-size:1.1rem}
+  .boss-node{width:66px!important;height:66px!important}
+  .connect-dot{width:7px!important;height:7px!important}
+}
+
+/* ── Touch targets (all mobile) ── */
+@media(hover:none) and (pointer:coarse){
+  .level-node{min-height:44px}
+  .node-btn{min-width:44px;min-height:44px}
+  .snd-btn{width:44px;height:44px}
+  .level-node:hover .node-btn{transform:none}
+}
 </style>
 </head>
 <body class="text-white min-h-screen flex flex-col">
@@ -129,38 +207,38 @@ body{background:#040608;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 <main class="flex-1 overflow-y-auto relative z-10">
   <!-- WORLD HEADER -->
   <div class="relative overflow-hidden" style="background:linear-gradient(180deg,rgba(212,175,55,.1) 0%,transparent 100%);border-bottom:1px solid rgba(212,175,55,.12);">
-    <div class="max-w-5xl mx-auto px-5 py-7">
-      <div class="flex items-center gap-2 mb-3">
-        <a href="portadanivelesacademia.html" class="text-gray-500 hover:brightness-125 transition text-sm font-semibold" style="color:rgba(212,175,55,.5)"><span class="material-symbols-outlined text-[16px] align-middle">arrow_back</span> Mundos</a>
+    <div class="max-w-5xl mx-auto px-4 sm:px-5 py-5 sm:py-7 world-header-wrap">
+      <div class="flex items-center gap-2 mb-2 sm:mb-3">
+        <a href="portadanivelesacademia.html" class="text-gray-500 hover:brightness-125 transition text-xs sm:text-sm font-semibold" style="color:rgba(212,175,55,.5)"><span class="material-symbols-outlined text-[14px] sm:text-[16px] align-middle">arrow_back</span> Mundos</a>
         <span class="text-gray-700">/</span>
-        <span class="text-sm font-semibold" style="color:#D4AF37">Mundo 02 — Intermedio</span>
+        <span class="text-xs sm:text-sm font-semibold truncate" style="color:#D4AF37">Mundo 02 — Intermedio</span>
       </div>
-      <div class="flex items-center justify-between flex-wrap gap-4">
-        <div class="flex items-center gap-4">
-          <div class="text-5xl float-anim">⛏️</div>
-          <div>
-            <p class="text-[9px] font-black tracking-[4px] uppercase mb-1" style="color:rgba(212,175,55,.6)">MUNDO 02 — RANGO: ANALISTA</p>
-            <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight text-white" style="font-family:Orbitron,sans-serif;letter-spacing:1px">INTERMEDIO</h1>
-            <p class="text-gray-400 text-sm mt-1">Análisis técnico avanzado & gestión de riesgo</p>
+      <div class="flex items-start sm:items-center justify-between flex-wrap gap-3 sm:gap-4">
+        <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+          <div class="world-header-emoji shrink-0" style="font-size:3rem">⛏️</div>
+          <div class="min-w-0">
+            <p class="world-header-rank text-[8px] sm:text-[9px] font-black tracking-[3px] sm:tracking-[4px] uppercase mb-1" style="color:rgba(212,175,55,.6)">MUNDO 02 — RANGO: ANALISTA</p>
+            <h1 class="world-header-title text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-tight text-white truncate" style="font-family:Orbitron,sans-serif;letter-spacing:1px">INTERMEDIO</h1>
+            <p class="world-header-sub text-gray-400 text-xs sm:text-sm mt-1 line-clamp-2">Análisis técnico avanzado & gestión de riesgo</p>
           </div>
         </div>
-        <div class="flex items-center gap-4">
-          <div class="text-center"><div class="text-xl font-black" style="color:#D4AF37" id="comp-count">0/12</div><div class="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Completados</div></div>
-          <div class="w-px h-9" style="background:rgba(212,175,55,.15)"></div>
-          <div class="text-center"><div class="text-xl font-black" style="color:#D4AF37" id="xp-count">0</div><div class="text-[9px] font-bold text-gray-500 uppercase tracking-wider">XP</div></div>
+        <div class="flex items-center gap-3 sm:gap-4 shrink-0">
+          <div class="text-center"><div class="stat-num text-lg sm:text-xl font-black" style="color:#D4AF37" id="comp-count">0/12</div><div class="stat-label text-[8px] sm:text-[9px] font-bold text-gray-500 uppercase tracking-wider">Completados</div></div>
+          <div class="w-px h-8 sm:h-9" style="background:rgba(212,175,55,.15)"></div>
+          <div class="text-center"><div class="stat-num text-lg sm:text-xl font-black" style="color:#D4AF37" id="xp-count">0</div><div class="stat-label text-[8px] sm:text-[9px] font-bold text-gray-500 uppercase tracking-wider">XP</div></div>
         </div>
       </div>
-      <div class="mt-4 h-2.5 w-full rounded-full overflow-hidden bg-gray-800/60"><div class="h-full rounded-full transition-all duration-700" id="prog-bar" style="width:0%;background:linear-gradient(90deg,#b8860b,#D4AF37,#fbbf24)"></div></div>
+      <div class="mt-3 sm:mt-4 h-2 sm:h-2.5 w-full rounded-full overflow-hidden bg-gray-800/60"><div class="h-full rounded-full transition-all duration-700" id="prog-bar" style="width:0%;background:linear-gradient(90deg,#b8860b,#D4AF37,#fbbf24)"></div></div>
     </div>
   </div>
 
   <!-- LEVEL MAP -->
-  <div class="max-w-xl mx-auto px-4 py-8 pb-24">
-    <p class="text-center text-[10px] font-black tracking-[5px] text-gray-600 uppercase mb-8" style="font-family:Share Tech Mono,monospace">— MAPA DE NIVELES —</p>
+  <div class="level-map-wrap max-w-xl mx-auto px-3 sm:px-4 py-6 sm:py-8 pb-24">
+    <p class="text-center text-[9px] sm:text-[10px] font-black tracking-[4px] sm:tracking-[5px] text-gray-600 uppercase mb-6 sm:mb-8" style="font-family:Share Tech Mono,monospace">— MAPA DE NIVELES —</p>
     <div id="level-map" class="relative flex flex-col items-start gap-0"></div>
 
     <!-- QUEST CARD -->
-    <div class="mt-8" id="quest-card"></div>
+    <div class="mt-6 sm:mt-8 quest-wrap" id="quest-card"></div>
   </div>
 
   <script>
@@ -184,21 +262,22 @@ body{background:#040608;overflow-x:hidden;-webkit-font-smoothing:antialiased}
     var h='';
     levels.forEach(function(lv,i){
       var isBoss=!!lv.boss;
-      var sz=lv.boss==='FINAL'?'width:88px;height:88px;font-size:2rem;':(isBoss?'width:84px;height:84px;font-size:1.75rem;':'');
+      var sz=isBoss?'':'';
+      var bossClass=isBoss?' boss-node':'';
       var tEsc=lv.t.replace(/'/g,"\\'");var dEsc=lv.d.replace(/'/g,"\\'");
       var nodeClass,nodeContent,nodeStyleExtra='',bossTag='';
 
       if(lv.s==='completed'){
-        nodeClass='node-btn completed'+(isBoss?' relative':'');
-        if(isBoss){nodeStyleExtra=sz+'box-shadow:0 0 30px rgba(212,175,55,.5);';bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:.6rem;background:linear-gradient(135deg,#D4AF37,#b8860b);color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
+        nodeClass='node-btn completed'+bossClass+(isBoss?' relative':'');
+        if(isBoss){nodeStyleExtra='box-shadow:0 0 30px rgba(212,175,55,.5);';bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:.6rem;background:linear-gradient(135deg,#D4AF37,#b8860b);color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
         nodeContent=bossTag+(isBoss?icons[i]:'✓');
       }else if(lv.s==='active'){
-        nodeClass='node-btn active'+(isBoss?' relative':'');
-        if(isBoss){nodeStyleExtra=sz;bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:.6rem;background:#D4AF37;color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
+        nodeClass='node-btn active'+bossClass+(isBoss?' relative':'');
+        if(isBoss){nodeStyleExtra='';bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:.6rem;background:#D4AF37;color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
         nodeContent=bossTag+icons[i];
       }else{
-        nodeClass='node-btn locked-node'+(isBoss?' relative':'');
-        if(isBoss){nodeStyleExtra=sz+'opacity:.5;';bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:.6rem;background:#374151;color:#6b7280;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
+        nodeClass='node-btn locked-node'+bossClass+(isBoss?' relative':'');
+        if(isBoss){nodeStyleExtra='opacity:.5;';bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:.6rem;background:#374151;color:#6b7280;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
         nodeContent=bossTag+'<span class="material-symbols-outlined text-gray-500 text-2xl">lock</span>';
       }
 
@@ -219,8 +298,8 @@ body{background:#040608;overflow-x:hidden;-webkit-font-smoothing:antialiased}
         var nextS=levels[i+1].s;
         var dc=(lv.s==='completed'&&nextS==='completed')?completedDot:(lv.s==='completed'&&nextS==='active')?activeDot:lockedDot;
         var curP=pattern[i%pattern.length]+5;var nextP=pattern[(i+1)%pattern.length]+5;
-        h+='<div class="w-full flex flex-col gap-2 py-2.5">';
-        for(var s=1;s<=3;s++){var pct=curP+(nextP-curP)*(s/4);h+='<div style="width:9px;height:9px;border-radius:50%;margin-left:'+pct+'%;'+dc+'"></div>';}
+        h+='<div class="w-full flex flex-col gap-1.5 sm:gap-2 py-2 sm:py-2.5">';
+        for(var s=1;s<=3;s++){var pct=curP+(nextP-curP)*(s/4);h+='<div class="connect-dot" style="width:8px;height:8px;border-radius:50%;margin-left:'+pct+'%;'+dc+'"></div>';}
         h+='</div>';
       }
     });
@@ -238,18 +317,18 @@ body{background:#040608;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 
 <!-- LEVEL MODAL -->
 <div id="level-modal" class="modal-overlay hidden" onclick="if(event.target===this)closeModal()">
-  <div class="modal-box">
-    <div class="flex items-center justify-between mb-4">
-      <span id="modal-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"></span>
-      <button onclick="closeModal()" class="text-gray-500 hover:text-white transition"><span class="material-symbols-outlined">close</span></button>
+  <div class="modal-box" style="margin:auto 12px">
+    <div class="flex items-center justify-between mb-3 sm:mb-4">
+      <span id="modal-badge" class="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-wider"></span>
+      <button onclick="closeModal()" class="text-gray-500 hover:text-white transition p-1"><span class="material-symbols-outlined">close</span></button>
     </div>
-    <div class="text-5xl text-center mb-3" id="modal-icon">⛏️</div>
-    <h3 class="text-lg font-black text-center uppercase tracking-tight mb-2" style="font-family:Orbitron,sans-serif;color:#D4AF37" id="modal-title"></h3>
-    <p class="text-gray-400 text-sm text-center mb-4 leading-relaxed" id="modal-desc"></p>
-    <div class="flex justify-center gap-1 mb-4" id="modal-stars">⭐⭐⭐</div>
-    <div class="flex items-center justify-between mb-4 rounded-xl px-4 py-3" style="background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.15);">
-      <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">XP a ganar</span>
-      <span class="font-black" style="color:#D4AF37" id="modal-xp"></span>
+    <div class="text-4xl sm:text-5xl text-center mb-2 sm:mb-3" id="modal-icon">⛏️</div>
+    <h3 class="text-base sm:text-lg font-black text-center uppercase tracking-tight mb-2" style="font-family:Orbitron,sans-serif;color:#D4AF37" id="modal-title"></h3>
+    <p class="text-gray-400 text-xs sm:text-sm text-center mb-3 sm:mb-4 leading-relaxed" id="modal-desc"></p>
+    <div class="flex justify-center gap-1 mb-3 sm:mb-4 text-sm" id="modal-stars">⭐⭐⭐</div>
+    <div class="flex items-center justify-between mb-3 sm:mb-4 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3" style="background:rgba(212,175,55,.06);border:1px solid rgba(212,175,55,.15);">
+      <span class="text-[9px] sm:text-[10px] font-bold text-gray-500 uppercase tracking-wider">XP a ganar</span>
+      <span class="font-black text-sm sm:text-base" style="color:#D4AF37" id="modal-xp"></span>
     </div>
     <div class="flex flex-col gap-2">
       <button id="modal-cta" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105 hover:brightness-110"></button>
