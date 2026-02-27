@@ -1,422 +1,432 @@
 <!DOCTYPE html>
 <html class="dark" lang="es">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>InvertProfit — Mundo Experto</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="auth.js"></script>
-    <script src="curriculum.js"></script>
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#D4AF37",
-                        "bg-dark": "#0a0f1a",
-                        "card": "#111827",
-                        "card-border": "#1f2937",
-                        "positive": "#22c55e",
-                        "negative": "#ef4444"
-                    },
-                    fontFamily: { "sans": ["Inter", "sans-serif"] }
-                }
-            }
-        }
-    </script>
-    <style>
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
-        ::-webkit-scrollbar-thumb:hover { background: #818cf8; }
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>InvertProfit — Mundo 3: Experto</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="auth.js"></script>
+<script src="curriculum.js"></script>
+<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"primary":"#D4AF37","bg-dark":"#0a0f1a","card":"#111827","card-border":"#1f2937"},fontFamily:{"sans":["Rajdhani","sans-serif"]}}}}</script>
+<style>
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#1f2937;border-radius:2px}
 
-        .logo-glow { filter: drop-shadow(0 0 10px rgba(212,175,55,0.3)); }
+/* ══════════════════════════════════════
+   DARK ATMOSPHERIC BACKGROUND V4
+   Sin formas, sin siluetas, puro ambiente
+   ══════════════════════════════════════ */
+body{background:#040608;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 
-        /* World background: purple/space theme */
-        .world-bg {
-            background:
-                radial-gradient(ellipse at 20% 40%, rgba(99,102,241,0.1) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 70%, rgba(129,140,248,0.08) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 20%, rgba(168,85,247,0.05) 0%, transparent 40%),
-                #0a0f1a;
-        }
+/* Full atmosphere - 3 zone gradient + colored glows */
+.atmo{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    /* Golden warm top */
+    radial-gradient(ellipse 90% 30% at 50% -5%,rgba(160,110,30,.14),rgba(120,80,20,.06) 50%,transparent 75%),
+    /* Cyan tech mid */
+    radial-gradient(ellipse 60% 25% at 50% 48%,rgba(0,160,200,.03),transparent 65%),
+    /* Fire bottom */
+    radial-gradient(ellipse 80% 25% at 50% 105%,rgba(180,50,0,.12),rgba(140,35,0,.05) 50%,transparent 75%),
+    /* Main vertical gradient */
+    linear-gradient(180deg,
+      #12100a 0%,#0e0c08 5%,#0a0a0c 12%,
+      #080a14 22%,#060a18 35%,#050a1a 48%,
+      #060a18 60%,#080a14 72%,
+      #0a0808 82%,#0e0804 90%,#120a04 96%,#140c02 100%)}
 
-        /* Level node */
-        .level-node {
-            position: relative;
-            z-index: 10;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .level-node:hover .node-btn { transform: scale(1.15); }
-        .level-node.locked { cursor: not-allowed; opacity: 0.45; }
+/* Subtle animated glow pulses */
+.glow-top{position:fixed;top:-15%;left:50%;transform:translateX(-50%);width:100%;height:40%;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 45% 50% at 50% 30%,rgba(200,160,60,.06),transparent 70%);
+  animation:glP 5s ease-in-out infinite alternate}
+.glow-bot{position:fixed;bottom:-10%;left:50%;transform:translateX(-50%);width:100%;height:35%;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 50% 50% at 50% 70%,rgba(200,60,0,.06),transparent 70%);
+  animation:glP 4s ease-in-out infinite alternate-reverse}
+.glow-mid{position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);width:50%;height:25%;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse,rgba(129,140,248,.025),transparent 65%);
+  animation:glP 6s ease-in-out infinite alternate}
+@keyframes glP{0%{opacity:.4}100%{opacity:1}}
 
-        .node-btn {
-            width: 72px; height: 72px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.5rem; font-weight: 900;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-        .node-btn.active {
-            background: radial-gradient(circle at 35% 35%, #a78bfa 0%, #818cf8 40%, #3730a3 100%);
-            box-shadow: 0 0 30px rgba(129,140,248,0.8), 0 4px 15px rgba(0,0,0,0.5);
-            border: 3px solid #818cf8;
-            animation: active-pulse 2s ease-in-out infinite;
-        }
-        .node-btn.locked-node {
-            background: radial-gradient(circle at 35% 35%, #374151 0%, #1f2937 60%, #111827 100%);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            border: 3px solid rgba(75,85,99,0.4);
-        }
+/* Vignette */
+.vig{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse 55% 60% at 50% 50%,transparent 15%,rgba(4,6,8,.55) 55%,rgba(2,3,5,.88) 100%)}
 
-        @keyframes active-pulse {
-            0%,100% { box-shadow: 0 0 30px rgba(129,140,248,0.8), 0 4px 15px rgba(0,0,0,0.5); transform: scale(1); }
-            50% { box-shadow: 0 0 50px rgba(129,140,248,1), 0 0 80px rgba(129,140,248,0.4), 0 4px 15px rgba(0,0,0,0.5); transform: scale(1.07); }
-        }
+/* FX canvas */
+#fxCanvas{position:fixed;inset:0;z-index:2;pointer-events:none;width:100%;height:100%}
 
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-        .float-anim { animation: float 3s ease-in-out infinite; }
+/* Scanlines */
+.scan{position:fixed;inset:0;z-index:70;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.012) 3px,rgba(0,0,0,.012) 4px)}
 
-        /* Stars rating on nodes */
-        .star-row { font-size: 0.75rem; line-height: 1; }
+/* Particles */
+.ptcl{position:fixed;border-radius:50%;pointer-events:none;z-index:3}
+@keyframes ptrise{0%{opacity:0;transform:translateY(0)}10%{opacity:.6}50%{opacity:1}85%{opacity:.4}100%{opacity:0;transform:translateY(-100vh)}}
+.ember{position:fixed;border-radius:50%;pointer-events:none;z-index:3;filter:blur(.5px)}
+@keyframes embrise{0%{opacity:0;transform:translateY(0) scale(1)}12%{opacity:1}65%{opacity:.5}100%{opacity:0;transform:translateY(-35vh) scale(.15)}}
 
-        /* Path dot animation */
-        @keyframes path-dot { 0%,100%{opacity:0.3} 50%{opacity:1} }
-        .path-dot { animation: path-dot 1.5s ease-in-out infinite; }
-        .path-dot:nth-child(2) { animation-delay: 0.3s; }
-        .path-dot:nth-child(3) { animation-delay: 0.6s; }
-        .path-dot:nth-child(4) { animation-delay: 0.9s; }
+/* ══ LEVEL MAP ══ */
+.level-node{position:relative;z-index:10;cursor:pointer;transition:all .3s cubic-bezier(.175,.885,.32,1.275);-webkit-tap-highlight-color:transparent}
+.level-node:hover .node-btn{transform:scale(1.15)}
+.level-node.locked{cursor:not-allowed;opacity:.4}
+.level-node.locked:hover .node-btn{transform:none}
 
-        /* Sidebar */
-        .sidebar-link { transition: all 0.2s ease; }
-        .sidebar-link:hover { background: rgba(255,255,255,0.04); color: #fff; }
-        .sidebar-link.active { background: rgba(212,175,55,0.15); color: #D4AF37; border: 1px solid rgba(212,175,55,0.2); }
-        .hamburger-open .hamburger-line-1 { transform: rotate(45deg) translateY(8px); }
-        .hamburger-open .hamburger-line-2 { opacity: 0; }
-        .hamburger-open .hamburger-line-3 { transform: rotate(-45deg) translateY(-8px); }
+.node-btn{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;transition:all .3s;position:relative;border:3px solid}
+.node-btn.completed{
+  background:radial-gradient(circle at 35% 35%,#a5b4fc 0%,#818cf8 50%,#4f46e5 100%);
+  box-shadow:0 0 20px rgba(129,140,248,.5),0 4px 15px rgba(0,0,0,.5);
+  border-color:rgba(129,140,248,.6)}
+.node-btn.active{
+  background:radial-gradient(circle at 35% 35%,#fbbf24 0%,#D4AF37 40%,#92400e 100%);
+  box-shadow:0 0 28px rgba(212,175,55,.7),0 4px 15px rgba(0,0,0,.5);
+  border-color:rgba(212,175,55,.9);animation:apulse 2s ease-in-out infinite}
+.node-btn.locked-node{
+  background:radial-gradient(circle at 35% 35%,#374151 0%,#1f2937 60%,#111827 100%);
+  box-shadow:0 4px 15px rgba(0,0,0,.5);border-color:rgba(75,85,99,.4)}
+@keyframes apulse{0%,100%{box-shadow:0 0 28px rgba(212,175,55,.7),0 4px 15px rgba(0,0,0,.5);transform:scale(1)}50%{box-shadow:0 0 48px rgba(212,175,55,.9),0 0 70px rgba(212,175,55,.3);transform:scale(1.06)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}.float-anim{animation:float 3s ease-in-out infinite}
+.star-row{font-size:.75rem;line-height:1}
 
-        /* Level modal */
-        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:200; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
-        .modal-box { background:#111827; border:1px solid rgba(212,175,55,0.3); border-radius:24px; padding:32px; max-width:420px; width:calc(100% - 2rem); box-shadow: 0 0 60px rgba(212,175,55,0.15); }
+/* ══ MODAL ══ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-box{background:#111827;border:1px solid rgba(129,140,248,.3);border-radius:24px;padding:28px;max-width:420px;width:calc(100% - 2rem);box-shadow:0 0 50px rgba(129,140,248,.12)}
 
-        /* Floating decorations */
-        @keyframes nebula-float { 0%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-15px) rotate(2deg)} 100%{transform:translateY(0) rotate(-2deg)} }
-        .nebula { position:absolute; animation: nebula-float 7s ease-in-out infinite; font-size:1.5rem; pointer-events:none; opacity:0.4; }
-
-        /* World header */
-        @keyframes title-in { from{opacity:0; transform:translateY(-20px)} to{opacity:1; transform:translateY(0)} }
-        .title-in { animation: title-in 0.6s ease-out forwards; }
-    </style>
+/* ══ SOUND BTN ══ */
+.snd-btn{position:fixed;bottom:16px;right:16px;z-index:110;width:42px;height:42px;border-radius:50%;border:1px solid rgba(129,140,248,.3);background:rgba(10,15,26,.85);backdrop-filter:blur(8px);color:#818cf8;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;box-shadow:0 0 12px rgba(129,140,248,.15)}
+.snd-btn:hover{box-shadow:0 0 22px rgba(129,140,248,.3)}
+.snd-btn.off{color:#444;border-color:rgba(255,255,255,.06)}
+</style>
 </head>
-<body class="world-bg text-white font-sans min-h-screen flex flex-col overflow-x-hidden">
+<body class="text-white min-h-screen flex flex-col">
+
+<!-- ═══ ATMOSPHERIC BACKGROUND ═══ -->
+<div class="atmo"></div>
+<div class="glow-top"></div>
+<div class="glow-bot"></div>
+<div class="glow-mid"></div>
+<div class="vig"></div>
+<canvas id="fxCanvas"></canvas>
+<div class="scan"></div>
 
 <!-- HEADER -->
-<header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-[60] shrink-0">
-    <div class="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
-        <div class="flex items-center gap-3">
-            <a href="portadanivelesacademia.html"
-               class="flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shrink-0"
-               style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.35); color:#D4AF37;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-                <span class="hidden sm:inline">Volver</span>
-            </a>
-            <div class="flex items-center gap-2.5">
-                <img src="images/logo_azul.png" alt="InvertProfit" id="logo-img"
-                     class="h-10 w-auto object-contain shrink-0"
-                     style="filter:drop-shadow(0 0 10px rgba(212,175,55,0.4));"
-                     onerror="this.style.display='none'; document.getElementById('logo-badge').style.display='flex';">
-                <div id="logo-badge" class="w-11 h-11 rounded-xl items-center justify-center font-black text-lg shrink-0" style="display:none; background:linear-gradient(135deg,#D4AF37,#b8860b); color:#0a0f1a; box-shadow:0 0 30px rgba(212,175,55,0.4);">IP</div>
-            </div>
-        </div>
-        <nav class="hidden lg:flex items-center gap-10">
-            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="index.html">INICIO</a>
-            <a class="font-black border-b-2 border-primary pb-1 text-sm tracking-widest uppercase" style="color:#D4AF37;" href="portadanivelesacademia.html">ACADEMIA</a>
-            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="mercado.html">MERCADOS</a>
-            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="#">PORTAFOLIO</a>
-        </nav>
-        <div class="flex items-center gap-2 md:gap-4">
-            <button class="shrink-0 bg-primary font-bold h-10 px-6 rounded-full inline-flex items-center gap-2 whitespace-nowrap hover:bg-primary/90 transition text-xs tracking-wide" style="color:#0a0f1a;">⚡ CONECTAR BROKER</button>
-            <div class="hidden md:flex items-center gap-3">
-                <div class="w-9 h-9 bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 rounded-full flex items-center justify-center text-xs font-black text-primary">AT</div>
-            </div>
-            <button id="hamburger-btn-inline" onclick="toggleSideMenu()" class="lg:hidden text-gray-400 hover:text-white p-2 flex flex-col gap-1.5 transition-all">
-                <span class="hamburger-line-1 block w-6 h-0.5 bg-current transition-all duration-300"></span>
-                <span class="hamburger-line-2 block w-6 h-0.5 bg-current transition-all duration-300"></span>
-                <span class="hamburger-line-3 block w-6 h-0.5 bg-current transition-all duration-300"></span> 
-            </button>
-        </div>
+<header class="border-b border-card-border bg-black/80 backdrop-blur-xl sticky top-0 z-[60] shrink-0">
+  <div class="flex items-center justify-between px-4 md:px-8 py-3">
+    <div class="flex items-center gap-3">
+      <a href="portadanivelesacademia.html" class="flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shrink-0" style="background:rgba(129,140,248,.1);border:1px solid rgba(129,140,248,.35);color:#818cf8;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <span class="hidden sm:inline">Mundos</span>
+      </a>
+      <img src="images/logo_azul.png" alt="IP" class="h-9 w-auto object-contain shrink-0" style="filter:drop-shadow(0 0 8px rgba(129,140,248,.3))" onerror="this.outerHTML='<span style=\'color:#818cf8;font-weight:900;font-size:1.1rem;font-family:Orbitron,sans-serif\'>IP</span>'">
     </div>
-    <nav id="mobile-menu" class="hidden lg:hidden border-t border-card-border bg-card px-4 py-3 space-y-2">
-        <a class="block font-bold py-2 border-l-2 border-primary pl-3 text-sm" style="color:#D4AF37;" href="portadanivelesacademia.html">ACADEMIA</a>
-        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="mercado.html">MERCADOS</a>
-        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="#">PORTAFOLIO</a>
+    <nav class="hidden lg:flex items-center gap-10">
+      <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="index.html">INICIO</a>
+      <a class="font-black border-b-2 pb-1 text-sm tracking-widest uppercase" style="color:#818cf8;border-color:#4f46e5;" href="portadanivelesacademia.html">ACADEMIA</a>
     </nav>
+    <button class="shrink-0 font-bold h-9 px-5 rounded-full inline-flex items-center gap-2 whitespace-nowrap transition text-xs tracking-wide hover:brightness-110" style="background:linear-gradient(135deg,#4f46e5,#818cf8);color:#0a0f1a;">⚡ BROKER</button>
+  </div>
 </header>
 
-<!-- SIDE MENU -->
-<aside id="side-menu" class="fixed top-0 left-0 h-full w-80 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 border-r border-gray-700 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out z-[65] flex flex-col">
-    <nav class="flex-1 p-6 space-y-2 pt-24">
-        <div class="mb-8 px-3">
-            <p class="text-[10px] font-black text-primary/80 uppercase tracking-[4px] leading-none mb-2">Menú</p>
-            <div class="h-[2px] w-10 bg-gradient-to-r from-primary/60 to-transparent rounded-full"></div>
+<main class="flex-1 overflow-y-auto relative z-10">
+  <!-- WORLD HEADER -->
+  <div class="relative overflow-hidden" style="background:linear-gradient(180deg,rgba(129,140,248,.1) 0%,transparent 100%);border-bottom:1px solid rgba(129,140,248,.12);">
+    <div class="max-w-5xl mx-auto px-5 py-7">
+      <div class="flex items-center gap-2 mb-3">
+        <a href="portadanivelesacademia.html" class="text-gray-500 hover:brightness-125 transition text-sm font-semibold" style="color:rgba(129,140,248,.5)"><span class="material-symbols-outlined text-[16px] align-middle">arrow_back</span> Mundos</a>
+        <span class="text-gray-700">/</span>
+        <span class="text-sm font-semibold" style="color:#818cf8">Mundo 03 — Experto</span>
+      </div>
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <div class="flex items-center gap-4">
+          <div class="text-5xl float-anim">🧠</div>
+          <div>
+            <p class="text-[9px] font-black tracking-[4px] uppercase mb-1" style="color:rgba(129,140,248,.6)">MUNDO 03 — RANGO: INSTITUCIONAL</p>
+            <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight text-white" style="font-family:Orbitron,sans-serif;letter-spacing:1px">DOMINIO INSTITUCIONAL</h1>
+            <p class="text-gray-400 text-sm mt-1">Smart Money, ICT, Wyckoff y trading algorítmico</p>
+          </div>
         </div>
-        <a href="portadanivelesacademia.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400"><span class="material-symbols-outlined text-[22px]">grid_view</span> Mundos</a>
-        <a href="portadanivelesacademia.html" class="sidebar-link active flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold"><span class="material-symbols-outlined text-[22px]">school</span> Academia</a>
-        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400"><span class="material-symbols-outlined text-[22px]">emoji_events</span> Logros</a>
-        <a href="mercado.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400"><span class="material-symbols-outlined text-[22px]">monitoring</span> Mercados</a>
-    </nav>
-    <div class="p-6 border-t border-gray-700">
-        <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-extrabold text-primary text-sm">AT</div>
-            <div class="flex-1 min-w-0"><p class="text-sm font-bold truncate">Alex Trader</p><p class="text-[10px] text-primary font-bold uppercase tracking-wider">Pro Member</p></div>
-            <a href="Login.html" class="text-gray-500 hover:text-red-400 transition"><span class="material-symbols-outlined text-[22px]">logout</span></a>
+        <div class="flex items-center gap-4">
+          <div class="text-center"><div class="text-xl font-black" style="color:#818cf8" id="comp-count">0/12</div><div class="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Completados</div></div>
+          <div class="w-px h-9" style="background:rgba(129,140,248,.15)"></div>
+          <div class="text-center"><div class="text-xl font-black" style="color:#818cf8" id="xp-count">0</div><div class="text-[9px] font-bold text-gray-500 uppercase tracking-wider">XP</div></div>
         </div>
+      </div>
+      <div class="mt-4 h-2.5 w-full rounded-full overflow-hidden bg-gray-800/60"><div class="h-full rounded-full transition-all duration-700" id="prog-bar" style="width:0%;background:linear-gradient(90deg,#4f46e5,#818cf8,#a5b4fc)"></div></div>
     </div>
-</aside>
-<div id="menu-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleSideMenu()"></div>
+  </div>
 
-<!-- MAIN -->
-<main class="flex-1 overflow-y-auto">
+  <!-- LEVEL MAP -->
+  <div class="max-w-xl mx-auto px-4 py-8 pb-24">
+    <p class="text-center text-[10px] font-black tracking-[5px] text-gray-600 uppercase mb-8" style="font-family:Share Tech Mono,monospace">— MAPA DE NIVELES —</p>
+    <div id="level-map" class="relative flex flex-col items-start gap-0"></div>
 
-    <!-- World banner — Purple/Space theme -->
-    <div class="relative overflow-hidden" style="background:linear-gradient(180deg, rgba(99,102,241,0.12) 0%, rgba(10,15,26,0) 100%); border-bottom:1px solid rgba(129,140,248,0.2);">
-        <!-- Decorative floating icons -->
-        <div class="nebula" style="top:20px; left:5%; animation-delay:0s;">🧠</div>
-        <div class="nebula" style="top:10px; left:15%; animation-delay:1s; font-size:1rem;">🔮</div>
-        <div class="nebula" style="top:30px; right:10%; animation-delay:2s;">🏛️</div>
-        <div class="nebula" style="top:15px; right:25%; animation-delay:0.5s; font-size:1rem;">💎</div>
-        <div class="nebula" style="top:5px; left:45%; animation-delay:1.5s; font-size:0.8rem;">⚡</div>
+    <!-- QUEST CARD -->
+    <div class="mt-8" id="quest-card"></div>
+  </div>
 
-        <div class="max-w-5xl mx-auto px-6 py-8">
-            <div class="flex items-center gap-3 mb-3">
-                <a href="portadanivelesacademia.html" class="flex items-center gap-1.5 text-gray-500 hover:text-indigo-400 transition text-sm font-semibold">
-                    <span class="material-symbols-outlined text-[18px]">arrow_back</span> Mundos
-                </a>
-                <span class="text-gray-700">/</span>
-                <span class="text-sm font-semibold" style="color:#818cf8;">Mundo 03 — Experto</span>
-            </div>
-            <div class="flex items-center justify-between flex-wrap gap-4 title-in">
-                <div class="flex items-center gap-5">
-                    <div class="text-5xl float-anim">🌌</div>
-                    <div>
-                        <p class="text-[10px] font-black tracking-[5px] uppercase" style="color:rgba(129,140,248,0.7);">MUNDO 03</p>
-                        <h1 class="text-3xl md:text-4xl font-black uppercase tracking-tight text-white">EXPERTO</h1>
-                        <p class="text-gray-400 text-sm">Estrategias institucionales & psicología de trading</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="text-center">
-                        <div class="text-2xl font-black" style="color:#818cf8;">0/12</div>
-                        <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Completados</div>
-                    </div>
-                    <div class="w-px h-10 bg-card-border"></div>
-                    <div class="text-center">
-                        <div class="flex gap-1"><span class="text-gray-600">⭐⭐⭐</span></div>
-                        <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Estrellas</div>
-                    </div>
-                    <div class="w-px h-10 bg-card-border"></div>
-                    <div class="text-center">
-                        <div class="text-2xl font-black" style="color:#818cf8;">0</div>
-                        <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">XP ganada</div>
-                    </div>
-                </div>
-            </div>
-            <!-- Global progress bar -->
-            <div class="mt-4 h-3 w-full rounded-full overflow-hidden bg-gray-800">
-                <div class="h-full rounded-full" style="width:0%; background:linear-gradient(90deg, #4f46e5, #818cf8, #a78bfa);"></div>
-            </div>
-        </div>
-    </div>
+  <script>
+  (function(){
+    var levels=window._wLevels=[{"n":23,"t":"Smart Money Concepts","d":"La dinámica del dinero inteligente y cómo manipula el mercado.","xp":300},{"n":24,"t":"ICT Power of 3","d":"Acumulación, manipulación, distribución. El framework de ICT.","xp":300},{"n":25,"t":"Order Flow & Volume Profile","d":"El flujo real de órdenes. Donde se esconde el dinero.","xp":300},{"n":26,"t":"Wyckoff Method","d":"El método de los institucionales. Acumulación y distribución.","xp":300},{"n":27,"t":"Breaker Blocks & Mitigation","d":"Zonas de reversión institucional. Mitigación precisa.","xp":300},{"n":28,"t":"⚡ BOSS: Lectura Institucional","d":"Demuestra tu capacidad de leer el mercado como un institucional.","xp":500,"boss":"BOSS"},{"n":29,"t":"Trading Algorítmico Intro","d":"Automatiza tu operativa. El primer paso al algo trading.","xp":300},{"n":30,"t":"Correlaciones Macro","d":"Cómo se conectan los mercados entre sí.","xp":300},{"n":31,"t":"Gestión de Portafolio Pro","d":"Diversificación avanzada y allocation.","xp":300},{"n":32,"t":"Psicología Avanzada","d":"El enemigo está dentro. Domina tu mente.","xp":300},{"n":33,"t":"Plan de Trading Institucional","d":"Tu plan como un hedge fund manager.","xp":300},{"n":34,"t":"🏆 FINAL: El Gran Examen","d":"El examen definitivo del nivel experto.","xp":800,"boss":"FINAL"}];
+    levels.forEach(function(l){l.s=CURRICULUM.getLevelStatus(l.n);});
+    var icons=["🧠","🔮","🏛️","💎","📡","⚡","🌀","🎯","🛡️","📊","💰","🏆"];
+    var pattern=[18,38,58,72,58,38,18,8,18,38,58,72];
 
-    <!-- LEVEL MAP - Candy Crush Long Winding Path -->
-    <div class="max-w-xl mx-auto px-4 py-10 pb-20">
-        <p class="text-center text-[11px] font-black tracking-[5px] text-gray-600 uppercase mb-10">— MAPA DE NIVELES —</p>
-        <div id="level-map" class="relative flex flex-col items-start gap-0"></div>
+    // Update stats
+    var compCount=levels.filter(function(l){return l.s==='completed'}).length;
+    var compXp=levels.reduce(function(a,l){return a+(l.s==='completed'?l.xp:0)},0);
+    document.getElementById('comp-count').textContent=compCount+'/'+levels.length;
+    document.getElementById('xp-count').textContent=compXp.toLocaleString();
+    document.getElementById('prog-bar').style.width=Math.round(compCount/levels.length*100)+'%';
 
-        <!-- Current quest indicator -->
-        <div class="mt-10">
-            <div class="mx-4 rounded-2xl p-5 flex items-center gap-4" style="background:linear-gradient(135deg, rgba(129,140,248,0.12) 0%, rgba(99,102,241,0.06) 100%); border:1px solid rgba(129,140,248,0.3);">
-                <div class="text-3xl float-anim">🧠</div>
-                <div class="flex-1">
-                    <p class="text-[10px] font-black tracking-[4px] uppercase mb-1" style="color:rgba(129,140,248,0.8);">NIVEL ACTUAL</p>
-                    <p class="font-black text-white text-sm">Completa "Smart Money Concepts" para desbloquear los siguientes niveles.</p>
-                    <p class="text-gray-500 text-xs mt-1">Completa el Mundo Intermedio para acceder a este mundo.</p>
-                </div>
-                <button onclick="openModal(1,'Smart Money Concepts','Comprende cómo operan las instituciones: order blocks, liquidity pools y market structure.','active',300)" class="shrink-0 px-5 py-2.5 rounded-xl font-black uppercase tracking-wider text-xs transition hover:scale-105 whitespace-nowrap" style="background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;">
-                    ▶ JUGAR
-                </button>
-            </div>
-        </div>
-    </div>
+    var completedDot='background:#818cf8;box-shadow:0 0 6px rgba(129,140,248,.6);';
+    var activeDot='background:#D4AF37;box-shadow:0 0 8px rgba(212,175,55,.8);';
+    var lockedDot='background:#2a2f3a;';
 
-    <script>
-    (function(){
-        var levels=[
-            {n:23,t:'Smart Money Concepts',d:'Comprende cómo operan las instituciones: order blocks, liquidity pools y market structure.',xp:300},
-            {n:24,t:'ICT Power of 3',d:'Acumulación, manipulación, distribución. El ciclo que mueve todos los mercados.',xp:300},
-            {n:25,t:'Order Flow & Volume Profile',d:'Lee el flujo de órdenes como un profesional. Delta, POC, Value Area.',xp:300},
-            {n:26,t:'Wyckoff Method',d:'El método legendario. Fases de acumulación y distribución de Wyckoff.',xp:300},
-            {n:27,t:'Breaker Blocks & Mitigation',d:'Cuando los order blocks fallan. Aprende a identificar breakers y mitigation blocks.',xp:300},
-            {n:28,t:'⚡ BOSS: Lectura Institucional',d:'Analiza un gráfico real usando SMC, ICT y Wyckoff. Demuestra tu visión institucional.',xp:500,boss:'BOSS'},
-            {n:29,t:'Trading Algorítmico Intro',d:'Automatiza tus estrategias. Introducción a bots, APIs y ejecución algorítmica.',xp:300},
-            {n:30,t:'Correlaciones Macro',d:'DXY, bonos, commodities. Cómo se conectan los mercados globales.',xp:300},
-            {n:31,t:'Gestión de Portafolio Pro',d:'Diversificación avanzada, hedging, y optimización de portafolio.',xp:300},
-            {n:32,t:'Psicología Avanzada',d:'Peak performance, estado de flujo, manejo del drawdown. La mente del trader elite.',xp:300},
-            {n:33,t:'Plan de Trading Institucional',d:'Crea tu edge definitivo. Un plan de trading de nivel hedge fund.',xp:300},
-            {n:34,t:'🏆 FINAL: El Gran Examen',d:'El desafío supremo. Demuestra dominio total del trading profesional. ¡Conviértete en Master Trader!',xp:800,boss:'FINAL'}
-        ];
-        levels.forEach(function(l){ l.s = CURRICULUM.getLevelStatus(l.n); });
-        var pos=[44,62,74,62,44,24,14,24,44,62,74,44];
-        var dpos=[[48,53,58],[65,69,72],[72,69,65],[58,53,48],[39,33,28],[21,18,15],[15,18,21],[28,33,39],[48,53,58],[65,69,72],[68,58,48]];
-        var ic=['🧠','🔮','🏛️','💎','📡','⚡','🌀','🎯','🛡️','📊','💰','🏆'];
-        var activeDot='background:#818cf8;box-shadow:0 0 8px rgba(129,140,248,0.9);';
-        var lockedDot='background:#374151;';
+    var h='';
+    levels.forEach(function(lv,i){
+      var isBoss=!!lv.boss;
+      var sz=lv.boss==='FINAL'?'width:88px;height:88px;font-size:2rem;':(isBoss?'width:84px;height:84px;font-size:1.75rem;':'');
+      var tEsc=lv.t.replace(/'/g,"\\'");var dEsc=lv.d.replace(/'/g,"\\'");
+      var nodeClass,nodeContent,nodeStyleExtra='',bossTag='';
 
-        var h='';
-        levels.forEach(function(lv,i){
-            var isBoss=!!lv.boss;
-            var sz=lv.boss==='FINAL'?'width:88px;height:88px;font-size:2rem;':'width:84px;height:84px;font-size:1.75rem;';
-            var tEsc=lv.t.replace(/'/g,"\\'");
-            var dEsc=lv.d.replace(/'/g,"\\'");
-            var nodeClass,nodeContent,nodeStyleExtra='',bossTag='';
+      if(lv.s==='completed'){
+        nodeClass='node-btn completed'+(isBoss?' relative':'');
+        if(isBoss){nodeStyleExtra=sz+'box-shadow:0 0 30px rgba(129,140,248,.5);';bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:.6rem;background:linear-gradient(135deg,#818cf8,#4f46e5);color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
+        nodeContent=bossTag+(isBoss?icons[i]:'✓');
+      }else if(lv.s==='active'){
+        nodeClass='node-btn active'+(isBoss?' relative':'');
+        if(isBoss){nodeStyleExtra=sz;bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:.6rem;background:#D4AF37;color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
+        nodeContent=bossTag+icons[i];
+      }else{
+        nodeClass='node-btn locked-node'+(isBoss?' relative':'');
+        if(isBoss){nodeStyleExtra=sz+'opacity:.5;';bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:.6rem;background:#374151;color:#6b7280;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
+        nodeContent=bossTag+'<span class="material-symbols-outlined text-gray-500 text-2xl">lock</span>';
+      }
 
-            if(lv.s==='active'){
-                nodeClass='node-btn active'+(isBoss?' relative':'');
-                if(isBoss){nodeStyleExtra=sz;bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:#818cf8;color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
-                nodeContent=bossTag+ic[i];
-            } else {
-                nodeClass='node-btn locked-node'+(isBoss?' relative':'');
-                if(isBoss){nodeStyleExtra=sz+'opacity:0.5;';bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:#374151;color:#9ca3af;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
-                nodeContent=bossTag+'<span class="material-symbols-outlined text-gray-500 text-2xl">lock</span>';
-            }
+      var starClass=lv.s==='completed'?'star-row':'star-row text-gray-700';
+      var lblColor=lv.s==='locked'?'color:#555':(isBoss?'color:#818cf8':'color:#888');
+      var clickAttr=lv.s==='locked'?'onclick="sfxLock()"':'onclick="sfxClick();openModal('+lv.n+',\''+tEsc+'\',\''+dEsc+'\',\''+lv.s+'\','+lv.xp+')"';
+      var wrapClass=lv.s==='locked'?'level-node locked text-center inline-block':'level-node text-center inline-block';
 
-            var starClass=lv.s==='active'?'star-row text-gray-600':'star-row text-gray-700';
-            var labelClass=lv.s==='locked'?'text-[10px] font-black text-gray-600 uppercase tracking-wider':'text-[10px] font-black uppercase tracking-wider';
-            var labelStyle=lv.s!=='locked'?'style="color:#818cf8;"':'';
-            var clickAttr=lv.s==='locked'?'':'onclick="openModal('+lv.n+',\''+tEsc+'\',\''+dEsc+'\',\''+lv.s+'\','+lv.xp+')"';
-            var wrapClass=lv.s==='locked'?'level-node locked text-center inline-block':'level-node text-center inline-block';
+      h+='<div class="w-full" style="padding-left:'+pattern[i%pattern.length]+'%">';
+      h+='<div class="'+wrapClass+'" '+clickAttr+' onmouseenter="sfxHover()">';
+      h+='<div class="flex flex-col items-center gap-2">';
+      h+='<div class="'+nodeClass+'" style="'+nodeStyleExtra+'">'+nodeContent+'</div>';
+      h+='<div class="'+starClass+'">⭐⭐⭐</div>';
+      h+='<div class="text-[10px] font-black uppercase tracking-wider" style="'+lblColor+'">Niv '+lv.n+'</div>';
+      h+='</div></div></div>';
 
-            h+='<div class="w-full" style="padding-left:'+pos[i]+'%">';
-            h+='<div class="'+wrapClass+'" '+clickAttr+'>';
-            h+='<div class="flex flex-col items-center gap-2">';
-            h+='<div class="'+nodeClass+'" style="'+nodeStyleExtra+'">'+nodeContent+'</div>';
-            h+='<div class="'+starClass+'">⭐⭐⭐</div>';
-            h+='<div class="'+labelClass+'" '+labelStyle+'>NIV '+lv.n+'</div>';
-            h+='</div></div></div>';
+      if(i<levels.length-1){
+        var nextS=levels[i+1].s;
+        var dc=(lv.s==='completed'&&nextS==='completed')?completedDot:(lv.s==='completed'&&nextS==='active')?activeDot:lockedDot;
+        var curP=pattern[i%pattern.length]+5;var nextP=pattern[(i+1)%pattern.length]+5;
+        h+='<div class="w-full flex flex-col gap-2 py-2.5">';
+        for(var s=1;s<=3;s++){var pct=curP+(nextP-curP)*(s/4);h+='<div style="width:9px;height:9px;border-radius:50%;margin-left:'+pct+'%;'+dc+'"></div>';}
+        h+='</div>';
+      }
+    });
+    document.getElementById('level-map').innerHTML=h;
 
-            if(i<levels.length-1){
-                var dc=(lv.s==='active')?activeDot:lockedDot;
-                h+='<div class="w-full flex flex-col gap-2.5 py-3">';
-                dpos[i].forEach(function(dp){h+='<div class="w-2.5 h-2.5 rounded-full" style="margin-left:'+dp+'%;'+dc+'"></div>';});
-                h+='</div>';
-            }
-        });
-        document.getElementById('level-map').innerHTML=h;
-    })();
-    </script>
+    // Quest card
+    var activeLevel=levels.find(function(l){return l.s==='active'});
+    if(activeLevel){
+      var qi=levels.indexOf(activeLevel);
+      document.getElementById('quest-card').innerHTML='<div class="rounded-2xl p-4 flex items-center gap-3" style="background:rgba(129,140,248,.06);border:1px solid rgba(129,140,248,.2);"><div class="text-3xl float-anim">⚡</div><div class="flex-1"><p class="text-[9px] font-black tracking-[4px] uppercase mb-1" style="color:rgba(129,140,248,.5)">NIVEL ACTUAL</p><p class="text-sm text-gray-300">Completa <strong style="color:#818cf8">'+activeLevel.t+'</strong></p></div><button onclick="sfxClick();openModal('+activeLevel.n+',\''+activeLevel.t.replace(/'/g,"\\'")+'\'  ,\''+activeLevel.d.replace(/'/g,"\\'")+'\'  ,\'active\','+activeLevel.xp+')" class="shrink-0 px-4 py-2 rounded-xl font-black uppercase tracking-wider text-xs transition hover:scale-105" style="background:linear-gradient(135deg,#4f46e5,#818cf8);color:#0a0f1a;">▶ JUGAR</button></div>';
+    }
+  })();
+  </script>
 </main>
 
 <!-- LEVEL MODAL -->
 <div id="level-modal" class="modal-overlay hidden" onclick="if(event.target===this)closeModal()">
-    <div class="modal-box">
-        <div class="flex items-center justify-between mb-5">
-            <span id="modal-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider" style="background:rgba(129,140,248,0.15); color:#818cf8; border:1px solid rgba(129,140,248,0.4);">▶ En Progreso</span>
-            <button onclick="closeModal()" class="text-gray-500 hover:text-white transition"><span class="material-symbols-outlined">close</span></button>
-        </div>
-        <div class="text-5xl text-center mb-4" id="modal-icon">📚</div>
-        <h3 class="text-xl font-black text-center uppercase tracking-tight mb-2" id="modal-title">Título</h3>
-        <p class="text-gray-400 text-sm text-center mb-5 leading-relaxed" id="modal-desc">Descripción</p>
-        <div class="flex justify-center gap-1 mb-5" id="modal-stars">⭐⭐⭐</div>
-        <div class="flex items-center justify-between mb-5 bg-card rounded-xl px-4 py-3" style="border:1px solid rgba(212,175,55,0.15);">
-            <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">XP a ganar</span>
-            <span class="font-black text-primary" id="modal-xp">+300 XP</span>
-        </div>
-        <button id="modal-cta" onclick="window.location.href='leccion.html'" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;">
-            ▶ JUGAR NIVEL
-        </button>
-        <button id="modal-next" class="hidden w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;">
-            ▶ SIGUIENTE NIVEL
-        </button>
-            ▶ JUGAR NIVEL
-        </button>
+  <div class="modal-box">
+    <div class="flex items-center justify-between mb-4">
+      <span id="modal-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"></span>
+      <button onclick="closeModal()" class="text-gray-500 hover:text-white transition"><span class="material-symbols-outlined">close</span></button>
     </div>
+    <div class="text-5xl text-center mb-3" id="modal-icon">🧠</div>
+    <h3 class="text-lg font-black text-center uppercase tracking-tight mb-2" style="font-family:Orbitron,sans-serif;color:#818cf8" id="modal-title"></h3>
+    <p class="text-gray-400 text-sm text-center mb-4 leading-relaxed" id="modal-desc"></p>
+    <div class="flex justify-center gap-1 mb-4" id="modal-stars">⭐⭐⭐</div>
+    <div class="flex items-center justify-between mb-4 rounded-xl px-4 py-3" style="background:rgba(129,140,248,.06);border:1px solid rgba(129,140,248,.15);">
+      <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">XP a ganar</span>
+      <span class="font-black" style="color:#818cf8" id="modal-xp"></span>
+    </div>
+    <div class="flex flex-col gap-2">
+      <button id="modal-cta" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105 hover:brightness-110"></button>
+      <button id="modal-next" class="hidden w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105 hover:brightness-110"></button>
+    </div>
+  </div>
 </div>
 
+<!-- SOUND BUTTON -->
+<button class="snd-btn" id="snd-btn" onclick="toggleSound()">🔊</button>
+
 <script>
-function toggleSideMenu() {
-    const menu = document.getElementById('side-menu');
-    const overlay = document.getElementById('menu-overlay');
-    const hamburger = document.getElementById('hamburger-btn-inline');
-    if (menu.classList.contains('-translate-x-full')) {
-        menu.classList.remove('-translate-x-full');
-        overlay.classList.remove('opacity-0', 'pointer-events-none');
-        if (hamburger) hamburger.classList.add('hamburger-open');
-    } else {
-        menu.classList.add('-translate-x-full');
-        overlay.classList.add('opacity-0', 'pointer-events-none');
-        if (hamburger) hamburger.classList.remove('hamburger-open');
-    }
-}
+// ══ AUDIO ENGINE ══
+var actx,mgain,sOn=true;
+function initA(){if(actx)return;actx=new(window.AudioContext||window.webkitAudioContext)();mgain=actx.createGain();mgain.gain.value=.22;mgain.connect(actx.destination);
+  [55,82.5,110].forEach(function(f,i){var o=actx.createOscillator(),g=actx.createGain(),fi=actx.createBiquadFilter();o.type=i<2?'sine':'triangle';o.frequency.value=f;fi.type='lowpass';fi.frequency.value=160+i*35;fi.Q.value=1;g.gain.value=.01;o.connect(fi);fi.connect(g);g.connect(mgain);o.start();var l=actx.createOscillator(),lg=actx.createGain();l.type='sine';l.frequency.value=.07+i*.03;lg.gain.value=1.2;l.connect(lg);lg.connect(o.frequency);l.start()});}
+function sfx(freq,dur,type,vol){if(!actx||!sOn)return;type=type||'sine';vol=vol||.1;var o=actx.createOscillator(),g=actx.createGain();o.type=type;o.frequency.setValueAtTime(freq,actx.currentTime);g.gain.setValueAtTime(vol,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+dur);o.connect(g);g.connect(mgain);o.start();o.stop(actx.currentTime+dur);}
+function sfxClick(){sfx(880,.1);setTimeout(function(){sfx(660,.07,'sine',.05)},35);}
+function sfxHover(){sfx(1200,.05,'sine',.025);}
+function sfxOpen(){[660,880,1100].forEach(function(f,i){setTimeout(function(){sfx(f,.16,'sine',.07)},i*50)});}
+function sfxLock(){sfx(150,.16,'square',.05);}
+function toggleSound(){initA();sOn=!sOn;var b=document.getElementById('snd-btn');b.textContent=sOn?'🔊':'🔇';b.classList.toggle('off',!sOn);if(mgain)mgain.gain.value=sOn?.22:0;}
+document.addEventListener('click',function(){initA()},{once:true});
 
-const icons = ['🧠','🔮','🏛️','💎','📡','⚡','🌀','🎯','🛡️','📊','💰','🏆'];
-const allLevels = [
-    {n:23,t:'Smart Money Concepts',xp:300},
-    {n:24,t:'ICT Power of 3',xp:300},
-    {n:25,t:'Order Flow & Volume Profile',xp:300},
-    {n:26,t:'Wyckoff Method',xp:300},
-    {n:27,t:'Breaker Blocks & Mitigation',xp:300},
-    {n:28,t:'⚡ BOSS: Lectura Institucional',xp:500,boss:'BOSS'},
-    {n:29,t:'Trading Algorítmico Intro',xp:300},
-    {n:30,t:'Correlaciones Macro',xp:300},
-    {n:31,t:'Gestión de Portafolio Pro',xp:300},
-    {n:32,t:'Psicología Avanzada',xp:300},
-    {n:33,t:'Plan de Trading Institucional',xp:300},
-    {n:34,t:'🏆 FINAL: El Gran Examen',xp:800,boss:'FINAL'}
-];
-allLevels.forEach(function(l){ l.s = CURRICULUM.getLevelStatus(l.n); });
-function openModal(num, title, desc, status, xp) {
-    var badge = document.getElementById('modal-badge');
-    var cta = document.getElementById('modal-cta');
-    var nextBtn = document.getElementById('modal-next');
-    var nextLevel = allLevels.find(function(l){ return l.n === num + 1; });
+// ══ MODAL ══
+function openModal(num,title,desc,status,xp){
+  sfxOpen();
+  var badge=document.getElementById('modal-badge');
+  var cta=document.getElementById('modal-cta');
+  var nextBtn=document.getElementById('modal-next');
+  var nextLevel=window._wLevels.find(function(l){return l.n===num+1;});
+  var icons=["🧠","🔮","🏛️","💎","📡","⚡","🌀","🎯","🛡️","📊","💰","🏆"];
+  var idx=window._wLevels.findIndex(function(l){return l.n===num;});
+  document.getElementById('modal-icon').textContent=icons[idx]||'🧠';
 
-    if (status === 'completed') {
-        badge.textContent = '✓ Completado';
-        badge.style.cssText = 'background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:10px;font-weight:900;text-transform:uppercase;';
-        document.getElementById('modal-stars').textContent = '⭐⭐⭐';
-        cta.style.cssText = 'background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;cursor:pointer;';
-        cta.textContent = '🔄 REPASAR NIVEL';
-        cta.onclick = function(){ window.location.href='leccion.html?world=3&level='+num; };
-        if (nextLevel) {
-            nextBtn.classList.remove('hidden');
-            nextBtn.style.cssText = 'background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;cursor:pointer;';
-            nextBtn.textContent = '▶ SIGUIENTE NIVEL (M' + nextLevel.n + ')';
-            nextBtn.onclick = function(){ window.location.href='leccion.html?world=3&level='+nextLevel.n; };
-        } else { nextBtn.classList.add('hidden'); }
-    } else {
-        badge.innerHTML = '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#818cf8;animation:path-dot 1s ease-in-out infinite;"></span> En Progreso';
-        badge.style.cssText = 'background:rgba(129,140,248,0.15);color:#818cf8;border:1px solid rgba(129,140,248,0.4);display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:10px;font-weight:900;text-transform:uppercase;';
-        document.getElementById('modal-stars').textContent = '⭐⭐⭐ (por ganar)';
-        cta.style.cssText = 'background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;cursor:pointer;';
-        cta.textContent = '▶ JUGAR NIVEL';
-        cta.onclick = function(){ window.location.href='leccion.html?world=3&level='+num; };
-        nextBtn.classList.add('hidden');
+  if(status==='completed'){
+    badge.textContent='✓ Completado';
+    badge.style.cssText='background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.3);';
+    document.getElementById('modal-stars').textContent='⭐⭐⭐';
+    cta.textContent='🔄 REPASAR NIVEL';
+    cta.style.cssText='background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.3);width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer;';
+    cta.onclick=function(){window.location.href='leccion.html?world=3&level='+num;};
+    if(nextLevel){nextBtn.classList.remove('hidden');nextBtn.textContent='▶ SIGUIENTE NIVEL (Niv '+nextLevel.n+')';nextBtn.style.cssText='background:linear-gradient(135deg,#4f46e5,#818cf8);color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer;';nextBtn.onclick=function(){window.location.href='leccion.html?world=3&level='+nextLevel.n;};}
+    else{nextBtn.classList.add('hidden');}
+  }else if(status==='active'){
+    badge.innerHTML='<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#D4AF37;animation:apulse 1s ease-in-out infinite;margin-right:4px"></span> En Progreso';
+    badge.style.cssText='background:rgba(212,175,55,.15);color:#D4AF37;border:1px solid rgba(212,175,55,.3);';
+    document.getElementById('modal-stars').textContent='⭐⭐⭐ (por ganar)';
+    cta.textContent='▶ JUGAR NIVEL';
+    cta.style.cssText='background:linear-gradient(135deg,#4f46e5,#818cf8);color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer;';
+    cta.onclick=function(){window.location.href='leccion.html?world=3&level='+num;};
+    nextBtn.classList.add('hidden');
+  }else{
+    badge.textContent='🔒 Bloqueado';
+    badge.style.cssText='background:rgba(107,114,128,.12);color:#6b7280;border:1px solid rgba(107,114,128,.25);';
+    document.getElementById('modal-stars').textContent='⭐⭐⭐';
+    cta.style.display='none';nextBtn.classList.add('hidden');
+  }
+  document.getElementById('modal-title').textContent='Nivel '+num+': '+title;
+  document.getElementById('modal-desc').textContent=desc;
+  document.getElementById('modal-xp').textContent='+'+xp+' XP';
+  document.getElementById('level-modal').classList.remove('hidden');
+}
+function closeModal(){document.getElementById('level-modal').classList.add('hidden');document.getElementById('modal-cta').style.display='';}
+
+// ══ FX CANVAS ══
+(function(){
+var cv=document.getElementById('fxCanvas'),ctx=cv.getContext('2d');
+var dpr=window.devicePixelRatio||1,W,H;
+function resize(){W=window.innerWidth;H=window.innerHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+window.addEventListener('resize',resize);resize();
+
+// Matrix rain
+var mCols=Math.floor(W/14),mDrops=[];
+for(var i=0;i<mCols;i++) mDrops[i]=Math.random()*-60;
+var mChars='01アイウエオカキクケコサシスセソ'.split('');
+
+// Embers
+var embers=[];
+for(var i=0;i<30;i++) embers.push({x:0,y:0,s:0,vx:0,vy:0,life:9999,max:1,r:0,g:0,d:Math.random()*200});
+function resetEmber(e){
+  e.x=W*.1+Math.random()*W*.8;e.y=H+5;e.s=1+Math.random()*2.5;
+  e.vx=(Math.random()-.5)*.5;e.vy=-(1.2+Math.random()*2);
+  e.life=0;e.max=100+Math.random()*250;
+  e.r=200+Math.floor(Math.random()*55);e.g=30+Math.floor(Math.random()*70);}
+embers.forEach(resetEmber);
+
+// Energy pulses
+var pulses=[];
+for(var i=0;i<5;i++) pulses.push({y:H*.6,sp:.2+Math.random()*.6,ph:Math.random()*6.28,mx:.03+Math.random()*.03});
+
+var tick=0;
+function frame(){
+  tick++;
+  ctx.clearRect(0,0,W,H);
+
+  // Matrix rain (tech zone)
+  ctx.font='10px monospace';
+  for(var i=0;i<mCols;i++){
+    if(mDrops[i]<0){mDrops[i]+=.25;continue;}
+    var y=mDrops[i]*14;
+    if(y>H*.22&&y<H*.7){
+      var fade=1-Math.abs(y-H*.46)/(H*.24);
+      ctx.fillStyle='rgba(0,229,255,'+(0.035*fade)+')';
+      ctx.fillText(mChars[Math.floor(Math.random()*mChars.length)],i*14,y);
     }
-    document.getElementById('modal-title').textContent = 'Nivel ' + num + ': ' + title;
-    document.getElementById('modal-desc').textContent = desc;
-    document.getElementById('modal-xp').textContent = '+' + xp + ' XP';
-    document.getElementById('modal-icon').textContent = icons[num - 23] || '📚';
-    document.getElementById('level-modal').classList.remove('hidden');
+    mDrops[i]+=.3+Math.random()*.25;
+    if(mDrops[i]*14>H*.72) mDrops[i]=Math.random()*-30;
+  }
+
+  // Energy pulses
+  pulses.forEach(function(p){
+    p.ph+=.018;
+    var a=p.mx*(.5+.5*Math.sin(p.ph));
+    ctx.save();
+    ctx.strokeStyle='rgba(0,229,255,'+a+')';ctx.lineWidth=.8;
+    ctx.beginPath();ctx.moveTo(W*.2,p.y);ctx.lineTo(W*.8,p.y);ctx.stroke();
+    ctx.strokeStyle='rgba(0,229,255,'+(a*.25)+')';ctx.lineWidth=5;ctx.filter='blur(2px)';
+    ctx.beginPath();ctx.moveTo(W*.2,p.y);ctx.lineTo(W*.8,p.y);ctx.stroke();
+    ctx.restore();
+    p.y-=p.sp;
+    if(p.y<H*.18){p.y=H*.58+Math.random()*H*.12;p.ph=Math.random()*6.28;}
+  });
+
+  // Embers
+  embers.forEach(function(e){
+    if(tick<e.d)return;
+    e.life++;
+    if(e.life>e.max){resetEmber(e);e.d=0;return;}
+    var p=e.life/e.max;
+    e.x+=e.vx+Math.sin(e.life*.04)*.25;
+    e.y+=e.vy*(1-p*.4);
+    var a=(1-p)*(p<.08?p/.08:1);
+    var sz=e.s*(1-p*.5);
+    ctx.beginPath();ctx.arc(e.x,e.y,sz,0,6.28);
+    ctx.fillStyle='rgba('+e.r+','+e.g+',0,'+(a*.65)+')';ctx.fill();
+    ctx.beginPath();ctx.arc(e.x,e.y,sz*3.5,0,6.28);
+    ctx.fillStyle='rgba('+e.r+','+e.g+',0,'+(a*.1)+')';ctx.fill();
+  });
+
+  // Sparks
+  if(tick%70===0){
+    var sx=W*.2+Math.random()*W*.6,sy=H*.82+Math.random()*H*.12;
+    ctx.beginPath();ctx.arc(sx,sy,1.5,0,6.28);
+    ctx.fillStyle='rgba(255,210,60,.85)';ctx.fill();
+    ctx.beginPath();ctx.arc(sx,sy,10,0,6.28);
+    ctx.fillStyle='rgba(255,190,50,.12)';ctx.fill();
+  }
+
+  requestAnimationFrame(frame);
 }
-function closeModal() {
-    document.getElementById('level-modal').classList.add('hidden');
-}
+frame();
+})();
+
+// ══ PARTICLES ══
+(function(){
+  var cols=['#818cf8','#00e5ff','#ffd700','#39ff14','#a5b4fc'];
+  for(var i=0;i<18;i++){
+    var p=document.createElement('div');p.className='ptcl';var c=cols[i%cols.length];
+    var sz=1.5+Math.random()*2.5;
+    p.style.cssText='left:'+Math.random()*100+'%;top:'+(30+Math.random()*70)+'%;width:'+sz+'px;height:'+sz+'px;background:'+c+';box-shadow:0 0 '+(4+Math.random()*4)+'px '+c+';animation:ptrise '+(10+Math.random()*16)+'s linear infinite;animation-delay:'+Math.random()*12+'s';
+    document.body.appendChild(p);
+  }
+})();
+
+// ══ CSS EMBERS ══
+(function(){
+  for(var i=0;i<12;i++){
+    var e=document.createElement('div');e.className='ember';
+    var sz=2+Math.random()*3;
+    var r=200+Math.floor(Math.random()*55),g=30+Math.floor(Math.random()*70);
+    e.style.cssText='left:'+(8+Math.random()*84)+'%;bottom:'+(1+Math.random()*6)+'%;width:'+sz+'px;height:'+sz+'px;background:rgb('+r+','+g+',0);box-shadow:0 0 6px rgba('+r+','+g+',0,.5);animation:embrise '+(4+Math.random()*7)+'s ease-out infinite;animation-delay:'+Math.random()*6+'s';
+    document.body.appendChild(e);
+  }
+})();
+
+// ══ DONE ══
 </script>
 </body>
 </html>

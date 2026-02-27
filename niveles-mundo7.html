@@ -1,157 +1,432 @@
 <!DOCTYPE html>
 <html class="dark" lang="es">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>InvertProfit — Mundo 7: Legado</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="auth.js"></script>
-    <script src="curriculum.js"></script>
-    <script>
-        tailwind.config={darkMode:"class",theme:{extend:{colors:{"primary":"#D4AF37","bg-dark":"#0a0f1a","card":"#111827","card-border":"#1f2937"},fontFamily:{"sans":["Inter","sans-serif"]}}}}
-    </script>
-    <style>
-        ::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#374151;border-radius:2px}
-        .world-bg{background:radial-gradient(ellipse at 20% 50%,rgba(212,175,55,.08) 0%,transparent 60%),radial-gradient(ellipse at 80% 30%,rgba(251,191,36,.06) 0%,transparent 50%),#0a0f1a}
-        .level-node{position:relative;z-index:10;cursor:pointer;transition:all .3s cubic-bezier(.175,.885,.32,1.275)}.level-node:hover .node-btn{transform:scale(1.15)}.level-node.locked{cursor:not-allowed;opacity:.45}
-        .node-btn{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;transition:all .3s;position:relative}
-        .node-btn.completed{background:radial-gradient(circle at 35% 35%,#fbbf24 0%,#D4AF37 60%,#92400e 100%);box-shadow:0 0 20px rgba(212,175,55,.5),0 4px 15px rgba(0,0,0,.5);border:3px solid rgba(251,191,36,.6)}
-        .node-btn.active{background:radial-gradient(circle at 35% 35%,#D4AF37 0%,#b8860b 60%,#3d2d05 100%);box-shadow:0 0 25px rgba(212,175,55,.7),0 4px 15px rgba(0,0,0,.5);border:3px solid rgba(212,175,55,.9);animation:active-pulse 2s ease-in-out infinite}
-        .node-btn.locked-node{background:radial-gradient(circle at 35% 35%,#374151 0%,#1f2937 60%,#111827 100%);box-shadow:0 4px 15px rgba(0,0,0,.5);border:3px solid rgba(75,85,99,.4)}
-        @keyframes active-pulse{0%,100%{transform:scale(1)}50%{box-shadow:0 0 45px rgba(212,175,55,.9);transform:scale(1.06)}}
-        @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}.float-anim{animation:float 3s ease-in-out infinite}
-        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
-        .modal-box{background:#111827;border:1px solid rgba(212,175,55,.4);border-radius:24px;padding:32px;max-width:420px;width:calc(100% - 2rem);box-shadow:0 0 80px rgba(212,175,55,.2)}
-        @keyframes title-in{from{opacity:0;transform:translateY(-20px)}to{opacity:1;transform:translateY(0)}}.title-in{animation:title-in .6s ease-out forwards}
-        @keyframes golden-glow{0%,100%{text-shadow:0 0 20px rgba(212,175,55,.5)}50%{text-shadow:0 0 60px rgba(212,175,55,1),0 0 120px rgba(212,175,55,.4)}}.golden-glow{animation:golden-glow 3s ease-in-out infinite}
-    </style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
+<title>InvertProfit — Mundo 7: Legado</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="auth.js"></script>
+<script src="curriculum.js"></script>
+<script>tailwind.config={darkMode:"class",theme:{extend:{colors:{"primary":"#D4AF37","bg-dark":"#0a0f1a","card":"#111827","card-border":"#1f2937"},fontFamily:{"sans":["Rajdhani","sans-serif"]}}}}</script>
+<style>
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#1f2937;border-radius:2px}
+
+/* ══════════════════════════════════════
+   DARK ATMOSPHERIC BACKGROUND V4
+   Sin formas, sin siluetas, puro ambiente
+   ══════════════════════════════════════ */
+body{background:#040608;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* Full atmosphere - 3 zone gradient + colored glows */
+.atmo{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    /* Golden warm top */
+    radial-gradient(ellipse 90% 30% at 50% -5%,rgba(160,110,30,.14),rgba(120,80,20,.06) 50%,transparent 75%),
+    /* Cyan tech mid */
+    radial-gradient(ellipse 60% 25% at 50% 48%,rgba(0,160,200,.03),transparent 65%),
+    /* Fire bottom */
+    radial-gradient(ellipse 80% 25% at 50% 105%,rgba(180,50,0,.12),rgba(140,35,0,.05) 50%,transparent 75%),
+    /* Main vertical gradient */
+    linear-gradient(180deg,
+      #12100a 0%,#0e0c08 5%,#0a0a0c 12%,
+      #080a14 22%,#060a18 35%,#050a1a 48%,
+      #060a18 60%,#080a14 72%,
+      #0a0808 82%,#0e0804 90%,#120a04 96%,#140c02 100%)}
+
+/* Subtle animated glow pulses */
+.glow-top{position:fixed;top:-15%;left:50%;transform:translateX(-50%);width:100%;height:40%;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 45% 50% at 50% 30%,rgba(200,160,60,.06),transparent 70%);
+  animation:glP 5s ease-in-out infinite alternate}
+.glow-bot{position:fixed;bottom:-10%;left:50%;transform:translateX(-50%);width:100%;height:35%;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse 50% 50% at 50% 70%,rgba(200,60,0,.06),transparent 70%);
+  animation:glP 4s ease-in-out infinite alternate-reverse}
+.glow-mid{position:fixed;top:40%;left:50%;transform:translate(-50%,-50%);width:50%;height:25%;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse,rgba(251,191,36,.025),transparent 65%);
+  animation:glP 6s ease-in-out infinite alternate}
+@keyframes glP{0%{opacity:.4}100%{opacity:1}}
+
+/* Vignette */
+.vig{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background:radial-gradient(ellipse 55% 60% at 50% 50%,transparent 15%,rgba(4,6,8,.55) 55%,rgba(2,3,5,.88) 100%)}
+
+/* FX canvas */
+#fxCanvas{position:fixed;inset:0;z-index:2;pointer-events:none;width:100%;height:100%}
+
+/* Scanlines */
+.scan{position:fixed;inset:0;z-index:70;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.012) 3px,rgba(0,0,0,.012) 4px)}
+
+/* Particles */
+.ptcl{position:fixed;border-radius:50%;pointer-events:none;z-index:3}
+@keyframes ptrise{0%{opacity:0;transform:translateY(0)}10%{opacity:.6}50%{opacity:1}85%{opacity:.4}100%{opacity:0;transform:translateY(-100vh)}}
+.ember{position:fixed;border-radius:50%;pointer-events:none;z-index:3;filter:blur(.5px)}
+@keyframes embrise{0%{opacity:0;transform:translateY(0) scale(1)}12%{opacity:1}65%{opacity:.5}100%{opacity:0;transform:translateY(-35vh) scale(.15)}}
+
+/* ══ LEVEL MAP ══ */
+.level-node{position:relative;z-index:10;cursor:pointer;transition:all .3s cubic-bezier(.175,.885,.32,1.275);-webkit-tap-highlight-color:transparent}
+.level-node:hover .node-btn{transform:scale(1.15)}
+.level-node.locked{cursor:not-allowed;opacity:.4}
+.level-node.locked:hover .node-btn{transform:none}
+
+.node-btn{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:900;transition:all .3s;position:relative;border:3px solid}
+.node-btn.completed{
+  background:radial-gradient(circle at 35% 35%,#fde68a 0%,#fbbf24 50%,#d97706 100%);
+  box-shadow:0 0 20px rgba(251,191,36,.5),0 4px 15px rgba(0,0,0,.5);
+  border-color:rgba(251,191,36,.6)}
+.node-btn.active{
+  background:radial-gradient(circle at 35% 35%,#fbbf24 0%,#D4AF37 40%,#92400e 100%);
+  box-shadow:0 0 28px rgba(212,175,55,.7),0 4px 15px rgba(0,0,0,.5);
+  border-color:rgba(212,175,55,.9);animation:apulse 2s ease-in-out infinite}
+.node-btn.locked-node{
+  background:radial-gradient(circle at 35% 35%,#374151 0%,#1f2937 60%,#111827 100%);
+  box-shadow:0 4px 15px rgba(0,0,0,.5);border-color:rgba(75,85,99,.4)}
+@keyframes apulse{0%,100%{box-shadow:0 0 28px rgba(212,175,55,.7),0 4px 15px rgba(0,0,0,.5);transform:scale(1)}50%{box-shadow:0 0 48px rgba(212,175,55,.9),0 0 70px rgba(212,175,55,.3);transform:scale(1.06)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}.float-anim{animation:float 3s ease-in-out infinite}
+.star-row{font-size:.75rem;line-height:1}
+
+/* ══ MODAL ══ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.modal-box{background:#111827;border:1px solid rgba(251,191,36,.3);border-radius:24px;padding:28px;max-width:420px;width:calc(100% - 2rem);box-shadow:0 0 50px rgba(251,191,36,.12)}
+
+/* ══ SOUND BTN ══ */
+.snd-btn{position:fixed;bottom:16px;right:16px;z-index:110;width:42px;height:42px;border-radius:50%;border:1px solid rgba(251,191,36,.3);background:rgba(10,15,26,.85);backdrop-filter:blur(8px);color:#fbbf24;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s;box-shadow:0 0 12px rgba(251,191,36,.15)}
+.snd-btn:hover{box-shadow:0 0 22px rgba(251,191,36,.3)}
+.snd-btn.off{color:#444;border-color:rgba(255,255,255,.06)}
+</style>
 </head>
-<body class="world-bg text-white font-sans min-h-screen flex flex-col overflow-x-hidden">
-<header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-[60] shrink-0">
-    <div class="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
-        <div class="flex items-center gap-3">
-            <a href="portadanivelesacademia.html" class="flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shrink-0" style="background:rgba(212,175,55,.1);border:1px solid rgba(212,175,55,.35);color:#D4AF37;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-                <span class="hidden sm:inline">Volver</span>
-            </a>
-            <img src="images/logo_azul.png" alt="InvertProfit" class="h-10 w-auto object-contain shrink-0" onerror="this.outerHTML='<span style=\'color:#D4AF37;font-weight:900;font-size:1.2rem;\'>IP</span>'">
-        </div>
-        <nav class="hidden lg:flex items-center gap-10">
-            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="index.html">INICIO</a>
-            <a class="font-black border-b-2 border-primary pb-1 text-sm tracking-widest uppercase" style="color:#D4AF37;" href="portadanivelesacademia.html">ACADEMIA</a>
-            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="mercado.html">MERCADOS</a>
-        </nav>
-        <div class="flex items-center gap-2 md:gap-4"><button class="shrink-0 bg-primary font-bold h-10 px-6 rounded-full inline-flex items-center gap-2 whitespace-nowrap hover:bg-primary/90 transition text-xs tracking-wide" style="color:#0a0f1a;">⚡ CONECTAR BROKER</button></div>
+<body class="text-white min-h-screen flex flex-col">
+
+<!-- ═══ ATMOSPHERIC BACKGROUND ═══ -->
+<div class="atmo"></div>
+<div class="glow-top"></div>
+<div class="glow-bot"></div>
+<div class="glow-mid"></div>
+<div class="vig"></div>
+<canvas id="fxCanvas"></canvas>
+<div class="scan"></div>
+
+<!-- HEADER -->
+<header class="border-b border-card-border bg-black/80 backdrop-blur-xl sticky top-0 z-[60] shrink-0">
+  <div class="flex items-center justify-between px-4 md:px-8 py-3">
+    <div class="flex items-center gap-3">
+      <a href="portadanivelesacademia.html" class="flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shrink-0" style="background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.35);color:#fbbf24;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        <span class="hidden sm:inline">Mundos</span>
+      </a>
+      <img src="images/logo_azul.png" alt="IP" class="h-9 w-auto object-contain shrink-0" style="filter:drop-shadow(0 0 8px rgba(251,191,36,.3))" onerror="this.outerHTML='<span style=\'color:#fbbf24;font-weight:900;font-size:1.1rem;font-family:Orbitron,sans-serif\'>IP</span>'">
     </div>
+    <nav class="hidden lg:flex items-center gap-10">
+      <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="index.html">INICIO</a>
+      <a class="font-black border-b-2 pb-1 text-sm tracking-widest uppercase" style="color:#fbbf24;border-color:#d97706;" href="portadanivelesacademia.html">ACADEMIA</a>
+    </nav>
+    <button class="shrink-0 font-bold h-9 px-5 rounded-full inline-flex items-center gap-2 whitespace-nowrap transition text-xs tracking-wide hover:brightness-110" style="background:linear-gradient(135deg,#d97706,#fbbf24);color:#0a0f1a;">⚡ BROKER</button>
+  </div>
 </header>
-<main class="flex-1 overflow-y-auto">
-    <div class="relative overflow-hidden" style="background:linear-gradient(180deg,rgba(212,175,55,.15) 0%,rgba(10,15,26,0) 100%);border-bottom:1px solid rgba(212,175,55,.2);">
-        <div class="max-w-5xl mx-auto px-6 py-8">
-            <div class="flex items-center gap-3 mb-3">
-                <a href="portadanivelesacademia.html" class="flex items-center gap-1.5 text-gray-500 hover:text-yellow-400 transition text-sm font-semibold"><span class="material-symbols-outlined text-[18px]">arrow_back</span> Mundos</a>
-                <span class="text-gray-700">/</span>
-                <span class="text-yellow-400 text-sm font-semibold">Mundo 07 — Legado</span>
-            </div>
-            <div class="flex items-center justify-between flex-wrap gap-4 title-in">
-                <div class="flex items-center gap-5">
-                    <div class="text-5xl float-anim">🏔️</div>
-                    <div>
-                        <p class="text-[10px] font-black tracking-[5px] text-yellow-400/70 uppercase">MUNDO 07 — THE APEX — RANGO: MAESTRO DE CAPITAL</p>
-                        <h1 class="text-3xl md:text-4xl font-black uppercase tracking-tight golden-glow" style="color:#D4AF37;">LA CÚSPIDE DEL LEGADO</h1>
-                        <p class="text-gray-400 text-sm">Maestría Final — Estadística, Algoritmos, Portafolios y Graduación Grand Master.</p>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4">
-                    <div class="text-center"><div class="text-2xl font-black text-yellow-400">0/10</div><div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Completados</div></div>
-                    <div class="w-px h-10 bg-card-border"></div>
-                    <div class="text-center"><div class="text-2xl font-black text-primary">0</div><div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">XP</div></div>
-                </div>
-            </div>
-            <div class="mt-4 h-3 w-full rounded-full overflow-hidden bg-gray-800"><div class="h-full rounded-full" style="width:0%;background:linear-gradient(90deg,#92400e,#D4AF37,#fbbf24);"></div></div>
+
+<main class="flex-1 overflow-y-auto relative z-10">
+  <!-- WORLD HEADER -->
+  <div class="relative overflow-hidden" style="background:linear-gradient(180deg,rgba(251,191,36,.1) 0%,transparent 100%);border-bottom:1px solid rgba(251,191,36,.12);">
+    <div class="max-w-5xl mx-auto px-5 py-7">
+      <div class="flex items-center gap-2 mb-3">
+        <a href="portadanivelesacademia.html" class="text-gray-500 hover:brightness-125 transition text-sm font-semibold" style="color:rgba(251,191,36,.5)"><span class="material-symbols-outlined text-[16px] align-middle">arrow_back</span> Mundos</a>
+        <span class="text-gray-700">/</span>
+        <span class="text-sm font-semibold" style="color:#fbbf24">Mundo 07 — Legado</span>
+      </div>
+      <div class="flex items-center justify-between flex-wrap gap-4">
+        <div class="flex items-center gap-4">
+          <div class="text-5xl float-anim">👑</div>
+          <div>
+            <p class="text-[9px] font-black tracking-[4px] uppercase mb-1" style="color:rgba(251,191,36,.6)">MUNDO 07 — RANGO: GRAND MASTER</p>
+            <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight text-white" style="font-family:Orbitron,sans-serif;letter-spacing:1px">LEGADO DEL GRAND MASTER</h1>
+            <p class="text-gray-400 text-sm mt-1">Estadística, Algoritmos, Portafolios Cuantitativos y Certificación</p>
+          </div>
         </div>
-    </div>
-    <div class="max-w-xl mx-auto px-4 py-10 pb-20">
-        <p class="text-center text-[11px] font-black tracking-[5px] text-gray-600 uppercase mb-10">— MAPA DE NIVELES — THE APEX —</p>
-        <div id="level-map" class="relative flex flex-col items-start gap-0"></div>
-        <div class="mt-10">
-            <div class="mx-4 rounded-3xl p-8 text-center relative overflow-hidden" style="background:linear-gradient(135deg,rgba(212,175,55,.15) 0%,rgba(212,175,55,.05) 100%);border:2px solid rgba(212,175,55,.4);box-shadow:0 0 60px rgba(212,175,55,.1);">
-                <div class="text-6xl mb-4">👑</div>
-                <h3 class="text-2xl font-black uppercase tracking-tight mb-2 golden-glow" style="color:#D4AF37;">GRADUACIÓN GRAND MASTER</h3>
-                <p class="text-gray-400 text-sm mb-2">Completa los 100 módulos para obtener la Certificación Grand Master</p>
-                <p class="text-primary font-black text-lg">RANGO FINAL: SOCIO AMIGOTRADE 🏆</p>
-            </div>
+        <div class="flex items-center gap-4">
+          <div class="text-center"><div class="text-xl font-black" style="color:#fbbf24" id="comp-count">0/10</div><div class="text-[9px] font-bold text-gray-500 uppercase tracking-wider">Completados</div></div>
+          <div class="w-px h-9" style="background:rgba(251,191,36,.15)"></div>
+          <div class="text-center"><div class="text-xl font-black" style="color:#fbbf24" id="xp-count">0</div><div class="text-[9px] font-bold text-gray-500 uppercase tracking-wider">XP</div></div>
         </div>
+      </div>
+      <div class="mt-4 h-2.5 w-full rounded-full overflow-hidden bg-gray-800/60"><div class="h-full rounded-full transition-all duration-700" id="prog-bar" style="width:0%;background:linear-gradient(90deg,#d97706,#f59e0b,#fbbf24)"></div></div>
     </div>
-    <script>
-    (function(){
-        var levels = window._wLevels = [
-            {n:91,t:'Estadística y Esperanza Matemática',d:'La base científica del trading rentable.',s:'locked',xp:250},
-            {n:92,t:'Teoría de Juegos Aplicada',d:'Estrategias competitivas en el mercado. Nash y más.',s:'locked',xp:250},
-            {n:93,t:'Ingeniería de Riesgo y Gestión de Drawdown',d:'Protege tu capital como un ingeniero financiero.',s:'locked',xp:300},
-            {n:94,t:'Introducción a Bots y Algoritmos (EA)',d:'Automatiza tu trading. Lógica de programación para traders.',s:'locked',xp:300},
-            {n:95,t:'Optimización de Portafolios Cuantitativos',d:'Ratios de Sharpe, Sortino. Portafolios eficientes.',s:'locked',xp:300},
-            {n:96,t:'Correlación Intermercado y Coeficiente Beta',d:'Cómo se conectan todos los mercados del mundo.',s:'locked',xp:250},
-            {n:97,t:'Creación de un Plan Maestro de Retiro',d:'Libertad financiera sistemática. El plan definitivo.',s:'locked',xp:250},
-            {n:98,t:'Auditoría Final: 100 Operaciones Reales',d:'Demuestra consistencia con un historial real.',s:'locked',xp:500},
-            {n:99,t:'Ética y Legado del Inversor Élite',d:'Trading como filosofía de vida. Tu legado financiero.',s:'locked',xp:250},
-            {n:100,t:'🏆 GRADUACIÓN: Certificación Grand Master',d:'El examen final. Acceso VIP y Certificación oficial. RANGO FINAL: SOCIO AMIGOTRADE.',s:'locked',xp:1000,boss:'FINAL'}
-        ];
-        levels.forEach(function(l){ l.s = CURRICULUM.getLevelStatus(l.n); });
-        const icons=['📊','♟️','🛡️','🤖','📈','🔗','🏖️','📋','⚖️','👑'];
-        const pattern=[20,40,60,70,60,40,20,10,20,40];
-        let h='';
-        levels.forEach(function(lv,i){
-            const isBoss=!!lv.boss;const sz=isBoss?'width:96px;height:96px;font-size:2.5rem;':'';
-            const bossGlow=isBoss?'box-shadow:0 0 50px rgba(212,175,55,.8),0 0 100px rgba(212,175,55,.3);background:radial-gradient(circle at 35% 35%,#fbbf24 0%,#D4AF37 40%,#92400e 80%);':'';
-            const bossTag=isBoss?'<span style="position:absolute;top:-10px;right:-10px;font-size:.7rem;background:linear-gradient(135deg,#D4AF37,#b8860b);color:#0a0f1a;border-radius:999px;padding:3px 10px;font-weight:900;">GRAND MASTER</span>':'';
-            const tEsc=lv.t.replace(/'/g,"\\'");const dEsc=lv.d.replace(/'/g,"\\'");
-            h+='<div class="w-full" style="padding-left:'+pattern[i%pattern.length]+'%">';
-            h+='<div class="level-node locked text-center inline-block" onclick="openModal('+lv.n+',\''+tEsc+'\',\''+dEsc+'\',\''+lv.s+'\','+lv.xp+')">';
-            h+='<div class="flex flex-col items-center gap-2"><div class="node-btn locked-node'+(isBoss?' relative':'')+'" style="'+sz+bossGlow+'">'+bossTag+'🔒</div>';
-            h+='<div class="text-[10px] font-black text-gray-600 uppercase tracking-wider">M'+lv.n+'</div></div></div></div>';
-            if(i<levels.length-1){const curC=pattern[i%pattern.length]+5;const nextC=pattern[(i+1)%pattern.length]+5;h+='<div class="w-full flex flex-col gap-2 py-2">';for(let s=1;s<=3;s++){const pct=curC+(nextC-curC)*(s/4);h+='<div class="w-2.5 h-2.5 rounded-full" style="margin-left:'+pct+'%;background:#374151;"></div>';}h+='</div>';}
-        });
-        document.getElementById('level-map').innerHTML=h;
-    })();
-    function openModal(num,title,desc,status,xp){
-        document.getElementById('modal-title').textContent='M'+num+': '+title;document.getElementById('modal-desc').textContent=desc;document.getElementById('modal-xp').textContent='+'+xp+' XP';
-        var badge=document.getElementById('modal-badge');var btn=document.getElementById('modal-btn');
-        var nextBtn=document.getElementById('modal-next');
-        var nextLevel=window._wLevels.find(function(l){return l.n===num+1;});
-        if(status==='completed'){
-            badge.textContent='✓ Completado';badge.style.cssText='background:rgba(34,197,94,.15);color:#22c55e;border:1px solid rgba(34,197,94,.3);';
-            btn.textContent='🔄 REPASAR NIVEL';btn.style.cssText='background:rgba(212,175,55,.15);color:#D4AF37;border:1px solid rgba(212,175,55,.3);width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;cursor:pointer;display:block;';
-            btn.onclick=function(){window.location.href='leccion.html?world=7&level='+num;};
-            if(nextLevel){nextBtn.classList.remove('hidden');nextBtn.textContent='▶ SIGUIENTE NIVEL (M'+nextLevel.n+')';nextBtn.style.cssText='background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;cursor:pointer;';nextBtn.onclick=function(){window.location.href='leccion.html?world=7&level='+nextLevel.n;};}
-            else{nextBtn.classList.add('hidden');}
-        } else if(status==='active'){
-            badge.textContent='▶ En Progreso';badge.style.cssText='background:rgba(212,175,55,.15);color:#D4AF37;border:1px solid rgba(212,175,55,.3);';
-            btn.textContent='▶ JUGAR NIVEL';btn.style.cssText='background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;cursor:pointer;display:block;';
-            btn.onclick=function(){window.location.href='leccion.html?world=7&level='+num;};nextBtn.classList.add('hidden');
-        } else{
-            badge.textContent='🔒 Bloqueado';badge.style.cssText='background:rgba(107,114,128,.15);color:#6b7280;border:1px solid rgba(107,114,128,.3);';
-            btn.style.display='none';nextBtn.classList.add('hidden');
-        }
-        document.getElementById('level-modal').classList.remove('hidden');
+  </div>
+
+  <!-- LEVEL MAP -->
+  <div class="max-w-xl mx-auto px-4 py-8 pb-24">
+    <p class="text-center text-[10px] font-black tracking-[5px] text-gray-600 uppercase mb-8" style="font-family:Share Tech Mono,monospace">— MAPA DE NIVELES —</p>
+    <div id="level-map" class="relative flex flex-col items-start gap-0"></div>
+
+    <!-- QUEST CARD -->
+    <div class="mt-8" id="quest-card"></div>
+  </div>
+
+  <script>
+  (function(){
+    var levels=window._wLevels=[{"n":91,"t":"Estadística y Esperanza Matemática","d":"La base científica del trading rentable.","xp":250},{"n":92,"t":"Teoría de Juegos Aplicada","d":"Estrategias competitivas en el mercado. Nash y más.","xp":250},{"n":93,"t":"Ingeniería de Riesgo y Gestión de Drawdown","d":"Protege tu capital como un ingeniero financiero.","xp":300},{"n":94,"t":"Introducción a Bots y Algoritmos (EA)","d":"Automatiza tu trading. Lógica de programación para traders.","xp":300},{"n":95,"t":"Optimización de Portafolios Cuantitativos","d":"Ratios de Sharpe, Sortino. Portafolios eficientes.","xp":300},{"n":96,"t":"Correlación Intermercado y Coeficiente Beta","d":"Cómo se conectan todos los mercados del mundo.","xp":250},{"n":97,"t":"Creación de un Plan Maestro de Retiro","d":"Libertad financiera sistemática. El plan definitivo.","xp":250},{"n":98,"t":"Auditoría Final: 100 Operaciones Reales","d":"Demuestra consistencia con un historial real.","xp":500},{"n":99,"t":"Ética y Legado del Inversor Élite","d":"Trading como filosofía de vida. Tu legado financiero.","xp":250},{"n":100,"t":"🏆 GRADUACIÓN: Certificación Grand Master","d":"El examen final. Acceso VIP y Certificación oficial. RANGO FINAL: SOCIO AMIGOTRADE.","xp":1000,"boss":"FINAL"}];
+    levels.forEach(function(l){l.s=CURRICULUM.getLevelStatus(l.n);});
+    var icons=["📐","♟️","🛡️","🤖","📊","🌐","🏖️","📋","⭐","🏆"];
+    var pattern=[18,38,58,72,58,38,18,8,18,38];
+
+    // Update stats
+    var compCount=levels.filter(function(l){return l.s==='completed'}).length;
+    var compXp=levels.reduce(function(a,l){return a+(l.s==='completed'?l.xp:0)},0);
+    document.getElementById('comp-count').textContent=compCount+'/'+levels.length;
+    document.getElementById('xp-count').textContent=compXp.toLocaleString();
+    document.getElementById('prog-bar').style.width=Math.round(compCount/levels.length*100)+'%';
+
+    var completedDot='background:#fbbf24;box-shadow:0 0 6px rgba(251,191,36,.6);';
+    var activeDot='background:#D4AF37;box-shadow:0 0 8px rgba(212,175,55,.8);';
+    var lockedDot='background:#2a2f3a;';
+
+    var h='';
+    levels.forEach(function(lv,i){
+      var isBoss=!!lv.boss;
+      var sz=lv.boss==='FINAL'?'width:88px;height:88px;font-size:2rem;':(isBoss?'width:84px;height:84px;font-size:1.75rem;':'');
+      var tEsc=lv.t.replace(/'/g,"\\'");var dEsc=lv.d.replace(/'/g,"\\'");
+      var nodeClass,nodeContent,nodeStyleExtra='',bossTag='';
+
+      if(lv.s==='completed'){
+        nodeClass='node-btn completed'+(isBoss?' relative':'');
+        if(isBoss){nodeStyleExtra=sz+'box-shadow:0 0 30px rgba(251,191,36,.5);';bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:.6rem;background:linear-gradient(135deg,#fbbf24,#d97706);color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
+        nodeContent=bossTag+(isBoss?icons[i]:'✓');
+      }else if(lv.s==='active'){
+        nodeClass='node-btn active'+(isBoss?' relative':'');
+        if(isBoss){nodeStyleExtra=sz;bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:.6rem;background:#D4AF37;color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
+        nodeContent=bossTag+icons[i];
+      }else{
+        nodeClass='node-btn locked-node'+(isBoss?' relative':'');
+        if(isBoss){nodeStyleExtra=sz+'opacity:.5;';bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:.6rem;background:#374151;color:#6b7280;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
+        nodeContent=bossTag+'<span class="material-symbols-outlined text-gray-500 text-2xl">lock</span>';
+      }
+
+      var starClass=lv.s==='completed'?'star-row':'star-row text-gray-700';
+      var lblColor=lv.s==='locked'?'color:#555':(isBoss?'color:#fbbf24':'color:#888');
+      var clickAttr=lv.s==='locked'?'onclick="sfxLock()"':'onclick="sfxClick();openModal('+lv.n+',\''+tEsc+'\',\''+dEsc+'\',\''+lv.s+'\','+lv.xp+')"';
+      var wrapClass=lv.s==='locked'?'level-node locked text-center inline-block':'level-node text-center inline-block';
+
+      h+='<div class="w-full" style="padding-left:'+pattern[i%pattern.length]+'%">';
+      h+='<div class="'+wrapClass+'" '+clickAttr+' onmouseenter="sfxHover()">';
+      h+='<div class="flex flex-col items-center gap-2">';
+      h+='<div class="'+nodeClass+'" style="'+nodeStyleExtra+'">'+nodeContent+'</div>';
+      h+='<div class="'+starClass+'">⭐⭐⭐</div>';
+      h+='<div class="text-[10px] font-black uppercase tracking-wider" style="'+lblColor+'">Niv '+lv.n+'</div>';
+      h+='</div></div></div>';
+
+      if(i<levels.length-1){
+        var nextS=levels[i+1].s;
+        var dc=(lv.s==='completed'&&nextS==='completed')?completedDot:(lv.s==='completed'&&nextS==='active')?activeDot:lockedDot;
+        var curP=pattern[i%pattern.length]+5;var nextP=pattern[(i+1)%pattern.length]+5;
+        h+='<div class="w-full flex flex-col gap-2 py-2.5">';
+        for(var s=1;s<=3;s++){var pct=curP+(nextP-curP)*(s/4);h+='<div style="width:9px;height:9px;border-radius:50%;margin-left:'+pct+'%;'+dc+'"></div>';}
+        h+='</div>';
+      }
+    });
+    document.getElementById('level-map').innerHTML=h;
+
+    // Quest card
+    var activeLevel=levels.find(function(l){return l.s==='active'});
+    if(activeLevel){
+      var qi=levels.indexOf(activeLevel);
+      document.getElementById('quest-card').innerHTML='<div class="rounded-2xl p-4 flex items-center gap-3" style="background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.2);"><div class="text-3xl float-anim">⚡</div><div class="flex-1"><p class="text-[9px] font-black tracking-[4px] uppercase mb-1" style="color:rgba(251,191,36,.5)">NIVEL ACTUAL</p><p class="text-sm text-gray-300">Completa <strong style="color:#fbbf24">'+activeLevel.t+'</strong></p></div><button onclick="sfxClick();openModal('+activeLevel.n+',\''+activeLevel.t.replace(/'/g,"\\'")+'\'  ,\''+activeLevel.d.replace(/'/g,"\\'")+'\'  ,\'active\','+activeLevel.xp+')" class="shrink-0 px-4 py-2 rounded-xl font-black uppercase tracking-wider text-xs transition hover:scale-105" style="background:linear-gradient(135deg,#d97706,#fbbf24);color:#0a0f1a;">▶ JUGAR</button></div>';
     }
-    function closeModal(){document.getElementById('level-modal').classList.add('hidden');}
-    </script>
+  })();
+  </script>
 </main>
+
+<!-- LEVEL MODAL -->
 <div id="level-modal" class="modal-overlay hidden" onclick="if(event.target===this)closeModal()">
-    <div class="modal-box">
-        <div class="flex items-center justify-between mb-5"><span id="modal-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider" style="background:rgba(107,114,128,.15);color:#6b7280;border:1px solid rgba(107,114,128,.3);">🔒 Bloqueado</span><button onclick="closeModal()" class="text-gray-500 hover:text-white transition"><span class="material-symbols-outlined">close</span></button></div>
-        <div class="text-5xl text-center mb-4" id="modal-icon">🏔️</div>
-        <h3 class="text-xl font-black text-center uppercase tracking-tight mb-2" id="modal-title">Título</h3>
-        <p class="text-gray-400 text-sm text-center mb-5 leading-relaxed" id="modal-desc">Descripción</p>
-        <div class="flex items-center justify-between mb-5 bg-card rounded-xl px-4 py-3" style="border:1px solid rgba(212,175,55,.2);"><span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">XP</span><span class="font-black text-primary" id="modal-xp">+200 XP</span></div>
-        <div class="flex flex-col gap-2">
-            <button id="modal-btn" onclick="window.location.href='leccion.html'" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="display:none;background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;">⚡ JUGAR NIVEL</button>
-            <button id="modal-next" class="hidden w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#b8860b,#D4AF37);color:#0a0f1a;">▶ SIGUIENTE NIVEL</button>
-        </div>
+  <div class="modal-box">
+    <div class="flex items-center justify-between mb-4">
+      <span id="modal-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"></span>
+      <button onclick="closeModal()" class="text-gray-500 hover:text-white transition"><span class="material-symbols-outlined">close</span></button>
     </div>
+    <div class="text-5xl text-center mb-3" id="modal-icon">👑</div>
+    <h3 class="text-lg font-black text-center uppercase tracking-tight mb-2" style="font-family:Orbitron,sans-serif;color:#fbbf24" id="modal-title"></h3>
+    <p class="text-gray-400 text-sm text-center mb-4 leading-relaxed" id="modal-desc"></p>
+    <div class="flex justify-center gap-1 mb-4" id="modal-stars">⭐⭐⭐</div>
+    <div class="flex items-center justify-between mb-4 rounded-xl px-4 py-3" style="background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.15);">
+      <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">XP a ganar</span>
+      <span class="font-black" style="color:#fbbf24" id="modal-xp"></span>
+    </div>
+    <div class="flex flex-col gap-2">
+      <button id="modal-cta" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105 hover:brightness-110"></button>
+      <button id="modal-next" class="hidden w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105 hover:brightness-110"></button>
+    </div>
+  </div>
 </div>
+
+<!-- SOUND BUTTON -->
+<button class="snd-btn" id="snd-btn" onclick="toggleSound()">🔊</button>
+
+<script>
+// ══ AUDIO ENGINE ══
+var actx,mgain,sOn=true;
+function initA(){if(actx)return;actx=new(window.AudioContext||window.webkitAudioContext)();mgain=actx.createGain();mgain.gain.value=.22;mgain.connect(actx.destination);
+  [55,82.5,110].forEach(function(f,i){var o=actx.createOscillator(),g=actx.createGain(),fi=actx.createBiquadFilter();o.type=i<2?'sine':'triangle';o.frequency.value=f;fi.type='lowpass';fi.frequency.value=160+i*35;fi.Q.value=1;g.gain.value=.01;o.connect(fi);fi.connect(g);g.connect(mgain);o.start();var l=actx.createOscillator(),lg=actx.createGain();l.type='sine';l.frequency.value=.07+i*.03;lg.gain.value=1.2;l.connect(lg);lg.connect(o.frequency);l.start()});}
+function sfx(freq,dur,type,vol){if(!actx||!sOn)return;type=type||'sine';vol=vol||.1;var o=actx.createOscillator(),g=actx.createGain();o.type=type;o.frequency.setValueAtTime(freq,actx.currentTime);g.gain.setValueAtTime(vol,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+dur);o.connect(g);g.connect(mgain);o.start();o.stop(actx.currentTime+dur);}
+function sfxClick(){sfx(880,.1);setTimeout(function(){sfx(660,.07,'sine',.05)},35);}
+function sfxHover(){sfx(1200,.05,'sine',.025);}
+function sfxOpen(){[660,880,1100].forEach(function(f,i){setTimeout(function(){sfx(f,.16,'sine',.07)},i*50)});}
+function sfxLock(){sfx(150,.16,'square',.05);}
+function toggleSound(){initA();sOn=!sOn;var b=document.getElementById('snd-btn');b.textContent=sOn?'🔊':'🔇';b.classList.toggle('off',!sOn);if(mgain)mgain.gain.value=sOn?.22:0;}
+document.addEventListener('click',function(){initA()},{once:true});
+
+// ══ MODAL ══
+function openModal(num,title,desc,status,xp){
+  sfxOpen();
+  var badge=document.getElementById('modal-badge');
+  var cta=document.getElementById('modal-cta');
+  var nextBtn=document.getElementById('modal-next');
+  var nextLevel=window._wLevels.find(function(l){return l.n===num+1;});
+  var icons=["📐","♟️","🛡️","🤖","📊","🌐","🏖️","📋","⭐","🏆"];
+  var idx=window._wLevels.findIndex(function(l){return l.n===num;});
+  document.getElementById('modal-icon').textContent=icons[idx]||'👑';
+
+  if(status==='completed'){
+    badge.textContent='✓ Completado';
+    badge.style.cssText='background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.3);';
+    document.getElementById('modal-stars').textContent='⭐⭐⭐';
+    cta.textContent='🔄 REPASAR NIVEL';
+    cta.style.cssText='background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.3);width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer;';
+    cta.onclick=function(){window.location.href='leccion.html?world=7&level='+num;};
+    if(nextLevel){nextBtn.classList.remove('hidden');nextBtn.textContent='▶ SIGUIENTE NIVEL (Niv '+nextLevel.n+')';nextBtn.style.cssText='background:linear-gradient(135deg,#d97706,#fbbf24);color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer;';nextBtn.onclick=function(){window.location.href='leccion.html?world=7&level='+nextLevel.n;};}
+    else{nextBtn.classList.add('hidden');}
+  }else if(status==='active'){
+    badge.innerHTML='<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#D4AF37;animation:apulse 1s ease-in-out infinite;margin-right:4px"></span> En Progreso';
+    badge.style.cssText='background:rgba(212,175,55,.15);color:#D4AF37;border:1px solid rgba(212,175,55,.3);';
+    document.getElementById('modal-stars').textContent='⭐⭐⭐ (por ganar)';
+    cta.textContent='▶ JUGAR NIVEL';
+    cta.style.cssText='background:linear-gradient(135deg,#d97706,#fbbf24);color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer;';
+    cta.onclick=function(){window.location.href='leccion.html?world=7&level='+num;};
+    nextBtn.classList.add('hidden');
+  }else{
+    badge.textContent='🔒 Bloqueado';
+    badge.style.cssText='background:rgba(107,114,128,.12);color:#6b7280;border:1px solid rgba(107,114,128,.25);';
+    document.getElementById('modal-stars').textContent='⭐⭐⭐';
+    cta.style.display='none';nextBtn.classList.add('hidden');
+  }
+  document.getElementById('modal-title').textContent='Nivel '+num+': '+title;
+  document.getElementById('modal-desc').textContent=desc;
+  document.getElementById('modal-xp').textContent='+'+xp+' XP';
+  document.getElementById('level-modal').classList.remove('hidden');
+}
+function closeModal(){document.getElementById('level-modal').classList.add('hidden');document.getElementById('modal-cta').style.display='';}
+
+// ══ FX CANVAS ══
+(function(){
+var cv=document.getElementById('fxCanvas'),ctx=cv.getContext('2d');
+var dpr=window.devicePixelRatio||1,W,H;
+function resize(){W=window.innerWidth;H=window.innerHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0);}
+window.addEventListener('resize',resize);resize();
+
+// Matrix rain
+var mCols=Math.floor(W/14),mDrops=[];
+for(var i=0;i<mCols;i++) mDrops[i]=Math.random()*-60;
+var mChars='01アイウエオカキクケコサシスセソ'.split('');
+
+// Embers
+var embers=[];
+for(var i=0;i<30;i++) embers.push({x:0,y:0,s:0,vx:0,vy:0,life:9999,max:1,r:0,g:0,d:Math.random()*200});
+function resetEmber(e){
+  e.x=W*.1+Math.random()*W*.8;e.y=H+5;e.s=1+Math.random()*2.5;
+  e.vx=(Math.random()-.5)*.5;e.vy=-(1.2+Math.random()*2);
+  e.life=0;e.max=100+Math.random()*250;
+  e.r=200+Math.floor(Math.random()*55);e.g=30+Math.floor(Math.random()*70);}
+embers.forEach(resetEmber);
+
+// Energy pulses
+var pulses=[];
+for(var i=0;i<5;i++) pulses.push({y:H*.6,sp:.2+Math.random()*.6,ph:Math.random()*6.28,mx:.03+Math.random()*.03});
+
+var tick=0;
+function frame(){
+  tick++;
+  ctx.clearRect(0,0,W,H);
+
+  // Matrix rain (tech zone)
+  ctx.font='10px monospace';
+  for(var i=0;i<mCols;i++){
+    if(mDrops[i]<0){mDrops[i]+=.25;continue;}
+    var y=mDrops[i]*14;
+    if(y>H*.22&&y<H*.7){
+      var fade=1-Math.abs(y-H*.46)/(H*.24);
+      ctx.fillStyle='rgba(0,229,255,'+(0.035*fade)+')';
+      ctx.fillText(mChars[Math.floor(Math.random()*mChars.length)],i*14,y);
+    }
+    mDrops[i]+=.3+Math.random()*.25;
+    if(mDrops[i]*14>H*.72) mDrops[i]=Math.random()*-30;
+  }
+
+  // Energy pulses
+  pulses.forEach(function(p){
+    p.ph+=.018;
+    var a=p.mx*(.5+.5*Math.sin(p.ph));
+    ctx.save();
+    ctx.strokeStyle='rgba(0,229,255,'+a+')';ctx.lineWidth=.8;
+    ctx.beginPath();ctx.moveTo(W*.2,p.y);ctx.lineTo(W*.8,p.y);ctx.stroke();
+    ctx.strokeStyle='rgba(0,229,255,'+(a*.25)+')';ctx.lineWidth=5;ctx.filter='blur(2px)';
+    ctx.beginPath();ctx.moveTo(W*.2,p.y);ctx.lineTo(W*.8,p.y);ctx.stroke();
+    ctx.restore();
+    p.y-=p.sp;
+    if(p.y<H*.18){p.y=H*.58+Math.random()*H*.12;p.ph=Math.random()*6.28;}
+  });
+
+  // Embers
+  embers.forEach(function(e){
+    if(tick<e.d)return;
+    e.life++;
+    if(e.life>e.max){resetEmber(e);e.d=0;return;}
+    var p=e.life/e.max;
+    e.x+=e.vx+Math.sin(e.life*.04)*.25;
+    e.y+=e.vy*(1-p*.4);
+    var a=(1-p)*(p<.08?p/.08:1);
+    var sz=e.s*(1-p*.5);
+    ctx.beginPath();ctx.arc(e.x,e.y,sz,0,6.28);
+    ctx.fillStyle='rgba('+e.r+','+e.g+',0,'+(a*.65)+')';ctx.fill();
+    ctx.beginPath();ctx.arc(e.x,e.y,sz*3.5,0,6.28);
+    ctx.fillStyle='rgba('+e.r+','+e.g+',0,'+(a*.1)+')';ctx.fill();
+  });
+
+  // Sparks
+  if(tick%70===0){
+    var sx=W*.2+Math.random()*W*.6,sy=H*.82+Math.random()*H*.12;
+    ctx.beginPath();ctx.arc(sx,sy,1.5,0,6.28);
+    ctx.fillStyle='rgba(255,210,60,.85)';ctx.fill();
+    ctx.beginPath();ctx.arc(sx,sy,10,0,6.28);
+    ctx.fillStyle='rgba(255,190,50,.12)';ctx.fill();
+  }
+
+  requestAnimationFrame(frame);
+}
+frame();
+})();
+
+// ══ PARTICLES ══
+(function(){
+  var cols=['#fbbf24','#00e5ff','#ffd700','#39ff14','#fde68a'];
+  for(var i=0;i<18;i++){
+    var p=document.createElement('div');p.className='ptcl';var c=cols[i%cols.length];
+    var sz=1.5+Math.random()*2.5;
+    p.style.cssText='left:'+Math.random()*100+'%;top:'+(30+Math.random()*70)+'%;width:'+sz+'px;height:'+sz+'px;background:'+c+';box-shadow:0 0 '+(4+Math.random()*4)+'px '+c+';animation:ptrise '+(10+Math.random()*16)+'s linear infinite;animation-delay:'+Math.random()*12+'s';
+    document.body.appendChild(p);
+  }
+})();
+
+// ══ CSS EMBERS ══
+(function(){
+  for(var i=0;i<12;i++){
+    var e=document.createElement('div');e.className='ember';
+    var sz=2+Math.random()*3;
+    var r=200+Math.floor(Math.random()*55),g=30+Math.floor(Math.random()*70);
+    e.style.cssText='left:'+(8+Math.random()*84)+'%;bottom:'+(1+Math.random()*6)+'%;width:'+sz+'px;height:'+sz+'px;background:rgb('+r+','+g+',0);box-shadow:0 0 6px rgba('+r+','+g+',0,.5);animation:embrise '+(4+Math.random()*7)+'s ease-out infinite;animation-delay:'+Math.random()*6+'s';
+    document.body.appendChild(e);
+  }
+})();
+
+// ══ DONE ══
+</script>
 </body>
 </html>
