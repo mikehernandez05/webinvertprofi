@@ -348,7 +348,7 @@ html,body{min-height:100%;min-height:100dvh;background:#000;font-family:'Inter',
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><polyline points="15 18 9 12 15 6"/></svg>
         <span class="back-text">SALIR</span>
       </a>
-      <div class="pill">🪙 4,500 XP · Piso 2/7</div>
+      <div class="pill" id="pill-xp">🪙 0 XP · Piso 1/7</div>
     </div>
   </div>
 
@@ -363,10 +363,10 @@ html,body{min-height:100%;min-height:100dvh;background:#000;font-family:'Inter',
 
   <!-- STATS -->
   <div class="stats">
-    <div><div class="sv">12</div><div class="sl">Niveles</div></div><div class="sd"></div>
-    <div><div class="sv">4,500</div><div class="sl">XP Total</div></div><div class="sd"></div>
-    <div><div class="sv">7</div><div class="sl">Racha</div></div><div class="sd"></div>
-    <div><div class="sv">1/7</div><div class="sl">Mundos</div></div>
+    <div><div class="sv" id="stat-levels">0</div><div class="sl">Niveles</div></div><div class="sd"></div>
+    <div><div class="sv" id="stat-xp">0</div><div class="sl">XP Total</div></div><div class="sd"></div>
+    <div><div class="sv" id="stat-streak">0</div><div class="sl">Racha</div></div><div class="sd"></div>
+    <div><div class="sv" id="stat-worlds">0/7</div><div class="sl">Mundos</div></div>
   </div>
 </div>
 
@@ -387,6 +387,42 @@ html,body{min-height:100%;min-height:100dvh;background:#000;font-family:'Inter',
   <div class="td"><span></span><span></span><span></span></div>
 </div>
 
+<script src="auth.js"></script>
+<script src="curriculum.js"></script>
+<script>
+// ===== DYNAMIC STATS =====
+(function(){
+  try {
+    var completed = JSON.parse(localStorage.getItem('ip_completed_levels')||'[]');
+    var totalLevels = completed.length;
+    document.getElementById('stat-levels').textContent = totalLevels;
+    
+    // Estimate XP (150 avg per level)
+    var xp = totalLevels * 175;
+    document.getElementById('stat-xp').textContent = xp.toLocaleString();
+    
+    // Calculate worlds completed
+    var worldRanges = [[1,10],[11,22],[23,34],[46,60],[61,75],[76,90],[91,100]];
+    var worldsDone = 0;
+    worldRanges.forEach(function(range){
+      var allDone = true;
+      for(var i=range[0];i<=range[1];i++){
+        if(completed.indexOf(i)===-1){allDone=false;break;}
+      }
+      if(allDone && completed.indexOf(range[0])!==-1) worldsDone++;
+    });
+    document.getElementById('stat-worlds').textContent = worldsDone+'/7';
+    
+    // Streak from localStorage
+    var streak = parseInt(localStorage.getItem('ip_streak')||'0',10);
+    document.getElementById('stat-streak').textContent = streak;
+    
+    // Update header pill
+    var pill = document.getElementById('pill-xp');
+    if(pill) pill.textContent = '🪙 ' + xp.toLocaleString() + ' XP · Piso ' + Math.max(1, worldsDone+1) + '/7';
+  } catch(e){}
+})();
+</script>
 <script>
 // ===== WORLD DATA =====
 const worlds = {

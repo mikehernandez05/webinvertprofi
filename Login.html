@@ -142,6 +142,21 @@
         .btn-primary:hover::before {
             transform: translateX(100%);
         }
+        
+        /* ══ RESPONSIVE ══ */
+        @media(max-width:374px){
+            .hud-card .p-8{padding:1.25rem!important}
+            .text-2xl{font-size:1.3rem!important}
+            .btn-primary{padding-top:.85rem;padding-bottom:.85rem;font-size:12px}
+            .grid-cols-2 button{padding:.6rem .5rem;font-size:12px}
+        }
+        @media(max-height:500px) and (orientation:landscape){
+            .mb-8{margin-bottom:1rem!important}
+            .hud-card .p-8{padding:1rem!important}
+        }
+        @supports(padding:max(0px)){
+            body{padding-top:max(10px,env(safe-area-inset-top));padding-bottom:max(10px,env(safe-area-inset-bottom))}
+        }
     </style>
 </head>
 <body class="text-white min-h-screen flex flex-col items-center justify-center px-4 py-10 relative scanlines overflow-hidden">
@@ -185,7 +200,7 @@
     </script>
 
     <!-- ← BOTÓN VOLVER (esquina superior izquierda, debajo del HUD) -->
-    <a href="dashboard.html"
+    <a href="portadanivelesacademia.html"
        class="fixed top-12 left-5 z-50 flex items-center gap-2 px-4 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95"
        style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.35); color:#D4AF37;">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>

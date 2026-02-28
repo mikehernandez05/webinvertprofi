@@ -1,52 +1,50 @@
 /**
- * InvertProfit — Auth Guard
- * Protege páginas de academia: requiere sesión activa.
- * Timeout de inactividad: 2 minutos.
+ * AUTH.js — InvertProfit Session Guard
+ * Checks if user is authenticated before loading protected pages.
+ * Redirects to Login.html if not authenticated.
  */
 (function () {
-    var TWO_MINUTES = 2 * 60 * 1000;
+  var SESSION_KEY = 'ip_authenticated';
+  var ACTIVITY_KEY = 'ip_last_activity';
+  var SESSION_TIMEOUT = 24 * 60 * 60 * 1000; // 24 hours
 
-    function getSession() {
-        return {
-            auth: localStorage.getItem('ip_authenticated'),
-            lastActivity: parseInt(localStorage.getItem('ip_last_activity') || '0')
-        };
+  function isAuthenticated() {
+    var auth = localStorage.getItem(SESSION_KEY);
+    if (auth !== '1') return false;
+
+    // Check timeout
+    var lastActivity = parseInt(localStorage.getItem(ACTIVITY_KEY) || '0', 10);
+    if (Date.now() - lastActivity > SESSION_TIMEOUT) {
+      localStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem(ACTIVITY_KEY);
+      return false;
     }
+    return true;
+  }
 
-    function clearSession() {
-        localStorage.removeItem('ip_authenticated');
-        localStorage.removeItem('ip_last_activity');
-    }
+  function refreshActivity() {
+    localStorage.setItem(ACTIVITY_KEY, Date.now().toString());
+  }
 
-    function redirectToLogin() {
-        window.location.replace('Login.html');
-    }
+  // Guard: redirect if not authenticated
+  // Skip guard on Login.html itself
+  var currentPage = window.location.pathname.split('/').pop().toLowerCase();
+  var publicPages = ['login.html', 'index.html', ''];
 
-    function checkAuth() {
-        var s = getSession();
-        var now = Date.now();
-        if (!s.auth || (now - s.lastActivity) > TWO_MINUTES) {
-            clearSession();
-            redirectToLogin();
-            return false;
-        }
-        return true;
-    }
+  if (publicPages.indexOf(currentPage) === -1 && !isAuthenticated()) {
+    window.location.replace('Login.html');
+  } else if (isAuthenticated()) {
+    refreshActivity();
+  }
 
-    function updateActivity() {
-        if (localStorage.getItem('ip_authenticated')) {
-            localStorage.setItem('ip_last_activity', Date.now().toString());
-        }
-    }
-
-    // Verificar al cargar
-    if (!checkAuth()) return;
-
-    // Actualizar actividad con eventos del usuario
-    ['mousemove', 'click', 'keypress', 'scroll', 'touchstart'].forEach(function (evt) {
-        document.addEventListener(evt, updateActivity, { passive: true });
-    });
-
-    // Verificar periódicamente cada 15 segundos
-    setInterval(checkAuth, 15000);
+  // Expose for other scripts
+  window.AUTH = {
+    isAuthenticated: isAuthenticated,
+    logout: function () {
+      localStorage.removeItem(SESSION_KEY);
+      localStorage.removeItem(ACTIVITY_KEY);
+      window.location.href = 'Login.html';
+    },
+    refreshActivity: refreshActivity
+  };
 })();

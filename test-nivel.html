@@ -2,7 +2,7 @@
 <html class="dark" lang="es">
 <head>
     <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport"/>
     <title>InvertProfit — Test de Nivel</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
@@ -99,6 +99,33 @@
         @keyframes confetti-fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}70%{opacity:1}100%{transform:translateY(110vh) rotate(var(--rot));opacity:0}}
         .golden-burst{position:fixed;top:50%;left:50%;width:0;height:0;border-radius:50%;background:radial-gradient(circle,rgba(212,175,55,0.6) 0%,rgba(212,175,55,0) 70%);transform:translate(-50%,-50%);z-index:9998;pointer-events:none;animation:burst-expand 0.8s ease-out forwards}
         @keyframes burst-expand{0%{width:0;height:0;opacity:1}100%{width:800px;height:800px;opacity:0}}
+
+        /* ══ RESPONSIVE ══ */
+        @media(max-width:374px){
+            .opt-card{padding:14px 16px;border-radius:14px}
+            .opt-card .w-9{width:28px;height:28px;min-width:28px}
+            .btn-gold{padding:14px 20px;font-size:13px}
+            .btn-outline{padding:12px 20px;font-size:11px}
+            .result-stat{padding:12px 8px}
+            .result-stat .text-2xl{font-size:1.3rem!important}
+            .level-badge{padding:10px 20px;font-size:.9rem}
+            .float-emoji{font-size:3.5rem}
+            .xp-fly{font-size:1.8rem}
+        }
+        @media(min-width:375px) and (max-width:480px){
+            .opt-card{padding:16px 20px}
+            .result-stat{padding:14px 10px}
+            .float-emoji{font-size:4rem}
+        }
+        @media(max-height:500px) and (orientation:landscape){
+            .float-emoji{font-size:3rem}
+            .btn-gold{padding:12px 20px}
+            .result-stat{padding:10px}
+        }
+        @supports(padding:max(0px)){
+            header{padding-top:max(0px,env(safe-area-inset-top))}
+            #bottom-bar{padding-bottom:max(8px,env(safe-area-inset-bottom))}
+        }
     </style>
 </head>
 <body class="min-h-screen text-white overflow-x-hidden flex flex-col">
@@ -316,12 +343,9 @@ function nextScreen(){
 function goToAcademy(world){
     // Unlock levels up to start world if needed
     if(world > 1){
-        // Mark earlier worlds' first levels as accessible by completing prior boss levels
-        var completed = JSON.parse(localStorage.getItem('ip_completed_levels')||'[]');
-        // We don't auto-complete levels, just save the recommended start
         localStorage.setItem('ip_recommended_world',world.toString());
     }
-    window.location.href = 'dashboard.html';
+    window.location.href = 'portadanivelesacademia.html';
 }
 
 // ══ CELEBRATION ══
@@ -337,7 +361,7 @@ function launchCelebration(){
 // ══ CHECK IF ALREADY DONE ══
 if(localStorage.getItem('ip_level_test_done')==='1'){
     // Already classified, skip to academy
-    window.location.replace('dashboard.html');
+    window.location.replace('portadanivelesacademia.html');
 } else {
     renderScreen();
 }
