@@ -200,7 +200,7 @@
     </script>
 
     <!-- ← BOTÓN VOLVER (esquina superior izquierda, debajo del HUD) -->
-    <a href="portadanivelesacademia.html"
+    <a href="index.html"
        class="fixed top-12 left-5 z-50 flex items-center gap-2 px-4 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95"
        style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.35); color:#D4AF37;">
         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
@@ -305,7 +305,7 @@
         }
 
         function getDestination() {
-            return localStorage.getItem('ip_level_test_done') === '1' ? 'portadanivelesacademia.html' : 'test-nivel.html';
+            return localStorage.getItem('ip_level_test_done') === '1' ? 'dashboard.html' : 'test-nivel.html';
         }
 
         function handleLogin(e) {

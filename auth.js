@@ -29,7 +29,7 @@
   // Guard: redirect if not authenticated
   // Skip guard on Login.html itself
   var currentPage = window.location.pathname.split('/').pop().toLowerCase();
-  var publicPages = ['login.html', 'index.html', ''];
+  var publicPages = ['login.html', 'index.html', 'mercado.html', ''];
 
   if (publicPages.indexOf(currentPage) === -1 && !isAuthenticated()) {
     window.location.replace('Login.html');
