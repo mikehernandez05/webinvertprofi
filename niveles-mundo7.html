@@ -85,6 +85,54 @@ body{background:#120e04;margin:0;overflow-x:hidden;-webkit-font-smoothing:antial
 @media(min-width:375px) and (max-width:480px){.node-circle{width:58px;height:58px;font-size:1.3rem}.node-boss .node-circle{width:70px;height:70px}}
 @media(min-width:769px){.map-wrap{max-width:500px}.node-circle{width:70px;height:70px;font-size:1.6rem}.node-boss .node-circle{width:86px;height:86px;font-size:2rem}}
 @media(hover:none){.node:active{transform:translate(-50%,-50%) scale(.92)!important}}
+
+/* ═══ MUSIC VISUALIZER ═══ */
+.viz{display:flex;align-items:flex-end;gap:2px;height:16px}
+.viz span{width:3px;border-radius:1px;background:var(--a);animation:vb 1s ease-in-out infinite}
+.viz span:nth-child(1){animation-delay:0s;height:30%}.viz span:nth-child(2){animation-delay:.12s;height:55%}
+.viz span:nth-child(3){animation-delay:.24s;height:40%}.viz span:nth-child(4){animation-delay:.36s;height:70%}
+.viz span:nth-child(5){animation-delay:.08s;height:25%}.viz span:nth-child(6){animation-delay:.2s;height:50%}
+.viz span:nth-child(7){animation-delay:.32s;height:35%}
+.viz.off span{animation:none!important;height:3px!important;opacity:.3}
+@keyframes vb{0%,100%{height:15%}50%{height:100%}}
+
+/* ═══ NODE ENTRY STAGGER ═══ */
+.node{opacity:0;animation:nodeEntry .6s ease-out forwards}
+@keyframes nodeEntry{from{opacity:0;transform:translate(-50%,-50%) scale(.3) translateY(20px)}to{opacity:1;transform:translate(-50%,-50%) scale(1) translateY(0)}}
+
+/* ═══ COMPLETED: sparkle ring + dots ═══ */
+.sparkle-ring{position:absolute;inset:-8px;border-radius:50%;border:1.5px solid transparent;background:conic-gradient(from 0deg,transparent,rgba(var(--ar),.4),transparent,rgba(var(--ar),.2),transparent) border-box;-webkit-mask:linear-gradient(#fff 0 0) padding-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:sparkleRot 4s linear infinite;pointer-events:none}
+@keyframes sparkleRot{to{transform:rotate(360deg)}}
+.sparkle-dot{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(var(--ar),.7);box-shadow:0 0 4px rgba(var(--ar),.5);pointer-events:none;animation:sparkleFly 2.5s ease-in-out infinite}
+@keyframes sparkleFly{0%,100%{opacity:0;transform:translate(0,0) scale(.5)}50%{opacity:1;transform:translate(var(--sx),var(--sy)) scale(1)}}
+
+/* ═══ ACTIVE: pulse rings + glow ═══ */
+.pulse-ring{position:absolute;inset:-6px;border-radius:50%;border:2px solid rgba(var(--ar),.3);animation:pulseExpand 2.5s ease-out infinite;pointer-events:none}
+.pulse-ring:nth-child(2){animation-delay:.8s}.pulse-ring:nth-child(3){animation-delay:1.6s}
+@keyframes pulseExpand{0%{inset:-4px;opacity:.7}100%{inset:-28px;opacity:0}}
+.glow-breath{position:absolute;inset:-15px;border-radius:50%;background:radial-gradient(circle,rgba(var(--ar),.15),transparent 70%);animation:glowB 2s ease-in-out infinite;pointer-events:none}
+@keyframes glowB{0%,100%{transform:scale(.9);opacity:.4}50%{transform:scale(1.15);opacity:.8}}
+
+/* ═══ LOCKED: scan + chains ═══ */
+.lock-scan{position:absolute;inset:0;border-radius:50%;overflow:hidden;pointer-events:none}
+.lock-scan::after{content:'';position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);animation:lockSweep 3s ease-in-out infinite}
+@keyframes lockSweep{0%{top:-2px}50%{top:100%}100%{top:-2px}}
+.lock-chains{position:absolute;inset:-4px;border-radius:50%;border:2px dashed rgba(255,255,255,.06);animation:chainSpin 8s linear infinite;pointer-events:none}
+@keyframes chainSpin{to{transform:rotate(360deg)}}
+
+/* ═══ CLICK BURST ═══ */
+.click-burst{position:fixed;pointer-events:none;z-index:9999}
+.burst-ring{position:absolute;border-radius:50%;border:2px solid rgba(var(--ar),.5);animation:burstGrow .6s ease-out forwards;transform:translate(-50%,-50%)}
+@keyframes burstGrow{0%{width:0;height:0;opacity:1}100%{width:120px;height:120px;opacity:0}}
+.burst-dot{position:absolute;width:4px;height:4px;border-radius:50%;background:var(--a);animation:burstFly .5s ease-out forwards;transform:translate(-50%,-50%)}
+@keyframes burstFly{0%{transform:translate(-50%,-50%);opacity:1}100%{transform:translate(calc(-50% + var(--bx)),calc(-50% + var(--by)));opacity:0}}
+
+/* ═══ MODAL ANIM ═══ */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);animation:mFade .3s ease}
+@keyframes mFade{from{opacity:0}to{opacity:1}}
+.modal-box{animation:mPop .4s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes mPop{from{opacity:0;transform:scale(.85) translateY(20px)}to{opacity:1;transform:none}}
+
 </style>
 </head>
 <body class="text-white min-h-screen">
@@ -102,6 +150,10 @@ body{background:#120e04;margin:0;overflow-x:hidden;-webkit-font-smoothing:antial
     <img src="images/logo_azul.png" alt="IP" class="h-9 w-auto shrink-0" style="filter:drop-shadow(0 0 8px rgba(var(--ar),.3))" onerror="this.outerHTML='<span style=\'color:var(--a);font-weight:900;font-size:1.1rem;font-family:Orbitron\'>IP</span>'">
   </div>
   <div class="flex items-center gap-3">
+    <button onclick="toggleMu()" class="flex items-center gap-2 px-3 py-1.5 rounded-xl transition hover:scale-105" style="background:rgba(var(--ar),.06);border:1px solid rgba(var(--ar),.15)">
+      <div class="viz" id="vizE"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <span class="text-[9px] font-bold uppercase tracking-wider" style="color:var(--a)" id="muLbl">♫ ON</span>
+    </button>
     <span class="text-sm font-black" style="color:var(--a)" id="xp-ct">0 XP</span>
     <span class="text-sm font-bold text-gray-500" id="comp-ct">0/10</span>
   </div>
@@ -149,7 +201,7 @@ body{background:#120e04;margin:0;overflow-x:hidden;-webkit-font-smoothing:antial
   </div>
 </div></div>
 
-<button class="mu-btn" id="muBtn" onclick="toggleMu()">🔊</button>
+<button class="mu-btn" id="muBtn" onclick="toggleMu()" style="display:none">🔊</button>
 
 <script>
 var A='#eab308',AR='234,179,8',WN=7;
@@ -218,37 +270,38 @@ window.addEventListener('resize',function(){drawPaths();placeNodes()});
 
 // ═══ PLACE NODES ═══
 function placeNodes(){
-  calcPositions();
-  var layer=document.getElementById('nodesLayer');
-  layer.innerHTML='';
+  calcPositions();var layer=document.getElementById('nodesLayer');layer.innerHTML='';
   for(var i=0;i<N;i++){
-    var lv=levels[i];var p=nodePos[i];var isBoss=!!lv.boss;
+    var lv=levels[i],p=nodePos[i],isBoss=!!lv.boss;
     var nd=document.createElement('div');
     nd.className='node'+(isBoss?' node-boss':'')+(lv.s==='locked'?' locked':'');
-    nd.style.cssText='position:absolute;left:'+p.x+'px;top:'+p.y+'px;transform:translate(-50%,-50%)';
+    nd.style.cssText='position:absolute;left:'+p.x+'px;top:'+p.y+'px;transform:translate(-50%,-50%);animation-delay:'+(i*80)+'ms';
 
     var circCls=lv.s==='completed'?'nc-done':(lv.s==='active'?'nc-active':'nc-locked');
     var content=lv.s==='completed'?'✓':(lv.s==='active'?(icons[i]||'🔥'):'<span class="material-symbols-outlined text-gray-600" style="font-size:1.2em">lock</span>');
     var bossTag='';
-    if(isBoss){
-      var bCls=lv.s==='locked'?'boss-tag locked':'boss-tag';
-      bossTag='<span class="'+bCls+'">'+lv.boss+'</span>';
-    }
-
-    var starHtml='';
-    if(lv.s==='completed')starHtml='<span class="star-on">⭐</span><span class="star-on">⭐</span><span class="star-on">⭐</span>';
-    else starHtml='<span class="star-off">☆</span><span class="star-off">☆</span><span class="star-off">☆</span>';
-
+    if(isBoss)bossTag='<span class="boss-tag'+(lv.s==='locked'?' locked':'')+'">'+lv.boss+'</span>';
+    var starHtml=lv.s==='completed'?'<span class="star-on">⭐</span><span class="star-on">⭐</span><span class="star-on">⭐</span>':'<span class="star-off">☆</span><span class="star-off">☆</span><span class="star-off">☆</span>';
     var lblCls=lv.s==='completed'?'lbl-done':(lv.s==='active'?'lbl-active':'lbl-locked');
-    var tE=lv.t.replace(/'/g,"\\'");var dE=lv.d.replace(/'/g,"\\'");
-    if(lv.s!=='locked')nd.setAttribute('onclick',"openM("+lv.n+",'"+tE+"','"+dE+"','"+lv.s+"',"+lv.xp+")");
-    else nd.setAttribute('onclick','sfxL()');
 
-    nd.innerHTML='<div style="position:relative;display:flex;flex-direction:column;align-items:center">'+
-      '<div class="node-circle '+circCls+'" style="position:relative">'+content+bossTag+'</div>'+
-      '<div class="node-stars">'+starHtml+'</div>'+
-      '<div class="node-lbl '+lblCls+'">'+lv.n+'</div>'+
-      '</div>';
+    var inner='<div style="position:relative;display:flex;flex-direction:column;align-items:center">';
+    // COMPLETED: sparkle ring + dots
+    if(lv.s==='completed'){
+      inner+='<div class="sparkle-ring"></div>';
+      for(var sp=0;sp<3;sp++){var ang=sp*2.09;inner+='<div class="sparkle-dot" style="top:50%;left:50%;--sx:'+Math.cos(ang)*20+'px;--sy:'+Math.sin(ang)*20+'px;animation-delay:'+(sp*.7)+'s"></div>'}
+    }
+    // ACTIVE: pulse rings + glow
+    if(lv.s==='active'){inner+='<div class="glow-breath"></div><div class="pulse-ring"></div><div class="pulse-ring"></div><div class="pulse-ring"></div>'}
+    // LOCKED: chains
+    if(lv.s==='locked'){inner+='<div class="lock-chains"></div>'}
+    inner+='<div class="node-circle '+circCls+'" style="position:relative">'+content+bossTag;
+    if(lv.s==='locked')inner+='<div class="lock-scan"></div>';
+    inner+='</div><div class="node-stars">'+starHtml+'</div><div class="node-lbl '+lblCls+'">'+lv.n+'</div></div>';
+    nd.innerHTML=inner;
+
+    var tE=lv.t.replace(/'/g,"\\'");var dE=lv.d.replace(/'/g,"\\'");
+    if(lv.s!=='locked')nd.setAttribute('onclick',"clickNode(event,"+lv.n+",'"+tE+"','"+dE+"','"+lv.s+"',"+lv.xp+")");
+    else nd.setAttribute('onclick','sfxL()');
     layer.appendChild(nd);
   }
 }
@@ -283,7 +336,10 @@ function sfx(fr,d){if(!actx||!sOn)return;var o=actx.createOscillator(),g=actx.cr
 function sfxC(){sfx(880,.1);setTimeout(function(){sfx(660,.07)},35)}
 function sfxL(){sfx(150,.15)}
 function sfxO(){[660,880,1100].forEach(function(f,i){setTimeout(function(){sfx(f,.15)},i*50)})}
-function toggleMu(){initA();sOn=!sOn;mg.gain.value=sOn?.08:0;document.getElementById('muBtn').className='mu-btn'+(sOn?'':' off');document.getElementById('muBtn').textContent=sOn?'🔊':'🔇'}
+function toggleMu(){initA();sOn=!sOn;mg.gain.value=sOn?.08:0;
+  var v=document.getElementById('vizE');if(v)v.classList.toggle('off',!sOn);
+  var l=document.getElementById('muLbl');if(l)l.textContent=sOn?'♫ ON':'♫ OFF';
+  var b=document.getElementById('muBtn');if(b){b.className='mu-btn'+(sOn?'':' off');b.textContent=sOn?'🔊':'🔇'}}
 document.addEventListener('click',function(){initA()},{once:true});
 
 // ═══ MODAL ═══
@@ -317,6 +373,19 @@ function openM(n,t,d,s,xp){
 function closeM(){document.getElementById('modal').classList.add('hidden');document.getElementById('m-cta').style.display=''}
 
 // ═══ WORLD FX ═══
+
+
+// ═══ CLICK BURST EFFECT ═══
+function clickBurst(e){
+  var c=document.createElement('div');c.className='click-burst';
+  c.style.left=e.clientX+'px';c.style.top=e.clientY+'px';
+  var r=document.createElement('div');r.className='burst-ring';c.appendChild(r);
+  for(var i=0;i<8;i++){var d=document.createElement('div');d.className='burst-dot';
+    var ang=i*(Math.PI*2/8);d.style.setProperty('--bx',(Math.cos(ang)*40)+'px');
+    d.style.setProperty('--by',(Math.sin(ang)*40)+'px');c.appendChild(d)}
+  document.body.appendChild(c);setTimeout(function(){c.remove()},700)}
+
+function clickNode(e,n,t,d,s,xp){clickBurst(e);sfxO();setTimeout(function(){openM(n,t,d,s,xp)},150)}
 
 // GOLDEN WORLD — Floating golden dust
 (function(){

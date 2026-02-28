@@ -1,879 +1,408 @@
 <!DOCTYPE html>
 <html class="dark" lang="es">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>InvertProfit — Academy Dashboard</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="auth.js"></script>
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#D4AF37",
-                        "bg-dark": "#0a0f1a",
-                        "card": "#111827",
-                        "card-border": "#1f2937",
-                        "positive": "#22c55e",
-                        "negative": "#ef4444"
-                    },
-                    fontFamily: { "sans": ["Inter", "sans-serif"] }
-                }
-            }
-        }
-    </script>
-    <style>
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
-        ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport"/>
+<title>InvertProfit — VOID NEXUS</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="auth.js"></script>
+<script src="curriculum.js"></script>
+<script>tailwind.config={darkMode:"class",theme:{extend:{fontFamily:{"sans":["Rajdhani","sans-serif"],"mono":["Share Tech Mono","monospace"],"display":["Orbitron","sans-serif"]}}}}</script>
+<style>
+*{box-sizing:border-box;margin:0}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#1a2236;border-radius:2px}
+body{background:#050810;font-family:'Rajdhani',sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 
-        .logo-glow { filter: drop-shadow(0 0 10px rgba(212,175,55,0.3)); }
+/* ═══ ATMOSPHERE ═══ */
+.atmo{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(180deg,#08061a 0%,#050810 30%,#060a14 60%,#0a0814 100%)}
+.stars{position:fixed;inset:0;z-index:1;pointer-events:none;
+  background-image:
+    radial-gradient(1px 1px at 12% 15%,rgba(255,255,255,.5),transparent),
+    radial-gradient(1px 1px at 28% 42%,rgba(255,255,255,.3),transparent),
+    radial-gradient(1.5px 1.5px at 45% 8%,rgba(255,255,255,.6),transparent),
+    radial-gradient(1px 1px at 62% 68%,rgba(255,255,255,.4),transparent),
+    radial-gradient(1px 1px at 78% 25%,rgba(212,175,55,.3),transparent),
+    radial-gradient(1px 1px at 88% 55%,rgba(255,255,255,.35),transparent),
+    radial-gradient(1px 1px at 35% 82%,rgba(0,229,255,.2),transparent),
+    radial-gradient(1.5px 1.5px at 55% 35%,rgba(212,175,55,.25),transparent),
+    radial-gradient(1px 1px at 92% 88%,rgba(255,255,255,.3),transparent),
+    radial-gradient(1px 1px at 8% 72%,rgba(168,85,247,.2),transparent)}
+.scan{position:fixed;inset:0;z-index:90;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.008) 3px,rgba(0,0,0,.008) 4px)}
+#fxCanvas{position:fixed;inset:0;z-index:2;pointer-events:none}
 
-        .stars-bg {
-            background-image:
-                radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.6) 0%, transparent 100%),
-                radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
-                radial-gradient(1.5px 1.5px at 50% 10%, rgba(255,255,255,0.7) 0%, transparent 100%),
-                radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.5) 0%, transparent 100%),
-                radial-gradient(1px 1px at 85% 30%, rgba(255,255,255,0.4) 0%, transparent 100%),
-                radial-gradient(1px 1px at 20% 85%, rgba(255,255,255,0.3) 0%, transparent 100%),
-                radial-gradient(1px 1px at 60% 45%, rgba(212,175,55,0.3) 0%, transparent 100%),
-                radial-gradient(1px 1px at 90% 65%, rgba(255,255,255,0.5) 0%, transparent 100%),
-                radial-gradient(1px 1px at 40% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
-                radial-gradient(1.5px 1.5px at 75% 15%, rgba(212,175,55,0.4) 0%, transparent 100%);
-        }
+/* ═══ TOWER SPINE ═══ */
+.tower-spine{position:absolute;left:50%;top:0;bottom:0;width:4px;transform:translateX(-50%);z-index:5}
+.spine-done{background:linear-gradient(180deg,#D4AF37,rgba(212,175,55,.6));box-shadow:0 0 12px rgba(212,175,55,.3)}
+.spine-active{background:linear-gradient(180deg,rgba(0,229,255,.6),rgba(0,229,255,.2));box-shadow:0 0 15px rgba(0,229,255,.3);animation:spinePulse 2s ease-in-out infinite}
+.spine-locked{background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,.02))}
+@keyframes spinePulse{0%,100%{box-shadow:0 0 15px rgba(0,229,255,.3)}50%{box-shadow:0 0 30px rgba(0,229,255,.5)}}
 
-        @keyframes particle-float {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-120px) rotate(360deg); opacity: 0; }
-        }
-        .particle {
-            position: absolute; width: 4px; height: 4px;
-            background: #D4AF37; border-radius: 50%;
-            animation: particle-float linear infinite; pointer-events: none;
-        }
+/* ═══ WORLD NODE ═══ */
+.wnode{position:relative;z-index:10;cursor:pointer;transition:transform .35s cubic-bezier(.175,.885,.32,1.275);-webkit-tap-highlight-color:transparent}
+.wnode:hover{transform:scale(1.03)}
+.wnode:active{transform:scale(.97)!important}
+.wnode.locked{cursor:not-allowed}
+.wnode.locked:hover{transform:none}
 
-        @keyframes shoot { 0%{transform:translateX(-200px) translateY(-200px) rotate(45deg); opacity:1; width:100px;} 100%{transform:translateX(400px) translateY(400px) rotate(45deg); opacity:0; width:0;} }
-        .shooting-star {
-            position: absolute; height: 1px;
-            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
-            animation: shoot 3s linear infinite;
-        }
+/* World card base */
+.wcard{position:relative;border-radius:24px;padding:24px 20px;overflow:hidden;transition:all .4s}
+.wcard::before{content:'';position:absolute;inset:0;border-radius:24px;pointer-events:none;z-index:1}
 
-        @keyframes title-glow { 0%,100%{text-shadow:0 0 20px rgba(212,175,55,0.5)} 50%{text-shadow:0 0 40px rgba(212,175,55,1), 0 0 80px rgba(212,175,55,0.5)} }
-        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
-        @keyframes coin-rotate { 0%,100%{transform:rotateY(0deg)} 50%{transform:rotateY(15deg)} }
-        @keyframes pulse-glow-gold { 0%,100%{box-shadow: 0 0 20px rgba(212,175,55,0.3)} 50%{box-shadow: 0 0 50px rgba(212,175,55,0.6), 0 0 80px rgba(212,175,55,0.2)} }
-        @keyframes spin-slow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-        @keyframes coin-bounce { 0%,100%{transform:scale(1) rotate(0deg)} 25%{transform:scale(1.1) rotate(-5deg)} 75%{transform:scale(1.1) rotate(5deg)} }
-        @keyframes beacon { 0%,100%{box-shadow:0 0 15px currentColor} 50%{box-shadow:0 0 40px currentColor, 0 0 70px currentColor} }
+/* ── COMPLETED STATE: Golden, polished ── */
+.wcard-done{
+  background:linear-gradient(135deg,#1a1608,#18140a,#1a1608);
+  border:2px solid rgba(212,175,55,.4);
+  box-shadow:0 0 30px rgba(212,175,55,.08),0 8px 32px rgba(0,0,0,.4),inset 0 1px 0 rgba(212,175,55,.1)}
+.wcard-done::before{background:linear-gradient(135deg,rgba(212,175,55,.04),transparent 60%)}
+.wcard-done::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#D4AF37,transparent);opacity:.4}
+.flag-banner{position:absolute;top:12px;right:-8px;background:linear-gradient(135deg,#b8960b,#D4AF37);color:#0a0814;font-family:'Orbitron';font-weight:900;font-size:8px;letter-spacing:2px;padding:5px 20px 5px 12px;clip-path:polygon(0 0,100% 0,92% 50%,100% 100%,0 100%,8% 50%);z-index:20;text-transform:uppercase}
+.done-glow{position:absolute;inset:-2px;border-radius:26px;background:conic-gradient(from 0deg,transparent,rgba(212,175,55,.1),transparent,rgba(212,175,55,.08),transparent);animation:doneRotate 8s linear infinite;z-index:0;pointer-events:none}
+@keyframes doneRotate{to{transform:rotate(360deg)}}
 
-        .title-glow { animation: title-glow 2.5s ease-in-out infinite; }
-        .float-anim { animation: float 4s ease-in-out infinite; }
-        .coin-anim { animation: coin-rotate 6s ease-in-out infinite; perspective: 600px; }
-        .coin-bounce { animation: coin-bounce 3s ease-in-out infinite; }
+/* ── ACTIVE STATE: Glowing, pulsing ── */
+.wcard-active{
+  background:linear-gradient(135deg,#0a1220,#0c1428,#0a1220);
+  border:2px solid rgba(0,229,255,.35);
+  box-shadow:0 0 40px rgba(0,229,255,.1),0 0 80px rgba(0,229,255,.04),0 8px 32px rgba(0,0,0,.4);
+  animation:activeGlow 3s ease-in-out infinite}
+.wcard-active::before{background:linear-gradient(135deg,rgba(0,229,255,.04),transparent 60%)}
+.wcard-active::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,#00e5ff,transparent);opacity:.5;animation:activeSweep 3s ease-in-out infinite}
+@keyframes activeGlow{0%,100%{box-shadow:0 0 40px rgba(0,229,255,.1),0 8px 32px rgba(0,0,0,.4)}50%{box-shadow:0 0 60px rgba(0,229,255,.18),0 0 100px rgba(0,229,255,.06),0 8px 32px rgba(0,0,0,.4)}}
+@keyframes activeSweep{0%{transform:translateX(-100%)}50%{transform:translateX(100%)}100%{transform:translateX(-100%)}}
 
-        /* Card styles */
-        .level-active {
-            border: 2px solid rgba(59,130,246,0.5);
-            box-shadow: 0 0 30px rgba(59,130,246,0.12), 0 0 60px rgba(59,130,246,0.06), inset 0 1px 0 rgba(59,130,246,0.1);
-            background: linear-gradient(135deg, #111827 0%, #131d30 50%, #111827 100%);
-        }
-        .badge-completed { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.25); }
-        .badge-progress { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
-        .badge-locked { background: rgba(107,114,128,0.15); color: #6b7280; border: 1px solid rgba(107,114,128,0.2); }
+/* Beacon pulse behind active world */
+.beacon{position:absolute;inset:-12px;border-radius:36px;z-index:0;pointer-events:none;
+  border:1px solid rgba(0,229,255,.08);animation:beaconPulse 2.5s ease-out infinite}
+.beacon:nth-child(2){animation-delay:.8s;inset:-20px;border-radius:44px}
+@keyframes beaconPulse{0%{opacity:.6;transform:scale(.98)}50%{opacity:.15;transform:scale(1.04)}100%{opacity:0;transform:scale(1.08)}}
 
-        .reward-card { transition: all 0.3s ease; }
-        .reward-card:hover { transform: translateY(-4px); border-color: rgba(212,175,55,0.3); }
+/* ── LOCKED STATE: Gray, force field ── */
+.wcard-locked{
+  background:linear-gradient(135deg,#0c0e14,#0e1018,#0c0e14);
+  border:2px solid rgba(255,255,255,.06);
+  box-shadow:0 8px 32px rgba(0,0,0,.4)}
+.wcard-locked::before{background:repeating-linear-gradient(45deg,transparent,transparent 8px,rgba(255,255,255,.008) 8px,rgba(255,255,255,.008) 9px)}
 
-        .resume-widget {
-            background: linear-gradient(135deg, #1a1f2e 0%, #111827 100%);
-            border: 1px solid #1f2937;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.4);
-        }
+/* Energy chains SVG */
+.chains{position:absolute;inset:0;z-index:15;pointer-events:none;overflow:hidden;border-radius:24px;opacity:.5}
+.chain-line{stroke:rgba(255,255,255,.08);stroke-width:2;fill:none;stroke-dasharray:6 4;animation:chainFlow 2s linear infinite}
+@keyframes chainFlow{to{stroke-dashoffset:-20}}
 
-        .sidebar-link { transition: all 0.2s ease; }
-        .sidebar-link:hover { background: rgba(255,255,255,0.04); color: #fff; }
-        .sidebar-link.active { background: rgba(212,175,55,0.15); color: #D4AF37; border: 1px solid rgba(212,175,55,0.2); }
+/* Force field shimmer */
+.forcefield{position:absolute;inset:0;border-radius:24px;z-index:14;pointer-events:none;overflow:hidden}
+.forcefield::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent,rgba(100,116,139,.03),transparent);animation:fieldShimmer 4s ease-in-out infinite}
+@keyframes fieldShimmer{0%,100%{transform:translateY(-100%)}50%{transform:translateY(100%)}}
+.lock-hex{position:absolute;inset:0;border-radius:24px;pointer-events:none;z-index:16;
+  background:repeating-conic-gradient(rgba(255,255,255,.01) 0deg,transparent 3deg,transparent 57deg,rgba(255,255,255,.01) 60deg);opacity:.3}
 
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+/* ═══ WORLD ICON ORB ═══ */
+.worb{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2rem;position:relative;flex-shrink:0;transition:all .3s}
+.worb-done{background:radial-gradient(circle at 35% 35%,rgba(212,175,55,.8),rgba(212,175,55,.5) 60%,rgba(212,175,55,.25));border:3px solid rgba(212,175,55,.6);box-shadow:0 0 25px rgba(212,175,55,.3),inset 0 -3px 6px rgba(0,0,0,.3)}
+.worb-done::after{content:'';position:absolute;inset:4px;border-radius:50%;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.2),transparent 60%)}
+.worb-active{background:radial-gradient(circle at 35% 35%,rgba(0,229,255,.4),rgba(0,229,255,.15) 60%,rgba(0,229,255,.05));border:3px solid rgba(0,229,255,.4);box-shadow:0 0 30px rgba(0,229,255,.25);animation:orbPulse 2.5s ease-in-out infinite}
+.worb-active::after{content:'';position:absolute;inset:4px;border-radius:50%;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.15),transparent 60%)}
+@keyframes orbPulse{0%,100%{box-shadow:0 0 30px rgba(0,229,255,.25)}50%{box-shadow:0 0 50px rgba(0,229,255,.4),0 0 80px rgba(0,229,255,.1)}}
+.worb-locked{background:radial-gradient(circle at 35% 35%,#2a2e38,#1e2028 60%,#14161c);border:3px solid #1e222c;box-shadow:inset 0 -3px 6px rgba(0,0,0,.3);filter:grayscale(60%) brightness(.5)}
 
-        .nav-arrow { transition: all 0.2s; }
-        .nav-arrow:hover { background: #D4AF37; color: #0a0f1a; border-color: #D4AF37; }
+/* ═══ AMIGOTRADE MASCOT ═══ */
+.amigo{position:absolute;right:-16px;bottom:-8px;z-index:25;animation:amigoFloat 3s ease-in-out infinite;filter:drop-shadow(0 0 12px rgba(0,229,255,.4))}
+@keyframes amigoFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.amigo-body{width:48px;height:58px;position:relative}
+.amigo-head{width:36px;height:32px;background:radial-gradient(circle at 40% 35%,#1a2844,#0e1628);border:2px solid rgba(0,229,255,.4);border-radius:10px 10px 8px 8px;position:absolute;top:0;left:6px;overflow:hidden}
+.amigo-visor{position:absolute;top:8px;left:4px;right:4px;height:12px;border-radius:4px;background:linear-gradient(90deg,rgba(0,229,255,.15),rgba(0,229,255,.3),rgba(0,229,255,.15));border:1px solid rgba(0,229,255,.3);overflow:hidden}
+.amigo-visor::after{content:'';position:absolute;width:6px;height:6px;background:rgba(0,229,255,.8);border-radius:50%;top:3px;box-shadow:0 0 6px rgba(0,229,255,.8);animation:eyeScan 3s ease-in-out infinite}
+@keyframes eyeScan{0%,100%{left:3px}50%{left:calc(100% - 9px)}}
+.amigo-antenna{position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:2px;height:8px;background:rgba(0,229,255,.3)}
+.amigo-antenna::after{content:'';position:absolute;top:-3px;left:-2px;width:6px;height:6px;border-radius:50%;background:rgba(0,229,255,.6);box-shadow:0 0 8px rgba(0,229,255,.6);animation:antennaGlow 1.5s ease-in-out infinite}
+@keyframes antennaGlow{0%,100%{opacity:.5;box-shadow:0 0 4px rgba(0,229,255,.4)}50%{opacity:1;box-shadow:0 0 12px rgba(0,229,255,.8)}}
+.amigo-body-lower{position:absolute;top:30px;left:8px;width:32px;height:24px;background:linear-gradient(180deg,#141e32,#0e1628);border:1.5px solid rgba(0,229,255,.2);border-radius:6px}
+.amigo-arm{position:absolute;top:32px;width:8px;height:16px;background:#141e32;border:1.5px solid rgba(0,229,255,.15);border-radius:3px}
+.amigo-arm-l{left:1px;transform:rotate(15deg);animation:armWave 2s ease-in-out infinite}
+.amigo-arm-r{right:1px;transform:rotate(-15deg)}
+@keyframes armWave{0%,100%{transform:rotate(15deg)}50%{transform:rotate(-5deg)}}
+.amigo-badge{position:absolute;bottom:-3px;left:50%;transform:translateX(-50%);background:rgba(0,229,255,.15);border:1px solid rgba(0,229,255,.3);border-radius:4px;padding:1px 5px;font-family:'Share Tech Mono';font-size:6px;color:rgba(0,229,255,.8);white-space:nowrap;letter-spacing:1px}
 
-        .hamburger-open .hamburger-line-1 { transform: rotate(45deg) translateY(8px); }
-        .hamburger-open .hamburger-line-2 { opacity: 0; }
-        .hamburger-open .hamburger-line-3 { transform: rotate(-45deg) translateY(-8px); }
+/* ═══ PROGRESS BAR ═══ */
+.wprog{height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-top:12px}
+.wprog-fill{height:100%;border-radius:2px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.wprog-done{background:linear-gradient(90deg,#b8960b,#D4AF37)}
+.wprog-active{background:linear-gradient(90deg,#0891b2,#00e5ff)}
+.wprog-locked{background:rgba(255,255,255,.04)}
 
-        @keyframes xp-fill { from{width:0} to{width:var(--xp-w)} }
-        .xp-bar { animation: xp-fill 1.5s ease-out 0.5s both; }
+/* ═══ WORLD NUMBER BADGE ═══ */
+.wnum{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Orbitron';font-weight:900;font-size:11px;position:absolute;left:-14px;top:50%;transform:translateY(-50%);z-index:20}
+.wnum-done{background:#D4AF37;color:#0a0814;box-shadow:0 0 12px rgba(212,175,55,.3)}
+.wnum-active{background:#00e5ff;color:#0a0814;box-shadow:0 0 15px rgba(0,229,255,.4);animation:numPulse 2s ease-in-out infinite}
+@keyframes numPulse{0%,100%{box-shadow:0 0 12px rgba(0,229,255,.3)}50%{box-shadow:0 0 25px rgba(0,229,255,.6)}}
+.wnum-locked{background:#1e222c;color:#555;border:1px solid #2a2e38}
 
-        .hud-corner { position: relative; }
-        .hud-corner::before, .hud-corner::after {
-            content: ''; position: absolute; width: 12px; height: 12px; border-color: rgba(212,175,55,0.3); pointer-events: none;
-        }
-        .hud-corner::before { top: 0; left: 0; border-top: 2px solid; border-left: 2px solid; }
-        .hud-corner::after { bottom: 0; right: 0; border-bottom: 2px solid; border-right: 2px solid; }
+/* ═══ TRANSITION OVERLAY ═══ */
+.zoom-ov{position:fixed;inset:0;z-index:9999;pointer-events:none;opacity:0;transition:opacity .3s}
+.zoom-ov.go{pointer-events:all;opacity:1}
+.zoom-flash{position:absolute;inset:0;background:radial-gradient(circle at var(--cx,50%) var(--cy,50%),var(--fc,rgba(0,229,255,.7)) 0%,transparent 70%);opacity:0}
+.zoom-flash.fire{animation:zFlash .6s ease-out forwards}
+@keyframes zFlash{0%{opacity:0;transform:scale(.5)}30%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(2)}}
+.zoom-vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 30%,rgba(0,0,0,.95) 100%);opacity:0}
+.zoom-vig.fire{animation:zVig 1.2s ease-in-out forwards}
+@keyframes zVig{0%{opacity:0}40%{opacity:1}100%{opacity:1}}
 
-        /* ===== DRAMATIC ZOOM TRANSITION ===== */
-        .zoom-overlay {
-            position: fixed; inset: 0; z-index: 9999;
-            pointer-events: none; opacity: 0;
-        }
-        .zoom-overlay.active { pointer-events: all; opacity: 1; }
-
-        .zoom-flash {
-            position: absolute; inset: 0;
-            background: radial-gradient(circle at var(--cx, 50%) var(--cy, 50%), var(--flash-color, rgba(212,175,55,0.8)) 0%, transparent 70%);
-            opacity: 0;
-        }
-        .zoom-flash.fire { animation: flash-burst 0.6s ease-out forwards; }
-        @keyframes flash-burst { 0%{opacity:0; transform:scale(0.5)} 30%{opacity:1; transform:scale(1)} 100%{opacity:0; transform:scale(2)} }
-
-        .zoom-shockwave {
-            position: absolute; border-radius: 50%;
-            border: 3px solid var(--shock-color, rgba(212,175,55,0.6));
-            width: 0; height: 0; opacity: 0;
-            top: var(--cy, 50%); left: var(--cx, 50%);
-            transform: translate(-50%, -50%);
-        }
-        .zoom-shockwave.fire { animation: shockwave-expand 0.8s ease-out forwards; }
-        @keyframes shockwave-expand { 0%{width:0;height:0;opacity:1} 100%{width:600px;height:600px;opacity:0} }
-
-        .zoom-vignette {
-            position: absolute; inset: 0;
-            background: radial-gradient(ellipse at center, transparent 30%, rgba(0,0,0,0.95) 100%);
-            opacity: 0;
-        }
-        .zoom-vignette.fire { animation: vignette-close 1.2s ease-in-out forwards; }
-        @keyframes vignette-close { 0%{opacity:0} 40%{opacity:1} 100%{opacity:1} }
-
-        .zoom-particles-container {
-            position: absolute; inset: 0; overflow: hidden;
-        }
-        .zoom-particle {
-            position: absolute; border-radius: 50%; pointer-events: none;
-        }
-
-        /* Level card interactivity */
-        .level-card-interactive {
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .level-card-interactive:hover {
-            transform: translateY(-8px) scale(1.03);
-        }
-        .level-card-interactive:active {
-            transform: scale(0.97);
-        }
-        .level-card-interactive.locked-card {
-            cursor: not-allowed;
-        }
-        .level-card-interactive.locked-card:hover {
-            transform: none;
-        }
-
-        /* Orb glow animations per level */
-        @keyframes orb-basico {
-            0%,100% { box-shadow: 0 8px 30px rgba(34,197,94,0.3), 0 0 60px rgba(34,197,94,0.1); }
-            50% { box-shadow: 0 8px 50px rgba(34,197,94,0.5), 0 0 100px rgba(34,197,94,0.2); }
-        }
-        @keyframes orb-intermedio {
-            0%,100% { box-shadow: 0 8px 30px rgba(59,130,246,0.3), 0 0 60px rgba(59,130,246,0.1); }
-            50% { box-shadow: 0 8px 50px rgba(59,130,246,0.5), 0 0 100px rgba(59,130,246,0.2); }
-        }
-        @keyframes orb-avanzado {
-            0%,100% { box-shadow: 0 8px 30px rgba(168,85,247,0.3), 0 0 60px rgba(168,85,247,0.1); }
-            50% { box-shadow: 0 8px 50px rgba(168,85,247,0.5), 0 0 100px rgba(168,85,247,0.2); }
-        }
-        .orb-basico-glow { animation: orb-basico 3s ease-in-out infinite; }
-        .orb-intermedio-glow { animation: orb-intermedio 3s ease-in-out infinite; }
-        .orb-avanzado-glow { animation: orb-avanzado 3s ease-in-out infinite; }
-
-        /* Entrance animations */
-        @keyframes card-entrance {
-            0% { opacity: 0; transform: translateY(60px) scale(0.8) rotateX(15deg); }
-            100% { opacity: 1; transform: translateY(0) scale(1) rotateX(0); }
-        }
-        .card-entrance { animation: card-entrance 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; }
-        .card-entrance-1 { animation-delay: 0.2s; }
-        .card-entrance-2 { animation-delay: 0.4s; }
-        .card-entrance-3 { animation-delay: 0.6s; }
-
-        @keyframes title-entrance {
-            0% { opacity: 0; transform: translateY(-30px); letter-spacing: 0.5em; }
-            100% { opacity: 1; transform: translateY(0); }
-        }
-        .title-entrance { animation: title-entrance 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; animation-delay: 0.1s; }
-
-        /* Hover ring pulse */
-        .hover-ring {
-            position: absolute; inset: -4px; border-radius: 1.5rem;
-            border: 2px solid transparent; transition: border-color 0.3s;
-            pointer-events: none;
-        }
-        .level-card-interactive:hover .hover-ring {
-            border-color: var(--ring-color, rgba(212,175,55,0.4));
-            animation: ring-pulse 1.5s ease-in-out infinite;
-        }
-        @keyframes ring-pulse {
-            0%,100% { opacity: 0.5; transform: scale(1); }
-            50% { opacity: 1; transform: scale(1.02); }
-        }
-    </style>
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:480px){.wcard{padding:18px 14px}.worb{width:56px;height:56px;font-size:1.5rem}.flag-banner{font-size:7px;padding:4px 14px 4px 10px}.amigo-body{transform:scale(.8);transform-origin:bottom right}.wnum{width:24px;height:24px;font-size:9px;left:-12px}}
+@media(min-width:769px){.wcard{padding:28px 24px}.worb{width:80px;height:80px;font-size:2.2rem}}
+</style>
 </head>
-<body class="bg-bg-dark text-white font-sans min-h-screen flex flex-col overflow-x-hidden">
+<body class="text-white min-h-screen">
+<div class="atmo"></div>
+<div class="stars"></div>
+<canvas id="fxCanvas"></canvas>
+<div class="scan"></div>
 
-<!-- ZOOM OVERLAY -->
-<div class="zoom-overlay" id="zoom-overlay">
-    <div class="zoom-flash" id="zoom-flash"></div>
-    <div class="zoom-shockwave" id="zoom-shockwave"></div>
-    <div class="zoom-vignette" id="zoom-vignette"></div>
-    <div class="zoom-particles-container" id="zoom-particles"></div>
-</div>
-
-<!-- PARTICLES -->
-<div id="particles-container" class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-    <div class="shooting-star" style="top:15%; left:10%; animation-delay:0s;"></div>
-    <div class="shooting-star" style="top:40%; left:5%; animation-delay:1.5s;"></div>
-    <div class="shooting-star" style="top:70%; left:20%; animation-delay:3s;"></div>
-</div>
-
-<!-- HEADER -->
-<header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-[60] shrink-0">
-    <div class="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
-        <div class="flex items-center gap-2 md:gap-3">
-            <img src="images/logo_azul.png" alt="InvertProfit" class="h-8 md:h-10 w-auto logo-glow object-contain" id="logo-img"/>
-            <span class="text-lg md:text-xl font-bold text-white" id="logo-text" style="display:none;">
-                <span style="color:#D4AF37;">INVERT</span>PROFIT
-            </span>
-        </div>
-        <script>
-            document.getElementById('logo-img').onerror = function() {
-                this.style.display = 'none';
-                document.getElementById('logo-text').style.display = 'inline';
-            };
-        </script>
-        <nav class="hidden lg:flex items-center gap-10">
-            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="index.html">INICIO</a>
-            <a class="font-black border-b-2 border-primary pb-1 text-sm tracking-widest uppercase" style="color:#D4AF37;" href="dashboard.html">ACADEMIA</a>
-            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="mercado.html">MERCADOS</a>
-            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="#">PORTAFOLIO</a>
-        </nav>
-        <div class="flex items-center gap-2 md:gap-4">
-            <button class="shrink-0 bg-primary text-bg-dark font-bold h-10 px-6 rounded-full inline-flex items-center gap-2 whitespace-nowrap hover:bg-primary/90 transition text-xs sm:text-sm tracking-wide leading-none">
-                <span class="leading-none">⚡</span>
-                <span class="leading-none" style="color:#0a0f1a;">CONECTAR BROKER</span>
-            </button>
-            <div class="hidden md:flex items-center gap-3">
-                <button class="w-9 h-9 rounded-full bg-card border border-card-border flex items-center justify-center text-gray-400 hover:text-primary transition relative">
-                    <span class="material-symbols-outlined text-[20px]">notifications</span>
-                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-bg-dark"></span>
-                </button>
-                <div class="w-9 h-9 bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 rounded-full flex items-center justify-center text-xs font-black text-primary">AT</div>
-            </div>
-            <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="lg:hidden text-gray-400 hover:text-white p-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-            </button>
-        </div>
+<!-- ═══ HEADER ═══ -->
+<header class="border-b border-white/5 bg-black/70 backdrop-blur-xl sticky top-0 z-[60]">
+<div class="flex items-center justify-between px-4 md:px-8 py-3">
+  <div class="flex items-center gap-3">
+    <a href="index.html" class="w-8 h-8 rounded-lg flex items-center justify-center border border-white/10 hover:border-white/20 transition" style="background:rgba(212,175,55,.05)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4AF37" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg></a>
+    <div>
+      <div class="flex items-center gap-2">
+        <img src="images/logo_azul.png" alt="IP" class="h-8 w-auto" style="filter:drop-shadow(0 0 8px rgba(212,175,55,.3))" onerror="this.outerHTML='<span style=\'color:#D4AF37;font-weight:900;font-size:1rem;font-family:Orbitron\'>IP</span>'">
+        <span class="font-display font-black text-sm tracking-[3px] text-white">VOID NEXUS</span>
+      </div>
     </div>
-    <nav id="mobile-menu" class="hidden lg:hidden border-t border-card-border bg-card px-4 py-3 space-y-2">
-        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="index.html">INICIO</a>
-        <a class="block font-bold py-2 border-l-2 border-primary pl-3 text-sm" style="color:#D4AF37;" href="dashboard.html">ACADEMIA</a>
-        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="mercado.html">MERCADOS</a>
-        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="#">PORTAFOLIO</a>
-    </nav>
+  </div>
+  <div class="flex items-center gap-4">
+    <div class="text-center hidden sm:block"><div class="text-[7px] font-bold text-gray-500 tracking-[2px] uppercase">Total XP</div><div class="text-xs font-display font-black text-yellow-400" id="totalXP">0</div></div>
+    <div class="text-center hidden sm:block"><div class="text-[7px] font-bold text-gray-500 tracking-[2px] uppercase">Niveles</div><div class="text-xs font-display font-black text-cyan-400" id="totalLvl">0/89</div></div>
+    <div class="text-center"><div class="text-[7px] font-bold text-gray-500 tracking-[2px] uppercase">Rank</div><div class="text-xs font-display font-black text-white" id="rankText">Novato</div></div>
+  </div>
+</div>
 </header>
 
-<!-- SIDEBAR -->
-<aside id="side-menu" class="fixed top-0 left-0 h-full w-80 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 border-r border-gray-700 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out z-[65] flex flex-col">
-    <nav class="flex-1 p-6 space-y-2 pt-24">
-        <div class="mb-8 px-3">
-            <p class="text-[10px] font-black text-primary/80 uppercase tracking-[4px] leading-none mb-2">Menú</p>
-            <div class="h-[2px] w-10 bg-gradient-to-r from-primary/60 to-transparent rounded-full"></div>
-        </div>
-        <a href="dashboard.html" class="sidebar-link active flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold">
-            <span class="material-symbols-outlined text-[22px]">grid_view</span> Dashboard
-        </a>
-        <a href="portadanivelesacademia.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
-            <span class="material-symbols-outlined text-[22px]">school</span> Academia
-        </a>
-        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
-            <span class="material-symbols-outlined text-[22px]">emoji_events</span> Logros
-        </a>
-        <a href="mercado.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
-            <span class="material-symbols-outlined text-[22px]">monitoring</span> Mercados
-        </a>
-    </nav>
-    <div class="p-6 border-t border-gray-700">
-        <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-extrabold text-primary text-sm">AT</div>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm font-bold truncate">Alex Trader</p>
-                <p class="text-[10px] text-primary font-bold uppercase tracking-wider">Pro Member</p>
-            </div>
-            <a href="Login.html" class="text-gray-500 hover:text-red-400 transition" title="Cerrar Sesión">
-                <span class="material-symbols-outlined text-[22px]">logout</span>
-            </a>
-        </div>
-    </div>
-</aside>
-<div id="menu-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleSideMenu()"></div>
+<!-- ═══ MAIN TOWER ═══ -->
+<main class="relative z-10 max-w-lg mx-auto px-4 pt-8 pb-24">
+  <!-- Title -->
+  <div class="text-center mb-10">
+    <div class="text-[9px] font-black tracking-[5px] uppercase text-gray-500 mb-2">SELECCIONA TU DESTINO</div>
+    <h1 class="font-display text-3xl md:text-4xl font-black uppercase tracking-tight text-white mb-2" style="text-shadow:0 0 30px rgba(212,175,55,.3)">TORRE NEXUS</h1>
+    <p class="text-gray-500 text-sm">7 mundos · 89 niveles · 1 leyenda</p>
+  </div>
 
-<!-- MAIN -->
-<main class="flex-1 overflow-y-auto relative z-10">
-    <div class="stars-bg absolute inset-0 pointer-events-none"></div>
-
-    <div class="p-6 md:p-10 pb-32 max-w-5xl mx-auto relative">
-
-        <!-- Top bar -->
-        <div class="flex items-center justify-between mb-10">
-            <div class="flex items-center gap-4">
-                <button onclick="toggleSideMenu()" id="hamburger-btn-inline" class="w-11 h-11 rounded-lg bg-card border border-card-border flex items-center justify-center shadow-lg hover:border-primary transition-all duration-300 hover:bg-card/80 shrink-0">
-                    <div class="flex flex-col gap-1.5">
-                        <span class="w-5 h-0.5 bg-primary rounded-full transition-all duration-300 hamburger-line-1"></span>
-                        <span class="w-5 h-0.5 bg-primary rounded-full transition-all duration-300 hamburger-line-2"></span>
-                        <span class="w-5 h-0.5 bg-primary rounded-full transition-all duration-300 hamburger-line-3"></span>
-                    </div>
-                </button>
-                <div>
-                    <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight title-glow">Panel de Control</h1>
-                    <p class="text-gray-500 text-sm mt-1">Bienvenido de nuevo. Continúa tu camino hacia la libertad financiera.</p>
-                </div>
-            </div>
-            <div class="hidden sm:flex items-center gap-4">
-                <div class="flex items-center gap-3 bg-card border border-card-border px-4 py-2.5 rounded-2xl hud-corner">
-                    <div class="coin-bounce text-xl">🪙</div>
-                    <div>
-                        <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">XP Total</p>
-                        <p class="text-sm font-black text-primary">0 XP</p>
-                    </div>
-                    <div class="w-px h-8 bg-card-border mx-1"></div>
-                    <div>
-                        <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Nivel</p>
-                        <p class="text-sm font-black text-white" id="xp-level">—</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TITLE -->
-        <div class="text-center mb-12 title-entrance">
-            <p class="text-[11px] font-black tracking-[6px] text-primary/70 uppercase mb-4">— VOID ACADEMY —</p>
-            <h2 class="text-3xl md:text-5xl font-black uppercase tracking-tight title-glow mb-4">
-                SELECCIONA TU <span style="color:#D4AF37;">NIVEL</span>
-            </h2>
-            <p class="text-gray-400 text-sm max-w-md mx-auto">Tu nivel fue asignado según tu desempeño en el test inicial. Domina cada fase para desbloquear la siguiente.</p>
-        </div>
-
-        <!-- LEVEL CARDS -->
-        <div id="levels-scroll" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-14">
-
-            <!-- BÁSICO -->
-            <div class="bg-card border border-card-border rounded-3xl p-6 relative group hover:border-green-500/20 transition-all duration-300 hud-corner level-card-interactive card-entrance card-entrance-1"
-                 id="card-basico" data-level="basico" data-href="niveles-novato.html" data-color-r="34" data-color-g="197" data-color-b="94"
-                 onmouseenter="SFX.hover('basico')" onclick="handleCardClick(this)">
-                <div class="hover-ring" style="--ring-color: rgba(34,197,94,0.4);"></div>
-                <div class="flex items-center justify-between mb-2">
-                    <span class="badge-completed text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full">Completado</span>
-                    <span class="text-green-500 text-lg">✓</span>
-                </div>
-                <div class="py-8 flex justify-center">
-                    <div class="coin-anim orb-basico-glow w-28 h-28 rounded-full flex items-center justify-center" style="background: radial-gradient(circle at 35% 35%, #f5d060 0%, #c9952b 40%, #8a6914 80%, #6b5311 100%); box-shadow: 0 8px 30px rgba(212,175,55,0.3), inset 0 2px 4px rgba(255,255,255,0.3);">
-                        <span class="text-5xl font-black text-white/90" style="text-shadow: 0 2px 4px rgba(0,0,0,0.3);">$</span>
-                    </div>
-                </div>
-                <h3 class="text-2xl font-black text-center uppercase tracking-tight text-gray-300 mb-1">Básico</h3>
-                <p class="text-center text-xs text-gray-500 mb-6">Fundamentos del trading y análisis de mercado.</p>
-                <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
-                    <span class="text-gray-500">Progreso</span>
-                    <span class="text-green-500">100%</span>
-                </div>
-                <div class="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
-                    <div class="h-full bg-green-500 rounded-full w-full"></div>
-                </div>
-                <div class="mt-4 block text-center text-xs font-bold text-primary hover:underline uppercase tracking-wider">Repasar →</div>
-            </div>
-
-            <!-- INTERMEDIO -->
-            <div class="level-active rounded-3xl p-6 relative group transition-all duration-300 hud-corner level-card-interactive card-entrance card-entrance-2"
-                 id="card-intermedio" data-level="intermedio" data-href="niveles-intermedio.html" data-color-r="59" data-color-g="130" data-color-b="246"
-                 onmouseenter="SFX.hover('intermedio')" onclick="handleCardClick(this)">
-                <div class="hover-ring" style="--ring-color: rgba(59,130,246,0.4);"></div>
-                <div class="flex items-center justify-between mb-2">
-                    <span class="badge-progress text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1">
-                        <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span> En Progreso
-                    </span>
-                    <span class="text-blue-400 text-lg">⚡</span>
-                </div>
-                <div class="py-8 flex justify-center">
-                    <div class="float-anim orb-intermedio-glow w-28 h-28 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #1e3a5f 0%, #0f2744 50%, #1a365d 100%); box-shadow: 0 8px 30px rgba(59,130,246,0.2), inset 0 1px 0 rgba(255,255,255,0.1);">
-                        <svg viewBox="0 0 60 60" width="56" height="56">
-                            <defs><linearGradient id="cg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#60a5fa"/><stop offset="100%" style="stop-color:#3b82f6"/></linearGradient></defs>
-                            <polygon points="30,8 52,20 52,40 30,52 8,40 8,20" fill="none" stroke="url(#cg)" stroke-width="1.5" opacity="0.6"/>
-                            <polygon points="30,8 52,20 30,32 8,20" fill="rgba(59,130,246,0.15)" stroke="url(#cg)" stroke-width="1"/>
-                            <polygon points="30,32 52,20 52,40 30,52" fill="rgba(59,130,246,0.1)" stroke="url(#cg)" stroke-width="1"/>
-                            <polygon points="30,32 8,20 8,40 30,52" fill="rgba(59,130,246,0.2)" stroke="url(#cg)" stroke-width="1"/>
-                        </svg>
-                    </div>
-                </div>
-                <h3 class="text-2xl font-black text-center uppercase tracking-tight text-white mb-1">Intermedio</h3>
-                <p class="text-center text-xs text-gray-400 mb-6">Análisis técnico y gestión de riesgo.</p>
-                <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
-                    <span class="text-gray-500">Progreso</span>
-                    <span class="text-blue-400">0%</span>
-                </div>
-                <div class="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
-                    <div class="h-full bg-blue-500 rounded-full" style="width:0%"></div>
-                </div>
-                <div class="mt-4 block text-center text-xs font-bold text-blue-400 hover:underline uppercase tracking-wider">Continuar →</div>
-            </div>
-
-            <!-- AVANZADO -->
-            <div class="bg-card border border-card-border rounded-3xl p-6 relative opacity-50 grayscale-[60%] hud-corner level-card-interactive card-entrance card-entrance-3"
-                 id="card-avanzado" data-level="avanzado" data-href="niveles-experto.html" data-color-r="168" data-color-g="85" data-color-b="247"
-                 onmouseenter="SFX.hover('avanzado')" onclick="handleCardClick(this)">
-                <div class="hover-ring" style="--ring-color: rgba(168,85,247,0.4);"></div>
-                <div class="flex items-center justify-between mb-2">
-                    <span class="badge-locked text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[12px]">lock</span> Bloqueado
-                    </span>
-                </div>
-                <div class="py-8 flex justify-center">
-                    <div class="w-28 h-28 rounded-full flex items-center justify-center relative" style="background: radial-gradient(circle at 40% 30%, #4b5563 0%, #1f2937 60%, #111827 100%);">
-                        <span class="material-symbols-outlined text-gray-500 text-2xl">lock</span>
-                    </div>
-                </div>
-                <h3 class="text-2xl font-black text-center uppercase tracking-tight text-gray-500 mb-1">Avanzado</h3>
-                <p class="text-center text-xs text-gray-600 mb-6">Estrategias institucionales y psicología.</p>
-                <div class="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider mb-2">
-                    <span class="text-gray-600">Progreso</span>
-                    <span class="text-gray-600">0%</span>
-                </div>
-                <div class="h-2 w-full bg-gray-800 rounded-full overflow-hidden">
-                    <div class="h-full bg-gray-700 rounded-full" style="width:0%"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- CTA -->
-        <div class="mb-14 flex justify-center">
-            <a href="portadanivelesacademia.html" id="cta-tower" class="group relative inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-bold text-base transition-all duration-300 hover:shadow-2xl hover:scale-105 hud-corner" style="background: linear-gradient(135deg, #b8860b 0%, #D4AF37 50%, #f5d060 100%); box-shadow: 0 0 30px rgba(212,175,55,0.3);" onmouseenter="SFX.uiHover()">
-                <span class="text-2xl">🏰</span>
-                <span style="color:#0a0f1a;" class="font-black uppercase tracking-wider text-sm">Ver todas las lecciones</span>
-                <span class="material-symbols-outlined group-hover:translate-x-1 transition-transform" style="color:#0a0f1a;">arrow_forward</span>
-            </a>
-        </div>
-
-        <!-- REWARDS -->
-        <div class="flex items-center justify-between mb-6">
-            <h2 class="text-lg font-black uppercase tracking-tight flex items-center gap-3">
-                <span class="w-1 h-7 bg-primary rounded-full"></span>
-                Recompensas y Logros
-            </h2>
-        </div>
-
-        <div class="flex gap-5 overflow-x-auto no-scrollbar pb-4">
-            <div class="reward-card bg-card border border-card-border rounded-2xl p-5 min-w-[200px] flex-shrink-0 hud-corner" onmouseenter="SFX.uiHover()">
-                <div class="h-28 flex items-center justify-center mb-4">
-                    <div class="w-20 h-20 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #92702d 0%, #d4af37 50%, #92702d 100%); box-shadow: 0 0 20px rgba(212,175,55,0.3);">
-                        <span class="text-4xl">🏆</span>
-                    </div>
-                </div>
-                <h4 class="font-black text-center text-sm mb-1">Primera Victoria</h4>
-                <p class="text-center text-[10px] text-gray-500">Completa tu primer nivel</p>
-            </div>
-            <div class="reward-card bg-card border border-card-border rounded-2xl p-5 min-w-[200px] flex-shrink-0 hud-corner" onmouseenter="SFX.uiHover()">
-                <div class="h-28 flex items-center justify-center mb-4">
-                    <div class="w-20 h-20 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #7c3aed 0%, #a855f7 50%, #7c3aed 100%); box-shadow: 0 0 20px rgba(168,85,247,0.3);">
-                        <span class="text-4xl">💎</span>
-                    </div>
-                </div>
-                <h4 class="font-black text-center text-sm mb-1">Maestro del Riesgo</h4>
-                <p class="text-center text-[10px] text-gray-500">Domina la gestión de riesgo</p>
-            </div>
-            <div class="reward-card bg-card border border-card-border rounded-2xl p-5 min-w-[200px] flex-shrink-0 hud-corner" onmouseenter="SFX.uiHover()">
-                <div class="h-28 flex items-center justify-center mb-4">
-                    <div class="w-20 h-20 rounded-2xl flex items-center justify-center" style="background: linear-gradient(135deg, #0e7490 0%, #06b6d4 50%, #0e7490 100%); box-shadow: 0 0 20px rgba(6,182,212,0.3);">
-                        <span class="text-4xl">🔮</span>
-                    </div>
-                </div>
-                <h4 class="font-black text-center text-sm mb-1">Visionario</h4>
-                <p class="text-center text-[10px] text-gray-500">Alcanza el nivel Avanzado</p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Resume Widget -->
-    <div class="resume-widget fixed bottom-6 right-6 w-[380px] max-w-[calc(100vw-3rem)] rounded-2xl p-4 z-50 hidden sm:block" id="resume-widget">
-        <div class="flex items-start gap-3">
-            <div class="w-12 h-12 rounded-xl bg-white/10 border border-white/10 flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-white text-2xl">play_arrow</span>
-            </div>
-            <div class="flex-1 min-w-0">
-                <h4 class="text-sm font-bold text-white mb-0.5 truncate">Continúa donde lo dejaste</h4>
-                <p class="text-[10px] text-gray-400" id="resume-lesson-name">Patrones de Velas 101</p>
-                <div class="flex items-center gap-2 mt-1">
-                    <div class="flex-1 h-1.5 bg-gray-700 rounded-full overflow-hidden">
-                        <div class="h-full bg-primary rounded-full" style="width:75%"></div>
-                    </div>
-                </div>
-            </div>
-            <button onclick="document.getElementById('resume-widget').style.display='none'" class="text-gray-500 hover:text-white">
-                <span class="material-symbols-outlined text-[16px]">close</span>
-            </button>
-        </div>
-    </div>
+  <!-- Tower container -->
+  <div class="relative" id="tower" style="padding-left:20px">
+    <!-- Spine segments will be injected here -->
+    <div id="spines"></div>
+    <!-- World nodes injected here -->
+    <div class="flex flex-col gap-5" id="worldNodes"></div>
+  </div>
 </main>
 
+<!-- Transition overlay -->
+<div class="zoom-ov" id="zOv">
+  <div class="zoom-flash" id="zFlash"></div>
+  <div class="zoom-vig" id="zVig"></div>
+</div>
+
+<!-- ═══ SCRIPT ═══ -->
 <script>
-// ===== WEB AUDIO API SOUND ENGINE =====
-const SFX = (() => {
-    let ctx;
-    function getCtx() {
-        if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
-        return ctx;
-    }
+// ── World configs ──
+var WDATA = [
+  {id:1,name:'Génesis',tag:'MUNDO 01',sub:'Despertar del Trader',desc:'Los fundamentos del mercado. Tu primer paso.',emoji:'🔥',color:'#ff6a00',rgb:'255,106,0',page:'niveles-novato.html',rank:'Aprendiz',levels:10,first:1,last:10},
+  {id:2,name:'Cartografía',tag:'MUNDO 02',sub:'Cartógrafo del Mercado',desc:'Análisis técnico y patrones de velas.',emoji:'⛏️',color:'#3b82f6',rgb:'59,130,246',page:'niveles-intermedio.html',rank:'Cartógrafo',levels:12,first:11,last:22},
+  {id:3,name:'Anatomía',tag:'MUNDO 03',sub:'Anatomía Institucional',desc:'Smart Money y operativa institucional.',emoji:'🧠',color:'#a855f7',rgb:'168,85,247',page:'niveles-experto.html',rank:'Cirujano',levels:12,first:23,last:34},
+  {id:4,name:'Sincronía',tag:'MUNDO 04',sub:'Arquitecto Digital',desc:'Indicadores y operativa sincronizada.',emoji:'🤖',color:'#06b6d4',rgb:'6,182,212',page:'niveles-mundo4.html',rank:'Arquitecto',levels:15,first:46,last:60},
+  {id:5,name:'Estrategia',tag:'MUNDO 05',sub:'El Decano',desc:'Macroeconomía, derivados y psicología.',emoji:'🌍',color:'#10b981',rgb:'16,185,129',page:'niveles-mundo5.html',rank:'Decano',levels:15,first:61,last:75},
+  {id:6,name:'Soberanía',tag:'MUNDO 06',sub:'El Cazador',desc:'Smart Money, Wyckoff e institucional.',emoji:'🎯',color:'#f43f5e',rgb:'244,63,94',page:'niveles-mundo6.html',rank:'Cazador',levels:15,first:76,last:90},
+  {id:7,name:'Legado',tag:'MUNDO 07',sub:'Grand Master',desc:'Estadística, algoritmos y certificación final.',emoji:'👑',color:'#eab308',rgb:'234,179,8',page:'niveles-mundo7.html',rank:'Grand Master',levels:10,first:91,last:100}
+];
 
-    function playTone(freq, duration, type = 'sine', volume = 0.15, detune = 0) {
-        const c = getCtx();
-        const osc = c.createOscillator();
-        const gain = c.createGain();
-        osc.type = type;
-        osc.frequency.value = freq;
-        osc.detune.value = detune;
-        gain.gain.setValueAtTime(volume, c.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + duration);
-        osc.connect(gain).connect(c.destination);
-        osc.start(); osc.stop(c.currentTime + duration);
-    }
+// ── Determine states ──
+var totalComp=CURRICULUM.getCompletedCount();
+var totalAll=CURRICULUM.getAllLevels().length;
+document.getElementById('totalLvl').textContent=totalComp+'/'+totalAll;
 
-    function playNoise(duration, volume = 0.05) {
-        const c = getCtx();
-        const bufSize = c.sampleRate * duration;
-        const buf = c.createBuffer(1, bufSize, c.sampleRate);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1) * 0.5;
-        const src = c.createBufferSource();
-        src.buffer = buf;
-        const gain = c.createGain();
-        const filter = c.createBiquadFilter();
-        filter.type = 'lowpass'; filter.frequency.value = 800;
-        gain.gain.setValueAtTime(volume, c.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + duration);
-        src.connect(filter).connect(gain).connect(c.destination);
-        src.start(); src.stop(c.currentTime + duration);
-    }
+var ranks=['Novato','Aprendiz','Cartógrafo','Cirujano','Arquitecto','Decano','Cazador','Grand Master'];
+var currentRankIdx=0;
 
-    return {
-        // Hover sounds - unique per level
-        hover(level) {
-            const c = getCtx();
-            if (level === 'basico') {
-                // Warm coin chime - ascending 2 notes
-                playTone(523, 0.15, 'sine', 0.08);
-                setTimeout(() => playTone(659, 0.2, 'sine', 0.06), 80);
-            } else if (level === 'intermedio') {
-                // Digital scanner sweep
-                const osc = c.createOscillator();
-                const gain = c.createGain();
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(300, c.currentTime);
-                osc.frequency.exponentialRampToValueAtTime(1200, c.currentTime + 0.15);
-                gain.gain.setValueAtTime(0.04, c.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.2);
-                osc.connect(gain).connect(c.destination);
-                osc.start(); osc.stop(c.currentTime + 0.2);
-            } else if (level === 'avanzado') {
-                // Mysterious deep pulse
-                playTone(110, 0.3, 'sine', 0.06);
-                playTone(165, 0.25, 'triangle', 0.03, 5);
-            }
-        },
+WDATA.forEach(function(w){
+  var unlocked=CURRICULUM.isWorldUnlocked(w.id);
+  var comp=CURRICULUM.getCompletedInWorld(w.id);
+  w.completed=comp;
+  w.total=w.levels;
+  if(!unlocked){w.state='locked'}
+  else if(comp>=w.levels){w.state='completed'}
+  else{w.state='active'}
+  if(w.state==='completed')currentRankIdx=w.id;
+  else if(w.state==='active'&&currentRankIdx<w.id)currentRankIdx=w.id-1;
+});
+document.getElementById('rankText').textContent=ranks[Math.min(currentRankIdx,ranks.length-1)];
 
-        // Click sounds - dramatic per level
-        clickBasico() {
-            // Victory fanfare - bright ascending arpeggio
-            const notes = [523, 659, 784, 1047];
-            notes.forEach((f, i) => {
-                setTimeout(() => {
-                    playTone(f, 0.3, 'sine', 0.12 - i * 0.02);
-                    playTone(f * 1.5, 0.2, 'triangle', 0.04);
-                }, i * 80);
-            });
-            playNoise(0.1, 0.03);
-        },
+// ── Build tower (bottom to top: world 1 at bottom) ──
+var container=document.getElementById('worldNodes');
+var reversed=WDATA.slice().reverse(); // World 7 at top, World 1 at bottom
 
-        clickIntermedio() {
-            // Power-up: rising synth sweep + impact
-            const c = getCtx();
-            const osc = c.createOscillator();
-            const osc2 = c.createOscillator();
-            const gain = c.createGain();
-            const gain2 = c.createGain();
-            osc.type = 'sawtooth';
-            osc2.type = 'sine';
-            osc.frequency.setValueAtTime(200, c.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(2000, c.currentTime + 0.4);
-            osc2.frequency.setValueAtTime(100, c.currentTime);
-            osc2.frequency.exponentialRampToValueAtTime(800, c.currentTime + 0.3);
-            gain.gain.setValueAtTime(0.08, c.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.5);
-            gain2.gain.setValueAtTime(0.1, c.currentTime);
-            gain2.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.4);
-            osc.connect(gain).connect(c.destination);
-            osc2.connect(gain2).connect(c.destination);
-            osc.start(); osc.stop(c.currentTime + 0.5);
-            osc2.start(); osc2.stop(c.currentTime + 0.4);
-            // Impact hit
-            setTimeout(() => {
-                playTone(80, 0.3, 'sine', 0.15);
-                playNoise(0.15, 0.06);
-            }, 100);
-        },
+var html='';
+reversed.forEach(function(w,idx){
+  var st=w.state;
+  var cardCls=st==='completed'?'wcard-done':(st==='active'?'wcard-active':'wcard-locked');
+  var orbCls=st==='completed'?'worb-done':(st==='active'?'worb-active':'worb-locked');
+  var numCls=st==='completed'?'wnum-done':(st==='active'?'wnum-active':'wnum-locked');
+  var pct=w.total>0?Math.round(w.completed/w.total*100):0;
+  var progCls=st==='completed'?'wprog-done':(st==='active'?'wprog-active':'wprog-locked');
 
-        clickAvanzado() {
-            // Dark forbidden gate - deep rumble + dissonant chord
-            playTone(55, 0.6, 'sine', 0.12);
-            playTone(82, 0.5, 'triangle', 0.08);
-            playTone(62, 0.5, 'sawtooth', 0.03);
-            setTimeout(() => playNoise(0.3, 0.04), 100);
-            setTimeout(() => {
-                playTone(110, 0.3, 'sine', 0.06);
-                playTone(147, 0.25, 'triangle', 0.04);
-            }, 200);
-        },
+  html+='<div class="wnode'+(st==='locked'?' locked':'')+'" data-id="'+w.id+'" data-state="'+st+'" data-page="'+w.page+'" data-rgb="'+w.rgb+'" onclick="goWorld(this)">';
 
-        // Locked card denied sound
-        denied() {
-            playTone(200, 0.15, 'square', 0.08);
-            setTimeout(() => playTone(150, 0.2, 'square', 0.06), 120);
-            playNoise(0.1, 0.03);
-        },
+  // Beacon pulses for active
+  if(st==='active')html+='<div class="beacon"></div><div class="beacon"></div>';
 
-        // UI hover (for buttons/rewards)
-        uiHover() {
-            playTone(800, 0.08, 'sine', 0.03);
-        },
+  // Number badge
+  html+='<div class="wnum '+numCls+'">'+w.id+'</div>';
 
-        // Whoosh for transition
-        whoosh() {
-            const c = getCtx();
-            const osc = c.createOscillator();
-            const gain = c.createGain();
-            const filter = c.createBiquadFilter();
-            osc.type = 'sawtooth';
-            filter.type = 'bandpass';
-            filter.frequency.setValueAtTime(200, c.currentTime);
-            filter.frequency.exponentialRampToValueAtTime(3000, c.currentTime + 0.3);
-            filter.Q.value = 2;
-            gain.gain.setValueAtTime(0.08, c.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 0.4);
-            osc.connect(filter).connect(gain).connect(c.destination);
-            osc.start(); osc.stop(c.currentTime + 0.4);
-            playNoise(0.3, 0.05);
-        },
+  html+='<div class="wcard '+cardCls+'">';
 
-        // Epic chime on arrival
-        chime() {
-            setTimeout(() => {
-                playTone(880, 0.4, 'sine', 0.06);
-                playTone(1320, 0.3, 'triangle', 0.03);
-            }, 300);
-        }
-    };
-})();
+  // Completed: golden glow ring + conquest flag
+  if(st==='completed'){
+    html+='<div class="done-glow"></div>';
+    html+='<div class="flag-banner">⚑ CONQUISTADO</div>';
+  }
 
-// ===== DRAMATIC ZOOM CLICK HANDLER =====
-let isTransitioning = false;
+  // Locked: chains + force field
+  if(st==='locked'){
+    html+='<svg class="chains" viewBox="0 0 400 120"><line class="chain-line" x1="0" y1="20" x2="400" y2="20"/><line class="chain-line" x1="0" y1="60" x2="400" y2="60" style="animation-delay:.5s"/><line class="chain-line" x1="0" y1="100" x2="400" y2="100" style="animation-delay:1s"/></svg>';
+    html+='<div class="forcefield"></div>';
+    html+='<div class="lock-hex"></div>';
+  }
 
-function handleCardClick(card) {
-    if (isTransitioning) return;
-    const isLocked = card.classList.contains('locked-card');
-    const href = card.dataset.href;
-    const r = parseInt(card.dataset.colorR);
-    const g = parseInt(card.dataset.colorG);
-    const b = parseInt(card.dataset.colorB);
-    const level = card.dataset.level;
+  // Content
+  html+='<div class="flex items-center gap-4 relative z-10">';
+  html+='<div class="worb '+orbCls+'">'+w.emoji+'</div>';
+  html+='<div class="flex-1 min-w-0">';
+  html+='<div class="text-[8px] font-bold tracking-[3px] uppercase '+(st==='locked'?'text-gray-600':'text-gray-500')+'">'+w.tag+'</div>';
+  html+='<h3 class="font-display text-lg md:text-xl font-black uppercase tracking-tight '+(st==='locked'?'text-gray-600':'text-white')+'" style="line-height:1.2">'+w.sub+'</h3>';
+  html+='<p class="text-xs '+(st==='locked'?'text-gray-700':'text-gray-500')+' mt-0.5">'+w.desc+'</p>';
 
-    if (isLocked) {
-        SFX.denied();
-        card.style.animation = 'none';
-        card.offsetHeight; // reflow
-        card.style.animation = '';
-        // Shake effect
-        card.style.transform = 'translateX(-6px)';
-        setTimeout(() => card.style.transform = 'translateX(6px)', 50);
-        setTimeout(() => card.style.transform = 'translateX(-4px)', 100);
-        setTimeout(() => card.style.transform = 'translateX(4px)', 150);
-        setTimeout(() => card.style.transform = '', 200);
-        return;
-    }
+  // Progress
+  html+='<div class="wprog"><div class="wprog-fill '+progCls+'" style="width:'+pct+'%"></div></div>';
+  html+='<div class="flex justify-between mt-1">';
+  html+='<span class="text-[9px] font-bold '+(st==='locked'?'text-gray-700':'text-gray-500')+'">'+w.completed+'/'+w.total+' niveles</span>';
+  if(st==='completed')html+='<span class="text-[9px] font-bold text-yellow-500">✓ 100%</span>';
+  else if(st==='active')html+='<span class="text-[9px] font-bold" style="color:#00e5ff">'+pct+'%</span>';
+  else html+='<span class="text-[9px] font-bold text-gray-700"><span class="material-symbols-outlined text-[10px]" style="vertical-align:middle">lock</span> Bloqueado</span>';
+  html+='</div>';
 
-    isTransitioning = true;
+  html+='</div></div>'; // end flex, end info
 
-    // Play level-specific click sound
-    if (level === 'basico') SFX.clickBasico();
-    else if (level === 'intermedio') SFX.clickIntermedio();
-    else SFX.clickAvanzado();
+  // AmigoTrade mascot for active world
+  if(st==='active'){
+    html+='<div class="amigo"><div class="amigo-body">';
+    html+='<div class="amigo-antenna"></div>';
+    html+='<div class="amigo-head"><div class="amigo-visor"></div></div>';
+    html+='<div class="amigo-body-lower"></div>';
+    html+='<div class="amigo-arm amigo-arm-l"></div>';
+    html+='<div class="amigo-arm amigo-arm-r"></div>';
+    html+='<div class="amigo-badge">AMIGO</div>';
+    html+='</div></div>';
+  }
 
-    // Get card center for effects
-    const rect = card.getBoundingClientRect();
-    const cx = rect.left + rect.width / 2;
-    const cy = rect.top + rect.height / 2;
-    const cxP = (cx / window.innerWidth * 100) + '%';
-    const cyP = (cy / window.innerHeight * 100) + '%';
+  html+='</div>'; // wcard
+  html+='</div>'; // wnode
+});
+container.innerHTML=html;
 
-    const overlay = document.getElementById('zoom-overlay');
-    const flash = document.getElementById('zoom-flash');
-    const shockwave = document.getElementById('zoom-shockwave');
-    const vignette = document.getElementById('zoom-vignette');
-    const particles = document.getElementById('zoom-particles');
+// ── Build spines ──
+// After layout, calculate positions for connecting spines
+setTimeout(function(){
+  var nodes=document.querySelectorAll('.wnode');
+  var spineC=document.getElementById('spines');
+  spineC.innerHTML='';
+  for(var i=0;i<nodes.length-1;i++){
+    var a=nodes[i],b=nodes[i+1];
+    var aR=a.getBoundingClientRect(),bR=b.getBoundingClientRect();
+    var towerR=document.getElementById('tower').getBoundingClientRect();
+    var top=aR.bottom-towerR.top;
+    var h=bR.top-aR.bottom;
+    var stA=a.dataset.state,stB=b.dataset.state;
+    var cls=(stA==='completed'&&stB==='completed')?'spine-done':
+            (stA==='completed'&&stB==='active')||(stA==='active'&&stB==='completed')?'spine-active':'spine-locked';
+    var sp=document.createElement('div');
+    sp.className='tower-spine '+cls;
+    sp.style.top=top+'px';
+    sp.style.height=Math.max(h,0)+'px';
+    spineC.appendChild(sp);
+  }
+},100);
 
-    // Set colors
-    const color = `rgba(${r},${g},${b}`;
-    flash.style.setProperty('--cx', cxP);
-    flash.style.setProperty('--cy', cyP);
-    flash.style.setProperty('--flash-color', color + ',0.8)');
-    shockwave.style.setProperty('--cx', cxP);
-    shockwave.style.setProperty('--cy', cyP);
-    shockwave.style.setProperty('--shock-color', color + ',0.6)');
+// ── Header XP ──
+var xpEstimate=totalComp*180;
+document.getElementById('totalXP').textContent=xpEstimate.toLocaleString();
 
-    // Card zoom effect
-    card.style.transition = 'transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s';
-    card.style.transform = 'scale(1.15)';
-    card.style.zIndex = '100';
+// ── Navigate to world ──
+var isTransitioning=false;
+function goWorld(el){
+  if(isTransitioning)return;
+  var state=el.dataset.state;
+  if(state==='locked'){
+    // Shake
+    el.style.transition='transform .1s';
+    el.style.transform='translateX(-4px)';
+    setTimeout(function(){el.style.transform='translateX(4px)'},80);
+    setTimeout(function(){el.style.transform=''},160);
+    sfxLock();
+    return;
+  }
+  isTransitioning=true;
+  var rgb=el.dataset.rgb;
+  var page=el.dataset.page;
 
-    // Activate overlay
-    overlay.classList.add('active');
+  sfxGo();
 
-    // Spawn explosion particles
-    particles.innerHTML = '';
-    for (let i = 0; i < 30; i++) {
-        const p = document.createElement('div');
-        p.className = 'zoom-particle';
-        const size = 3 + Math.random() * 6;
-        const angle = Math.random() * Math.PI * 2;
-        const dist = 100 + Math.random() * 300;
-        const dx = Math.cos(angle) * dist;
-        const dy = Math.sin(angle) * dist;
-        p.style.cssText = `
-            left:${cx}px; top:${cy}px; width:${size}px; height:${size}px;
-            background: rgba(${r},${g},${b},${0.6 + Math.random() * 0.4});
-            box-shadow: 0 0 ${size * 2}px rgba(${r},${g},${b},0.6);
-            transition: all ${0.4 + Math.random() * 0.4}s cubic-bezier(0.165, 0.84, 0.44, 1);
-            opacity: 1;
-        `;
-        particles.appendChild(p);
-        requestAnimationFrame(() => {
-            p.style.transform = `translate(${dx}px, ${dy}px)`;
-            p.style.opacity = '0';
-        });
-    }
+  // Flash transition
+  var rect=el.getBoundingClientRect();
+  var cx=(rect.left+rect.width/2)/innerWidth*100+'%';
+  var cy=(rect.top+rect.height/2)/innerHeight*100+'%';
+  var ov=document.getElementById('zOv');
+  var fl=document.getElementById('zFlash');
+  var vi=document.getElementById('zVig');
+  fl.style.setProperty('--cx',cx);fl.style.setProperty('--cy',cy);
+  fl.style.setProperty('--fc','rgba('+rgb+',.7)');
+  ov.classList.add('go');
 
-    // Fire effects sequentially
-    setTimeout(() => { flash.classList.add('fire'); }, 50);
-    setTimeout(() => { shockwave.classList.add('fire'); SFX.whoosh(); }, 150);
-    setTimeout(() => { vignette.classList.add('fire'); }, 300);
+  // Card zoom
+  el.style.transition='transform .6s cubic-bezier(.175,.885,.32,1.275),opacity .5s';
+  el.style.transform='scale(1.12)';el.style.zIndex='100';
 
-    // Zoom the card into the screen
-    setTimeout(() => {
-        card.style.transform = 'scale(3)';
-        card.style.opacity = '0';
-    }, 500);
-
-    // Navigate
-    setTimeout(() => {
-        window.location.href = href;
-    }, 1000);
+  setTimeout(function(){fl.classList.add('fire')},50);
+  setTimeout(function(){vi.classList.add('fire')},300);
+  setTimeout(function(){el.style.transform='scale(2.5)';el.style.opacity='0'},500);
+  setTimeout(function(){location.href=page},950);
 }
 
-// ===== SIDEBAR TOGGLE =====
-function toggleSideMenu() {
-    const menu = document.getElementById('side-menu');
-    const overlay = document.getElementById('menu-overlay');
-    const hamburger = document.getElementById('hamburger-btn-inline');
-    if (menu.classList.contains('-translate-x-full')) {
-        menu.classList.remove('-translate-x-full');
-        overlay.classList.remove('opacity-0', 'pointer-events-none');
-        if (hamburger) hamburger.classList.add('hamburger-open');
-    } else {
-        menu.classList.add('-translate-x-full');
-        overlay.classList.add('opacity-0', 'pointer-events-none');
-        if (hamburger) hamburger.classList.remove('hamburger-open');
-    }
-}
+// ── SFX ──
+function sfxGo(){try{var c=new(AudioContext||webkitAudioContext)();
+  [660,880,1100,1320].forEach(function(f,i){var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(0,c.currentTime+i*.06);g.gain.linearRampToValueAtTime(.12,c.currentTime+i*.06+.03);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+i*.06+.3);o.start(c.currentTime+i*.06);o.stop(c.currentTime+i*.06+.3)})}catch(e){}}
+function sfxLock(){try{var c=new(AudioContext||webkitAudioContext)();var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=150;o.type='sawtooth';g.gain.setValueAtTime(.08,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+.2);o.start();o.stop(c.currentTime+.2)}catch(e){}}
 
-// ===== DYNAMIC PARTICLES =====
-(function() {
-    const container = document.getElementById('particles-container');
-    for (let i = 0; i < 15; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        p.style.left = Math.random() * 100 + '%';
-        p.style.bottom = Math.random() * 30 + '%';
-        p.style.animationDuration = (4 + Math.random() * 6) + 's';
-        p.style.animationDelay = Math.random() * 5 + 's';
-        p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
-        p.style.opacity = 0.3 + Math.random() * 0.5;
-        container.appendChild(p);
-    }
-})();
+// ── Floating dust particles ──
+(function(){
+  var cv=document.getElementById('fxCanvas'),x=cv.getContext('2d'),W,H,dpr=devicePixelRatio||1;
+  function rs(){W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0)}
+  addEventListener('resize',rs);rs();
+  var pts=[];for(var i=0;i<30;i++)pts.push({x:Math.random()*W,y:Math.random()*H,s:.5+Math.random()*1.5,vy:-.15-Math.random()*.35,vx:(Math.random()-.5)*.2,ph:Math.random()*6.28,sp:.008+Math.random()*.015,c:['rgba(212,175,55,','rgba(0,229,255,','rgba(168,85,247,','rgba(255,255,255,'][Math.random()*4|0]});
+  function f(){x.clearRect(0,0,W,H);
+    pts.forEach(function(p){p.ph+=p.sp;p.x+=p.vx+Math.sin(p.ph)*.3;p.y+=p.vy;
+      if(p.y<-10){p.y=H+10;p.x=Math.random()*W}if(p.x<-10)p.x=W+10;if(p.x>W+10)p.x=-10;
+      var a=.2+.15*Math.sin(p.ph*2);
+      x.beginPath();x.arc(p.x,p.y,p.s,0,6.28);x.fillStyle=p.c+a+')';x.fill();
+      x.beginPath();x.arc(p.x,p.y,p.s*3,0,6.28);x.fillStyle=p.c+(a*.08)+')';x.fill()});
+    requestAnimationFrame(f)}f()})();
 
-// ===== DYNAMIC LEVEL STATES =====
-(function() {
-    const level = (localStorage.getItem('ip_user_level') || 'basico').toLowerCase();
-    const basico = document.getElementById('card-basico');
-    const intermedio = document.getElementById('card-intermedio');
-    const avanzado = document.getElementById('card-avanzado');
-    const xpLevel = document.getElementById('xp-level');
-
-    function setCompleted(card) {
-        card.classList.remove('level-active', 'opacity-50', 'grayscale-[60%]', 'locked-card');
-        card.classList.add('bg-card', 'border', 'border-card-border');
-        card.style.opacity = '1'; card.style.filter = '';
-        const badge = card.querySelector('span[class*="badge"]');
-        if (badge) { badge.className = 'badge-completed text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full'; badge.innerHTML = 'Completado'; }
-    }
-    function setActive(card) {
-        card.classList.remove('bg-card', 'opacity-50', 'grayscale-[60%]', 'locked-card');
-        card.classList.add('level-active');
-        card.style.opacity = '1'; card.style.filter = '';
-        const badge = card.querySelector('span[class*="badge"]');
-        if (badge) { badge.className = 'badge-progress text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1'; badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span> En Progreso'; }
-    }
-    function setLocked(card) {
-        card.classList.remove('level-active');
-        card.classList.add('bg-card', 'border', 'border-card-border', 'opacity-50', 'locked-card');
-        card.style.filter = 'grayscale(60%)';
-        const badge = card.querySelector('span[class*="badge"]');
-        if (badge) { badge.className = 'badge-locked text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full flex items-center gap-1'; badge.innerHTML = '<span class="material-symbols-outlined text-[12px]">lock</span> Bloqueado'; }
-    }
-
-    if (level === 'basico') {
-        setActive(basico); setLocked(intermedio); setLocked(avanzado);
-        if (xpLevel) xpLevel.textContent = 'Básico';
-    } else if (level === 'intermedio') {
-        setCompleted(basico); setActive(intermedio); setLocked(avanzado);
-        if (xpLevel) xpLevel.textContent = 'Intermedio';
-    } else {
-        setCompleted(basico); setCompleted(intermedio); setActive(avanzado);
-        if (xpLevel) xpLevel.textContent = 'Avanzado';
-    }
-
-    // Entrance chime
-    setTimeout(() => SFX.chime(), 800);
-})();
+// ── Entrance sound ──
+setTimeout(function(){try{var c=new(AudioContext||webkitAudioContext)();
+  [440,554,659].forEach(function(f,i){var o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.frequency.value=f;o.type='sine';g.gain.setValueAtTime(0,c.currentTime+i*.15);g.gain.linearRampToValueAtTime(.08,c.currentTime+i*.15+.05);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+i*.15+.8);o.start(c.currentTime+i*.15);o.stop(c.currentTime+i*.15+.8)})}catch(e){}},600);
 </script>
-
 </body>
 </html>
