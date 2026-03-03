@@ -1,819 +1,335 @@
 <!DOCTYPE html>
 <html class="dark" lang="es">
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <title>InvertProfit — La Torre del Conocimiento</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="auth.js"></script>
-    <script>
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "primary": "#D4AF37",
-                        "bg-dark": "#0a0f1a",
-                        "card": "#111827",
-                        "card-border": "#1f2937",
-                        "positive": "#22c55e",
-                        "negative": "#ef4444"
-                    },
-                    fontFamily: { "sans": ["Inter", "sans-serif"] }
-                }
-            }
-        }
-    </script>
-    <style>
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
-        ::-webkit-scrollbar-thumb:hover { background: #D4AF37; }
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport"/>
+<title>InvertProfit — Mundo 5: Estrategia</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="auth.js"></script>
+<script src="curriculum.js"></script>
+<script>tailwind.config={darkMode:"class",theme:{extend:{fontFamily:{"sans":["Rajdhani","sans-serif"]}}}}</script>
+<style>
+:root{--a:#10b981;--ad:#059669;--ar:16,185,129}
+*{box-sizing:border-box}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#1a2236;border-radius:2px}
+body{background:#040e0a;margin:0;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 
-        .logo-glow { filter: drop-shadow(0 0 10px rgba(212,175,55,0.3)); }
+/* ═══ ATMOSPHERE ═══ */
+.atmo{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(180deg,#001208 0%,#040e0a 40%,#040e0a 60%,#001810 100%)}
+#fxC{position:fixed;inset:0;z-index:1;pointer-events:none}
+.scan{position:fixed;inset:0;z-index:80;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.01) 3px,rgba(0,0,0,.01) 4px)}
 
-        /* Stars background */
-        .stars-bg {
-            background-image:
-                radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.6) 0%, transparent 100%),
-                radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.4) 0%, transparent 100%),
-                radial-gradient(1.5px 1.5px at 50% 10%, rgba(255,255,255,0.7) 0%, transparent 100%),
-                radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.5) 0%, transparent 100%),
-                radial-gradient(1px 1px at 85% 30%, rgba(255,255,255,0.4) 0%, transparent 100%),
-                radial-gradient(1px 1px at 20% 85%, rgba(255,255,255,0.3) 0%, transparent 100%),
-                radial-gradient(1px 1px at 60% 45%, rgba(212,175,55,0.3) 0%, transparent 100%),
-                radial-gradient(1px 1px at 90% 65%, rgba(255,255,255,0.5) 0%, transparent 100%),
-                radial-gradient(1px 1px at 40% 35%, rgba(255,255,255,0.4) 0%, transparent 100%),
-                radial-gradient(1.5px 1.5px at 75% 15%, rgba(212,175,55,0.4) 0%, transparent 100%);
-        }
+/* ═══ CANDY CRUSH PATH ═══ */
+.map-wrap{max-width:440px;margin:0 auto;padding:0 12px;position:relative;z-index:10}
+#pathSvg{position:absolute;top:0;left:0;width:100%;pointer-events:none;z-index:5}
+.path-done{stroke:var(--a);stroke-width:4;fill:none;filter:drop-shadow(0 0 6px rgba(var(--ar),.4));stroke-linecap:round}
+.path-active{stroke:var(--a);stroke-width:4;fill:none;filter:drop-shadow(0 0 8px rgba(var(--ar),.5));stroke-linecap:round;stroke-dasharray:10 6;animation:dashAnim 1s linear infinite}
+.path-locked{stroke:rgba(255,255,255,.06);stroke-width:3;fill:none;stroke-linecap:round}
+@keyframes dashAnim{to{stroke-dashoffset:-32}}
 
-        /* Floating particles */
-        @keyframes particle-float {
-            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { transform: translateY(-120px) rotate(360deg); opacity: 0; }
-        }
-        .particle {
-            position: absolute;
-            width: 4px; height: 4px;
-            background: #D4AF37;
-            border-radius: 50%;
-            animation: particle-float linear infinite;
-            pointer-events: none;
-        }
+/* ═══ NODE ═══ */
+.node{position:absolute;z-index:15;cursor:pointer;transition:transform .25s cubic-bezier(.175,.885,.32,1.275);-webkit-tap-highlight-color:transparent}
+.node:active{transform:translate(-50%,-50%) scale(.9)!important}
+.node.locked{cursor:not-allowed;filter:saturate(.2) brightness(.5)}
+.node.locked:active{transform:translate(-50%,-50%) scale(1)!important}
 
-        /* Shooting stars */
-        @keyframes shoot { 0%{transform:translateX(-200px) translateY(-200px) rotate(45deg); opacity:1; width:100px;} 100%{transform:translateX(400px) translateY(400px) rotate(45deg); opacity:0; width:0;} }
-        .shooting-star {
-            position: absolute;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #D4AF37, transparent);
-            animation: shoot 3s linear infinite;
-        }
+.node-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;position:relative;transition:all .3s;
+  box-shadow:0 4px 15px rgba(0,0,0,.4)}
 
-        /* Animations */
-        @keyframes title-glow { 0%,100%{text-shadow:0 0 20px rgba(212,175,55,0.5)} 50%{text-shadow:0 0 40px rgba(212,175,55,1), 0 0 80px rgba(212,175,55,0.5)} }
-        @keyframes float-card { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-        @keyframes pulse-glow-gold { 0%,100%{box-shadow: 0 0 20px rgba(212,175,55,0.3)} 50%{box-shadow: 0 0 50px rgba(212,175,55,0.6), 0 0 80px rgba(212,175,55,0.2)} }
-        @keyframes spin-slow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
-        @keyframes shimmer { 0%{opacity:0.5} 50%{opacity:1} 100%{opacity:0.5} }
-        @keyframes chain-pulse { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
-        @keyframes beacon { 0%,100%{box-shadow:0 0 15px currentColor} 50%{box-shadow:0 0 40px currentColor, 0 0 70px currentColor} }
-        @keyframes badge-pop { 0%{transform:scale(0.8); opacity:0} 100%{transform:scale(1); opacity:1} }
-        @keyframes coin-bounce { 0%,100%{transform:scale(1) rotate(0deg)} 25%{transform:scale(1.1) rotate(-5deg)} 75%{transform:scale(1.1) rotate(5deg)} }
+/* Completed node */
+.nc-done{background:radial-gradient(circle at 35% 35%,rgba(var(--ar),.9),rgba(var(--ar),.6) 60%,rgba(var(--ar),.4));border:3px solid rgba(var(--ar),.7);
+  box-shadow:0 0 20px rgba(var(--ar),.4),0 4px 15px rgba(0,0,0,.4),inset 0 -3px 6px rgba(0,0,0,.3)}
+.nc-done::after{content:'';position:absolute;inset:3px;border-radius:50%;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.25),transparent 60%);pointer-events:none}
 
-        .title-glow { animation: title-glow 2.5s ease-in-out infinite; }
-        .badge-pop { animation: badge-pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-        .coin-bounce { animation: coin-bounce 3s ease-in-out infinite; }
+/* Active node */
+.nc-active{background:radial-gradient(circle at 35% 35%,rgba(var(--ar),.7),rgba(var(--ar),.4) 60%,rgba(var(--ar),.2));border:3px solid var(--a);
+  animation:activePulse 2s ease-in-out infinite;
+  box-shadow:0 0 30px rgba(var(--ar),.5),0 4px 15px rgba(0,0,0,.4),inset 0 -3px 6px rgba(0,0,0,.2)}
+.nc-active::after{content:'';position:absolute;inset:3px;border-radius:50%;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.3),transparent 60%);pointer-events:none}
+@keyframes activePulse{0%,100%{box-shadow:0 0 30px rgba(var(--ar),.5),0 4px 15px rgba(0,0,0,.4);transform:scale(1)}50%{box-shadow:0 0 50px rgba(var(--ar),.7),0 0 80px rgba(var(--ar),.2);transform:scale(1.08)}}
 
-        /* Tower connector line */
-        .tower-connector {
-            width: 3px;
-            margin: 0 auto;
-            position: relative;
-        }
-        .tower-connector.completed { background: linear-gradient(180deg, #D4AF37, #b8860b); box-shadow: 0 0 10px rgba(212,175,55,0.4); }
-        .tower-connector.active { background: linear-gradient(180deg, #D4AF37 0%, #374151 100%); }
-        .tower-connector.locked { background: #1f2937; }
+/* Locked node */
+.nc-locked{background:radial-gradient(circle at 35% 35%,#2a2f3a,#1a1f2a 60%,#111620);border:3px solid #1f2530;
+  box-shadow:0 4px 15px rgba(0,0,0,.5),inset 0 -3px 6px rgba(0,0,0,.3)}
 
-        /* World floor card */
-        .world-floor {
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            cursor: pointer;
-            position: relative;
-        }
-        .world-floor:hover:not(.floor-locked) { transform: scale(1.03); }
-        .world-floor.floor-active { animation: float-card 4s ease-in-out infinite; }
+/* Boss node bigger */
+.node-boss .node-circle{width:78px;height:78px;font-size:1.8rem}
+.boss-tag{position:absolute;top:-6px;right:-6px;font-size:8px;font-weight:900;font-family:'Orbitron',sans-serif;border-radius:999px;padding:2px 8px;z-index:20;letter-spacing:.5px;
+  background:linear-gradient(135deg,var(--ad),var(--a));color:#0a0f1a}
+.boss-tag.locked{background:#1f2530;color:#555}
 
-        /* Locked overlay */
-        .locked-overlay {
-            position: absolute; inset: 0;
-            background: rgba(10,15,26,0.75);
-            border-radius: inherit;
-            display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            backdrop-filter: blur(3px);
-            z-index: 10;
-        }
-        .chain-icon { animation: chain-pulse 2s ease-in-out infinite; font-size: 2rem; }
+/* Node label */
+.node-lbl{text-align:center;margin-top:8px;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;white-space:nowrap}
+.node-lbl.lbl-done{color:rgba(var(--ar),.7)}.node-lbl.lbl-active{color:var(--a)}.node-lbl.lbl-locked{color:#333}
 
-        /* Zoom transition overlay */
-        #zoom-overlay {
-            position: fixed; inset: 0; z-index: 100;
-            background: radial-gradient(circle, transparent 0%, rgba(10,15,26,0.98) 100%);
-            display: flex; align-items: center; justify-content: center;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.3s ease;
-        }
-        #zoom-overlay.active { opacity: 1; pointer-events: all; }
-        #zoom-overlay .zoom-content {
-            transform: scale(0.5); opacity: 0;
-            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        #zoom-overlay.active .zoom-content {
-            transform: scale(1); opacity: 1;
-        }
+/* Stars */
+.node-stars{text-align:center;font-size:10px;margin-top:2px}
+.star-on{color:#fbbf24}.star-off{color:#333}
 
-        /* Flash effect */
-        #zoom-flash {
-            position: fixed; inset: 0; z-index: 99;
-            background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(212,175,55,0.4) 40%, transparent 70%);
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.15s ease;
-        }
-        #zoom-flash.active { opacity: 1; }
+/* ═══ MODAL ═══ */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
+.modal-box{background:linear-gradient(135deg,#0c1019,#111827,#0c1019);border:1px solid rgba(var(--ar),.2);border-radius:24px;padding:28px;max-width:400px;width:calc(100% - 2rem);box-shadow:0 0 60px rgba(var(--ar),.06),0 25px 50px rgba(0,0,0,.5)}
 
-        /* Explosion particles */
-        @keyframes explode-particle {
-            0% { transform: translate(0,0) scale(1); opacity:1; }
-            100% { opacity:0; }
-        }
-        .explosion-particle {
-            position: fixed; z-index: 101;
-            border-radius: 50%;
-            pointer-events: none;
-        }
+/* ═══ MUSIC BTN ═══ */
+.mu-btn{position:fixed;bottom:16px;right:16px;z-index:110;width:44px;height:44px;border-radius:50%;border:1px solid rgba(var(--ar),.2);background:rgba(10,15,26,.9);color:var(--a);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s}
+.mu-btn:hover{box-shadow:0 0 20px rgba(var(--ar),.2)}
+.mu-btn.off{color:#444;border-color:#1f2530}
 
-        /* Shockwave ring */
-        @keyframes shockwave {
-            0% { transform: translate(-50%,-50%) scale(0); opacity:0.8; border-width:4px; }
-            100% { transform: translate(-50%,-50%) scale(1); opacity:0; border-width:1px; }
-        }
-        #shockwave-ring {
-            position: fixed; z-index: 101;
-            width: 500px; height: 500px;
-            border: 4px solid rgba(212,175,55,0.6);
-            border-radius: 50%;
-            top: 50%; left: 50%;
-            transform: translate(-50%,-50%) scale(0);
-            pointer-events: none; opacity:0;
-        }
-
-        /* Candy Crush serpentine path */
-        .tower-path {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0;
-            position: relative;
-        }
-        .floor-wrapper {
-            width: 100%;
-            max-width: 600px;
-            display: flex;
-            transition: all 0.3s ease;
-        }
-        .floor-wrapper:nth-child(odd) { justify-content: flex-start; padding-left: 0; padding-right: 20%; }
-        .floor-wrapper:nth-child(even) { justify-content: flex-end; padding-left: 20%; padding-right: 0; }
-        @media (max-width: 640px) {
-            .floor-wrapper:nth-child(odd) { padding-right: 8%; }
-            .floor-wrapper:nth-child(even) { padding-left: 8%; }
-        }
-
-        /* SVG path connector */
-        .path-connector {
-            width: 100%; max-width: 600px;
-            height: 60px;
-            position: relative;
-        }
-        .path-connector svg { width: 100%; height: 100%; }
-        .path-line { stroke-dasharray: 8,6; stroke-linecap: round; fill: none; }
-
-        /* Planet / Icon for each world */
-        .world-icon-container {
-            width: 100px; height: 100px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 2.8rem;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        /* Orbit ring */
-        .orbit-ring {
-            position: absolute;
-            border: 1px solid rgba(255,255,255,0.08);
-            border-radius: 50%;
-            animation: spin-slow 15s linear infinite;
-        }
-        .orbit-ring::after {
-            content: '';
-            position: absolute;
-            width: 5px; height: 5px;
-            background: #D4AF37;
-            border-radius: 50%;
-            top: -2.5px;
-            left: calc(50% - 2.5px);
-            box-shadow: 0 0 8px #D4AF37;
-        }
-
-        /* Completed golden shimmer */
-        .completed-shimmer {
-            position: absolute; inset: -4px;
-            border-radius: inherit;
-            background: conic-gradient(from 0deg, transparent, rgba(212,175,55,0.4), transparent, rgba(212,175,55,0.2), transparent);
-            animation: spin-slow 6s linear infinite;
-            z-index: -1;
-        }
-
-        /* Sidebar */
-        .sidebar-link { transition: all 0.2s ease; }
-        .sidebar-link:hover { background: rgba(255,255,255,0.04); color: #fff; }
-        .sidebar-link.active { background: rgba(212,175,55,0.15); color: #D4AF37; border: 1px solid rgba(212,175,55,0.2); }
-        .hamburger-open .hamburger-line-1 { transform: rotate(45deg) translateY(8px); }
-        .hamburger-open .hamburger-line-2 { opacity: 0; }
-        .hamburger-open .hamburger-line-3 { transform: rotate(-45deg) translateY(-8px); }
-
-        /* XP Bar */
-        @keyframes xp-fill { from{width:0} to{width:var(--xp-w)} }
-        .xp-bar { animation: xp-fill 1.5s ease-out 0.5s both; }
-
-        .nav-arrow { transition: all 0.2s; }
-        .nav-arrow:hover { background: #D4AF37; color: #0a0f1a; border-color: #D4AF37; }
-
-        /* Floor number badge */
-        .floor-number {
-            width: 36px; height: 36px;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 900; font-size: 0.85rem;
-            position: absolute;
-            top: -18px; left: 50%; transform: translateX(-50%);
-            z-index: 20;
-        }
-    </style>
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:374px){.node-circle{width:52px;height:52px;font-size:1.15rem}.node-boss .node-circle{width:64px;height:64px}.node-lbl{font-size:8px}.map-wrap{max-width:340px}}
+@media(min-width:375px) and (max-width:480px){.node-circle{width:58px;height:58px;font-size:1.3rem}.node-boss .node-circle{width:70px;height:70px}}
+@media(min-width:769px){.map-wrap{max-width:500px}.node-circle{width:70px;height:70px;font-size:1.6rem}.node-boss .node-circle{width:86px;height:86px;font-size:2rem}}
+@media(hover:none){.node:active{transform:translate(-50%,-50%) scale(.92)!important}}
+</style>
 </head>
-<body class="bg-bg-dark text-white font-sans min-h-screen flex flex-col overflow-x-hidden">
-
-<!-- PARTICLES -->
-<div id="particles-container" class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-    <div class="shooting-star" style="top:15%; left:10%; animation-delay:0s;"></div>
-    <div class="shooting-star" style="top:40%; left:5%; animation-delay:1.5s;"></div>
-    <div class="shooting-star" style="top:70%; left:20%; animation-delay:3s;"></div>
-</div>
-
-<!-- ZOOM FLASH -->
-<div id="zoom-flash"></div>
-<!-- SHOCKWAVE -->
-<div id="shockwave-ring"></div>
-
-<!-- ZOOM OVERLAY -->
-<div id="zoom-overlay">
-    <div class="zoom-content text-center">
-        <div id="zoom-icon" class="text-8xl mb-6" style="filter:drop-shadow(0 0 40px rgba(212,175,55,0.8));"></div>
-        <h2 id="zoom-title" class="text-4xl font-black uppercase tracking-tight mb-2" style="text-shadow:0 0 30px rgba(212,175,55,0.6);"></h2>
-        <p id="zoom-sub" class="text-gray-400 text-sm mb-4"></p>
-        <div class="flex items-center justify-center gap-2">
-            <div class="w-3 h-3 rounded-full bg-primary animate-bounce" style="animation-delay:0s;"></div>
-            <div class="w-3 h-3 rounded-full bg-primary animate-bounce" style="animation-delay:0.15s;"></div>
-            <div class="w-3 h-3 rounded-full bg-primary animate-bounce" style="animation-delay:0.3s;"></div>
-        </div>
-    </div>
-</div>
+<body class="text-white min-h-screen">
+<div class="atmo"></div>
+<canvas id="fxC"></canvas>
+<div class="scan"></div>
 
 <!-- HEADER -->
-<header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-[60] shrink-0">
-    <div class="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
-        <div class="flex items-center gap-2 md:gap-3">
-            <img src="images/logo_azul.png" alt="InvertProfit" class="h-8 md:h-10 w-auto logo-glow object-contain" id="logo-img"/>
-            <span class="text-lg md:text-xl font-bold text-white" id="logo-text" style="display:none;">
-                <span style="color:#D4AF37;">INVERT</span>PROFIT
-            </span>
-        </div>
-        <script>
-            document.getElementById('logo-img').onerror = function() {
-                this.style.display = 'none';
-                document.getElementById('logo-text').style.display = 'inline';
-            };
-        </script>
-        <nav class="hidden lg:flex items-center gap-10">
-            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="index.html">INICIO</a>
-            <a class="font-black border-b-2 border-primary pb-1 text-sm tracking-widest uppercase" style="color:#D4AF37;" href="portadanivelesacademia.html">ACADEMIA</a>
-            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="mercado.html">MERCADOS</a>
-            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="#">PORTAFOLIO</a>
-        </nav>
-        <div class="flex items-center gap-2 md:gap-4">
-            <button class="shrink-0 bg-primary text-bg-dark font-bold h-10 px-6 rounded-full inline-flex items-center gap-2 whitespace-nowrap hover:bg-primary/90 transition text-xs sm:text-sm tracking-wide leading-none">
-                <span class="leading-none">⚡</span>
-                <span class="leading-none" style="color:#0a0f1a;">CONECTAR BROKER</span>
-            </button>
-            <div class="hidden md:flex items-center gap-3">
-                <button class="w-9 h-9 rounded-full bg-card border border-card-border flex items-center justify-center text-gray-400 hover:text-primary transition relative">
-                    <span class="material-symbols-outlined text-[20px]">notifications</span>
-                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-bg-dark"></span>
-                </button>
-                <div class="w-9 h-9 bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 rounded-full flex items-center justify-center text-xs font-black text-primary">AT</div>
-            </div>
-            <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="lg:hidden text-gray-400 hover:text-white p-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-            </button>
-        </div>
-    </div>
-    <nav id="mobile-menu" class="hidden lg:hidden border-t border-card-border bg-card px-4 py-3 space-y-2">
-        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="index.html">INICIO</a>
-        <a class="block font-bold py-2 border-l-2 border-primary pl-3 text-sm" style="color:#D4AF37;" href="portadanivelesacademia.html">ACADEMIA</a>
-        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="mercado.html">MERCADOS</a>
-        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="#">PORTAFOLIO</a>
-    </nav>
+<header class="border-b border-white/5 bg-black/70 backdrop-blur-xl sticky top-0 z-[60]">
+<div class="flex items-center justify-between px-4 md:px-8 py-3">
+  <div class="flex items-center gap-3">
+    <a href="dashboard.html" class="flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition hover:scale-105" style="background:rgba(var(--ar),.08);border:1px solid rgba(var(--ar),.25);color:var(--a)">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"/></svg>
+      <span class="hidden sm:inline">Mundos</span></a>
+    <img src="images/logo_azul.png" alt="IP" class="h-9 w-auto shrink-0" style="filter:drop-shadow(0 0 8px rgba(var(--ar),.3))" onerror="this.outerHTML='<span style=\'color:var(--a);font-weight:900;font-size:1.1rem;font-family:Orbitron\'>IP</span>'">
+  </div>
+  <div class="flex items-center gap-3">
+    <span class="text-sm font-black" style="color:var(--a)" id="xp-ct">0 XP</span>
+    <span class="text-sm font-bold text-gray-500" id="comp-ct">0/15</span>
+  </div>
+</div>
+<div class="h-1.5 w-full" style="background:rgba(255,255,255,.04)"><div class="h-full transition-all duration-700" id="prog-bar" style="width:0%;background:linear-gradient(90deg,var(--ad),var(--a))"></div></div>
 </header>
 
-<!-- SIDE MENU -->
-<aside id="side-menu" class="fixed top-0 left-0 h-full w-80 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 border-r border-gray-700 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out z-[65] flex flex-col">
-    <nav class="flex-1 p-6 space-y-2 pt-24">
-        <div class="mb-8 px-3">
-            <p class="text-[10px] font-black text-primary/80 uppercase tracking-[4px] leading-none mb-2">Menú</p>
-            <div class="h-[2px] w-10 bg-gradient-to-r from-primary/60 to-transparent rounded-full"></div>
-        </div>
-        <a href="dashboard.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
-            <span class="material-symbols-outlined text-[22px]">grid_view</span> Dashboard
-        </a>
-        <a href="portadanivelesacademia.html" class="sidebar-link active flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold">
-            <span class="material-symbols-outlined text-[22px]">school</span> Academia
-        </a>
-        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
-            <span class="material-symbols-outlined text-[22px]">emoji_events</span> Logros
-        </a>
-        <a href="mercado.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
-            <span class="material-symbols-outlined text-[22px]">monitoring</span> Mercados
-        </a>
-    </nav>
-    <div class="p-6 border-t border-gray-700">
-        <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-extrabold text-primary text-sm">AT</div>
-            <div class="flex-1 min-w-0">
-                <p class="text-sm font-bold truncate">Alex Trader</p>
-                <p class="text-[10px] text-primary font-bold uppercase tracking-wider">Pro Member</p>
-            </div>
-            <a href="Login.html" class="text-gray-500 hover:text-red-400 transition"><span class="material-symbols-outlined text-[22px]">logout</span></a>
-        </div>
-    </div>
-</aside>
-<div id="menu-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleSideMenu()"></div>
+<main class="relative z-10 pb-24">
+  <!-- World title -->
+  <div class="text-center pt-6 pb-2 relative z-10">
+    <div style="font-size:3rem" class="mb-2">🌍</div>
+    <div class="text-[8px] font-black tracking-[4px] uppercase mb-1" style="color:rgba(var(--ar),.5)">MUNDO 05 — DECANO</div>
+    <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight text-white mb-1" style="font-family:Orbitron,sans-serif">EL DECANO</h1>
+    <p class="text-gray-500 text-sm">Macroeconomía, derivados y psicología.</p>
+  </div>
 
-<!-- MAIN -->
-<main class="flex-1 overflow-y-auto relative z-10">
-    <div class="stars-bg absolute inset-0 pointer-events-none"></div>
+  <!-- CANDY CRUSH MAP -->
+  <div class="map-wrap" id="mapWrap" style="position:relative">
+    <svg id="pathSvg" xmlns="http://www.w3.org/2000/svg"></svg>
+    <div id="nodesLayer" style="position:relative"></div>
+  </div>
 
-    <div class="p-6 md:p-10 pb-20 max-w-4xl mx-auto">
-
-        <!-- Top bar -->
-        <div class="flex items-center justify-between mb-10">
-            <div class="flex items-center gap-4">
-                <button onclick="toggleSideMenu()" id="hamburger-btn-inline" class="w-11 h-11 rounded-lg bg-card border border-card-border flex items-center justify-center shadow-lg hover:border-primary transition-all duration-300 hover:bg-card/80 shrink-0">
-                    <div class="flex flex-col gap-1.5">
-                        <span class="w-5 h-0.5 bg-primary rounded-full transition-all duration-300 hamburger-line-1"></span>
-                        <span class="w-5 h-0.5 bg-primary rounded-full transition-all duration-300 hamburger-line-2"></span>
-                        <span class="w-5 h-0.5 bg-primary rounded-full transition-all duration-300 hamburger-line-3"></span>
-                    </div>
-                </button>
-                <div>
-                    <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight">La Torre</h1>
-                    <p class="text-gray-500 text-sm mt-1">Escala la torre del conocimiento. Conquista cada piso.</p>
-                </div>
-            </div>
-            <!-- XP Player Bar -->
-            <div class="hidden sm:flex items-center gap-4">
-                <div class="flex items-center gap-3 bg-card border border-card-border px-4 py-2.5 rounded-2xl">
-                    <div class="coin-bounce text-xl">🪙</div>
-                    <div>
-                        <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">XP Total</p>
-                        <p class="text-sm font-black text-primary">4,500 XP</p>
-                    </div>
-                    <div class="w-px h-8 bg-card-border mx-1"></div>
-                    <div>
-                        <p class="text-[10px] text-gray-500 uppercase tracking-wider font-bold">Piso</p>
-                        <p class="text-sm font-black text-white">2 / 7</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TITLE -->
-        <div class="text-center mb-14">
-            <p class="text-[11px] font-black tracking-[6px] text-primary/70 uppercase mb-4">— ACADEMY MODE —</p>
-            <h2 class="text-4xl md:text-6xl font-black uppercase tracking-tight title-glow mb-4">
-                LA TORRE DEL <span style="color:#D4AF37;">CONOCIMIENTO</span>
-            </h2>
-            <p class="text-gray-400 text-base max-w-lg mx-auto">Asciende desde La Forja hasta La Cúspide. Cada piso es un universo de conocimiento que te acerca a la maestría total.</p>
-        </div>
-
-        <!-- ========== TOWER — CANDY CRUSH PATH ========== -->
-        <div class="tower-path mb-16" id="tower-container">
-
-            <!-- ===== PISO 1: GÉNESIS — COMPLETED ===== -->
-            <div class="floor-wrapper">
-                <div class="w-full">
-                    <div class="world-floor relative rounded-3xl overflow-hidden" onclick="enterWorld('niveles-novato.html','⚒️','GÉNESIS: LA FORJA','Bóveda subterránea de alta seguridad')">
-                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #1a1207 0%, #111827 50%, #1a1207 100%); border:2px solid rgba(212,175,55,0.5); box-shadow: 0 0 30px rgba(212,175,55,0.2);">
-                            <div class="completed-shimmer rounded-3xl"></div>
-                            <div class="floor-number" style="background:linear-gradient(135deg,#D4AF37,#b8860b); color:#0a0f1a;">1</div>
-                            <div class="flex items-center gap-4 md:gap-6">
-                                <div class="shrink-0">
-                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #D4AF37 0%, #b8860b 50%, #5a3e0a 100%); box-shadow: 0 0 30px rgba(212,175,55,0.4); border:3px solid rgba(212,175,55,0.6);">
-                                        <div class="orbit-ring" style="width:100px;height:100px;top:-10px;left:-10px;animation-duration:12s;border-color:rgba(212,175,55,0.2);"></div>
-                                        ⚒️
-                                    </div>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <span class="badge-pop inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider mb-1" style="background:rgba(212,175,55,0.2); color:#D4AF37; border:1px solid rgba(212,175,55,0.4);">🏴 Conquistado</span>
-                                    <p class="text-[9px] font-black tracking-[4px] text-primary/60 uppercase">PISO 01</p>
-                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-white">GÉNESIS: LA FORJA</h3>
-                                    <p class="text-gray-400 text-[10px] mt-0.5 leading-relaxed hidden sm:block">Bóveda subterránea de alta seguridad, hornos de fundición de oro.</p>
-                                    <div class="flex items-center gap-3 mt-2">
-                                        <div class="h-1.5 flex-1 bg-gray-800 rounded-full overflow-hidden">
-                                            <div class="h-full rounded-full" style="width:100%; background:linear-gradient(90deg, #b8860b, #D4AF37);"></div>
-                                        </div>
-                                        <span class="text-[10px] font-black text-primary">12/12</span>
-                                        <span class="text-sm">⭐⭐⭐</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Connector 1→2 -->
-            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M200 0 Q200 30, 400 30 Q400 60, 400 60" stroke="rgba(212,175,55,0.5)" stroke-width="3"/></svg></div>
-
-            <!-- ===== PISO 2: CARTOGRAFÍA — ACTIVE ===== -->
-            <div class="floor-wrapper">
-                <div class="w-full">
-                    <div class="world-floor floor-active relative rounded-3xl overflow-hidden" onclick="enterWorld('niveles-intermedio.html','🗺️','CARTOGRAFÍA: LABERINTO','Pantallas holográficas flotantes')">
-                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #0a1628 0%, #111827 50%, #0a1628 100%); border:2px solid rgba(59,130,246,0.6); box-shadow: 0 0 40px rgba(59,130,246,0.3), 0 0 80px rgba(59,130,246,0.1);">
-                            <div class="floor-number" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; box-shadow:0 0 20px rgba(59,130,246,0.5);">2</div>
-                            <div class="absolute inset-0 rounded-3xl" style="background:radial-gradient(circle at 50% 50%, rgba(59,130,246,0.1) 0%, transparent 70%);"></div>
-                            <div class="flex items-center gap-4 md:gap-6">
-                                <div class="shrink-0 relative">
-                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #60a5fa 0%, #3b82f6 50%, #1e3a5f 100%); box-shadow: 0 0 35px rgba(59,130,246,0.6); border:3px solid rgba(59,130,246,0.8); animation: beacon 2s ease-in-out infinite; color:rgba(59,130,246,1);">
-                                        <div class="orbit-ring" style="width:100px;height:100px;top:-10px;left:-10px;animation-duration:8s;border-color:rgba(59,130,246,0.3);"></div>
-                                        🗺️
-                                    </div>
-                                    <div class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-card border-2 border-blue-400 flex items-center justify-center text-sm shadow-lg" style="box-shadow:0 0 15px rgba(59,130,246,0.5);" title="AmigoTrade te espera">🤖</div>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <span class="badge-pop inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider mb-1" style="background:rgba(59,130,246,0.2); color:#60a5fa; border:1px solid rgba(59,130,246,0.5);">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse inline-block"></span> Mundo Actual
-                                    </span>
-                                    <p class="text-[9px] font-black tracking-[4px] uppercase" style="color:rgba(59,130,246,0.6);">PISO 02</p>
-                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-white">CARTOGRAFÍA: LABERINTO</h3>
-                                    <p class="text-gray-400 text-[10px] mt-0.5 leading-relaxed hidden sm:block">Pantallas holográficas flotantes y mapas estelares de datos.</p>
-                                    <div class="flex items-center gap-3 mt-2">
-                                        <div class="h-1.5 flex-1 bg-gray-800 rounded-full overflow-hidden">
-                                            <div class="h-full rounded-full" style="width:42%; background:linear-gradient(90deg, #1d4ed8, #3b82f6, #60a5fa);"></div>
-                                        </div>
-                                        <span class="text-[10px] font-black" style="color:#60a5fa;">5/12</span>
-                                        <span class="text-sm">⭐⭐<span class="text-gray-600">⭐</span></span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Connector 2→3 -->
-            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M400 0 Q400 30, 200 30 Q200 60, 200 60" stroke="#1f2937" stroke-width="3"/></svg></div>
-
-            <!-- ===== PISO 3: ANATOMÍA — LOCKED ===== -->
-            <div class="floor-wrapper">
-                <div class="w-full">
-                    <div class="world-floor floor-locked relative rounded-3xl overflow-hidden" style="cursor:not-allowed;">
-                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #0d1117 0%, #111827 50%, #0d1117 100%); border:2px solid rgba(75,85,99,0.3);">
-                            <div class="floor-number" style="background:#1f2937; color:#6b7280; border:1px solid #374151;">3</div>
-                            <div class="locked-overlay rounded-3xl">
-                                <div class="chain-icon mb-1">⛓️</div>
-                                <p class="text-[10px] font-black uppercase tracking-[3px] text-gray-500">Bloqueado</p>
-                            </div>
-                            <div class="flex items-center gap-4 md:gap-6 opacity-30" style="filter:grayscale(1);">
-                                <div class="shrink-0">
-                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #22d3ee 0%, #06b6d4 50%, #0e4a5c 100%); border:3px solid rgba(6,182,212,0.4);">🔬</div>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-[9px] font-black tracking-[4px] text-gray-600 uppercase">PISO 03</p>
-                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-gray-500">ANATOMÍA: INGENIERÍA</h3>
-                                    <p class="text-gray-600 text-[10px] mt-0.5 hidden sm:block">Laboratorio limpio de alta tecnología.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Connector 3→4 -->
-            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M200 0 Q200 30, 400 30 Q400 60, 400 60" stroke="#1f2937" stroke-width="3"/></svg></div>
-
-            <!-- ===== PISO 4: SINCRONÍA — LOCKED ===== -->
-            <div class="floor-wrapper">
-                <div class="w-full">
-                    <div class="world-floor floor-locked relative rounded-3xl overflow-hidden" style="cursor:not-allowed;">
-                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #0d0d1f 0%, #111827 50%, #0d0d1f 100%); border:2px solid rgba(75,85,99,0.3);">
-                            <div class="floor-number" style="background:#1f2937; color:#6b7280; border:1px solid #374151;">4</div>
-                            <div class="locked-overlay rounded-3xl">
-                                <div class="chain-icon mb-1">🔒</div>
-                                <p class="text-[10px] font-black uppercase tracking-[3px] text-gray-500">Bloqueado</p>
-                            </div>
-                            <div class="flex items-center gap-4 md:gap-6 opacity-30" style="filter:grayscale(1);">
-                                <div class="shrink-0">
-                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #a78bfa 0%, #7c3aed 50%, #3b1578 100%); border:3px solid rgba(124,58,237,0.4);">🤖</div>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-[9px] font-black tracking-[4px] text-gray-600 uppercase">PISO 04</p>
-                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-gray-500">SINCRONÍA: ORÁCULO IA</h3>
-                                    <p class="text-gray-600 text-[10px] mt-0.5 hidden sm:block">Núcleo de energía pulsante, estética Matrix/Tron.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Connector 4→5 -->
-            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M400 0 Q400 30, 200 30 Q200 60, 200 60" stroke="#1f2937" stroke-width="3"/></svg></div>
-
-            <!-- ===== PISO 5: ESTRATEGIA — LOCKED ===== -->
-            <div class="floor-wrapper">
-                <div class="w-full">
-                    <div class="world-floor floor-locked relative rounded-3xl overflow-hidden" style="cursor:not-allowed;">
-                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #111a0d 0%, #111827 50%, #111a0d 100%); border:2px solid rgba(75,85,99,0.3);">
-                            <div class="floor-number" style="background:#1f2937; color:#6b7280; border:1px solid #374151;">5</div>
-                            <div class="locked-overlay rounded-3xl">
-                                <div class="chain-icon mb-1">⛓️</div>
-                                <p class="text-[10px] font-black uppercase tracking-[3px] text-gray-500">Bloqueado</p>
-                            </div>
-                            <div class="flex items-center gap-4 md:gap-6 opacity-30" style="filter:grayscale(1);">
-                                <div class="shrink-0">
-                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #34d399 0%, #059669 50%, #064e3b 100%); border:3px solid rgba(5,150,105,0.4);">♟️</div>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-[9px] font-black tracking-[4px] text-gray-600 uppercase">PISO 05</p>
-                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-gray-500">ESTRATEGIA: TABLERO GLOBAL</h3>
-                                    <p class="text-gray-600 text-[10px] mt-0.5 hidden sm:block">Penthouse con mapamundi holográfico gigante.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Connector 5→6 -->
-            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M200 0 Q200 30, 400 30 Q400 60, 400 60" stroke="#1f2937" stroke-width="3"/></svg></div>
-
-            <!-- ===== PISO 6: SOBERANÍA — LOCKED ===== -->
-            <div class="floor-wrapper">
-                <div class="w-full">
-                    <div class="world-floor floor-locked relative rounded-3xl overflow-hidden" style="cursor:not-allowed;">
-                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #0d0a14 0%, #111827 50%, #0d0a14 100%); border:2px solid rgba(75,85,99,0.3);">
-                            <div class="floor-number" style="background:#1f2937; color:#6b7280; border:1px solid #374151;">6</div>
-                            <div class="locked-overlay rounded-3xl">
-                                <div class="chain-icon mb-1">🔒</div>
-                                <p class="text-[10px] font-black uppercase tracking-[3px] text-gray-500">Bloqueado</p>
-                            </div>
-                            <div class="flex items-center gap-4 md:gap-6 opacity-30" style="filter:grayscale(1);">
-                                <div class="shrink-0">
-                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #c084fc 0%, #9333ea 50%, #581c87 100%); border:3px solid rgba(147,51,234,0.4);">🏛️</div>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-[9px] font-black tracking-[4px] text-gray-600 uppercase">PISO 06</p>
-                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-gray-500">SOBERANÍA: INSTITUCIONAL</h3>
-                                    <p class="text-gray-600 text-[10px] mt-0.5 hidden sm:block">Club privado de banqueros, flujos de liquidez.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Connector 6→7 -->
-            <div class="path-connector"><svg viewBox="0 0 600 60"><path class="path-line" d="M400 0 Q400 30, 200 30 Q200 60, 200 60" stroke="#1f2937" stroke-width="3"/></svg></div>
-
-            <!-- ===== PISO 7: LEGADO — LOCKED (THE APEX) ===== -->
-            <div class="floor-wrapper">
-                <div class="w-full">
-                    <div class="world-floor floor-locked relative rounded-3xl overflow-hidden" style="cursor:not-allowed;">
-                        <div class="rounded-3xl p-5 md:p-7 relative overflow-hidden" style="background:linear-gradient(135deg, #1a1508 0%, #111827 50%, #1a1508 100%); border:2px solid rgba(75,85,99,0.3);">
-                            <div class="floor-number" style="background:#1f2937; color:#6b7280; border:1px solid #374151;">7</div>
-                            <div class="locked-overlay rounded-3xl">
-                                <div class="chain-icon mb-1">👑</div>
-                                <p class="text-[10px] font-black uppercase tracking-[3px] text-gray-500">La Cúspide</p>
-                            </div>
-                            <div class="flex items-center gap-4 md:gap-6 opacity-30" style="filter:grayscale(1);">
-                                <div class="shrink-0">
-                                    <div class="world-icon-container" style="width:80px;height:80px;font-size:2.2rem;background:radial-gradient(circle at 35% 30%, #fbbf24 0%, #D4AF37 50%, #92400e 100%); border:3px solid rgba(212,175,55,0.4);">🏔️</div>
-                                </div>
-                                <div class="flex-1 min-w-0">
-                                    <p class="text-[9px] font-black tracking-[4px] text-gray-600 uppercase">PISO 07 — THE APEX</p>
-                                    <h3 class="text-lg md:text-xl font-black uppercase tracking-tight text-gray-500">LEGADO: LA CÚSPIDE</h3>
-                                    <p class="text-gray-600 text-[10px] mt-0.5 hidden sm:block">Helipuerto privado con vista infinita. Todo dorado y brillante.</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- STATS ROW -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
-            <div class="bg-card border border-card-border rounded-2xl p-5 text-center">
-                <div class="text-3xl font-black text-primary mb-1">12</div>
-                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Niveles Completados</div>
-            </div>
-            <div class="bg-card border border-card-border rounded-2xl p-5 text-center">
-                <div class="text-3xl font-black text-white mb-1">4,500</div>
-                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500">XP Acumulada</div>
-            </div>
-            <div class="bg-card border border-card-border rounded-2xl p-5 text-center">
-                <div class="text-3xl font-black text-green-400 mb-1">7</div>
-                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Días en racha</div>
-            </div>
-            <div class="bg-card border border-card-border rounded-2xl p-5 text-center">
-                <div class="text-3xl font-black text-yellow-400 mb-1">1 / 7</div>
-                <div class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Pisos Conquistados</div>
-            </div>
-        </div>
-
-        <!-- Daily Quest Banner -->
-        <div class="rounded-2xl p-6 flex items-center gap-5 mb-8" style="background:linear-gradient(135deg, rgba(212,175,55,0.1) 0%, rgba(212,175,55,0.05) 100%); border:1px solid rgba(212,175,55,0.25);">
-            <div class="text-4xl shrink-0">🎯</div>
-            <div class="flex-1">
-                <p class="text-[10px] font-black tracking-[4px] text-primary/70 uppercase mb-1">Quest diaria</p>
-                <p class="font-bold text-white text-sm">Completa 2 lecciones hoy para obtener <span class="text-primary font-black">+300 XP</span> y una recompensa especial.</p>
-            </div>
-            <div class="shrink-0">
-                <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1 text-right">1/2 completadas</div>
-                <div class="w-32 h-2 bg-gray-800 rounded-full overflow-hidden">
-                    <div class="h-full rounded-full" style="width:50%; background:linear-gradient(90deg, #b8860b, #D4AF37);"></div>
-                </div>
-            </div>
-        </div>
-
-    </div>
+  <!-- Quest card -->
+  <div class="max-w-md mx-auto px-4 mt-6" id="quest"></div>
 </main>
 
+<!-- MODAL -->
+<div id="modal" class="modal-bg hidden" onclick="if(event.target===this)closeM()">
+<div class="modal-box">
+  <div class="flex items-center justify-between mb-4">
+    <span id="m-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"></span>
+    <button onclick="closeM()" class="text-gray-500 hover:text-white transition"><span class="material-symbols-outlined">close</span></button>
+  </div>
+  <div class="text-5xl text-center mb-3" id="m-icon"></div>
+  <h3 class="text-lg font-black text-center uppercase tracking-tight mb-2" style="font-family:Orbitron;color:var(--a)" id="m-title"></h3>
+  <p class="text-gray-400 text-sm text-center mb-4" id="m-desc"></p>
+  <div class="flex justify-center gap-1 mb-4 text-sm" id="m-stars">⭐⭐⭐</div>
+  <div class="flex items-center justify-between mb-4 rounded-xl px-4 py-3" style="background:rgba(var(--ar),.05);border:1px solid rgba(var(--ar),.1)">
+    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">XP</span>
+    <span class="font-black" style="color:var(--a)" id="m-xp"></span>
+  </div>
+  <div class="flex flex-col gap-2">
+    <button id="m-cta" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105"></button>
+    <button id="m-next" class="hidden w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105"></button>
+  </div>
+</div></div>
+
+<button class="mu-btn" id="muBtn" onclick="toggleMu()">🔊</button>
+
 <script>
-function toggleSideMenu() {
-    const menu = document.getElementById('side-menu');
-    const overlay = document.getElementById('menu-overlay');
-    const hamburger = document.getElementById('hamburger-btn-inline');
-    if (menu.classList.contains('-translate-x-full')) {
-        menu.classList.remove('-translate-x-full');
-        overlay.classList.remove('opacity-0', 'pointer-events-none');
-        if (hamburger) hamburger.classList.add('hamburger-open');
-    } else {
-        menu.classList.add('-translate-x-full');
-        overlay.classList.add('opacity-0', 'pointer-events-none');
-        if (hamburger) hamburger.classList.remove('hamburger-open');
+var A='#10b981',AR='16,185,129',WN=5;
+var levels=window._wL=[{"n": 61, "t": "Macroeconomía", "d": "El sol del sistema.", "xp": 200}, {"n": 62, "t": "Ciclo de Deuda", "d": "Ray Dalio decodificado.", "xp": 250}, {"n": 63, "t": "FED y Tasas", "d": "La herramienta más poderosa.", "xp": 200}, {"n": 64, "t": "Inflación", "d": "IPC y deflación.", "xp": 200}, {"n": 65, "t": "DXY", "d": "El rey de las divisas.", "xp": 200}, {"n": 66, "t": "Geopolítica", "d": "Guerras y commodities.", "xp": 250}, {"n": 67, "t": "Bonos", "d": "Renta fija.", "xp": 200}, {"n": 68, "t": "Opciones I", "d": "Calls, Puts, primas.", "xp": 250}, {"n": 69, "t": "Futuros", "d": "Contratos billonarios.", "xp": 250}, {"n": 70, "t": "Psicología 1%", "d": "Dominio del ego.", "xp": 200}, {"n": 71, "t": "Sesgos Cognitivos", "d": "El enemigo interno.", "xp": 200}, {"n": 72, "t": "Bio-Hacking", "d": "El cuerpo del trader.", "xp": 200}, {"n": 73, "t": "Fiscal", "d": "Planificación fiscal.", "xp": 200}, {"n": 74, "t": "Real Estate", "d": "Diversificación real.", "xp": 200}, {"n": 75, "t": "⚡ BOSS: Tesis Macro", "d": "Tesis macroeconómica.", "xp": 500, "boss": "BOSS"}];
+var icons=["🌞", "🔄", "🏛️", "📊", "💵", "🌍", "📜", "🎲", "📈", "🧠", "🪞", "🧬", "📋", "🏠", "🏆"];
+levels.forEach(function(l){l.s=CURRICULUM.getLevelStatus(l.n)});
+
+// Stats
+var cc=levels.filter(function(l){return l.s==='completed'}).length;
+var cx=levels.reduce(function(a,l){return a+(l.s==='completed'?l.xp:0)},0);
+document.getElementById('comp-ct').textContent=cc+'/'+levels.length;
+document.getElementById('xp-ct').textContent=cx.toLocaleString()+' XP';
+document.getElementById('prog-bar').style.width=Math.round(cc/levels.length*100)+'%';
+
+// ═══ CANDY CRUSH SERPENTINE LAYOUT ═══
+var N=levels.length;
+var MAP_W,NODE_H=110,PAD_TOP=40;
+var nodePos=[]; // {x,y} in px
+
+function calcPositions(){
+  MAP_W=document.getElementById('mapWrap').offsetWidth;
+  nodePos=[];
+  var margin=50;
+  var usable=MAP_W-margin*2;
+  for(var i=0;i<N;i++){
+    // Serpentine: row groups of ~3, zigzag left-right
+    var row=Math.floor(i/3);
+    var col=i%3;
+    var goingRight=row%2===0;
+    var xNorm=goingRight?col/(3-1||1):(3-1-col)/(3-1||1);
+    // Smooth with sine
+    var rawX=margin+xNorm*usable;
+    // Add some wave
+    var wave=Math.sin(i*0.8)*usable*0.12;
+    var x=Math.max(margin,Math.min(MAP_W-margin,rawX+wave));
+    var y=PAD_TOP+(N-1-i)*NODE_H;
+    nodePos.push({x:x,y:y});
+  }
+}
+calcPositions();
+
+// Set container height
+var totalH=PAD_TOP+N*NODE_H+60;
+document.getElementById('nodesLayer').style.height=totalH+'px';
+document.getElementById('pathSvg').setAttribute('height',totalH);
+document.getElementById('pathSvg').style.height=totalH+'px';
+
+// ═══ DRAW SVG PATH ═══
+function drawPaths(){
+  calcPositions();
+  var svg=document.getElementById('pathSvg');
+  svg.innerHTML='';
+  for(var i=0;i<N-1;i++){
+    var a_=nodePos[i],b_=nodePos[i+1];
+    var sA=levels[i].s,sB=levels[i+1].s;
+    var cls=(sA==='completed'&&sB==='completed')?'path-done':(sA==='completed'&&sB==='active')?'path-active':'path-locked';
+    var path=document.createElementNS('http://www.w3.org/2000/svg','path');
+    var midY=(a_.y+b_.y)/2;
+    path.setAttribute('d','M '+a_.x+' '+a_.y+' C '+a_.x+' '+midY+', '+b_.x+' '+midY+', '+b_.x+' '+b_.y);
+    path.setAttribute('class',cls);
+    svg.appendChild(path);
+  }
+}
+drawPaths();
+window.addEventListener('resize',function(){drawPaths();placeNodes()});
+
+// ═══ PLACE NODES ═══
+function placeNodes(){
+  calcPositions();
+  var layer=document.getElementById('nodesLayer');
+  layer.innerHTML='';
+  for(var i=0;i<N;i++){
+    var lv=levels[i];var p=nodePos[i];var isBoss=!!lv.boss;
+    var nd=document.createElement('div');
+    nd.className='node'+(isBoss?' node-boss':'')+(lv.s==='locked'?' locked':'');
+    nd.style.cssText='position:absolute;left:'+p.x+'px;top:'+p.y+'px;transform:translate(-50%,-50%)';
+
+    var circCls=lv.s==='completed'?'nc-done':(lv.s==='active'?'nc-active':'nc-locked');
+    var content=lv.s==='completed'?'✓':(lv.s==='active'?(icons[i]||'🔥'):'<span class="material-symbols-outlined text-gray-600" style="font-size:1.2em">lock</span>');
+    var bossTag='';
+    if(isBoss){
+      var bCls=lv.s==='locked'?'boss-tag locked':'boss-tag';
+      bossTag='<span class="'+bCls+'">'+lv.boss+'</span>';
     }
+
+    var starHtml='';
+    if(lv.s==='completed')starHtml='<span class="star-on">⭐</span><span class="star-on">⭐</span><span class="star-on">⭐</span>';
+    else starHtml='<span class="star-off">☆</span><span class="star-off">☆</span><span class="star-off">☆</span>';
+
+    var lblCls=lv.s==='completed'?'lbl-done':(lv.s==='active'?'lbl-active':'lbl-locked');
+    var tE=lv.t.replace(/'/g,"\\'");var dE=lv.d.replace(/'/g,"\\'");
+    if(lv.s!=='locked')nd.setAttribute('onclick',"openM("+lv.n+",'"+tE+"','"+dE+"','"+lv.s+"',"+lv.xp+")");
+    else nd.setAttribute('onclick','sfxL()');
+
+    nd.innerHTML='<div style="position:relative;display:flex;flex-direction:column;align-items:center">'+
+      '<div class="node-circle '+circCls+'" style="position:relative">'+content+bossTag+'</div>'+
+      '<div class="node-stars">'+starHtml+'</div>'+
+      '<div class="node-lbl '+lblCls+'">'+lv.n+'</div>'+
+      '</div>';
+    layer.appendChild(nd);
+  }
+}
+placeNodes();
+
+// Quest
+var actLv=levels.find(function(l){return l.s==='active'});
+if(actLv){
+  var tE2=actLv.t.replace(/'/g,"\\'");var dE2=actLv.d.replace(/'/g,"\\'");
+  document.getElementById('quest').innerHTML='<div class="rounded-2xl p-4 flex items-center gap-3" style="background:rgba(var(--ar),.05);border:1px solid rgba(var(--ar),.12)"><div class="text-2xl" style="animation:activePulse 2s ease-in-out infinite">⚡</div><div class="flex-1"><div class="text-[8px] font-black tracking-[3px] uppercase mb-1" style="color:rgba(var(--ar),.5)">NIVEL ACTUAL</div><div class="text-sm text-gray-300 font-bold">'+actLv.t+'</div></div><button onclick="openM('+actLv.n+',\''+tE2+'\',\''+dE2+'\',\'active\','+actLv.xp+')" class="px-4 py-2 rounded-xl font-black uppercase tracking-wider text-xs" style="background:linear-gradient(135deg,var(--ad),var(--a));color:#0a0f1a">▶ JUGAR</button></div>';
 }
 
-// Sound effects using Web Audio API
-function playZoomSound() {
-    try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        // Whoosh
-        const osc1 = ctx.createOscillator();
-        const gain1 = ctx.createGain();
-        osc1.type = 'sine';
-        osc1.frequency.setValueAtTime(800, ctx.currentTime);
-        osc1.frequency.exponentialRampToValueAtTime(200, ctx.currentTime + 0.4);
-        gain1.gain.setValueAtTime(0.15, ctx.currentTime);
-        gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.5);
-        osc1.connect(gain1).connect(ctx.destination);
-        osc1.start(); osc1.stop(ctx.currentTime + 0.5);
+// ═══ AUDIO ═══
+var actx,mg,sOn=true;
+function initA(){if(actx)return;actx=new(AudioContext||webkitAudioContext)();mg=actx.createGain();mg.gain.value=.08;mg.connect(actx.destination);
+  // Ambient drone
+  [0,7,12].forEach(function(s,i){var o=actx.createOscillator(),g=actx.createGain(),f=actx.createBiquadFilter();
+    o.type=i<2?'sine':'triangle';o.frequency.value=58*Math.pow(2,s/12);
+    f.type='lowpass';f.frequency.value=180+i*50;f.Q.value=.7;g.gain.value=.012;
+    o.connect(f);f.connect(g);g.connect(mg);o.start();
+    var l=actx.createOscillator(),lg=actx.createGain();l.type='sine';l.frequency.value=.06+i*.02;lg.gain.value=1.5;l.connect(lg);lg.connect(o.frequency);l.start()});
+  // Melody
+  var sc=[0, 2, 4, 5, 7, 9, 11],ni=0;
+  (function play(){if(!sOn){setTimeout(play,2000);return}
+    var semi=sc[ni%sc.length]+12*Math.floor(ni/sc.length);
+    var fr=58*2*Math.pow(2,semi/12);
+    var o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=fr;
+    g.gain.setValueAtTime(.015,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+2.5);
+    o.connect(g);g.connect(mg);o.start();o.stop(actx.currentTime+2.5);ni++;
+    setTimeout(play,2500+Math.random()*1500)})()}
+function sfx(fr,d){if(!actx||!sOn)return;var o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=fr;g.gain.setValueAtTime(.08,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d);o.connect(g);g.connect(mg);o.start();o.stop(actx.currentTime+d)}
+function sfxC(){sfx(880,.1);setTimeout(function(){sfx(660,.07)},35)}
+function sfxL(){sfx(150,.15)}
+function sfxO(){[660,880,1100].forEach(function(f,i){setTimeout(function(){sfx(f,.15)},i*50)})}
+function toggleMu(){initA();sOn=!sOn;mg.gain.value=sOn?.08:0;document.getElementById('muBtn').className='mu-btn'+(sOn?'':' off');document.getElementById('muBtn').textContent=sOn?'🔊':'🔇'}
+document.addEventListener('click',function(){initA()},{once:true});
 
-        // Impact
-        setTimeout(() => {
-            const osc2 = ctx.createOscillator();
-            const gain2 = ctx.createGain();
-            osc2.type = 'square';
-            osc2.frequency.setValueAtTime(120, ctx.currentTime);
-            osc2.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.3);
-            gain2.gain.setValueAtTime(0.1, ctx.currentTime);
-            gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
-            osc2.connect(gain2).connect(ctx.destination);
-            osc2.start(); osc2.stop(ctx.currentTime + 0.3);
-        }, 200);
-
-        // Chime
-        setTimeout(() => {
-            const osc3 = ctx.createOscillator();
-            const gain3 = ctx.createGain();
-            osc3.type = 'sine';
-            osc3.frequency.setValueAtTime(1200, ctx.currentTime);
-            osc3.frequency.exponentialRampToValueAtTime(1600, ctx.currentTime + 0.3);
-            gain3.gain.setValueAtTime(0.08, ctx.currentTime);
-            gain3.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.4);
-            osc3.connect(gain3).connect(ctx.destination);
-            osc3.start(); osc3.stop(ctx.currentTime + 0.4);
-        }, 400);
-    } catch(e) {}
+// ═══ MODAL ═══
+function openM(n,t,d,s,xp){
+  sfxO();var ic=icons[levels.findIndex(function(l){return l.n===n})]||'🔥';
+  document.getElementById('m-icon').textContent=ic;
+  var b=document.getElementById('m-badge'),c=document.getElementById('m-cta'),nx=document.getElementById('m-next');
+  var nxt=levels.find(function(l){return l.n===n+1});
+  if(s==='completed'){
+    b.textContent='✓ COMPLETADO';b.style.cssText='background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.25)';
+    document.getElementById('m-stars').textContent='⭐⭐⭐';
+    c.textContent='🔄 REPASAR';c.style.cssText='background:rgba(34,197,94,.08);color:#22c55e;border:1px solid rgba(34,197,94,.2);width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer';
+    c.onclick=function(){location.href='leccion.html?world=5&level='+n};
+    if(nxt){nx.classList.remove('hidden');nx.textContent='▶ SIGUIENTE';nx.style.cssText='background:linear-gradient(135deg,var(--ad),var(--a));color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer';nx.onclick=function(){location.href='leccion.html?world=5&level='+nxt.n}}
+    else nx.classList.add('hidden');
+  }else if(s==='active'){
+    b.innerHTML='<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--a);animation:activePulse 1s infinite;margin-right:4px"></span> EN PROGRESO';
+    b.style.cssText='background:rgba(var(--ar),.1);color:var(--a);border:1px solid rgba(var(--ar),.2)';
+    document.getElementById('m-stars').textContent='⭐⭐⭐';
+    c.textContent='▶ JUGAR';c.style.cssText='background:linear-gradient(135deg,var(--ad),var(--a));color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer';
+    c.onclick=function(){location.href='leccion.html?world=5&level='+n};nx.classList.add('hidden');
+  }else{
+    b.textContent='🔒 BLOQUEADO';b.style.cssText='background:rgba(107,114,128,.08);color:#6b7280;border:1px solid rgba(107,114,128,.15)';
+    document.getElementById('m-stars').textContent='☆☆☆';c.style.display='none';nx.classList.add('hidden');
+  }
+  document.getElementById('m-title').textContent='Nivel '+n+': '+t;
+  document.getElementById('m-desc').textContent=d;
+  document.getElementById('m-xp').textContent='+'+xp+' XP';
+  document.getElementById('modal').classList.remove('hidden');
 }
+function closeM(){document.getElementById('modal').classList.add('hidden');document.getElementById('m-cta').style.display=''}
 
-// Explosion particles from center
-function spawnExplosion() {
-    const colors = ['#D4AF37','#fbbf24','#fff','#60a5fa','#a78bfa','#f97316'];
-    const cx = window.innerWidth / 2;
-    const cy = window.innerHeight / 2;
-    for (let i = 0; i < 40; i++) {
-        const p = document.createElement('div');
-        p.className = 'explosion-particle';
-        const size = Math.random() * 8 + 3;
-        const angle = (Math.PI * 2 / 40) * i + (Math.random() - 0.5) * 0.5;
-        const dist = Math.random() * 350 + 150;
-        const tx = Math.cos(angle) * dist;
-        const ty = Math.sin(angle) * dist;
-        const dur = Math.random() * 0.6 + 0.4;
-        p.style.cssText = `
-            left:${cx}px; top:${cy}px; width:${size}px; height:${size}px;
-            background:${colors[Math.floor(Math.random()*colors.length)]};
-            box-shadow: 0 0 ${size*2}px ${colors[Math.floor(Math.random()*colors.length)]};
-            animation: explode-particle ${dur}s cubic-bezier(0,.6,.6,1) forwards;
-        `;
-        // Custom trajectory via inline keyframes
-        p.animate([
-            { transform:'translate(0,0) scale(1)', opacity:1 },
-            { transform:`translate(${tx}px,${ty}px) scale(0)`, opacity:0 }
-        ], { duration: dur * 1000, easing:'cubic-bezier(0,.5,.5,1)', fill:'forwards' });
-        document.body.appendChild(p);
-        setTimeout(() => p.remove(), dur * 1000 + 100);
-    }
-}
+// ═══ WORLD FX ═══
 
-// ZOOM dramatic transition with explosion, flash & sound
-function enterWorld(url, icon, title, sub) {
-    const overlay = document.getElementById('zoom-overlay');
-    const flash = document.getElementById('zoom-flash');
-    const ring = document.getElementById('shockwave-ring');
-
-    // Sound
-    playZoomSound();
-
-    // Flash
-    flash.classList.add('active');
-    setTimeout(() => flash.classList.remove('active'), 300);
-
-    // Explosion particles
-    setTimeout(() => spawnExplosion(), 100);
-
-    // Shockwave ring
-    ring.style.animation = 'none';
-    ring.offsetHeight; // reflow
-    ring.style.animation = 'shockwave 0.8s ease-out forwards';
-
-    // Zoom overlay
-    document.getElementById('zoom-icon').textContent = icon;
-    document.getElementById('zoom-title').textContent = title;
-    document.getElementById('zoom-sub').textContent = sub;
-    setTimeout(() => overlay.classList.add('active'), 200);
-
-    setTimeout(function() {
-        window.location.href = url;
-    }, 1500);
-}
-
-// Generate floating particles
-(function() {
-    const container = document.getElementById('particles-container');
-    for (let i = 0; i < 15; i++) {
-        const p = document.createElement('div');
-        p.classList.add('particle');
-        p.style.left = Math.random() * 100 + '%';
-        p.style.top = Math.random() * 100 + '%';
-        p.style.width = (Math.random() * 3 + 1) + 'px';
-        p.style.height = p.style.width;
-        p.style.animationDuration = (Math.random() * 8 + 5) + 's';
-        p.style.animationDelay = (Math.random() * 5) + 's';
-        p.style.opacity = Math.random() * 0.5 + 0.2;
-        if (Math.random() > 0.7) p.style.background = '#fff';
-        container.appendChild(p);
-    }
-})();
+// NATURE WORLD — Floating leaves/particles
+(function(){
+  var cv=document.getElementById('fxC'),x=cv.getContext('2d'),W,H,dpr=devicePixelRatio||1;
+  function rs(){W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0)}
+  addEventListener('resize',rs);rs();
+  var pts=[];for(var i=0;i<20;i++)pts.push({x:Math.random()*W,y:Math.random()*H,s:2+Math.random()*3,vx:.2+Math.random()*.3,vy:.5+Math.random(),ph:Math.random()*6.28});
+  function f(){x.clearRect(0,0,W,H);
+    pts.forEach(function(p){p.ph+=.02;p.x+=p.vx+Math.sin(p.ph)*.5;p.y+=p.vy;
+      if(p.y>H+10){p.y=-10;p.x=Math.random()*W}if(p.x>W+10)p.x=-10;
+      x.beginPath();x.arc(p.x,p.y,p.s,0,6.28);x.fillStyle='rgba(16,185,129,.15)';x.fill();
+      x.beginPath();x.arc(p.x,p.y,p.s*3,0,6.28);x.fillStyle='rgba(16,185,129,.03)';x.fill()});
+    requestAnimationFrame(f)}f()})();
 </script>
 </body>
 </html>
