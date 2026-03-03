@@ -1,398 +1,309 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nexus Tower</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>InvertProfit — Mapa de Niveles</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
 <style>
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --bg:#080b14;--surface:#0d1117;--border:rgba(56,189,248,.12);
-    --text:#e2e8f0;--muted:#64748b;--cyan:#22d3ee;--green:#4ade80;
-    --purple:#a78bfa;--orange:#fb923c;
-    --font-display:'Segoe UI',system-ui,sans-serif;
-  }
-  html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--font-display)}
-  
-  .page{max-width:1400px;margin:0 auto;padding:2rem}
-  .page h1{font-size:1.875rem;font-weight:700;letter-spacing:.08em;
-    text-shadow:0 0 14px rgba(34,211,238,.3)}
-  .page .subtitle{font-size:.8rem;letter-spacing:.15em;color:var(--muted);margin-top:.25rem}
-  .header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1rem}
-  .header-actions{display:flex;gap:.5rem;align-items:center}
-  .zoom-label{font-size:10px;color:rgba(100,116,139,.6);margin-right:.5rem}
-  .icon-btn{width:36px;height:36px;display:flex;align-items:center;justify-content:center;
-    border-radius:8px;border:1px solid rgba(100,116,139,.3);background:transparent;
-    color:var(--muted);cursor:pointer;transition:color .2s}
-  .icon-btn:hover{color:var(--text)}
-
-  .main{display:flex;gap:1.5rem}
-
-  /* Viewport */
-  .viewport{flex:7;min-width:0;height:680px;position:relative;overflow:hidden;
-    border-radius:12px;border:1px solid rgba(56,189,248,.1);background:#060810;
-    cursor:grab;user-select:none}
-  .viewport.panning{cursor:grabbing}
-
-  /* World */
-  .world{position:absolute;left:0;top:0;transform-origin:0 0;will-change:transform}
-  .world img{display:block;width:100%;height:100%;pointer-events:none;-webkit-user-drag:none}
-  .vignette{position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(ellipse at 50% 50%,transparent 40%,rgba(6,8,16,.5) 100%)}
-
-  /* SVG layer */
-  .connections{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
-
-  /* Node */
-  .node{position:absolute;display:flex;flex-direction:column;align-items:center;
-    transform:translate(-50%,-50%);z-index:10;border:none;background:none;
-    cursor:pointer;padding:0;outline:none;touch-action:none}
-  .node.locked{opacity:.4;cursor:default}
-  .node .glow{position:absolute;width:64px;height:64px;top:-8px;left:-8px;border-radius:50%;
-    background:radial-gradient(circle,rgba(34,211,238,.1),transparent 70%);filter:blur(6px);z-index:-1}
-  .node.selected .glow{background:radial-gradient(circle,rgba(34,211,238,.3),transparent 70%)}
-  .node.locked .glow{display:none}
-  .hex{width:48px;height:48px;display:flex;align-items:center;justify-content:center;
-    clip-path:polygon(50% 0%,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);transition:transform .2s,filter .2s}
-  .hex-inner{width:42px;height:42px;display:flex;align-items:center;justify-content:center;
-    clip-path:polygon(50% 0%,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%)}
-  .node.locked .hex{background:linear-gradient(135deg,hsl(220 15% 18%),hsl(220 15% 12%))}
-  .node.locked .hex-inner{background:hsl(220 15% 8%)}
-  .node.completed .hex{background:linear-gradient(135deg,hsl(190 40% 25%),hsl(220 30% 18%))}
-  .node.completed .hex-inner{background:hsl(220 25% 10%)}
-  .node.unlocked .hex{background:linear-gradient(135deg,hsl(190 80% 35%),hsl(270 70% 40%));
-    filter:drop-shadow(0 0 5px rgba(34,211,238,.4))}
-  .node.unlocked .hex-inner{background:hsl(220 30% 8%)}
-  .node.selected .hex{transform:scale(1.15);filter:drop-shadow(0 0 8px rgba(34,211,238,.7))}
-  .hex-inner svg{width:18px;height:18px}
-  .node-label{margin-top:2px;font-size:9px;font-weight:700;letter-spacing:.05em;white-space:nowrap;
-    text-align:center;text-shadow:0 0 5px rgba(34,211,238,.4),0 1px 3px rgba(0,0,0,.9)}
-  .node.locked .node-label{color:hsl(220 10% 30%);text-shadow:0 1px 2px rgba(0,0,0,.5)}
-
-  /* Panel */
-  .panel{width:320px;flex-shrink:0;border-radius:12px;align-self:flex-start;position:sticky;top:2rem;
-    border:1px solid rgba(56,189,248,.1);background:linear-gradient(180deg,hsl(220 28% 9%),hsl(220 25% 7%))}
-  .panel-empty{padding:1.5rem;display:flex;flex-direction:column;align-items:center;
-    justify-content:center;min-height:280px;text-align:center;color:var(--muted)}
-  .panel-empty .icon-circle{width:56px;height:56px;border-radius:50%;display:flex;
-    align-items:center;justify-content:center;background:hsl(220 20% 12%);margin-bottom:.75rem}
-  .panel-content{padding:1.5rem}
-  .panel-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1rem}
-  .panel-hex{width:48px;height:48px;display:flex;align-items:center;justify-content:center;
-    clip-path:polygon(50% 0%,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);
-    background:linear-gradient(135deg,hsl(190 80% 30%),hsl(270 70% 35%))}
-  .panel-hex-inner{width:40px;height:40px;display:flex;align-items:center;justify-content:center;
-    clip-path:polygon(50% 0%,93% 25%,93% 75%,50% 100%,7% 75%,7% 25%);background:hsl(220 30% 8%)}
-  .panel-hex-inner svg{width:20px;height:20px;color:var(--cyan)}
-  .panel-title{font-size:1rem;font-weight:700;letter-spacing:.04em;
-    text-shadow:0 0 8px rgba(34,211,238,.3)}
-  .panel-badge{display:inline-block;font-size:.7rem;font-weight:600;padding:.125rem .5rem;
-    border-radius:9999px;margin-top:.25rem}
-  .panel-badge.completed{background:rgba(74,222,128,.15);color:#4ade80;border:1px solid rgba(74,222,128,.3)}
-  .panel-badge.unlocked{background:rgba(34,211,238,.15);color:#67e8f9;border:1px solid rgba(34,211,238,.3)}
-  .panel-desc{font-size:.875rem;color:var(--muted);line-height:1.6;margin-bottom:1.25rem}
-  .panel-btn{width:100%;padding:.625rem 0;border-radius:8px;border:none;font-size:.875rem;
-    font-weight:700;letter-spacing:.08em;color:#fff;cursor:pointer;
-    box-shadow:0 0 16px rgba(34,211,238,.25)}
-  .panel-btn.completed{background:linear-gradient(135deg,hsl(140 60% 35%),hsl(160 50% 30%))}
-  .panel-btn.unlocked{background:linear-gradient(135deg,hsl(190 100% 45%),hsl(270 80% 50%))}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:'Segoe UI',system-ui,sans-serif;background:#000}
+.map{position:fixed;inset:0;width:100vw;height:100vh;background:url('/images/NivelesPortada.jpg') 50% 45%/cover no-repeat;overflow:hidden}
+.map::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 50%,rgba(0,0,0,.35) 100%);pointer-events:none}
+#world{position:absolute;inset:0;width:100%;height:100%;transform-origin:0 0;transition:transform .6s cubic-bezier(.25,.8,.25,1);pointer-events:none}
+#world>*{pointer-events:auto}
+@media(prefers-reduced-motion:reduce){#world{transition:none!important}.node .ring{animation:none!important}.warp-overlay{transition:none!important}}
+.connections{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:2}
+.warp-overlay{position:fixed;inset:0;z-index:9000;pointer-events:none;background:radial-gradient(circle at var(--wx,50%) var(--wy,50%),rgba(56,189,248,.3) 0%,rgba(139,92,246,.2) 30%,rgba(0,0,0,.7) 100%);opacity:0;transition:opacity .3s ease;backdrop-filter:blur(0px)}
+.warp-overlay.active{opacity:1;backdrop-filter:blur(8px)}
+.btn-back{position:fixed;top:20px;left:20px;z-index:9999;display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;border:1px solid rgba(56,189,248,.15);background:rgba(10,14,24,.7);backdrop-filter:blur(16px);color:#e2e8f0;font-size:13px;font-weight:600;letter-spacing:.04em;cursor:pointer;transition:background .2s,border-color .2s;text-decoration:none}
+.btn-back:hover{background:rgba(10,14,24,.9);border-color:rgba(56,189,248,.3)}
+.btn-back svg{width:16px;height:16px}
+.world-banner{position:fixed;top:16px;left:50%;transform:translateX(-50%);z-index:9998;padding:8px 24px;border-radius:12px;background:rgba(10,14,24,.8);backdrop-filter:blur(16px);border:1px solid rgba(212,175,55,.25);text-align:center}
+.world-banner .world-name{font-size:15px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#D4AF37;text-shadow:0 0 12px rgba(212,175,55,.3)}
+.world-banner .world-sub{font-size:10px;color:rgba(255,255,255,.45);font-weight:600;letter-spacing:.06em;margin-top:2px}
+.node{position:absolute;display:flex;flex-direction:column;align-items:center;transform:translate(-50%,-50%);z-index:10;border:none;background:none;padding:0;outline:none;cursor:pointer}
+.node.locked{cursor:not-allowed}
+.node .ring{width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:transform .25s,box-shadow .25s}
+.node.completed .ring{background:linear-gradient(135deg,hsl(140 70% 30%),hsl(160 60% 25%));box-shadow:0 0 12px rgba(74,222,128,.4),0 0 24px rgba(74,222,128,.15)}
+.node.active .ring{background:linear-gradient(135deg,hsl(190 90% 40%),hsl(270 70% 45%));box-shadow:0 0 14px rgba(34,211,238,.5),0 0 28px rgba(167,139,250,.25);animation:pulse 2.2s ease-in-out infinite}
+.node.locked .ring{background:linear-gradient(135deg,hsl(220 15% 22%),hsl(220 15% 16%));box-shadow:0 0 6px rgba(0,0,0,.3)}
+.node.boss .ring{width:64px;height:64px}
+.node.boss.active .ring{background:linear-gradient(135deg,hsl(35 90% 45%),hsl(15 80% 40%));box-shadow:0 0 20px rgba(245,158,11,.5),0 0 40px rgba(245,158,11,.2);animation:pulseBoss 2s ease-in-out infinite}
+.node.boss.completed .ring{background:linear-gradient(135deg,hsl(45 80% 40%),hsl(35 70% 30%));box-shadow:0 0 12px rgba(212,175,55,.5)}
+@keyframes pulse{0%,100%{box-shadow:0 0 14px rgba(34,211,238,.5),0 0 28px rgba(167,139,250,.25)}50%{box-shadow:0 0 22px rgba(34,211,238,.7),0 0 40px rgba(167,139,250,.35)}}
+@keyframes pulseBoss{0%,100%{box-shadow:0 0 20px rgba(245,158,11,.5),0 0 40px rgba(245,158,11,.2)}50%{box-shadow:0 0 35px rgba(245,158,11,.8),0 0 60px rgba(245,158,11,.3)}}
+@keyframes zoomPulse{0%{box-shadow:0 0 14px rgba(34,211,238,.5),0 0 28px rgba(167,139,250,.25);transform:scale(1)}50%{box-shadow:0 0 40px rgba(34,211,238,.9),0 0 80px rgba(167,139,250,.5);transform:scale(1.2)}100%{box-shadow:0 0 60px rgba(255,255,255,.8),0 0 100px rgba(34,211,238,.6);transform:scale(1.15)}}
+.node.zooming .ring{animation:zoomPulse .6s ease-out forwards!important}
+.node .inner{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:hsl(220 30% 8%)}
+.node.boss .inner{width:52px;height:52px}
+.node .inner svg{width:20px;height:20px}
+.node.boss .inner svg{width:24px;height:24px}
+.node:hover:not(.locked) .ring{transform:scale(1.12)}
+.node .lvl-num{position:absolute;top:-6px;right:-6px;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;z-index:11}
+.node.completed .lvl-num{background:hsl(140 70% 35%)}
+.node.active .lvl-num{background:hsl(190 90% 42%)}
+.node.locked .lvl-num{background:hsl(220 15% 25%);color:hsl(220 10% 45%)}
+.node.boss .lvl-num{background:hsl(35 90% 45%);width:22px;height:22px;font-size:10px}
+.node-label{margin-top:4px;font-size:9px;font-weight:700;letter-spacing:.04em;white-space:nowrap;text-align:center;color:#e2e8f0;max-width:90px;overflow:hidden;text-overflow:ellipsis;text-shadow:0 0 6px rgba(0,0,0,.9),0 0 12px rgba(0,0,0,.6)}
+.node.locked .node-label{color:hsl(220 10% 35%)}
+.node-xp{font-size:8px;font-weight:700;color:rgba(212,175,55,.7);margin-top:1px;text-shadow:0 0 4px rgba(0,0,0,.8)}
+.node.locked .node-xp{color:hsl(220 10% 30%)}
+.tooltip{position:fixed;z-index:200;padding:8px 14px;border-radius:8px;background:rgba(10,14,24,.9);backdrop-filter:blur(12px);border:1px solid rgba(251,146,60,.3);color:#fb923c;font-size:12px;font-weight:600;letter-spacing:.04em;pointer-events:none;opacity:0;transition:opacity .2s;white-space:nowrap}
+.tooltip.show{opacity:1}
+.hud{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:100;display:flex;gap:4px;align-items:center;padding:8px 16px;border-radius:12px;background:rgba(10,14,24,.7);backdrop-filter:blur(16px);border:1px solid rgba(56,189,248,.1);flex-wrap:wrap;justify-content:center;max-width:90vw}
+.hud-label{font-size:10px;color:hsl(200 20% 55%);letter-spacing:.08em;font-weight:600;margin-right:4px}
+.hud-progress{display:flex;gap:3px;flex-wrap:wrap}
+.hud-dot{width:8px;height:8px;border-radius:50%;border:1.5px solid hsl(220 15% 25%);background:transparent;transition:all .3s}
+.hud-dot.done{background:hsl(140 70% 40%);border-color:hsl(140 70% 40%)}
+.hud-dot.current{background:hsl(190 90% 50%);border-color:hsl(190 90% 50%);box-shadow:0 0 6px rgba(34,211,238,.6)}
+.hud-dot.boss-dot{width:10px;height:10px;border-radius:3px}
 </style>
 </head>
 <body>
+<script src="auth.js"></script>
+<script src="curriculum.js"></script>
 
-<div class="page">
-  <div class="header">
-    <div>
-      <h1>Nexus Tower</h1>
-      <p class="subtitle">VERTICAL PROGRESS MAP</p>
-    </div>
-    <div class="header-actions">
-      <span class="zoom-label" id="zoomLabel">100%</span>
-      <button class="icon-btn" id="resetBtn" title="Reset view">↺</button>
-    </div>
-  </div>
+<a class="btn-back" href="portadanivelesacademia.html">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+  Volver
+</a>
 
-  <div class="main">
-    <div class="viewport" id="viewport">
-      <div class="world" id="world">
-        <!-- BG image -->
-        <img src="nexus-tower-bg.png" alt="" id="bgImg" draggable="false">
-        <div class="vignette"></div>
-        <!-- SVG connections injected here -->
-        <svg class="connections" id="svgLayer" viewBox="0 0 100 100" preserveAspectRatio="none">
-          <defs>
-            <filter id="gl" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="0.5" result="b1"/>
-              <feGaussianBlur stdDeviation="1.2" result="b2"/>
-              <feMerge><feMergeNode in="b2"/><feMergeNode in="b1"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-            <filter id="gla" x="-50%" y="-50%" width="200%" height="200%">
-              <feGaussianBlur stdDeviation="0.8" result="b1"/>
-              <feGaussianBlur stdDeviation="1.8" result="b2"/>
-              <feMerge><feMergeNode in="b2"/><feMergeNode in="b2"/><feMergeNode in="b1"/><feMergeNode in="SourceGraphic"/></feMerge>
-            </filter>
-          </defs>
-          <g id="connGroup"></g>
-        </svg>
-        <!-- Nodes injected here -->
-        <div id="nodesLayer"></div>
-      </div>
-    </div>
+<div class="world-banner" id="worldBanner">
+  <div class="world-name" id="worldName">—</div>
+  <div class="world-sub" id="worldSub">—</div>
+</div>
 
-    <aside class="panel" id="panel">
-      <div class="panel-empty" id="panelEmpty">
-        <div class="icon-circle">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--muted)"><path d="m8 3 4 8 5-5 2 15H2L8 3z"/></svg>
-        </div>
-        <p>Select a node to view details</p>
-      </div>
-      <div class="panel-content" id="panelContent" style="display:none"></div>
-    </aside>
+<div class="map" id="map">
+  <div id="world">
+    <svg class="connections" id="svgLayer" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <defs>
+        <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur stdDeviation="0.4" result="b"/>
+          <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+        </filter>
+      </defs>
+      <g id="connGroup"></g>
+    </svg>
+    <div id="nodesLayer"></div>
   </div>
 </div>
 
-<script>
-// ============ CONFIG ============
-const CURRENT_LEVEL = 4;
-const ZOOM_MIN = 0.7;
-const ZOOM_MAX = 3.5;
+<div class="warp-overlay" id="warpOverlay"></div>
+<div class="tooltip" id="tooltip">🔒 Bloqueado — completa el nivel anterior</div>
+<div class="hud" id="hud">
+  <span class="hud-label">PROGRESO</span>
+  <div class="hud-progress" id="hudProgress"></div>
+</div>
 
-// SVG icon paths (inline)
-const ICONS = {
-  flame: '<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14 0-5.5 3-7-.5 1.5 0 2.5 1 3.5 1 1 2 2 2 4a4.5 4.5 0 0 1-9 0Z"/>',
-  database: '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/>',
-  cpu: '<rect width="16" height="16" x="4" y="4" rx="2"/><rect width="6" height="6" x="9" y="9"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/>',
-  chart: '<line x1="12" x2="12" y1="20" y2="10"/><line x1="18" x2="18" y1="20" y2="4"/><line x1="6" x2="6" y1="20" y2="16"/>',
-  network: '<rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3M12 12V8"/>',
-  mountain: '<path d="m8 3 4 8 5-5 2 15H2L8 3z"/>',
-  wallet: '<path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>',
-  globe: '<circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/>',
-  lock: '<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
-  check: '<path d="M20 6 9 17l-5-5"/>',
+<script>
+// ═══════════════════════════════════════
+// READ WORLD FROM URL
+// ═══════════════════════════════════════
+var params = new URLSearchParams(window.location.search);
+var WORLD_ID = parseInt(params.get('world')) || 1;
+
+// ═══════════════════════════════════════
+// WORLD METADATA & LEVEL DATA
+// ═══════════════════════════════════════
+var WORLD_META = {
+  1:{name:'Génesis',sub:'Fundamentos del trading',emoji:'⚒️'},
+  2:{name:'Cartografía',sub:'El lenguaje del precio',emoji:'🗺️'},
+  3:{name:'Anatomía',sub:'Psicología del trader',emoji:'🔬'},
+  4:{name:'Sincronía',sub:'Algoritmos e IA',emoji:'🤖'},
+  5:{name:'Estrategia',sub:'Tablero geopolítico',emoji:'♟️'},
+  6:{name:'Soberanía',sub:'Tu templo financiero',emoji:'🏛️'},
+  7:{name:'Legado',sub:'The Apex — Meta final',emoji:'🏔️'}
 };
 
+var LEVEL_DATA = {
+  1:[{n:1,t:"¿Qué es Invertir?",d:"Tu primer paso hacia tu libertad financiera.",xp:150},{n:2,t:"Tipos de Activos",d:"Acciones, forex, crypto, commodities.",xp:150},{n:3,t:"Tu Primera Cuenta",d:"Crea tu cuenta de broker paso a paso.",xp:150},{n:4,t:"Leer un Gráfico",d:"Entiende los ejes, el tiempo y el precio.",xp:150},{n:5,t:"Velas Japonesas",d:"El lenguaje visual del mercado.",xp:200},{n:6,t:"⚡ BOSS: Primera Op",d:"Ejecuta tu primera operación real.",xp:350,boss:"BOSS"},{n:7,t:"Soportes y Resistencias",d:"Los muros invisibles del precio.",xp:150},{n:8,t:"Tendencias",d:"Alcista, bajista, lateral.",xp:150},{n:9,t:"Gestión de Riesgo",d:"Protege tu capital desde el día 1.",xp:150},{n:10,t:"🏆 FINAL",d:"Examen Principiante.",xp:500,boss:"FINAL"}],
+  2:[{n:11,t:"Patrones de Velas",d:"Doji, martillo, estrella fugaz.",xp:200},{n:12,t:"Fibonacci",d:"Retrocesos y niveles áureos.",xp:200},{n:13,t:"RSI & MACD",d:"Divergencias y señales.",xp:200},{n:14,t:"Oferta y Demanda",d:"Las zonas de los grandes players.",xp:200},{n:15,t:"Stop Loss Pro",d:"El arte del stop loss estratégico.",xp:200},{n:16,t:"⚡ BOSS: Multi-TF",d:"Analiza en 4 timeframes.",xp:400,boss:"BOSS"},{n:17,t:"Estructura de Mercado",d:"BOS, CHoCH. Lenguaje institucional.",xp:200},{n:18,t:"Order Blocks",d:"Órdenes masivas institucionales.",xp:200},{n:19,t:"Liquidez",d:"Dónde está el dinero.",xp:200},{n:20,t:"Riesgo Avanzado",d:"R:R, position sizing, correlación.",xp:200},{n:21,t:"Backtesting",d:"Tu diario de trading.",xp:200},{n:22,t:"🏆 FINAL",d:"Examen Intermedio.",xp:600,boss:"FINAL"}],
+  3:[{n:23,t:"Smart Money",d:"El dinero inteligente.",xp:300},{n:24,t:"ICT Power of 3",d:"Acumulación, manipulación, distribución.",xp:300},{n:25,t:"Order Flow",d:"El flujo real de órdenes.",xp:300},{n:26,t:"Wyckoff Method",d:"El método de los institucionales.",xp:300},{n:27,t:"Breaker Blocks",d:"Zonas de reversión institucional.",xp:300},{n:28,t:"⚡ BOSS: Lectura",d:"Lee el mercado como institucional.",xp:500,boss:"BOSS"},{n:29,t:"Algo Trading Intro",d:"Automatiza tu operativa.",xp:300},{n:30,t:"Correlaciones Macro",d:"Conexión entre mercados.",xp:300},{n:31,t:"Portafolio Pro",d:"Diversificación avanzada.",xp:300},{n:32,t:"Psicología",d:"Domina tu mente.",xp:300},{n:33,t:"Plan Institucional",d:"Tu plan como hedge fund.",xp:300},{n:34,t:"🏆 FINAL",d:"El Gran Examen.",xp:800,boss:"FINAL"}],
+  4:[{n:35,t:"Intro a IA Trading",d:"Algoritmos que operan por ti.",xp:200},{n:36,t:"APIs de Mercado",d:"Conecta datos en tiempo real.",xp:250},{n:37,t:"Python para Traders",d:"Tu primera herramienta de código.",xp:200},{n:38,t:"Backtesting Auto",d:"Testea estrategias con datos.",xp:200},{n:39,t:"Indicadores Custom",d:"Crea tus propias señales.",xp:200},{n:40,t:"Alertas Inteligentes",d:"Notificaciones que importan.",xp:250},{n:41,t:"Bots Básicos",d:"Tu primer bot de trading.",xp:200},{n:42,t:"Machine Learning I",d:"Predicción con datos.",xp:250},{n:43,t:"Sentiment Analysis",d:"NLP aplicado al mercado.",xp:250},{n:44,t:"Risk Management Auto",d:"Stop-loss dinámicos.",xp:200},{n:45,t:"Data Pipelines",d:"ETL financiero.",xp:200},{n:46,t:"Portfolio Rebalancing",d:"Rebalanceo automático.",xp:200},{n:47,t:"HFT Concepts",d:"Trading de alta frecuencia.",xp:200},{n:48,t:"Cloud Trading",d:"Infraestructura en la nube.",xp:200},{n:49,t:"⚡ BOSS: Bot Live",d:"Despliega un bot en vivo.",xp:500,boss:"BOSS"}],
+  5:[{n:50,t:"Macroeconomía",d:"El sol del sistema.",xp:200},{n:51,t:"Ciclo de Deuda",d:"Ray Dalio decodificado.",xp:250},{n:52,t:"FED y Tasas",d:"La herramienta más poderosa.",xp:200},{n:53,t:"Inflación",d:"IPC y deflación.",xp:200},{n:54,t:"DXY",d:"El rey de las divisas.",xp:200},{n:55,t:"Geopolítica",d:"Guerras y commodities.",xp:250},{n:56,t:"Bonos",d:"Renta fija.",xp:200},{n:57,t:"Opciones I",d:"Calls, Puts, primas.",xp:250},{n:58,t:"Futuros",d:"Contratos billonarios.",xp:250},{n:59,t:"Psicología 1%",d:"Dominio del ego.",xp:200},{n:60,t:"Sesgos Cognitivos",d:"El enemigo interno.",xp:200},{n:61,t:"Bio-Hacking",d:"El cuerpo del trader.",xp:200},{n:62,t:"Fiscal",d:"Planificación fiscal.",xp:200},{n:63,t:"Real Estate",d:"Diversificación real.",xp:200},{n:64,t:"⚡ BOSS: Tesis Macro",d:"Tesis macroeconómica.",xp:500,boss:"BOSS"}],
+  6:[{n:65,t:"SMC Concepts",d:"Dinero inteligente.",xp:200},{n:66,t:"Liquidez Int/Ext",d:"Pools de liquidez.",xp:250},{n:67,t:"Order Blocks",d:"Zonas bancarias.",xp:250},{n:68,t:"FVG",d:"Fair Value Gaps.",xp:250},{n:69,t:"BOS & ChoCh",d:"Confirmaciones reales.",xp:250},{n:70,t:"Wyckoff Acum",d:"Esquema acumulación.",xp:250},{n:71,t:"Wyckoff Dist",d:"Esquema distribución.",xp:250},{n:72,t:"Killzones",d:"London y NY Open.",xp:200},{n:73,t:"Modelo Institucional",d:"Framework completo.",xp:300},{n:74,t:"Multi-temporal",d:"HTF a LTF sniper.",xp:250},{n:75,t:"Mitigación",d:"Re-entrada precisa.",xp:250},{n:76,t:"Manipulación",d:"Captura de liquidez.",xp:250},{n:77,t:"R:R 1:5+",d:"Ratios extremos.",xp:250},{n:78,t:"Backtesting SMC",d:"Datos históricos.",xp:200},{n:79,t:"⚡ BOSS: Cacería",d:"Operación SMC completa.",xp:500,boss:"BOSS"}],
+  7:[{n:80,t:"Estadística",d:"Esperanza matemática.",xp:250},{n:81,t:"Teoría de Juegos",d:"Nash y más.",xp:250},{n:82,t:"Ingeniería Riesgo",d:"Gestión de drawdown.",xp:300},{n:83,t:"Bots & Algos",d:"Automatiza tu trading.",xp:300},{n:84,t:"Portafolios Quant",d:"Sharpe, Sortino.",xp:300},{n:85,t:"Correlación Beta",d:"Intermercado.",xp:250},{n:86,t:"Plan Retiro",d:"Libertad financiera.",xp:250},{n:87,t:"100 Operaciones",d:"Historial real.",xp:500},{n:88,t:"Ética & Legado",d:"Filosofía de vida.",xp:250},{n:89,t:"🏆 GRADUACIÓN",d:"Certificación Grand Master.",xp:1000,boss:"FINAL"}]
+};
+
+// ═══════════════════════════════════════
+// CONFIG
+// ═══════════════════════════════════════
+var isNavigating = false;
+var meta = WORLD_META[WORLD_ID] || WORLD_META[1];
+var worldLevels = LEVEL_DATA[WORLD_ID] || LEVEL_DATA[1];
+
+document.title = 'InvertProfit — ' + meta.name;
+document.getElementById('worldName').textContent = meta.emoji + ' ' + meta.name;
+document.getElementById('worldSub').textContent = meta.sub + ' · ' + worldLevels.length + ' niveles';
+
+// ═══════════════════════════════════════
+// GENERATE NODE POSITIONS (zigzag path bottom→top)
+// ═══════════════════════════════════════
+function generatePositions(count) {
+  var positions = [];
+  var yStart = 90, yEnd = 10;
+  var yStep = (yStart - yEnd) / Math.max(count - 1, 1);
+  for (var i = 0; i < count; i++) {
+    var y = yStart - (i * yStep);
+    var xBase = (i % 2 === 0) ? 42 : 58;
+    var xVar = Math.sin(i * 1.3) * 6;
+    positions.push({ x: Math.round(xBase + xVar), y: Math.round(y) });
+  }
+  return positions;
+}
+
+var positions = generatePositions(worldLevels.length);
+
+var levels = worldLevels.map(function(lv, i) {
+  return {
+    id: i + 1, levelNum: lv.n, title: lv.t, desc: lv.d, xp: lv.xp,
+    boss: lv.boss || null, x: positions[i].x, y: positions[i].y,
+    href: 'leccion.html?world=' + WORLD_ID + '&level=' + lv.n
+  };
+});
+
+var connections = [];
+for (var i = 1; i < levels.length; i++) connections.push({ from: i, to: i + 1 });
+
+// ═══════════════════════════════════════
+// ICONS
+// ═══════════════════════════════════════
+var ICONS = {
+  flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14 0-5.5 3-7-.5 1.5 0 2.5 1 3.5 1 1 2 2 2 4a4.5 4.5 0 0 1-9 0Z"/>',
+  book:'<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20"/><path d="M8 7h6"/>',
+  target:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  zap:'<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+  trophy:'<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>',
+  lock:'<rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  check:'<path d="M20 6 9 17l-5-5"/>'
+};
 function svgIcon(name, color) {
-  return `<svg viewBox="0 0 24 24" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[name]}</svg>`;
+  return '<svg viewBox="0 0 24 24" fill="none" stroke="'+color+'" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'+(ICONS[name]||ICONS.book)+'</svg>';
+}
+function getLevelIcon(idx, total) {
+  if (idx === total - 1) return 'trophy';
+  if (idx % 5 === 0) return 'flame';
+  if (idx % 3 === 0) return 'target';
+  return 'book';
 }
 
-const levels = [
-  { id:1, title:"Stage 1: Forge", desc:"Ignite the foundational systems. Begin smelting raw potential into structured power.", x:50, y:90, icon:"flame" },
-  { id:2, title:"Stage 1: Forge", desc:"Reinforce the forge. Secondary ignition chamber online.", x:25, y:82, icon:"flame" },
-  { id:3, title:"Resource Acquisition", desc:"Harvest critical resources from the surrounding sectors.", x:50, y:74, icon:"database" },
-  { id:4, title:"Processing Unit", desc:"Activate the processing core. Transform raw data into intelligence.", x:75, y:64, icon:"cpu" },
-  { id:5, title:"Stage 2: Core", desc:"The central nexus awakens. All subsystems converge here.", x:50, y:56, icon:"chart" },
-  { id:6, title:"Network Integration", desc:"Establish inter-node communication channels.", x:25, y:48, icon:"network" },
-  { id:7, title:"Data Optimization", desc:"Refine algorithms and streamline data flow.", x:50, y:42, icon:"chart" },
-  { id:8, title:"Stage 3: Summit", desc:"Breach the upper atmosphere. Summit protocols accessible.", x:75, y:33, icon:"mountain" },
-  { id:9, title:"Wealth Management", desc:"Deploy financial matrices. Control digital assets.", x:50, y:26, icon:"wallet" },
-  { id:10, title:"Global Dominance", desc:"Achieve total network sovereignty. The Nexus Tower is yours.", x:25, y:18, icon:"globe" },
-];
+// ═══════════════════════════════════════
+// STATUS
+// ═══════════════════════════════════════
+function getStatus(levelNum) { return CURRICULUM.getLevelStatus(levelNum); }
 
-const connections = [
-  { from:1, to:2, color:"hsl(30,100%,55%)" },
-  { from:1, to:3, color:"hsl(30,100%,55%)" },
-  { from:2, to:3, color:"hsl(30,100%,55%)" },
-  { from:3, to:4, color:"hsl(140,80%,50%)" },
-  { from:3, to:5, color:"hsl(190,100%,55%)" },
-  { from:4, to:5, color:"hsl(190,100%,55%)" },
-  { from:5, to:6, color:"hsl(270,80%,60%)" },
-  { from:5, to:7, color:"hsl(190,100%,55%)" },
-  { from:6, to:7, color:"hsl(270,80%,60%)" },
-  { from:7, to:8, color:"hsl(140,80%,50%)" },
-  { from:7, to:9, color:"hsl(190,100%,55%)" },
-  { from:8, to:9, color:"hsl(140,80%,50%)" },
-  { from:9, to:10, color:"hsl(270,80%,60%)" },
-];
+// ═══════════════════════════════════════
+// ZOOM + WARP
+// ═══════════════════════════════════════
+var worldEl = document.getElementById('world');
+var warpOverlay = document.getElementById('warpOverlay');
+var reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-function getStatus(id) {
-  if (id < CURRENT_LEVEL) return "completed";
-  if (id === CURRENT_LEVEL) return "unlocked";
-  return "locked";
+function navigateToLevel(level, btnEl) {
+  if (isNavigating) return;
+  isNavigating = true;
+  if (reducedMotion) { window.location.href = level.href; return; }
+  btnEl.classList.add('zooming');
+  var vw = window.innerWidth, vh = window.innerHeight;
+  var nodeX = (level.x / 100) * vw, nodeY = (level.y / 100) * vh;
+  var scale = 2.2;
+  worldEl.style.transform = 'translate(' + ((vw/2) - nodeX*scale) + 'px,' + ((vh/2) - nodeY*scale) + 'px) scale(' + scale + ')';
+  warpOverlay.style.setProperty('--wx', level.x + '%');
+  warpOverlay.style.setProperty('--wy', level.y + '%');
+  setTimeout(function() { warpOverlay.classList.add('active'); }, 350);
+  setTimeout(function() { window.location.href = level.href; }, 900);
 }
-const statusLabels = { completed:"Completed", unlocked:"Unlocked", locked:"Locked" };
 
-// ============ DOM ============
-const viewport = document.getElementById("viewport");
-const world = document.getElementById("world");
-const bgImg = document.getElementById("bgImg");
-const connGroup = document.getElementById("connGroup");
-const nodesLayer = document.getElementById("nodesLayer");
-const panelEmpty = document.getElementById("panelEmpty");
-const panelContent = document.getElementById("panelContent");
-const zoomLabel = document.getElementById("zoomLabel");
-const resetBtn = document.getElementById("resetBtn");
+// ═══════════════════════════════════════
+// DOM RENDERING
+// ═══════════════════════════════════════
+var connGroup = document.getElementById('connGroup');
+var nodesLayer = document.getElementById('nodesLayer');
+var tooltip = document.getElementById('tooltip');
+var hudProgress = document.getElementById('hudProgress');
 
-let zoom = 1, panX = 0, panY = 0;
-let imgW = 0, imgH = 0;
-let selected = null;
-let isPanning = false, panStartX = 0, panStartY = 0, panOrigX = 0, panOrigY = 0;
+function connColor(fi, ti) {
+  var sA = getStatus(levels[fi].levelNum), sB = getStatus(levels[ti].levelNum);
+  if (sA === 'completed' && sB === 'completed') return {color:'hsl(140,70%,45%)',opacity:'0.7',width:'0.5'};
+  if (sA !== 'locked' && sB !== 'locked') return {color:'hsl(190,100%,55%)',opacity:'0.5',width:'0.4'};
+  return {color:'hsl(220,15%,22%)',opacity:'0.15',width:'0.25'};
+}
 
-// ============ RENDER ============
 function renderConnections() {
-  connGroup.innerHTML = "";
-  connections.forEach((conn, i) => {
-    const a = levels[conn.from - 1], b = levels[conn.to - 1];
-    const bothOk = getStatus(conn.from) !== "locked" && getStatus(conn.to) !== "locked";
-    const isActive = selected !== null && conn.from <= selected && conn.to <= selected;
-    const locked = !bothOk;
-
-    // Outer glow line
-    const l1 = document.createElementNS("http://www.w3.org/2000/svg","line");
-    l1.setAttribute("x1", a.x); l1.setAttribute("y1", a.y);
-    l1.setAttribute("x2", b.x); l1.setAttribute("y2", b.y);
-    l1.setAttribute("stroke", locked ? "hsl(220,15%,20%)" : conn.color);
-    l1.setAttribute("stroke-width", isActive ? "1" : bothOk ? "0.6" : "0.2");
-    l1.setAttribute("stroke-opacity", isActive ? "0.5" : bothOk ? "0.25" : "0.1");
-    if (isActive) l1.setAttribute("filter", "url(#gla)");
-    else if (bothOk) l1.setAttribute("filter", "url(#gl)");
+  connGroup.innerHTML = '';
+  connections.forEach(function(c) {
+    var a = levels[c.from-1], b = levels[c.to-1], style = connColor(c.from-1, c.to-1);
+    var l1 = document.createElementNS('http://www.w3.org/2000/svg','line');
+    l1.setAttribute('x1',a.x);l1.setAttribute('y1',a.y);l1.setAttribute('x2',b.x);l1.setAttribute('y2',b.y);
+    l1.setAttribute('stroke',style.color);l1.setAttribute('stroke-width',String(parseFloat(style.width)*2.5));
+    l1.setAttribute('stroke-opacity',String(parseFloat(style.opacity)*0.4));l1.setAttribute('filter','url(#glow)');
     connGroup.appendChild(l1);
-
-    // Core line
-    const l2 = document.createElementNS("http://www.w3.org/2000/svg","line");
-    l2.setAttribute("x1", a.x); l2.setAttribute("y1", a.y);
-    l2.setAttribute("x2", b.x); l2.setAttribute("y2", b.y);
-    l2.setAttribute("stroke", locked ? "hsl(220,15%,25%)" : conn.color);
-    l2.setAttribute("stroke-width", isActive ? "0.4" : "0.2");
-    l2.setAttribute("stroke-opacity", isActive ? "1" : bothOk ? "0.6" : "0.08");
+    var l2 = document.createElementNS('http://www.w3.org/2000/svg','line');
+    l2.setAttribute('x1',a.x);l2.setAttribute('y1',a.y);l2.setAttribute('x2',b.x);l2.setAttribute('y2',b.y);
+    l2.setAttribute('stroke',style.color);l2.setAttribute('stroke-width',style.width);l2.setAttribute('stroke-opacity',style.opacity);
     connGroup.appendChild(l2);
   });
 }
 
 function renderNodes() {
-  nodesLayer.innerHTML = "";
-  levels.forEach(level => {
-    const status = getStatus(level.id);
-    const isSelected = selected === level.id;
-    const btn = document.createElement("button");
-    btn.className = `node ${status}${isSelected ? " selected" : ""}`;
-    btn.style.left = level.x + "%";
-    btn.style.top = level.y + "%";
-    if (status === "locked") btn.disabled = true;
-
-    const iconName = status === "locked" ? "lock" : status === "completed" ? "check" : level.icon;
-    const iconColor = status === "locked" ? "hsl(220,10%,30%)" : status === "completed" ? "hsl(140,80%,50%)" : "hsl(190,100%,60%)";
-
-    btn.innerHTML = `
-      <div class="glow"></div>
-      <div class="hex"><div class="hex-inner">${svgIcon(iconName, iconColor)}</div></div>
-      <span class="node-label">${level.title}</span>
-    `;
-
-    btn.addEventListener("click", (e) => {
+  nodesLayer.innerHTML = '';
+  levels.forEach(function(level, idx) {
+    var status = getStatus(level.levelNum);
+    var isBoss = !!level.boss;
+    var btn = document.createElement('button');
+    btn.className = 'node ' + status + (isBoss ? ' boss' : '');
+    btn.style.left = level.x + '%'; btn.style.top = level.y + '%';
+    var iconName, iconColor;
+    if (status === 'locked') { iconName='lock'; iconColor='hsl(220,10%,35%)'; }
+    else if (status === 'completed') { iconName='check'; iconColor='hsl(140,80%,55%)'; }
+    else { iconName = isBoss ? 'zap' : getLevelIcon(idx, levels.length); iconColor = isBoss ? 'hsl(35,100%,65%)' : 'hsl(190,100%,65%)'; }
+    btn.innerHTML =
+      '<div class="ring"><div class="inner">' + svgIcon(iconName, iconColor) + '</div></div>' +
+      '<span class="lvl-num">' + (idx+1) + '</span>' +
+      '<span class="node-label">' + level.title + '</span>' +
+      '<span class="node-xp">' + level.xp + ' XP</span>';
+    btn.addEventListener('click', function(e) {
       e.stopPropagation();
-      if (status === "locked") return;
-      selected = level.id;
-      render();
+      if (status === 'locked') { showTooltip(e.clientX, e.clientY); return; }
+      navigateToLevel(level, btn);
     });
-
+    btn.addEventListener('mouseenter', function(e) { if (status === 'locked') showTooltip(e.clientX, e.clientY); });
+    btn.addEventListener('mouseleave', hideTooltip);
     nodesLayer.appendChild(btn);
   });
 }
 
-function renderPanel() {
-  if (selected === null) {
-    panelEmpty.style.display = "";
-    panelContent.style.display = "none";
-    return;
-  }
-  panelEmpty.style.display = "none";
-  panelContent.style.display = "";
-
-  const level = levels.find(l => l.id === selected);
-  const status = getStatus(level.id);
-  const iconColor = "hsl(190,100%,60%)";
-
-  panelContent.innerHTML = `
-    <div class="panel-header">
-      <div class="panel-hex"><div class="panel-hex-inner">${svgIcon(level.icon, iconColor)}</div></div>
-      <div>
-        <div class="panel-title">${level.title}</div>
-        <span class="panel-badge ${status}">${statusLabels[status]}</span>
-      </div>
-    </div>
-    <p class="panel-desc">${level.desc}</p>
-    <button class="panel-btn ${status}">${status === "completed" ? "Review" : "Start"}</button>
-  `;
+function renderHUD() {
+  hudProgress.innerHTML = '';
+  levels.forEach(function(level) {
+    var dot = document.createElement('div');
+    dot.className = 'hud-dot';
+    if (level.boss) dot.classList.add('boss-dot');
+    var s = getStatus(level.levelNum);
+    if (s === 'completed') dot.classList.add('done');
+    if (s === 'active') dot.classList.add('current');
+    hudProgress.appendChild(dot);
+  });
 }
 
-function applyTransform() {
-  world.style.width = imgW + "px";
-  world.style.height = imgH + "px";
-  world.style.transform = `translate(${panX}px,${panY}px) scale(${zoom})`;
-  zoomLabel.textContent = Math.round(zoom * 100) + "%";
-}
+// ═══════════════════════════════════════
+// TOOLTIP
+// ═══════════════════════════════════════
+var tooltipTimer;
+function showTooltip(x, y) { clearTimeout(tooltipTimer); tooltip.style.left=(x+14)+'px'; tooltip.style.top=(y-36)+'px'; tooltip.classList.add('show'); tooltipTimer=setTimeout(hideTooltip,2000); }
+function hideTooltip() { tooltip.classList.remove('show'); }
 
-function render() {
+// ═══════════════════════════════════════
+// SECURITY + INIT
+// ═══════════════════════════════════════
+if (!CURRICULUM.isWorldUnlocked(WORLD_ID)) {
+  window.location.replace('portadanivelesacademia.html');
+} else {
   renderConnections();
   renderNodes();
-  renderPanel();
-  applyTransform();
+  renderHUD();
 }
-
-// ============ INIT ZOOM ============
-function initView() {
-  const vpW = viewport.clientWidth;
-  const vpH = viewport.clientHeight;
-  const fitH = vpH / imgH;
-  const fitMinW = (vpW * 0.75) / imgW;
-  zoom = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, Math.max(fitH, fitMinW)));
-  const scaledW = imgW * zoom;
-  const scaledH = imgH * zoom;
-  panX = (vpW - scaledW) / 2;
-  panY = scaledH <= vpH ? (vpH - scaledH) / 2 : 0;
-  render();
-}
-
-bgImg.addEventListener("load", () => {
-  imgW = bgImg.naturalWidth;
-  imgH = bgImg.naturalHeight;
-  initView();
-});
-// If cached
-if (bgImg.complete && bgImg.naturalWidth) {
-  imgW = bgImg.naturalWidth;
-  imgH = bgImg.naturalHeight;
-  initView();
-}
-
-resetBtn.addEventListener("click", initView);
-viewport.addEventListener("dblclick", initView);
-window.addEventListener("resize", initView);
-
-// ============ PAN ============
-viewport.addEventListener("pointerdown", (e) => {
-  if (e.target.closest(".node")) return;
-  isPanning = true;
-  viewport.classList.add("panning");
-  panStartX = e.clientX; panStartY = e.clientY;
-  panOrigX = panX; panOrigY = panY;
-  viewport.setPointerCapture(e.pointerId);
-});
-viewport.addEventListener("pointermove", (e) => {
-  if (!isPanning) return;
-  panX = panOrigX + (e.clientX - panStartX);
-  panY = panOrigY + (e.clientY - panStartY);
-  applyTransform();
-});
-viewport.addEventListener("pointerup", () => {
-  isPanning = false;
-  viewport.classList.remove("panning");
-});
-
-// ============ ZOOM ============
-viewport.addEventListener("wheel", (e) => {
-  e.preventDefault();
-  const rect = viewport.getBoundingClientRect();
-  const mx = e.clientX - rect.left;
-  const my = e.clientY - rect.top;
-  const delta = e.deltaY > 0 ? 0.92 : 1.08;
-  const next = Math.max(ZOOM_MIN, Math.min(ZOOM_MAX, zoom * delta));
-  const ratio = next / zoom;
-  panX = mx - ratio * (mx - panX);
-  panY = my - ratio * (my - panY);
-  zoom = next;
-  applyTransform();
-}, { passive: false });
 </script>
 </body>
 </html>
