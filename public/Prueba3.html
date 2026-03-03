@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport"/>
-<title>InvertProfit — Mundo 5: Estrategia</title>
+<title>InvertProfit — Mundo 1: Principiante</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -12,14 +12,14 @@
 <script src="curriculum.js"></script>
 <script>tailwind.config={darkMode:"class",theme:{extend:{fontFamily:{"sans":["Rajdhani","sans-serif"]}}}}</script>
 <style>
-:root{--a:#10b981;--ad:#059669;--ar:16,185,129}
+:root{--a:#ff6a00;--ad:#cc4400;--ar:255,106,0}
 *{box-sizing:border-box}
 ::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#1a2236;border-radius:2px}
-body{background:#040e0a;margin:0;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{background:#0a0612;margin:0;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 
 /* ═══ ATMOSPHERE ═══ */
 .atmo{position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:linear-gradient(180deg,#001208 0%,#040e0a 40%,#040e0a 60%,#001810 100%)}
+  background:linear-gradient(180deg,#1a0800 0%,#0a0612 40%,#0a0612 60%,#120600 100%)}
 #fxC{position:fixed;inset:0;z-index:1;pointer-events:none}
 .scan{position:fixed;inset:0;z-index:80;pointer-events:none;
   background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.01) 3px,rgba(0,0,0,.01) 4px)}
@@ -103,7 +103,7 @@ body{background:#040e0a;margin:0;overflow-x:hidden;-webkit-font-smoothing:antial
   </div>
   <div class="flex items-center gap-3">
     <span class="text-sm font-black" style="color:var(--a)" id="xp-ct">0 XP</span>
-    <span class="text-sm font-bold text-gray-500" id="comp-ct">0/15</span>
+    <span class="text-sm font-bold text-gray-500" id="comp-ct">0/10</span>
   </div>
 </div>
 <div class="h-1.5 w-full" style="background:rgba(255,255,255,.04)"><div class="h-full transition-all duration-700" id="prog-bar" style="width:0%;background:linear-gradient(90deg,var(--ad),var(--a))"></div></div>
@@ -112,10 +112,10 @@ body{background:#040e0a;margin:0;overflow-x:hidden;-webkit-font-smoothing:antial
 <main class="relative z-10 pb-24">
   <!-- World title -->
   <div class="text-center pt-6 pb-2 relative z-10">
-    <div style="font-size:3rem" class="mb-2">🌍</div>
-    <div class="text-[8px] font-black tracking-[4px] uppercase mb-1" style="color:rgba(var(--ar),.5)">MUNDO 05 — DECANO</div>
-    <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight text-white mb-1" style="font-family:Orbitron,sans-serif">EL DECANO</h1>
-    <p class="text-gray-500 text-sm">Macroeconomía, derivados y psicología.</p>
+    <div style="font-size:3rem" class="mb-2">🔥</div>
+    <div class="text-[8px] font-black tracking-[4px] uppercase mb-1" style="color:rgba(var(--ar),.5)">MUNDO 01 — APRENDIZ</div>
+    <h1 class="text-2xl md:text-3xl font-black uppercase tracking-tight text-white mb-1" style="font-family:Orbitron,sans-serif">DESPERTAR DEL TRADER</h1>
+    <p class="text-gray-500 text-sm">Tu primer paso al mercado.</p>
   </div>
 
   <!-- CANDY CRUSH MAP -->
@@ -152,9 +152,9 @@ body{background:#040e0a;margin:0;overflow-x:hidden;-webkit-font-smoothing:antial
 <button class="mu-btn" id="muBtn" onclick="toggleMu()">🔊</button>
 
 <script>
-var A='#10b981',AR='16,185,129',WN=5;
-var levels=window._wL=[{"n": 61, "t": "Macroeconomía", "d": "El sol del sistema.", "xp": 200}, {"n": 62, "t": "Ciclo de Deuda", "d": "Ray Dalio decodificado.", "xp": 250}, {"n": 63, "t": "FED y Tasas", "d": "La herramienta más poderosa.", "xp": 200}, {"n": 64, "t": "Inflación", "d": "IPC y deflación.", "xp": 200}, {"n": 65, "t": "DXY", "d": "El rey de las divisas.", "xp": 200}, {"n": 66, "t": "Geopolítica", "d": "Guerras y commodities.", "xp": 250}, {"n": 67, "t": "Bonos", "d": "Renta fija.", "xp": 200}, {"n": 68, "t": "Opciones I", "d": "Calls, Puts, primas.", "xp": 250}, {"n": 69, "t": "Futuros", "d": "Contratos billonarios.", "xp": 250}, {"n": 70, "t": "Psicología 1%", "d": "Dominio del ego.", "xp": 200}, {"n": 71, "t": "Sesgos Cognitivos", "d": "El enemigo interno.", "xp": 200}, {"n": 72, "t": "Bio-Hacking", "d": "El cuerpo del trader.", "xp": 200}, {"n": 73, "t": "Fiscal", "d": "Planificación fiscal.", "xp": 200}, {"n": 74, "t": "Real Estate", "d": "Diversificación real.", "xp": 200}, {"n": 75, "t": "⚡ BOSS: Tesis Macro", "d": "Tesis macroeconómica.", "xp": 500, "boss": "BOSS"}];
-var icons=["🌞", "🔄", "🏛️", "📊", "💵", "🌍", "📜", "🎲", "📈", "🧠", "🪞", "🧬", "📋", "🏠", "🏆"];
+var A='#ff6a00',AR='255,106,0',WN=1;
+var levels=window._wL=[{"n": 1, "t": "¿Qué es Invertir?", "d": "Tu primer paso hacia tu libertad financiera.", "xp": 150}, {"n": 2, "t": "Tipos de Activos", "d": "Acciones, forex, crypto, commodities.", "xp": 150}, {"n": 3, "t": "Tu Primera Cuenta", "d": "Crea tu cuenta de broker paso a paso.", "xp": 150}, {"n": 4, "t": "Leer un Gráfico", "d": "Entiende los ejes, el tiempo y el precio.", "xp": 150}, {"n": 5, "t": "Velas Japonesas", "d": "El lenguaje visual del mercado.", "xp": 200}, {"n": 6, "t": "⚡ BOSS: Primera Op", "d": "Ejecuta tu primera operación real.", "xp": 350, "boss": "BOSS"}, {"n": 7, "t": "Soportes y Resistencias", "d": "Los muros invisibles del precio.", "xp": 150}, {"n": 8, "t": "Tendencias", "d": "Alcista, bajista, lateral.", "xp": 150}, {"n": 9, "t": "Gestión de Riesgo", "d": "Protege tu capital desde el día 1.", "xp": 150}, {"n": 10, "t": "🏆 FINAL", "d": "Examen Principiante.", "xp": 500, "boss": "FINAL"}];
+var icons=["💡", "📦", "🏦", "📈", "🕯️", "⚡", "🧱", "📊", "🛡️", "🏆"];
 levels.forEach(function(l){l.s=CURRICULUM.getLevelStatus(l.n)});
 
 // Stats
@@ -266,15 +266,15 @@ var actx,mg,sOn=true;
 function initA(){if(actx)return;actx=new(AudioContext||webkitAudioContext)();mg=actx.createGain();mg.gain.value=.08;mg.connect(actx.destination);
   // Ambient drone
   [0,7,12].forEach(function(s,i){var o=actx.createOscillator(),g=actx.createGain(),f=actx.createBiquadFilter();
-    o.type=i<2?'sine':'triangle';o.frequency.value=58*Math.pow(2,s/12);
+    o.type=i<2?'sine':'triangle';o.frequency.value=55*Math.pow(2,s/12);
     f.type='lowpass';f.frequency.value=180+i*50;f.Q.value=.7;g.gain.value=.012;
     o.connect(f);f.connect(g);g.connect(mg);o.start();
     var l=actx.createOscillator(),lg=actx.createGain();l.type='sine';l.frequency.value=.06+i*.02;lg.gain.value=1.5;l.connect(lg);lg.connect(o.frequency);l.start()});
   // Melody
-  var sc=[0, 2, 4, 5, 7, 9, 11],ni=0;
+  var sc=[0, 3, 5, 7, 10],ni=0;
   (function play(){if(!sOn){setTimeout(play,2000);return}
     var semi=sc[ni%sc.length]+12*Math.floor(ni/sc.length);
-    var fr=58*2*Math.pow(2,semi/12);
+    var fr=55*2*Math.pow(2,semi/12);
     var o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=fr;
     g.gain.setValueAtTime(.015,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+2.5);
     o.connect(g);g.connect(mg);o.start();o.stop(actx.currentTime+2.5);ni++;
@@ -296,15 +296,15 @@ function openM(n,t,d,s,xp){
     b.textContent='✓ COMPLETADO';b.style.cssText='background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.25)';
     document.getElementById('m-stars').textContent='⭐⭐⭐';
     c.textContent='🔄 REPASAR';c.style.cssText='background:rgba(34,197,94,.08);color:#22c55e;border:1px solid rgba(34,197,94,.2);width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer';
-    c.onclick=function(){location.href='leccion.html?world=5&level='+n};
-    if(nxt){nx.classList.remove('hidden');nx.textContent='▶ SIGUIENTE';nx.style.cssText='background:linear-gradient(135deg,var(--ad),var(--a));color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer';nx.onclick=function(){location.href='leccion.html?world=5&level='+nxt.n}}
+    c.onclick=function(){location.href='leccion.html?world=1&level='+n};
+    if(nxt){nx.classList.remove('hidden');nx.textContent='▶ SIGUIENTE';nx.style.cssText='background:linear-gradient(135deg,var(--ad),var(--a));color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer';nx.onclick=function(){location.href='leccion.html?world=1&level='+nxt.n}}
     else nx.classList.add('hidden');
   }else if(s==='active'){
     b.innerHTML='<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--a);animation:activePulse 1s infinite;margin-right:4px"></span> EN PROGRESO';
     b.style.cssText='background:rgba(var(--ar),.1);color:var(--a);border:1px solid rgba(var(--ar),.2)';
     document.getElementById('m-stars').textContent='⭐⭐⭐';
     c.textContent='▶ JUGAR';c.style.cssText='background:linear-gradient(135deg,var(--ad),var(--a));color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer';
-    c.onclick=function(){location.href='leccion.html?world=5&level='+n};nx.classList.add('hidden');
+    c.onclick=function(){location.href='leccion.html?world=1&level='+n};nx.classList.add('hidden');
   }else{
     b.textContent='🔒 BLOQUEADO';b.style.cssText='background:rgba(107,114,128,.08);color:#6b7280;border:1px solid rgba(107,114,128,.15)';
     document.getElementById('m-stars').textContent='☆☆☆';c.style.display='none';nx.classList.add('hidden');
@@ -318,17 +318,22 @@ function closeM(){document.getElementById('modal').classList.add('hidden');docum
 
 // ═══ WORLD FX ═══
 
-// NATURE WORLD — Floating leaves/particles
+// FIRE WORLD — Embers rising from bottom
 (function(){
   var cv=document.getElementById('fxC'),x=cv.getContext('2d'),W,H,dpr=devicePixelRatio||1;
   function rs(){W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0)}
   addEventListener('resize',rs);rs();
-  var pts=[];for(var i=0;i<20;i++)pts.push({x:Math.random()*W,y:Math.random()*H,s:2+Math.random()*3,vx:.2+Math.random()*.3,vy:.5+Math.random(),ph:Math.random()*6.28});
-  function f(){x.clearRect(0,0,W,H);
-    pts.forEach(function(p){p.ph+=.02;p.x+=p.vx+Math.sin(p.ph)*.5;p.y+=p.vy;
-      if(p.y>H+10){p.y=-10;p.x=Math.random()*W}if(p.x>W+10)p.x=-10;
-      x.beginPath();x.arc(p.x,p.y,p.s,0,6.28);x.fillStyle='rgba(16,185,129,.15)';x.fill();
-      x.beginPath();x.arc(p.x,p.y,p.s*3,0,6.28);x.fillStyle='rgba(16,185,129,.03)';x.fill()});
+  var em=[];for(var i=0;i<35;i++)em.push({x:0,y:0,s:0,vx:0,vy:0,l:0,m:1,r:0,g:0,d:Math.random()*200});
+  function re(e){e.x=W*.08+Math.random()*W*.84;e.y=H+5;e.s=1.5+Math.random()*3;e.vx=(Math.random()-.5)*.6;e.vy=-(1.5+Math.random()*2.5);e.l=0;e.m=80+Math.random()*200;e.r=220+Math.random()*35|0;e.g=40+Math.random()*80|0}
+  em.forEach(re);var t=0;
+  function f(){t++;x.clearRect(0,0,W,H);
+    em.forEach(function(e){if(t<e.d)return;e.l++;if(e.l>e.m){re(e);e.d=0;return}
+      var p=e.l/e.m;e.x+=e.vx+Math.sin(e.l*.04)*.3;e.y+=e.vy*(1-p*.4);
+      var a=(1-p)*(p<.1?p/.1:1)*0.7;var sz=e.s*(1-p*.5);
+      x.beginPath();x.arc(e.x,e.y,sz,0,6.28);x.fillStyle='rgba('+e.r+','+e.g+',0,'+a+')';x.fill();
+      x.beginPath();x.arc(e.x,e.y,sz*4,0,6.28);x.fillStyle='rgba('+e.r+','+e.g+',0,'+(a*.12)+')';x.fill()});
+    if(t%50===0){var sx=W*.15+Math.random()*W*.7,sy=H*.85+Math.random()*H*.1;
+      x.beginPath();x.arc(sx,sy,2,0,6.28);x.fillStyle='rgba(255,220,60,.9)';x.fill()}
     requestAnimationFrame(f)}f()})();
 </script>
 </body>
