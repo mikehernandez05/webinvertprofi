@@ -288,7 +288,7 @@ function selAns(sel,cor){
 }
 function nxtS(){sfx('cl');cStep++;if(cStep<steps.length)renderS()}
 function goNxt(){if(NI)location.href='leccion.html?world='+NI.world.id+'&level='+NI.level.n}
-function goMap(){location.href=CI?CI.world.page:'portadaniveles.html?world=1'}
+function goMap(){location.href=CI?CI.world.page:'niveles-novato.html'}
 function celeb(){
   var b=document.createElement('div');b.className='gburst';document.body.appendChild(b);setTimeout(function(){b.remove()},900);
   var t=document.createElement('div');t.className='ctxt';t.textContent='🏆 ¡COMPLETADO!';document.body.appendChild(t);setTimeout(function(){t.remove()},1600);

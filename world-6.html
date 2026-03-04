@@ -1,0 +1,200 @@
+<!-- FILE: world-6.html -->
+<!DOCTYPE html>
+<html class="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport"/>
+<title>InvertProfit — Mundo 6: Cazador</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script><script src="auth.js"></script><script src="curriculum.js"></script>
+<script>tailwind.config={darkMode:"class",theme:{extend:{fontFamily:{"sans":["Rajdhani","sans-serif"]}}}}</script>
+<style>
+:root{--a:#f43f5e;--ad:#e11d48;--ar:244,63,94}
+*{box-sizing:border-box}::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#1a1020;border-radius:2px}
+body{background:#0a0408;margin:0;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+.atmo{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(180deg,#140008 0%,#0a0408 20%,#0e060a 50%,#160010 80%,#0a0408 100%)}
+.atmo::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 40% at 50% 50%,rgba(225,29,72,.04),transparent 60%)}
+.atmo::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,rgba(244,63,94,.03),transparent 40%),radial-gradient(circle at 30% 70%,rgba(225,29,72,.04),transparent 40%)}
+#fxC{position:fixed;inset:0;z-index:1;pointer-events:none}
+.scan{position:fixed;inset:0;z-index:80;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.01) 3px,rgba(0,0,0,.01) 4px)}
+
+/* ═══ SNIPER/CROSSHAIR DECORATIONS ═══ */
+.world-deco{position:fixed;inset:0;z-index:2;pointer-events:none;overflow:hidden}
+
+/* Large crosshair */
+.crosshair-main{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:250px;height:250px;opacity:.04}
+.crosshair-main::before{content:'';position:absolute;top:50%;left:0;width:100%;height:1px;background:linear-gradient(90deg,transparent 10%,rgba(var(--ar),.6) 40%,transparent 48%,transparent 52%,rgba(var(--ar),.6) 60%,transparent 90%)}
+.crosshair-main::after{content:'';position:absolute;left:50%;top:0;width:1px;height:100%;background:linear-gradient(180deg,transparent 10%,rgba(var(--ar),.6) 40%,transparent 48%,transparent 52%,rgba(var(--ar),.6) 60%,transparent 90%)}
+
+/* Scope rings */
+.scope{position:absolute;border-radius:50%;border:1px solid rgba(var(--ar),.04);top:50%;left:50%;transform:translate(-50%,-50%)}
+.scope-1{width:200px;height:200px;animation:scopePulse 4s ease-in-out infinite}
+.scope-2{width:140px;height:140px;animation:scopePulse 4s ease-in-out infinite;animation-delay:2s}
+.scope-3{width:80px;height:80px;border-width:2px;border-color:rgba(var(--ar),.03)}
+@keyframes scopePulse{0%,100%{opacity:.3}50%{opacity:.7}}
+
+/* Corner brackets */
+.corner-bracket{position:fixed;z-index:3;pointer-events:none;width:30px;height:30px;opacity:.06}
+.cb-tl{top:15%;left:15%}.cb-tr{top:15%;right:15%}.cb-bl{bottom:25%;left:15%}.cb-br{bottom:25%;right:15%}
+.cb-tl{border-top:2px solid rgba(var(--ar),.6);border-left:2px solid rgba(var(--ar),.6)}
+.cb-tr{border-top:2px solid rgba(var(--ar),.6);border-right:2px solid rgba(var(--ar),.6)}
+.cb-bl{border-bottom:2px solid rgba(var(--ar),.6);border-left:2px solid rgba(var(--ar),.6)}
+.cb-br{border-bottom:2px solid rgba(var(--ar),.6);border-right:2px solid rgba(var(--ar),.6)}
+
+/* Danger stripes */
+.danger-stripe{position:fixed;z-index:3;pointer-events:none;height:3px;opacity:.03;
+  background:repeating-linear-gradient(90deg,rgba(var(--ar),.8) 0,rgba(var(--ar),.8) 8px,transparent 8px,transparent 16px)}
+.ds-1{top:18%;left:0;right:0}.ds-2{bottom:22%;left:0;right:0}
+
+.world-hero{position:relative;z-index:10;padding:20px 16px 12px;text-align:center}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 16px;border-radius:999px;font-family:'Orbitron',sans-serif;font-size:9px;font-weight:900;letter-spacing:3px;text-transform:uppercase;
+  background:linear-gradient(135deg,rgba(var(--ar),.12),rgba(var(--ar),.04));border:1px solid rgba(var(--ar),.25);color:var(--a);box-shadow:0 0 20px rgba(var(--ar),.1)}
+.hero-badge .badge-dot{width:6px;height:6px;border-radius:50%;background:var(--a);animation:dotPulse 1.5s ease-in-out infinite}
+@keyframes dotPulse{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+
+/* Kill zone panel */
+.killzone-panel{margin:12px auto;max-width:300px;border-radius:12px;padding:10px 14px;
+  background:rgba(0,0,0,.5);border:1px solid rgba(var(--ar),.12);backdrop-filter:blur(8px);display:flex;gap:8px;justify-content:center}
+.kz-item{text-align:center;padding:4px 10px;border-radius:8px;background:rgba(var(--ar),.04)}
+.kz-item .kz-label{font-family:'Share Tech Mono',monospace;font-size:7px;color:rgba(var(--ar),.4);text-transform:uppercase;letter-spacing:1px}
+.kz-item .kz-time{font-family:'Orbitron',sans-serif;font-size:11px;font-weight:900;color:var(--a)}
+.kz-item .kz-status{font-size:7px;font-family:'Share Tech Mono',monospace;margin-top:1px}
+.kz-active{color:#22c55e}.kz-closed{color:#555}
+
+.hero-icon{font-size:3.5rem;margin:8px 0;filter:drop-shadow(0 0 25px rgba(var(--ar),.5));animation:heroFloat 3s ease-in-out infinite}
+@keyframes heroFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.hero-title{font-family:'Orbitron',sans-serif;font-size:1.6rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;color:#fff;margin:4px 0;text-shadow:0 0 30px rgba(var(--ar),.3)}
+.hero-sub{color:#555;font-size:12px;font-family:'Share Tech Mono',monospace}
+
+.float-panel{position:fixed;z-index:5;pointer-events:none;padding:8px 10px;border-radius:10px;backdrop-filter:blur(6px);background:rgba(10,4,8,.85);border:1px solid rgba(var(--ar),.1)}
+.fp-label{font-family:'Share Tech Mono',monospace;font-size:7px;color:rgba(var(--ar),.4);text-transform:uppercase;letter-spacing:2px}
+.fp-value{font-family:'Orbitron',sans-serif;font-size:12px;font-weight:900;color:var(--a)}
+.fp-target{top:20%;right:8px}.fp-liq{bottom:28%;left:8px}.fp-rr{top:55%;right:8px}
+
+.map-wrap{max-width:440px;margin:0 auto;padding:0 12px;position:relative;z-index:10}
+#pathSvg{position:absolute;top:0;left:0;width:100%;pointer-events:none;z-index:5}
+.path-done{stroke:var(--a);stroke-width:4;fill:none;filter:drop-shadow(0 0 6px rgba(var(--ar),.4));stroke-linecap:round}
+.path-active{stroke:var(--a);stroke-width:4;fill:none;filter:drop-shadow(0 0 8px rgba(var(--ar),.5));stroke-linecap:round;stroke-dasharray:10 6;animation:dashAnim 1s linear infinite}
+.path-locked{stroke:rgba(255,255,255,.06);stroke-width:3;fill:none;stroke-linecap:round}
+@keyframes dashAnim{to{stroke-dashoffset:-32}}
+.node{position:absolute;z-index:15;cursor:pointer;transition:transform .25s cubic-bezier(.175,.885,.32,1.275);-webkit-tap-highlight-color:transparent}
+.node:active{transform:translate(-50%,-50%) scale(.9)!important}.node.locked{cursor:not-allowed;filter:saturate(.2) brightness(.5)}.node.locked:active{transform:translate(-50%,-50%) scale(1)!important}
+.node-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;position:relative;transition:all .3s;box-shadow:0 4px 15px rgba(0,0,0,.4)}
+.nc-done{background:radial-gradient(circle at 35% 35%,#fb7185,rgba(var(--ar),.7) 50%,#881337);border:3px solid rgba(var(--ar),.7);box-shadow:0 0 20px rgba(var(--ar),.5),0 4px 15px rgba(0,0,0,.4),inset 0 -3px 6px rgba(0,0,0,.4),inset 0 2px 4px rgba(253,164,175,.2)}
+.nc-done::after{content:'';position:absolute;inset:3px;border-radius:50%;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.3),transparent 60%);pointer-events:none}
+.nc-active{background:radial-gradient(circle at 35% 35%,#fda4af,rgba(var(--ar),.5) 50%,#881337);border:3px solid var(--a);animation:activePulse 2s ease-in-out infinite;box-shadow:0 0 30px rgba(var(--ar),.6),0 0 60px rgba(var(--ar),.15),0 4px 15px rgba(0,0,0,.4)}
+.nc-active::after{content:'';position:absolute;inset:3px;border-radius:50%;background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.35),transparent 60%);pointer-events:none}
+@keyframes activePulse{0%,100%{box-shadow:0 0 30px rgba(var(--ar),.5),0 4px 15px rgba(0,0,0,.4);transform:scale(1)}50%{box-shadow:0 0 50px rgba(var(--ar),.7),0 0 80px rgba(var(--ar),.2);transform:scale(1.08)}}
+.nc-locked{background:radial-gradient(circle at 35% 35%,#2a1a20,#1a1018 60%,#0e060a);border:3px solid #2a1520;box-shadow:0 4px 15px rgba(0,0,0,.6),inset 0 -3px 6px rgba(0,0,0,.4)}
+.node-boss .node-circle{width:78px;height:78px;font-size:1.8rem}
+.boss-tag{position:absolute;top:-6px;right:-6px;font-size:8px;font-weight:900;font-family:'Orbitron',sans-serif;border-radius:999px;padding:2px 8px;z-index:20;letter-spacing:.5px;background:linear-gradient(135deg,var(--ad),var(--a));color:#0a0f1a;box-shadow:0 0 12px rgba(var(--ar),.4)}
+.boss-tag.locked{background:#1f2530;color:#555;box-shadow:none}
+.node-lbl{text-align:center;margin-top:8px;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;white-space:nowrap}
+.node-lbl.lbl-done{color:rgba(var(--ar),.7)}.node-lbl.lbl-active{color:var(--a)}.node-lbl.lbl-locked{color:#333}
+.node-stars{text-align:center;font-size:10px;margin-top:2px}.star-on{color:#fbbf24}.star-off{color:#333}
+.quest-box{border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(var(--ar),.06),rgba(0,0,0,.4));border:1px solid rgba(var(--ar),.12);backdrop-filter:blur(10px)}
+.quest-box .quest-icon{font-size:1.4rem;width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:rgba(var(--ar),.06);border:1px solid rgba(var(--ar),.12)}
+.quest-box .quest-label{font-family:'Share Tech Mono',monospace;font-size:8px;color:rgba(var(--ar),.4);text-transform:uppercase;letter-spacing:3px}
+.quest-box .quest-title{font-size:13px;color:#ccc;font-weight:700}
+.quest-box .quest-btn{padding:8px 16px;border-radius:12px;font-family:'Orbitron',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:2px;font-size:10px;cursor:pointer;border:none;background:linear-gradient(135deg,var(--ad),var(--a));color:#0a0f1a;box-shadow:0 0 15px rgba(var(--ar),.3);transition:all .2s}
+.quest-box .quest-btn:hover{transform:scale(1.05)}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px)}
+.modal-box{background:linear-gradient(135deg,#180810,#1a0c12,#180810);border:1px solid rgba(var(--ar),.25);border-radius:24px;padding:28px;max-width:400px;width:calc(100% - 2rem);box-shadow:0 0 80px rgba(var(--ar),.08),0 25px 50px rgba(0,0,0,.6),inset 0 1px 0 rgba(var(--ar),.1)}
+.mu-btn{position:fixed;bottom:16px;right:16px;z-index:110;width:44px;height:44px;border-radius:50%;border:1px solid rgba(var(--ar),.2);background:rgba(10,4,8,.9);color:var(--a);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s}
+.mu-btn:hover{box-shadow:0 0 20px rgba(var(--ar),.3)}.mu-btn.off{color:#444;border-color:#1f2530}
+header{border-image:linear-gradient(90deg,transparent,rgba(var(--ar),.3),transparent) 1}
+@media(max-width:374px){.node-circle{width:52px;height:52px;font-size:1.15rem}.node-boss .node-circle{width:64px;height:64px}.node-lbl{font-size:8px}.map-wrap{max-width:340px}.hero-title{font-size:1.3rem}}
+@media(min-width:375px) and (max-width:480px){.node-circle{width:58px;height:58px;font-size:1.3rem}.node-boss .node-circle{width:70px;height:70px}}
+@media(min-width:769px){.map-wrap{max-width:500px}.node-circle{width:70px;height:70px;font-size:1.6rem}.node-boss .node-circle{width:86px;height:86px;font-size:2rem}.hero-title{font-size:2rem}}
+@media(hover:none){.node:active{transform:translate(-50%,-50%) scale(.92)!important}}
+</style>
+</head>
+<body class="text-white min-h-screen">
+<div class="atmo"></div><canvas id="fxC"></canvas><div class="scan"></div>
+<div class="world-deco"><div class="crosshair-main"></div><div class="scope scope-1"></div><div class="scope scope-2"></div><div class="scope scope-3"></div></div>
+<div class="corner-bracket cb-tl"></div><div class="corner-bracket cb-tr"></div><div class="corner-bracket cb-bl"></div><div class="corner-bracket cb-br"></div>
+<div class="danger-stripe ds-1"></div><div class="danger-stripe ds-2"></div>
+
+<div class="float-panel fp-target"><div class="fp-label">Target</div><div class="fp-value">🎯 SET</div></div>
+<div class="float-panel fp-liq"><div class="fp-label">Liquidez</div><div class="fp-value">$2.1M</div></div>
+<div class="float-panel fp-rr"><div class="fp-label">R:R</div><div class="fp-value">1:5.2</div></div>
+
+<header class="border-b border-white/5 bg-black/70 backdrop-blur-xl sticky top-0 z-[60]">
+<div class="flex items-center justify-between px-4 md:px-8 py-3">
+  <div class="flex items-center gap-3"><a href="dashboard.html" class="flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition hover:scale-105" style="background:rgba(var(--ar),.08);border:1px solid rgba(var(--ar),.25);color:var(--a)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"/></svg><span class="hidden sm:inline">Mundos</span></a>
+    <img src="images/logo_azul.png" alt="IP" class="h-9 w-auto shrink-0" style="filter:drop-shadow(0 0 8px rgba(var(--ar),.3))" onerror="this.outerHTML='<span style=\'color:var(--a);font-weight:900;font-size:1.1rem;font-family:Orbitron\'>IP</span>'"></div>
+  <div class="flex items-center gap-3"><span class="text-sm font-black" style="color:var(--a)" id="xp-ct">0 XP</span><span class="text-sm font-bold text-gray-500" id="comp-ct">0/15</span></div>
+</div>
+<div class="h-1.5 w-full" style="background:rgba(255,255,255,.04)"><div class="h-full transition-all duration-700" id="prog-bar" style="width:0%;background:linear-gradient(90deg,var(--ad),var(--a))"></div></div>
+</header>
+<main class="relative z-10 pb-24">
+  <div class="world-hero">
+    <div class="hero-badge"><span class="badge-dot"></span> MUNDO 06 — CAZADOR</div>
+    <div class="killzone-panel">
+      <div class="kz-item"><div class="kz-label">London</div><div class="kz-time">08:00</div><div class="kz-status kz-active">● ACTIVO</div></div>
+      <div class="kz-item"><div class="kz-label">NY Open</div><div class="kz-time">14:30</div><div class="kz-status kz-closed">○ CERRADO</div></div>
+      <div class="kz-item"><div class="kz-label">Asia</div><div class="kz-time">00:00</div><div class="kz-status kz-closed">○ CERRADO</div></div>
+    </div>
+    <div class="hero-icon">🎯</div>
+    <h1 class="hero-title">EL CAZADOR</h1>
+    <p class="hero-sub">// Smart Money, Wyckoff e institucional</p>
+  </div>
+  <div class="map-wrap" id="mapWrap" style="position:relative"><svg id="pathSvg" xmlns="http://www.w3.org/2000/svg"></svg><div id="nodesLayer" style="position:relative"></div></div>
+  <div class="max-w-md mx-auto px-4 mt-6" id="quest"></div>
+</main>
+<div id="modal" class="modal-bg hidden" onclick="if(event.target===this)closeM()"><div class="modal-box">
+  <div class="flex items-center justify-between mb-4"><span id="m-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"></span><button onclick="closeM()" class="text-gray-500 hover:text-white transition"><span class="material-symbols-outlined">close</span></button></div>
+  <div class="text-5xl text-center mb-3" id="m-icon"></div><h3 class="text-lg font-black text-center uppercase tracking-tight mb-2" style="font-family:Orbitron;color:var(--a)" id="m-title"></h3><p class="text-gray-400 text-sm text-center mb-4" id="m-desc"></p>
+  <div class="flex justify-center gap-1 mb-4 text-sm" id="m-stars">⭐⭐⭐</div>
+  <div class="flex items-center justify-between mb-4 rounded-xl px-4 py-3" style="background:rgba(var(--ar),.05);border:1px solid rgba(var(--ar),.1)"><span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">XP</span><span class="font-black" style="color:var(--a)" id="m-xp"></span></div>
+  <div class="flex flex-col gap-2"><button id="m-cta" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105"></button><button id="m-next" class="hidden w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105"></button></div>
+</div></div>
+<button class="mu-btn" id="muBtn" onclick="toggleMu()">🔊</button>
+
+<script>
+var A='#f43f5e',AR='244,63,94',WN=6;
+var levels=window._wL=[{"n": 76, "t": "SMC Concepts", "d": "Dinero inteligente.", "xp": 200}, {"n": 77, "t": "Liquidez Int/Ext", "d": "Pools de liquidez.", "xp": 250}, {"n": 78, "t": "Order Blocks", "d": "Zonas bancarias.", "xp": 250}, {"n": 79, "t": "FVG", "d": "Fair Value Gaps.", "xp": 250}, {"n": 80, "t": "BOS & ChoCh", "d": "Confirmaciones reales.", "xp": 250}, {"n": 81, "t": "Wyckoff Acum", "d": "Esquema acumulación.", "xp": 250}, {"n": 82, "t": "Wyckoff Dist", "d": "Esquema distribución.", "xp": 250}, {"n": 83, "t": "Killzones", "d": "London y NY Open.", "xp": 200}, {"n": 84, "t": "Modelo Institucional", "d": "Framework completo.", "xp": 300}, {"n": 85, "t": "Multi-temporal", "d": "HTF a LTF sniper.", "xp": 250}, {"n": 86, "t": "Mitigación", "d": "Re-entrada precisa.", "xp": 250}, {"n": 87, "t": "Manipulación", "d": "Captura de liquidez.", "xp": 250}, {"n": 88, "t": "R:R 1:5+", "d": "Ratios extremos.", "xp": 250}, {"n": 89, "t": "Backtesting SMC", "d": "Datos históricos.", "xp": 200}, {"n": 90, "t": "⚡ BOSS: Cacería", "d": "Operación SMC completa.", "xp": 500, "boss": "BOSS"}];
+var icons=["🧠", "💧", "🏦", "⚖️", "🔀", "📥", "📤", "⏰", "🏛️", "🎯", "💉", "🕵️", "📐", "🔬", "🏆"];
+levels.forEach(function(l){l.s=CURRICULUM.getLevelStatus(l.n)});
+var cc=levels.filter(function(l){return l.s==='completed'}).length;var cx=levels.reduce(function(a,l){return a+(l.s==='completed'?l.xp:0)},0);
+document.getElementById('comp-ct').textContent=cc+'/'+levels.length;document.getElementById('xp-ct').textContent=cx.toLocaleString()+' XP';document.getElementById('prog-bar').style.width=Math.round(cc/levels.length*100)+'%';
+var N=levels.length,MAP_W,NODE_H=110,PAD_TOP=40,nodePos=[];
+function calcPositions(){MAP_W=document.getElementById('mapWrap').offsetWidth;nodePos=[];var margin=50,usable=MAP_W-margin*2;for(var i=0;i<N;i++){var row=Math.floor(i/3),col=i%3,goingRight=row%2===0;var xNorm=goingRight?col/2:(2-col)/2;var rawX=margin+xNorm*usable,wave=Math.sin(i*0.8)*usable*0.12;nodePos.push({x:Math.max(margin,Math.min(MAP_W-margin,rawX+wave)),y:PAD_TOP+(N-1-i)*NODE_H})}}
+calcPositions();var totalH=PAD_TOP+N*NODE_H+60;document.getElementById('nodesLayer').style.height=totalH+'px';document.getElementById('pathSvg').setAttribute('height',totalH);document.getElementById('pathSvg').style.height=totalH+'px';
+function drawPaths(){calcPositions();var svg=document.getElementById('pathSvg');svg.innerHTML='';for(var i=0;i<N-1;i++){var a_=nodePos[i],b_=nodePos[i+1],sA=levels[i].s,sB=levels[i+1].s;var cls=(sA==='completed'&&sB==='completed')?'path-done':(sA==='completed'&&sB==='active')?'path-active':'path-locked';var path=document.createElementNS('http://www.w3.org/2000/svg','path');var midY=(a_.y+b_.y)/2;path.setAttribute('d','M '+a_.x+' '+a_.y+' C '+a_.x+' '+midY+', '+b_.x+' '+midY+', '+b_.x+' '+b_.y);path.setAttribute('class',cls);svg.appendChild(path)}}
+drawPaths();window.addEventListener('resize',function(){drawPaths();placeNodes()});
+function placeNodes(){calcPositions();var layer=document.getElementById('nodesLayer');layer.innerHTML='';for(var i=0;i<N;i++){var lv=levels[i],p=nodePos[i],isBoss=!!lv.boss;var nd=document.createElement('div');nd.className='node'+(isBoss?' node-boss':'')+(lv.s==='locked'?' locked':'');nd.style.cssText='position:absolute;left:'+p.x+'px;top:'+p.y+'px;transform:translate(-50%,-50%)';var circCls=lv.s==='completed'?'nc-done':(lv.s==='active'?'nc-active':'nc-locked');var content=lv.s==='completed'?'✓':(lv.s==='active'?(icons[i]||'🔥'):'<span class="material-symbols-outlined text-gray-600" style="font-size:1.2em">lock</span>');var bossTag='';if(isBoss){bossTag='<span class="'+(lv.s==='locked'?'boss-tag locked':'boss-tag')+'">'+lv.boss+'</span>'}var starHtml=lv.s==='completed'?'<span class="star-on">⭐</span><span class="star-on">⭐</span><span class="star-on">⭐</span>':'<span class="star-off">☆</span><span class="star-off">☆</span><span class="star-off">☆</span>';var lblCls=lv.s==='completed'?'lbl-done':(lv.s==='active'?'lbl-active':'lbl-locked');var tE=lv.t.replace(/'/g,"\\'"),dE=lv.d.replace(/'/g,"\\'");if(lv.s!=='locked')nd.setAttribute('onclick',"openM("+lv.n+",'"+tE+"','"+dE+"','"+lv.s+"',"+lv.xp+")");else nd.setAttribute('onclick','sfxL()');nd.innerHTML='<div style="position:relative;display:flex;flex-direction:column;align-items:center"><div class="node-circle '+circCls+'" style="position:relative">'+content+bossTag+'</div><div class="node-stars">'+starHtml+'</div><div class="node-lbl '+lblCls+'">'+lv.n+'</div></div>';layer.appendChild(nd)}}
+placeNodes();
+var actLv=levels.find(function(l){return l.s==='active'});if(actLv){var tE2=actLv.t.replace(/'/g,"\\'"),dE2=actLv.d.replace(/'/g,"\\'");document.getElementById('quest').innerHTML='<div class="quest-box"><div class="quest-icon">🎯</div><div class="flex-1"><div class="quest-label">NIVEL ACTUAL</div><div class="quest-title">'+actLv.t+'</div></div><button onclick="openM('+actLv.n+',\''+tE2+'\',\''+dE2+'\',\'active\','+actLv.xp+')" class="quest-btn">▶ JUGAR</button></div>'}
+var actx,mg,sOn=true;
+function initA(){if(actx)return;actx=new(AudioContext||webkitAudioContext)();mg=actx.createGain();mg.gain.value=.08;mg.connect(actx.destination);[0,7,12].forEach(function(s,i){var o=actx.createOscillator(),g=actx.createGain(),f=actx.createBiquadFilter();o.type=i<2?'sine':'triangle';o.frequency.value=44*Math.pow(2,s/12);f.type='lowpass';f.frequency.value=180+i*50;f.Q.value=.7;g.gain.value=.012;o.connect(f);f.connect(g);g.connect(mg);o.start();var l=actx.createOscillator(),lg=actx.createGain();l.type='sine';l.frequency.value=.06+i*.02;lg.gain.value=1.5;l.connect(lg);lg.connect(o.frequency);l.start()});var sc=[0,2,3,5,7,8,10],ni=0;(function play(){if(!sOn){setTimeout(play,2000);return}var semi=sc[ni%sc.length]+12*Math.floor(ni/sc.length);var fr=44*2*Math.pow(2,semi/12);var o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=fr;g.gain.setValueAtTime(.015,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+2.5);o.connect(g);g.connect(mg);o.start();o.stop(actx.currentTime+2.5);ni++;setTimeout(play,2500+Math.random()*1500)})()}
+function sfx(fr,d){if(!actx||!sOn)return;var o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=fr;g.gain.setValueAtTime(.08,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d);o.connect(g);g.connect(mg);o.start();o.stop(actx.currentTime+d)}
+function sfxC(){sfx(880,.1);setTimeout(function(){sfx(660,.07)},35)}function sfxL(){sfx(150,.15)}function sfxO(){[660,880,1100].forEach(function(f,i){setTimeout(function(){sfx(f,.15)},i*50)})}
+function toggleMu(){initA();sOn=!sOn;mg.gain.value=sOn?.08:0;document.getElementById('muBtn').className='mu-btn'+(sOn?'':' off');document.getElementById('muBtn').textContent=sOn?'🔊':'🔇'}
+document.addEventListener('click',function(){initA()},{once:true});
+function openM(n,t,d,s,xp){sfxO();var ic=icons[levels.findIndex(function(l){return l.n===n})]||'🔥';document.getElementById('m-icon').textContent=ic;var b=document.getElementById('m-badge'),c=document.getElementById('m-cta'),nx=document.getElementById('m-next');var nxt=levels.find(function(l){return l.n===n+1});if(s==='completed'){b.textContent='✓ COMPLETADO';b.style.cssText='background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.25)';document.getElementById('m-stars').textContent='⭐⭐⭐';c.textContent='🔄 REPASAR';c.style.cssText='background:rgba(34,197,94,.08);color:#22c55e;border:1px solid rgba(34,197,94,.2);width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer';c.onclick=function(){location.href='leccion.html?world=6&level='+n};if(nxt){nx.classList.remove('hidden');nx.textContent='▶ SIGUIENTE';nx.style.cssText='background:linear-gradient(135deg,var(--ad),var(--a));color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer';nx.onclick=function(){location.href='leccion.html?world=6&level='+nxt.n}}else nx.classList.add('hidden')}else if(s==='active'){b.innerHTML='<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--a);animation:activePulse 1s infinite;margin-right:4px"></span> EN PROGRESO';b.style.cssText='background:rgba(var(--ar),.1);color:var(--a);border:1px solid rgba(var(--ar),.2)';document.getElementById('m-stars').textContent='⭐⭐⭐';c.textContent='▶ JUGAR';c.style.cssText='background:linear-gradient(135deg,var(--ad),var(--a));color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer';c.onclick=function(){location.href='leccion.html?world=6&level='+n};nx.classList.add('hidden')}else{b.textContent='🔒 BLOQUEADO';b.style.cssText='background:rgba(107,114,128,.08);color:#6b7280;border:1px solid rgba(107,114,128,.15)';document.getElementById('m-stars').textContent='☆☆☆';c.style.display='none';nx.classList.add('hidden')}document.getElementById('m-title').textContent='Nivel '+n+': '+t;document.getElementById('m-desc').textContent=d;document.getElementById('m-xp').textContent='+'+xp+' XP';document.getElementById('modal').classList.remove('hidden')}
+function closeM(){document.getElementById('modal').classList.add('hidden');document.getElementById('m-cta').style.display=''}
+
+// ═══ WORLD FX — RADAR SWEEP + RED PARTICLES ═══
+(function(){var cv=document.getElementById('fxC'),x=cv.getContext('2d'),W,H,dpr=devicePixelRatio||1;function rs(){W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;x.setTransform(dpr,0,0,dpr,0,0)}addEventListener('resize',rs);rs();
+  var angle=0;var targets=[];for(var i=0;i<12;i++)targets.push({x:Math.random()*W,y:Math.random()*H,s:1+Math.random()*2,ph:Math.random()*6.28,sp:.005+Math.random()*.01});
+  function f(){x.clearRect(0,0,W,H);angle+=.006;
+    // Radar sweep
+    var cx=W*.5,cy=H*.4,r=Math.min(W,H)*.3;
+    x.save();x.globalAlpha=.03;x.beginPath();x.moveTo(cx,cy);x.arc(cx,cy,r,angle,angle+.6);x.closePath();
+    var g=x.createRadialGradient(cx,cy,0,cx,cy,r);g.addColorStop(0,'rgba(244,63,94,.4)');g.addColorStop(1,'rgba(244,63,94,0)');x.fillStyle=g;x.fill();x.restore();
+    // Scope circle
+    x.beginPath();x.arc(cx,cy,r,0,6.28);x.strokeStyle='rgba(244,63,94,.03)';x.lineWidth=1;x.stroke();
+    // Floating targets
+    targets.forEach(function(t){t.ph+=t.sp;t.x+=Math.sin(t.ph)*.3;t.y+=Math.cos(t.ph)*.3;
+      if(t.x<-20)t.x=W+20;if(t.x>W+20)t.x=-20;if(t.y<-20)t.y=H+20;if(t.y>H+20)t.y=-20;
+      var a=.15+.1*Math.sin(t.ph*2);x.beginPath();x.arc(t.x,t.y,t.s,0,6.28);x.fillStyle='rgba(244,63,94,'+a+')';x.fill();
+      x.beginPath();x.arc(t.x,t.y,t.s*4,0,6.28);x.fillStyle='rgba(244,63,94,'+(a*.06)+')';x.fill()});
+    requestAnimationFrame(f)}f()})();
+</script>
+</body>
+</html>
