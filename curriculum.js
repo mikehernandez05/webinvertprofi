@@ -9,13 +9,13 @@ var CURRICULUM = (function () {
   //  WORLD & LEVEL DEFINITIONS
   // ══════════════════════════════════════
   var worlds = [
-    { id: 1, name: 'Génesis',    page: 'niveles-novato.html',      levels: [1,2,3,4,5,6,7,8,9,10] },
-    { id: 2, name: 'Cartografía', page: 'niveles-intermedio.html',  levels: [11,12,13,14,15,16,17,18,19,20,21,22] },
-    { id: 3, name: 'Anatomía',   page: 'niveles-experto.html',     levels: [23,24,25,26,27,28,29,30,31,32,33,34] },
-    { id: 4, name: 'Sincronía',  page: 'niveles-mundo4.html',      levels: [46,47,48,49,50,51,52,53,54,55,56,57,58,59,60] },
-    { id: 5, name: 'Estrategia', page: 'niveles-mundo5.html',      levels: [61,62,63,64,65,66,67,68,69,70,71,72,73,74,75] },
-    { id: 6, name: 'Soberanía',  page: 'niveles-mundo6.html',      levels: [76,77,78,79,80,81,82,83,84,85,86,87,88,89,90] },
-    { id: 7, name: 'Legado',     page: 'niveles-mundo7.html',      levels: [91,92,93,94,95,96,97,98,99,100] }
+    { id: 1, name: 'Génesis',    page: 'world-1.html', levels: [1,2,3,4,5,6,7,8,9,10] },
+    { id: 2, name: 'Cartografía', page: 'world-2.html', levels: [11,12,13,14,15,16,17,18,19,20,21,22] },
+    { id: 3, name: 'Anatomía',   page: 'world-3.html', levels: [23,24,25,26,27,28,29,30,31,32,33,34] },
+    { id: 4, name: 'Sincronía',  page: 'world-4.html', levels: [35,36,37,38,39,40,41,42,43,44,45,46,47,48,49] },
+    { id: 5, name: 'Estrategia', page: 'world-5.html', levels: [61,62,63,64,65,66,67,68,69,70,71,72,73,74,75] },
+    { id: 6, name: 'Soberanía',  page: 'world-6.html', levels: [76,77,78,79,80,81,82,83,84,85,86,87,88,89,90] },
+    { id: 7, name: 'Legado',     page: 'world-7.html', levels: [91,92,93,94,95,96,97,98,99,100] }
   ];
 
   // Build a flat ordered list of ALL level numbers for determining "next level"
