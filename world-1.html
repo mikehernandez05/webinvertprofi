@@ -728,7 +728,100 @@ function sfxC(){sfx(880,.1);setTimeout(function(){sfx(660,.07)},35)}
 function sfxL(){sfx(150,.15)}
 function sfxO(){[660,880,1100].forEach(function(f,i){setTimeout(function(){sfx(f,.15)},i*50)})}
 function toggleMu(){initA();sOn=!sOn;mg.gain.value=sOn?.08:0;document.getElementById('muBtn').className='mu-btn'+(sOn?'':' off');document.getElementById('muBtn').textContent=sOn?'🔊':'🔇'}
-document.addEventListener('click',function(){initA()},{once:true});
+document.addEventListener('click',function(){initA();startAmb();},{once:true});
+
+// ═══ AMBIENT — ENGRANAJES DEL MERCADO ═══
+// Sonido ambiental del fondo: fábrica industrial en marcha.
+// Capas: sub-rumble de planta + hum de engranaje giratorio +
+//        shimmer metálico (2 bandpass resonantes) + click de pistón rítmico.
+// Todo conectado a mg → el botón 🔊 lo silencia como el resto.
+var _ambOk=false;
+function startAmb(){
+  if(_ambOk||!actx)return;_ambOk=true;
+
+  var ambG=actx.createGain();ambG.gain.value=0;ambG.connect(mg);
+  ambG.gain.linearRampToValueAtTime(0.88,actx.currentTime+2.0);
+
+  // ── 1. PISTÓN — sube/baja cada ~1.4s (pistonAmp=38, spd=0.55) ──
+  // Golpe grave al tocar fondo del cilindro + ring metálico
+  (function pistonLoop(){
+    if(actx.state==='closed')return;
+    if(sOn){
+      var o=actx.createOscillator(),g=actx.createGain();
+      o.type='sine';
+      o.frequency.setValueAtTime(190,actx.currentTime);
+      o.frequency.exponentialRampToValueAtTime(48,actx.currentTime+.14);
+      g.gain.setValueAtTime(.78,actx.currentTime);
+      g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+.20);
+      o.connect(g);g.connect(ambG);o.start();o.stop(actx.currentTime+.20);
+      var r=actx.createOscillator(),rg=actx.createGain(),rf=actx.createBiquadFilter();
+      r.type='sine';r.frequency.value=640;
+      rf.type='bandpass';rf.frequency.value=640;rf.Q.value=11;
+      rg.gain.setValueAtTime(.32,actx.currentTime+.02);
+      rg.gain.exponentialRampToValueAtTime(.001,actx.currentTime+.28);
+      r.connect(rf);rf.connect(rg);rg.connect(ambG);r.start();r.stop(actx.currentTime+.28);
+    }
+    setTimeout(pistonLoop,1400+Math.random()*80);
+  })();
+
+  // ── 2. ENGRANAJES — hum de rotación de los 7 gears de la escena ─
+  // Alpha=18rpm, Beta=28rpm, Gamma=12rpm, Delta=10rpm, Epsilon=7rpm,
+  // Zeta=8rpm, Eta=15rpm. Cada rpm → frecuencia audible vía armónico.
+  [18,28,12,10,7,8,15].forEach(function(rpm,i){
+    var hz=rpm/60;
+    var o=actx.createOscillator(),g=actx.createGain(),bp=actx.createBiquadFilter();
+    o.type='sawtooth';
+    o.frequency.value=hz*(8+i*3);
+    bp.type='bandpass';bp.frequency.value=120+i*60;bp.Q.value=6+i;
+    g.gain.value=[.28,.22,.18,.15,.12,.12,.16][i];
+    o.connect(bp);bp.connect(g);g.connect(ambG);o.start();
+    var lfo=actx.createOscillator(),lg=actx.createGain();
+    lfo.type='sine';lfo.frequency.value=.04+i*.015;lg.gain.value=hz*2.5;
+    lfo.connect(lg);lg.connect(o.frequency);lfo.start();
+  });
+
+  // ── 3. ARCOS ELÉCTRICOS — crackle sincronizado con las chispas ──
+  // Canvas lanza un arc flash cada 20 frames (~333ms a 60fps)
+  // Burst de ruido blanco corto filtrado en banda alta
+  (function spark(){
+    if(actx.state==='closed')return;
+    if(sOn){
+      var sbuf=actx.createBuffer(1,Math.floor(actx.sampleRate*.022),actx.sampleRate);
+      var sd=sbuf.getChannelData(0);
+      for(var i=0;i<sd.length;i++)sd[i]=(Math.random()*2-1)*Math.pow(1-i/sd.length,2);
+      var src=actx.createBufferSource(),sg=actx.createGain(),sf=actx.createBiquadFilter();
+      sf.type='bandpass';sf.frequency.value=2400+Math.random()*1200;sf.Q.value=2;
+      sg.gain.value=.55;
+      src.buffer=sbuf;src.connect(sf);sf.connect(sg);sg.connect(ambG);src.start();
+    }
+    setTimeout(spark,320+Math.random()*80);
+  })();
+
+  // ── 4. VAPOR — ruido blanco filtrado de los steam vents ─────────
+  // Los vents están en las tuberías principales (W*0.075 y W*0.925)
+  var vbuf=actx.createBuffer(1,actx.sampleRate*2,actx.sampleRate);
+  var vd=vbuf.getChannelData(0);for(var i=0;i<vd.length;i++)vd[i]=(Math.random()*2-1);
+  var vs=actx.createBufferSource();vs.buffer=vbuf;vs.loop=true;
+  var vhp=actx.createBiquadFilter(),vlp=actx.createBiquadFilter(),vg=actx.createGain();
+  vhp.type='highpass';vhp.frequency.value=1600;
+  vlp.type='lowpass';vlp.frequency.value=6000;
+  vg.gain.value=.24;
+  vs.connect(vhp);vhp.connect(vlp);vlp.connect(vg);vg.connect(ambG);vs.start();
+  var vplfo=actx.createOscillator(),vplg=actx.createGain();
+  vplfo.type='sine';vplfo.frequency.value=.08;vplg.gain.value=.16;
+  vplfo.connect(vplg);vplg.connect(vg.gain);vplfo.start();
+
+  // ── 5. CONDUCTOS DE ENERGÍA — buzz eléctrico 60/120/180 Hz ─────
+  // Las líneas de energía naranja que fluyen por el canvas
+  // generan el zumbido eléctrico característico de alto voltaje
+  [60,120,180].forEach(function(f,i){
+    var o=actx.createOscillator(),g=actx.createGain(),bp=actx.createBiquadFilter();
+    o.type='sawtooth';o.frequency.value=f;
+    bp.type='bandpass';bp.frequency.value=f;bp.Q.value=18;
+    g.gain.value=[.18,.10,.06][i];
+    o.connect(bp);bp.connect(g);g.connect(ambG);o.start();
+  });
+}
 
 // ═══ MODAL ═══
 function openM(n,t,d,s,xp){sfxO();var ic=icons[levels.findIndex(function(l){return l.n===n})]||'⚙️';
