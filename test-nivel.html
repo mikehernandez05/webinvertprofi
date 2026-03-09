@@ -374,42 +374,31 @@ function launchCelebration(){
     setTimeout(function(){c.remove()},5000);
 }
 
-// ══ FIRESTORE — Guardar resultado del test ══
+// ══ GUARDAR RESULTADO — localStorage + Firestore opcional ══
 function saveTestResultToFirestore(level, startWorld, score, correctCount) {
     var user = firebase.auth().currentUser;
     if (!user) return;
-    var db = firebase.firestore();
-    db.collection('users').doc(user.uid).update({
-        ip_level_test_done: true,
-        ip_user_level: level,
-        ip_start_world: startWorld,
-        ip_test_score: score,
-        ip_test_correct: correctCount,
-        ip_test_date: firebase.firestore.FieldValue.serverTimestamp()
-    }).catch(function(e) { console.error('Error guardando resultado:', e); });
+    try {
+        var db = firebase.firestore();
+        db.collection('users').doc(user.uid).update({
+            ip_level_test_done: true,
+            ip_user_level: level,
+            ip_start_world: startWorld,
+            ip_test_score: score,
+            ip_test_correct: correctCount,
+            ip_test_date: firebase.firestore.FieldValue.serverTimestamp()
+        }).catch(function(e) { console.warn('Firestore no disponible:', e.message); });
+    } catch(e) { console.warn('Firestore no disponible:', e.message); }
 }
 
-// ══ CHECK IF ALREADY DONE (Firestore + localStorage fallback) ══
+// ══ CHECK IF ALREADY DONE — localStorage es la fuente principal ══
 (function checkTestDone() {
-    // Primero verificar localStorage (rápido)
     if (localStorage.getItem('ip_level_test_done') === '1') {
         window.location.replace('dashboard.html');
         return;
     }
-    // Luego verificar Firestore (autoritativo)
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (!user) return; // auth.js ya maneja la redirección
-        firebase.firestore().collection('users').doc(user.uid).get()
-            .then(function(doc) {
-                if (doc.exists && doc.data().ip_level_test_done) {
-                    localStorage.setItem('ip_level_test_done', '1');
-                    window.location.replace('dashboard.html');
-                } else {
-                    renderScreen();
-                }
-            })
-            .catch(function() { renderScreen(); });
-    });
+    // Mostrar el test si no se ha hecho
+    renderScreen();
 })();
 </script>
 </body>

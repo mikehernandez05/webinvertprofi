@@ -911,18 +911,17 @@ function toggleSideMenu() {
         if (sidebarUsername) sidebarUsername.textContent = displayName;
     }
 
-    // Leer de Firebase Auth primero (rápido, sin red)
+    // 1. Leer de localStorage inmediatamente (sin esperar red)
+    var lsName = localStorage.getItem('ip_user_name');
+    var lsEmail = localStorage.getItem('ip_user_email');
+    if (lsName || lsEmail) updateUI(lsName, lsEmail);
+
+    // 2. Actualizar con Firebase Auth cuando esté listo
     firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
             updateUI(user.displayName, user.email);
-            // También leer de Firestore por si tiene datos más completos
-            firebase.firestore().collection('users').doc(user.uid).get()
-                .then(function(doc) {
-                    if (doc.exists && doc.data().displayName) {
-                        updateUI(doc.data().displayName, doc.data().email);
-                    }
-                })
-                .catch(function(e) { console.error('Error cargando perfil:', e); });
+            if (user.displayName) localStorage.setItem('ip_user_name', user.displayName);
+            if (user.email) localStorage.setItem('ip_user_email', user.email);
         }
     });
 })();

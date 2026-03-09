@@ -49,6 +49,14 @@
     },
     logout: function () {
       firebase.auth().signOut().then(function () {
+        localStorage.removeItem('ip_authenticated');
+        localStorage.removeItem('ip_user_email');
+        localStorage.removeItem('ip_user_name');
+        localStorage.removeItem('ip_user_photo');
+        localStorage.removeItem('ip_provider');
+        localStorage.removeItem('ip_level_test_done');
+        localStorage.removeItem('ip_user_level');
+        localStorage.removeItem('ip_start_world');
         window.location.href = 'Login.html';
       });
     }

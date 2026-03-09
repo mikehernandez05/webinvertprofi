@@ -418,58 +418,58 @@
         }
 
         // ═══════════════════════════════════════════
-        // FIRESTORE — Guardar/actualizar datos del usuario
+        // DATOS DE USUARIO — Firestore con fallback a localStorage
         // ═══════════════════════════════════════════
         var isRedirecting = false;
 
-        async function saveUserToFirestore(user, provider) {
-            const userRef = db.collection('users').doc(user.uid);
-            const doc = await userRef.get();
+        async function saveUserData(user, provider) {
+            // Guardar en localStorage siempre (funciona sin Firestore)
+            localStorage.setItem('ip_authenticated', '1');
+            localStorage.setItem('ip_user_email', user.email || '');
+            localStorage.setItem('ip_user_name', user.displayName || '');
+            localStorage.setItem('ip_user_photo', user.photoURL || '');
+            localStorage.setItem('ip_provider', provider);
 
-            const userData = {
-                email: user.email,
-                displayName: user.displayName || '',
-                photoURL: user.photoURL || '',
-                provider: provider,
-                lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
-                ip_authenticated: true
-            };
-
-            if (!doc.exists) {
-                userData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                userData.ip_level_test_done = false;
-                await userRef.set(userData);
-                return userData;
-            } else {
-                await userRef.update(userData);
-                return doc.data();
+            // Intentar guardar en Firestore (opcional)
+            try {
+                var userRef = db.collection('users').doc(user.uid);
+                var doc = await userRef.get();
+                var userData = {
+                    email: user.email,
+                    displayName: user.displayName || '',
+                    photoURL: user.photoURL || '',
+                    provider: provider,
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                    ip_authenticated: true
+                };
+                if (!doc.exists) {
+                    userData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                    userData.ip_level_test_done = false;
+                    await userRef.set(userData);
+                } else {
+                    await userRef.update(userData);
+                }
+            } catch (e) {
+                console.warn('Firestore no disponible, usando localStorage:', e.message);
             }
         }
 
-        async function getDestination(uid) {
-            try {
-                const doc = await db.collection('users').doc(uid).get();
-                if (doc.exists && doc.data().ip_level_test_done) {
-                    return 'dashboard.html';
-                }
-            } catch (e) {
-                console.error('Error reading user doc:', e);
-            }
-            return 'test-nivel.html';
+        function getDestination() {
+            // Verificar si ya hizo el test de nivel
+            var testDone = localStorage.getItem('ip_level_test_done');
+            return testDone === '1' ? 'dashboard.html' : 'test-nivel.html';
         }
 
         async function onAuthSuccess(user, provider) {
             if (isRedirecting) return;
             isRedirecting = true;
             try {
-                var firestoreData = await saveUserToFirestore(user, provider);
-                var dest = firestoreData.ip_level_test_done ? 'dashboard.html' : 'test-nivel.html';
-                window.location.href = dest;
+                await saveUserData(user, provider);
+                window.location.href = getDestination();
             } catch (error) {
                 console.error('Error post-auth:', error);
-                isRedirecting = false;
-                showError('Error al guardar datos. Redirigiendo...');
-                setTimeout(() => { window.location.href = 'test-nivel.html'; }, 1500);
+                // Aún así redirigir — Auth funciona, solo falló Firestore
+                window.location.href = getDestination();
             }
         }
 
@@ -622,16 +622,13 @@
         // Solo redirige si el usuario YA tenía sesión activa
         // (no interfiere con login/registro en curso)
         // ═══════════════════════════════════════════
-        auth.onAuthStateChanged(async (user) => {
+        auth.onAuthStateChanged(function(user) {
             if (user && !isRedirecting) {
                 isRedirecting = true;
-                try {
-                    const dest = await getDestination(user.uid);
-                    window.location.href = dest;
-                } catch (e) {
-                    console.error('Error checking auth state:', e);
-                    isRedirecting = false;
-                }
+                localStorage.setItem('ip_authenticated', '1');
+                localStorage.setItem('ip_user_email', user.email || '');
+                localStorage.setItem('ip_user_name', user.displayName || '');
+                window.location.href = getDestination();
             }
         });
     </script>
