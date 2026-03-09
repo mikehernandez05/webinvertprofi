@@ -11,7 +11,7 @@
 html,body{min-height:100%;min-height:100dvh;background:#050508;font-family:'Inter',sans-serif;color:#fff;overflow-x:hidden;-webkit-tap-highlight-color:transparent}
 
 /* ===== TOWER CONTAINER ===== */
-.tower{position:relative;width:100%;max-width:900px;margin:0 auto}
+.tower{position:relative;width:100%;margin:0 auto}
 .tower-img{
   display:block;width:100%;height:auto;position:relative;z-index:1;
   image-rendering:auto;filter:contrast(1.04) saturate(1.08) brightness(1.02);
@@ -577,10 +577,19 @@ function drawNodes(rW, rH){
 
 // Ejecutar layout cuando la imagen carga (critical para posicionar zonas)
 var bgImg=document.getElementById('bg');
-if(bgImg.complete && bgImg.naturalHeight>0){layout()}
-else{bgImg.addEventListener('load',function(){layout()})}
+function tryLayout(){
+  if(bgImg.clientWidth>0 && bgImg.clientHeight>0) layout();
+}
+if(bgImg.complete && bgImg.naturalHeight>0){tryLayout()}
+bgImg.addEventListener('load',function(){tryLayout()});
+// Reintentar después de un breve delay por si la imagen tarda
+setTimeout(tryLayout, 300);
+setTimeout(tryLayout, 1000);
 bgImg.addEventListener('error',function(){
-  // Fallback si la imagen no carga
+  // Fallback si la imagen no carga — intentar ruta alternativa
+  if(this.src.indexOf('/images/')!==-1){
+    this.src='images/Torre.jpg';return;
+  }
   this.style.display='none';
   document.querySelector('.tower').style.minHeight='100vh';
   document.querySelector('.tower').style.background='linear-gradient(to top,#1a0f00 0%,#0a1628 30%,#050510 60%,#020208 100%)';
