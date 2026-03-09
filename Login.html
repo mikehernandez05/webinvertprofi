@@ -6,6 +6,10 @@
     <title>InvertProfit - Acceso a la Terminal</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase v9+ compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -157,6 +161,20 @@
         @supports(padding:max(0px)){
             body{padding-top:max(10px,env(safe-area-inset-top));padding-bottom:max(10px,env(safe-area-inset-bottom))}
         }
+        /* Modal overlay */
+        .modal-overlay {
+            position: fixed; inset: 0; z-index: 100;
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+            display: flex; align-items: center; justify-content: center;
+            opacity: 0; pointer-events: none; transition: opacity 0.3s;
+        }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-box {
+            background: #111827; border: 1px solid rgba(212,175,55,0.2);
+            border-radius: 1rem; padding: 2rem; width: 90%; max-width: 420px;
+            transform: translateY(20px); transition: transform 0.3s;
+        }
+        .modal-overlay.active .modal-box { transform: translateY(0); }
     </style>
 </head>
 <body class="text-white min-h-screen flex flex-col items-center justify-center px-4 py-10 relative scanlines overflow-hidden">
@@ -264,9 +282,12 @@
                         <button type="button" onclick="togglePass()" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-300 text-xs font-bold uppercase tracking-wider transition">VER</button>
                     </div>
                     <div class="flex justify-end mt-1.5">
-                        <a href="#" class="text-[10px] font-bold uppercase tracking-wider transition" style="color:rgba(212,175,55,0.7);">¿Olvidaste tu contraseña?</a>
+                        <a href="#" onclick="handleForgotPassword(); return false;" class="text-[10px] font-bold uppercase tracking-wider transition" style="color:rgba(212,175,55,0.7);">¿Olvidaste tu contraseña?</a>
                     </div>
                 </div>
+
+                <!-- Error messages -->
+                <div id="auth-error" class="hidden text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3 mt-1"></div>
 
                 <button type="submit" id="submit-btn" class="btn-primary w-full font-black py-4 rounded-xl transition-all transform active:scale-[0.98] uppercase tracking-[3px] text-sm mt-2"
                     style="background:linear-gradient(135deg, #D4AF37, #b8860b); color:#0a0f1a; box-shadow:0 0 30px rgba(212,175,55,0.3);">
@@ -275,7 +296,7 @@
             </form>
 
             <p class="mt-6 text-center text-sm text-gray-500">
-                ¿Nuevo en la academia? <a href="#" class="font-black hover:underline transition" style="color:#D4AF37;">Regístrate gratis</a>
+                ¿Nuevo en la academia? <a href="#" onclick="openRegisterModal(); return false;" class="font-black hover:underline transition" style="color:#D4AF37;">Regístrate gratis</a>
             </p>
         </div>
     </div>
@@ -293,42 +314,295 @@
         </div>
     </div>
 
+    <!-- Registration Modal -->
+    <div id="register-modal" class="modal-overlay" onclick="if(event.target===this)closeRegisterModal()">
+        <div class="modal-box">
+            <div class="text-center mb-6">
+                <p class="text-[10px] font-black tracking-[5px] text-gray-600 uppercase mb-2">— NUEVO ACCESO —</p>
+                <h3 class="text-xl font-black tracking-tight text-white">Crear Cuenta</h3>
+            </div>
+            <form id="register-form" onsubmit="handleRegister(event)" class="space-y-4">
+                <div>
+                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-[3px] mb-2">Nombre</label>
+                    <input id="reg-name" type="text" placeholder="Tu nombre" required
+                        class="w-full rounded-xl py-3 px-4 text-sm font-medium outline-none"
+                        style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); color:white;">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-[3px] mb-2">Email</label>
+                    <input id="reg-email" type="email" placeholder="tu@email.com" required
+                        class="w-full rounded-xl py-3 px-4 text-sm font-medium outline-none"
+                        style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); color:white;">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-black text-gray-500 uppercase tracking-[3px] mb-2">Contraseña</label>
+                    <input id="reg-pass" type="password" placeholder="Mínimo 6 caracteres" required minlength="6"
+                        class="w-full rounded-xl py-3 px-4 text-sm font-medium outline-none"
+                        style="background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); color:white;">
+                </div>
+                <div id="reg-error" class="hidden text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3"></div>
+                <button type="submit" id="reg-btn" class="btn-primary w-full font-black py-3.5 rounded-xl uppercase tracking-[3px] text-sm transition-all active:scale-[0.98]"
+                    style="background:linear-gradient(135deg, #D4AF37, #b8860b); color:#0a0f1a; box-shadow:0 0 20px rgba(212,175,55,0.3);">
+                    CREAR CUENTA
+                </button>
+            </form>
+            <p class="mt-4 text-center text-sm text-gray-500">
+                ¿Ya tienes cuenta? <a href="#" onclick="closeRegisterModal(); return false;" class="font-black hover:underline" style="color:#D4AF37;">Inicia sesión</a>
+            </p>
+        </div>
+    </div>
+
     <script>
+        // ═══════════════════════════════════════════
+        // FIREBASE CONFIG — Reemplaza con tus credenciales
+        // ═══════════════════════════════════════════
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_PROYECTO.firebaseapp.com",
+            projectId: "TU_PROYECTO",
+            storageBucket: "TU_PROYECTO.appspot.com",
+            messagingSenderId: "123456",
+            appId: "TU_APP_ID"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // ═══════════════════════════════════════════
+        // HELPERS
+        // ═══════════════════════════════════════════
         function togglePass() {
             const input = document.getElementById('pass-input');
             input.type = input.type === 'password' ? 'text' : 'password';
         }
 
-        function setSession() {
-            localStorage.setItem('ip_authenticated', '1');
-            localStorage.setItem('ip_last_activity', Date.now().toString());
+        function showError(msg, elementId) {
+            const el = document.getElementById(elementId || 'auth-error');
+            el.textContent = msg;
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 6000);
         }
 
-        function getDestination() {
-            return localStorage.getItem('ip_level_test_done') === '1' ? 'dashboard.html' : 'test-nivel.html';
+        function hideError(elementId) {
+            document.getElementById(elementId || 'auth-error').classList.add('hidden');
         }
 
-        function handleLogin(e) {
-            e.preventDefault();
+        function translateFirebaseError(code) {
+            const errors = {
+                'auth/user-not-found': 'No existe una cuenta con este email.',
+                'auth/wrong-password': 'Contraseña incorrecta. Intenta de nuevo.',
+                'auth/invalid-credential': 'Credenciales inválidas. Verifica tu email y contraseña.',
+                'auth/email-already-in-use': 'Este email ya está registrado. Intenta iniciar sesión.',
+                'auth/weak-password': 'La contraseña debe tener al menos 6 caracteres.',
+                'auth/invalid-email': 'El formato del email no es válido.',
+                'auth/too-many-requests': 'Demasiados intentos fallidos. Espera unos minutos.',
+                'auth/popup-closed-by-user': 'Se cerró la ventana de autenticación.',
+                'auth/cancelled-popup-request': 'Se canceló la solicitud de autenticación.',
+                'auth/account-exists-with-different-credential': 'Ya existe una cuenta con este email usando otro método de inicio de sesión.',
+                'auth/network-request-failed': 'Error de red. Verifica tu conexión a internet.',
+                'auth/popup-blocked': 'El navegador bloqueó la ventana emergente. Permite popups para este sitio.'
+            };
+            return errors[code] || 'Ocurrió un error inesperado. Intenta de nuevo.';
+        }
+
+        function setButtonState(text, disabled) {
             const btn = document.getElementById('submit-btn');
-            btn.textContent = '⚡ AUTENTICANDO...';
-            btn.style.opacity = '0.7';
+            btn.textContent = text;
+            btn.style.opacity = disabled ? '0.7' : '1';
+            btn.disabled = disabled;
+        }
+
+        function resetButton() {
+            setButtonState('⚡ CONTINUAR ASCENSO', false);
+        }
+
+        // ═══════════════════════════════════════════
+        // FIRESTORE — Guardar/actualizar datos del usuario
+        // ═══════════════════════════════════════════
+        async function saveUserToFirestore(user, provider) {
+            const userRef = db.collection('users').doc(user.uid);
+            const doc = await userRef.get();
+
+            const userData = {
+                email: user.email,
+                displayName: user.displayName || '',
+                photoURL: user.photoURL || '',
+                provider: provider,
+                lastLogin: firebase.firestore.FieldValue.serverTimestamp(),
+                ip_authenticated: true
+            };
+
+            if (!doc.exists) {
+                userData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                userData.ip_level_test_done = false;
+                await userRef.set(userData);
+            } else {
+                await userRef.update(userData);
+            }
+
+            return (await userRef.get()).data();
+        }
+
+        async function getDestination(uid) {
+            try {
+                const doc = await db.collection('users').doc(uid).get();
+                if (doc.exists && doc.data().ip_level_test_done) {
+                    return 'dashboard.html';
+                }
+            } catch (e) {
+                console.error('Error reading user doc:', e);
+            }
+            return 'test-nivel.html';
+        }
+
+        async function onAuthSuccess(user, provider) {
+            try {
+                await saveUserToFirestore(user, provider);
+                const dest = await getDestination(user.uid);
+                window.location.href = dest;
+            } catch (error) {
+                console.error('Error post-auth:', error);
+                showError('Error al guardar datos. Redirigiendo...');
+                setTimeout(() => { window.location.href = 'test-nivel.html'; }, 1500);
+            }
+        }
+
+        // ═══════════════════════════════════════════
+        // AUTH — Email/Password login
+        // ═══════════════════════════════════════════
+        async function handleLogin(e) {
+            e.preventDefault();
+            hideError();
+            const email = document.getElementById('email-input').value.trim();
+            const password = document.getElementById('pass-input').value;
+
+            setButtonState('⚡ AUTENTICANDO...', true);
+
+            try {
+                const result = await auth.signInWithEmailAndPassword(email, password);
+                await onAuthSuccess(result.user, 'email');
+            } catch (error) {
+                resetButton();
+                showError(translateFirebaseError(error.code));
+            }
+        }
+
+        // ═══════════════════════════════════════════
+        // AUTH — Google
+        // ═══════════════════════════════════════════
+        async function loginWithGoogle() {
+            hideError();
+            setButtonState('⚡ CONECTANDO CON GOOGLE...', true);
+
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                const result = await auth.signInWithPopup(provider);
+                await onAuthSuccess(result.user, 'google');
+            } catch (error) {
+                resetButton();
+                showError(translateFirebaseError(error.code));
+            }
+        }
+
+        // ═══════════════════════════════════════════
+        // AUTH — Apple
+        // ═══════════════════════════════════════════
+        async function loginWithApple() {
+            hideError();
+            setButtonState('⚡ CONECTANDO CON APPLE...', true);
+
+            try {
+                const provider = new firebase.auth.OAuthProvider('apple.com');
+                provider.addScope('email');
+                provider.addScope('name');
+                const result = await auth.signInWithPopup(provider);
+                await onAuthSuccess(result.user, 'apple');
+            } catch (error) {
+                resetButton();
+                showError(translateFirebaseError(error.code));
+            }
+        }
+
+        // ═══════════════════════════════════════════
+        // AUTH — Forgot password
+        // ═══════════════════════════════════════════
+        async function handleForgotPassword() {
+            hideError();
+            const email = document.getElementById('email-input').value.trim();
+
+            if (!email) {
+                showError('Escribe tu email arriba para recibir el enlace de recuperación.');
+                return;
+            }
+
+            try {
+                await auth.sendPasswordResetEmail(email);
+                const el = document.getElementById('auth-error');
+                el.textContent = '✓ Se envió un enlace de recuperación a ' + email;
+                el.classList.remove('hidden');
+                el.style.color = '#4ade80';
+                el.style.background = 'rgba(74,222,128,0.1)';
+                el.style.borderColor = 'rgba(74,222,128,0.2)';
+                setTimeout(() => {
+                    el.classList.add('hidden');
+                    el.style.color = '';
+                    el.style.background = '';
+                    el.style.borderColor = '';
+                }, 6000);
+            } catch (error) {
+                showError(translateFirebaseError(error.code));
+            }
+        }
+
+        // ═══════════════════════════════════════════
+        // AUTH — Register modal
+        // ═══════════════════════════════════════════
+        function openRegisterModal() {
+            document.getElementById('register-modal').classList.add('active');
+        }
+
+        function closeRegisterModal() {
+            document.getElementById('register-modal').classList.remove('active');
+            hideError('reg-error');
+        }
+
+        async function handleRegister(e) {
+            e.preventDefault();
+            hideError('reg-error');
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-pass').value;
+            const btn = document.getElementById('reg-btn');
+
+            btn.textContent = 'CREANDO CUENTA...';
             btn.disabled = true;
-            setTimeout(() => {
-                setSession();
-                window.location.href = getDestination();
-            }, 800);
+
+            try {
+                const result = await auth.createUserWithEmailAndPassword(email, password);
+                await result.user.updateProfile({ displayName: name });
+                closeRegisterModal();
+                await onAuthSuccess(result.user, 'email');
+            } catch (error) {
+                btn.textContent = 'CREAR CUENTA';
+                btn.disabled = false;
+                showError(translateFirebaseError(error.code), 'reg-error');
+            }
         }
 
-        function loginWithGoogle() {
-            document.getElementById('submit-btn').textContent = '⚡ CONECTANDO...';
-            setTimeout(() => { setSession(); window.location.href = getDestination(); }, 600);
-        }
-
-        function loginWithApple() {
-            document.getElementById('submit-btn').textContent = '⚡ CONECTANDO...';
-            setTimeout(() => { setSession(); window.location.href = getDestination(); }, 600);
-        }
+        // ═══════════════════════════════════════════
+        // PERSISTENCIA — onAuthStateChanged
+        // ═══════════════════════════════════════════
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    const dest = await getDestination(user.uid);
+                    window.location.href = dest;
+                } catch (e) {
+                    console.error('Error checking auth state:', e);
+                }
+            }
+        });
     </script>
 
 </body>
