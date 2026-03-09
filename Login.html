@@ -420,6 +420,8 @@
         // ═══════════════════════════════════════════
         // FIRESTORE — Guardar/actualizar datos del usuario
         // ═══════════════════════════════════════════
+        var isRedirecting = false;
+
         async function saveUserToFirestore(user, provider) {
             const userRef = db.collection('users').doc(user.uid);
             const doc = await userRef.get();
@@ -437,11 +439,11 @@
                 userData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                 userData.ip_level_test_done = false;
                 await userRef.set(userData);
+                return userData;
             } else {
                 await userRef.update(userData);
+                return doc.data();
             }
-
-            return (await userRef.get()).data();
         }
 
         async function getDestination(uid) {
@@ -457,12 +459,15 @@
         }
 
         async function onAuthSuccess(user, provider) {
+            if (isRedirecting) return;
+            isRedirecting = true;
             try {
-                await saveUserToFirestore(user, provider);
-                const dest = await getDestination(user.uid);
+                var firestoreData = await saveUserToFirestore(user, provider);
+                var dest = firestoreData.ip_level_test_done ? 'dashboard.html' : 'test-nivel.html';
                 window.location.href = dest;
             } catch (error) {
                 console.error('Error post-auth:', error);
+                isRedirecting = false;
                 showError('Error al guardar datos. Redirigiendo...');
                 setTimeout(() => { window.location.href = 'test-nivel.html'; }, 1500);
             }
@@ -489,16 +494,22 @@
         }
 
         // ═══════════════════════════════════════════
-        // AUTH — Google
+        // HELPERS — Detección de móvil
         // ═══════════════════════════════════════════
-        async function loginWithGoogle() {
+        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
+        async function socialLogin(provider, providerName) {
             hideError();
-            setButtonState('⚡ CONECTANDO CON GOOGLE...', true);
+            setButtonState('⚡ CONECTANDO...', true);
 
             try {
-                const provider = new firebase.auth.GoogleAuthProvider();
-                const result = await auth.signInWithPopup(provider);
-                await onAuthSuccess(result.user, 'google');
+                if (isMobile) {
+                    // En móviles, signInWithRedirect es más confiable
+                    await auth.signInWithRedirect(provider);
+                } else {
+                    var result = await auth.signInWithPopup(provider);
+                    await onAuthSuccess(result.user, providerName);
+                }
             } catch (error) {
                 resetButton();
                 showError(translateFirebaseError(error.code));
@@ -506,22 +517,21 @@
         }
 
         // ═══════════════════════════════════════════
+        // AUTH — Google
+        // ═══════════════════════════════════════════
+        function loginWithGoogle() {
+            var provider = new firebase.auth.GoogleAuthProvider();
+            socialLogin(provider, 'google');
+        }
+
+        // ═══════════════════════════════════════════
         // AUTH — Apple
         // ═══════════════════════════════════════════
-        async function loginWithApple() {
-            hideError();
-            setButtonState('⚡ CONECTANDO CON APPLE...', true);
-
-            try {
-                const provider = new firebase.auth.OAuthProvider('apple.com');
-                provider.addScope('email');
-                provider.addScope('name');
-                const result = await auth.signInWithPopup(provider);
-                await onAuthSuccess(result.user, 'apple');
-            } catch (error) {
-                resetButton();
-                showError(translateFirebaseError(error.code));
-            }
+        function loginWithApple() {
+            var provider = new firebase.auth.OAuthProvider('apple.com');
+            provider.addScope('email');
+            provider.addScope('name');
+            socialLogin(provider, 'apple');
         }
 
         // ═══════════════════════════════════════════
@@ -591,15 +601,36 @@
         }
 
         // ═══════════════════════════════════════════
+        // REDIRECT RESULT — Para móviles (signInWithRedirect)
+        // ═══════════════════════════════════════════
+        auth.getRedirectResult().then(function(result) {
+            if (result.user) {
+                var providerName = 'social';
+                if (result.credential) {
+                    var pid = result.credential.providerId || '';
+                    if (pid.indexOf('google') !== -1) providerName = 'google';
+                    else if (pid.indexOf('apple') !== -1) providerName = 'apple';
+                }
+                onAuthSuccess(result.user, providerName);
+            }
+        }).catch(function(error) {
+            if (error.code) showError(translateFirebaseError(error.code));
+        });
+
+        // ═══════════════════════════════════════════
         // PERSISTENCIA — onAuthStateChanged
+        // Solo redirige si el usuario YA tenía sesión activa
+        // (no interfiere con login/registro en curso)
         // ═══════════════════════════════════════════
         auth.onAuthStateChanged(async (user) => {
-            if (user) {
+            if (user && !isRedirecting) {
+                isRedirecting = true;
                 try {
                     const dest = await getDestination(user.uid);
                     window.location.href = dest;
                 } catch (e) {
                     console.error('Error checking auth state:', e);
+                    isRedirecting = false;
                 }
             }
         });

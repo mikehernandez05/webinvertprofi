@@ -294,7 +294,7 @@
                     <span class="material-symbols-outlined text-[20px]">notifications</span>
                     <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-bg-dark"></span>
                 </button>
-                <div class="w-9 h-9 bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 rounded-full flex items-center justify-center text-xs font-black text-primary">AT</div>
+                <div id="header-avatar" class="w-9 h-9 bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 rounded-full flex items-center justify-center text-xs font-black text-primary">--</div>
             </div>
             <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="lg:hidden text-gray-400 hover:text-white p-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -331,10 +331,10 @@
     </nav>
     <div class="p-6 border-t border-gray-700">
         <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-extrabold text-primary text-sm">AT</div>
+            <div id="sidebar-avatar" class="w-12 h-12 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-extrabold text-primary text-sm">--</div>
             <div class="flex-1 min-w-0">
-                <p class="text-sm font-bold truncate">Alex Trader</p>
-                <p class="text-[10px] text-primary font-bold uppercase tracking-wider">Pro Member</p>
+                <p id="sidebar-username" class="text-sm font-bold truncate">Cargando...</p>
+                <p id="sidebar-role" class="text-[10px] text-primary font-bold uppercase tracking-wider">Miembro</p>
             </div>
             <a href="#" onclick="AUTH.logout(); return false;" class="text-gray-500 hover:text-red-400 transition" title="Cerrar Sesión">
                 <span class="material-symbols-outlined text-[22px]">logout</span>
@@ -888,7 +888,45 @@ function toggleSideMenu() {
     // Entrance chime
     setTimeout(() => SFX.chime(), 800);
 })();
+
+// ===== LOAD USER PROFILE =====
+(function() {
+    function getInitials(name) {
+        if (!name) return '??';
+        var parts = name.trim().split(/\s+/);
+        if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+        return name.substring(0, 2).toUpperCase();
+    }
+
+    function updateUI(name, email) {
+        var displayName = name || email || 'Usuario';
+        var initials = name ? getInitials(name) : (email ? email.substring(0, 2).toUpperCase() : '??');
+
+        var headerAvatar = document.getElementById('header-avatar');
+        var sidebarAvatar = document.getElementById('sidebar-avatar');
+        var sidebarUsername = document.getElementById('sidebar-username');
+
+        if (headerAvatar) headerAvatar.textContent = initials;
+        if (sidebarAvatar) sidebarAvatar.textContent = initials;
+        if (sidebarUsername) sidebarUsername.textContent = displayName;
+    }
+
+    // Leer de Firebase Auth primero (rápido, sin red)
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            updateUI(user.displayName, user.email);
+            // También leer de Firestore por si tiene datos más completos
+            firebase.firestore().collection('users').doc(user.uid).get()
+                .then(function(doc) {
+                    if (doc.exists && doc.data().displayName) {
+                        updateUI(doc.data().displayName, doc.data().email);
+                    }
+                })
+                .catch(function(e) { console.error('Error cargando perfil:', e); });
+        }
+    });
+})();
 </script>
 
 </body>
-</html> 
+</html>
