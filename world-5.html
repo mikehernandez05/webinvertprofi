@@ -881,7 +881,7 @@ if(actLv){
 // AUDIO — deep cinematic war room tone
 // ══════════════════════════════════════════════
 var actx,mg,sOn=true;
-function initA(){if(actx)return;actx=new(AudioContext||webkitAudioContext)();mg=actx.createGain();mg.gain.value=.065;mg.connect(actx.destination);
+function initA(){if(actx){if(actx.state==="suspended")actx.resume();return;}actx=new(AudioContext||webkitAudioContext)();if(actx.state==="suspended")actx.resume();mg=actx.createGain();mg.gain.value=.065;mg.connect(actx.destination);
   // Low sub + warm harmonics
   [[0,0.008,'sine'],[7,0.007,'sawtooth'],[14,0.005,'triangle']].forEach(function(s,i){
     var o=actx.createOscillator(),g=actx.createGain(),f=actx.createBiquadFilter();

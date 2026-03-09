@@ -452,6 +452,13 @@
                     userData.ip_level_test_done = false;
                     await userRef.set(userData);
                 } else {
+                    // Restaurar progreso del test desde Firestore si no está en localStorage
+                    var data = doc.data();
+                    if (data.ip_level_test_done && localStorage.getItem('ip_level_test_done') !== '1') {
+                        localStorage.setItem('ip_level_test_done', '1');
+                        if (data.ip_user_level) localStorage.setItem('ip_user_level', data.ip_user_level);
+                        if (data.ip_start_world) localStorage.setItem('ip_start_world', data.ip_start_world);
+                    }
                     await userRef.update(userData);
                 }
             } catch (e) {

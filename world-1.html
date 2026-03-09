@@ -732,7 +732,7 @@ var conduitOff=0,lastT=performance.now();
 
 // ═══ AUDIO ═══
 var actx,mg,sOn=true;
-function initA(){if(actx)return;actx=new(AudioContext||webkitAudioContext)();mg=actx.createGain();mg.gain.value=.08;mg.connect(actx.destination);
+function initA(){if(actx){if(actx.state==="suspended")actx.resume();return;}actx=new(AudioContext||webkitAudioContext)();if(actx.state==="suspended")actx.resume();mg=actx.createGain();mg.gain.value=.08;mg.connect(actx.destination);
   [0,7,12].forEach(function(s,i){var o=actx.createOscillator(),g=actx.createGain(),f=actx.createBiquadFilter();
     o.type=i<2?'sine':'triangle';o.frequency.value=55*Math.pow(2,s/12);f.type='lowpass';f.frequency.value=180+i*50;f.Q.value=.7;g.gain.value=.012;
     o.connect(f);f.connect(g);g.connect(mg);o.start();var l=actx.createOscillator(),lg=actx.createGain();l.type='sine';l.frequency.value=.06+i*.02;lg.gain.value=1.5;l.connect(lg);lg.connect(o.frequency);l.start()});

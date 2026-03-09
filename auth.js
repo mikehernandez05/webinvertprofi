@@ -49,14 +49,14 @@
     },
     logout: function () {
       firebase.auth().signOut().then(function () {
+        // Solo limpiar datos de sesión, NO el progreso del usuario
         localStorage.removeItem('ip_authenticated');
         localStorage.removeItem('ip_user_email');
         localStorage.removeItem('ip_user_name');
         localStorage.removeItem('ip_user_photo');
         localStorage.removeItem('ip_provider');
-        localStorage.removeItem('ip_level_test_done');
-        localStorage.removeItem('ip_user_level');
-        localStorage.removeItem('ip_start_world');
+        // ip_level_test_done, ip_user_level, ip_start_world se conservan
+        // para que al volver a entrar no repita el examen diagnóstico
         window.location.href = 'Login.html';
       });
     }
