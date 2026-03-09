@@ -302,10 +302,14 @@ function renderScreen(){
                 '</div>';
             bottomBar.style.display='none';
 
-            // Guardar nivel en Firestore y localStorage
+            // Guardar nivel en localStorage + sessionStorage + cookie + Firestore
             localStorage.setItem('ip_level_test_done','1');
             localStorage.setItem('ip_user_level',level.toLowerCase());
             localStorage.setItem('ip_start_world',startWorld.toString());
+            sessionStorage.setItem('ip_level_test_done','1');
+            // Cookie como respaldo (dura 1 año)
+            var exp=new Date();exp.setTime(exp.getTime()+365*86400000);
+            document.cookie='ip_test_done=1;expires='+exp.toUTCString()+';path=/;SameSite=Lax';
             saveTestResultToFirestore(level.toLowerCase(), startWorld, score, correctCount);
 
             // Celebration
@@ -391,9 +395,16 @@ function saveTestResultToFirestore(level, startWorld, score, correctCount) {
     } catch(e) { console.warn('Firestore no disponible:', e.message); }
 }
 
-// ══ CHECK IF ALREADY DONE — localStorage es la fuente principal ══
+// ══ CHECK IF ALREADY DONE — localStorage + cookie + sessionStorage ══
 (function checkTestDone() {
-    if (localStorage.getItem('ip_level_test_done') === '1') {
+    var done = localStorage.getItem('ip_level_test_done') === '1'
+        || sessionStorage.getItem('ip_level_test_done') === '1'
+        || document.cookie.indexOf('ip_test_done=1') !== -1;
+    if (done) {
+        // Restaurar localStorage si estaba vacío
+        if (localStorage.getItem('ip_level_test_done') !== '1') {
+            localStorage.setItem('ip_level_test_done', '1');
+        }
         window.location.replace('dashboard.html');
         return;
     }
