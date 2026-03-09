@@ -8,6 +8,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase v9+ compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script>
+        // Firebase Config — debe coincidir con Login.html
+        firebase.initializeApp({
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_PROYECTO.firebaseapp.com",
+            projectId: "TU_PROYECTO",
+            storageBucket: "TU_PROYECTO.appspot.com",
+            messagingSenderId: "123456",
+            appId: "TU_APP_ID"
+        });
+    </script>
     <script src="auth.js"></script>
     <script>
         tailwind.config={darkMode:"class",theme:{extend:{colors:{"primary":"#D4AF37","bg-dark":"#0a0f1a","card":"#111827","card-border":"#1f2937"},fontFamily:{"sans":["Inter","sans-serif"],"mono":["Share Tech Mono","monospace"]}}}}
@@ -287,10 +302,11 @@ function renderScreen(){
                 '</div>';
             bottomBar.style.display='none';
 
-            // Save level
+            // Guardar nivel en Firestore y localStorage
             localStorage.setItem('ip_level_test_done','1');
             localStorage.setItem('ip_user_level',level.toLowerCase());
             localStorage.setItem('ip_start_world',startWorld.toString());
+            saveTestResultToFirestore(level.toLowerCase(), startWorld, score, correctCount);
 
             // Celebration
             setTimeout(function(){playSound('victory');launchCelebration();},400);
@@ -358,13 +374,43 @@ function launchCelebration(){
     setTimeout(function(){c.remove()},5000);
 }
 
-// ══ CHECK IF ALREADY DONE ══
-if(localStorage.getItem('ip_level_test_done')==='1'){
-    // Already classified, skip to academy
-    window.location.replace('dashboard.html');
-} else {
-    renderScreen();
+// ══ FIRESTORE — Guardar resultado del test ══
+function saveTestResultToFirestore(level, startWorld, score, correctCount) {
+    var user = firebase.auth().currentUser;
+    if (!user) return;
+    var db = firebase.firestore();
+    db.collection('users').doc(user.uid).update({
+        ip_level_test_done: true,
+        ip_user_level: level,
+        ip_start_world: startWorld,
+        ip_test_score: score,
+        ip_test_correct: correctCount,
+        ip_test_date: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(function(e) { console.error('Error guardando resultado:', e); });
 }
+
+// ══ CHECK IF ALREADY DONE (Firestore + localStorage fallback) ══
+(function checkTestDone() {
+    // Primero verificar localStorage (rápido)
+    if (localStorage.getItem('ip_level_test_done') === '1') {
+        window.location.replace('dashboard.html');
+        return;
+    }
+    // Luego verificar Firestore (autoritativo)
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (!user) return; // auth.js ya maneja la redirección
+        firebase.firestore().collection('users').doc(user.uid).get()
+            .then(function(doc) {
+                if (doc.exists && doc.data().ip_level_test_done) {
+                    localStorage.setItem('ip_level_test_done', '1');
+                    window.location.replace('dashboard.html');
+                } else {
+                    renderScreen();
+                }
+            })
+            .catch(function() { renderScreen(); });
+    });
+})();
 </script>
 </body>
 </html>

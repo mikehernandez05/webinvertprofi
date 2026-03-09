@@ -8,6 +8,21 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase v9+ compat -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+    <script>
+        // Firebase Config — debe coincidir con Login.html
+        firebase.initializeApp({
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_PROYECTO.firebaseapp.com",
+            projectId: "TU_PROYECTO",
+            storageBucket: "TU_PROYECTO.appspot.com",
+            messagingSenderId: "123456",
+            appId: "TU_APP_ID"
+        });
+    </script>
     <script src="auth.js"></script>
     <script>
         tailwind.config = {
@@ -321,7 +336,7 @@
                 <p class="text-sm font-bold truncate">Alex Trader</p>
                 <p class="text-[10px] text-primary font-bold uppercase tracking-wider">Pro Member</p>
             </div>
-            <a href="Login.html" class="text-gray-500 hover:text-red-400 transition" title="Cerrar Sesión">
+            <a href="#" onclick="AUTH.logout(); return false;" class="text-gray-500 hover:text-red-400 transition" title="Cerrar Sesión">
                 <span class="material-symbols-outlined text-[22px]">logout</span>
             </a>
         </div>

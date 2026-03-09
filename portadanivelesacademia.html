@@ -349,6 +349,20 @@ html,body{min-height:100%;min-height:100dvh;background:#050508;font-family:'Inte
   <div class="tr-dots"><span></span><span></span><span></span></div>
 </div>
 
+<!-- Firebase v9+ compat -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+    firebase.initializeApp({
+        apiKey: "TU_API_KEY",
+        authDomain: "TU_PROYECTO.firebaseapp.com",
+        projectId: "TU_PROYECTO",
+        storageBucket: "TU_PROYECTO.appspot.com",
+        messagingSenderId: "123456",
+        appId: "TU_APP_ID"
+    });
+</script>
 <script src="auth.js"></script>
 <script src="curriculum.js"></script>
 <script>
