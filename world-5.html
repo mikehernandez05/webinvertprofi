@@ -881,7 +881,8 @@ if(actLv){
 // AUDIO — deep cinematic war room tone
 // ══════════════════════════════════════════════
 var actx,mg,sOn=true;
-function initA(){if(actx){if(actx.state==="suspended")actx.resume();return;}actx=new(AudioContext||webkitAudioContext)();if(actx.state==="suspended")actx.resume();mg=actx.createGain();mg.gain.value=.065;mg.connect(actx.destination);
+(function(){function u(){if(actx&&actx.state==='suspended')actx.resume();var c=new(AudioContext||webkitAudioContext)();var b=c.createBuffer(1,1,22050);var s=c.createBufferSource();s.buffer=b;s.connect(c.destination);s.start(0);if(c.state==='suspended')c.resume();document.removeEventListener('touchstart',u,true);document.removeEventListener('touchend',u,true);document.removeEventListener('click',u,true)}document.addEventListener('touchstart',u,true);document.addEventListener('touchend',u,true);document.addEventListener('click',u,true)})();
+function initA(){if(actx){if(actx.state==='suspended')actx.resume();return;}actx=new(AudioContext||webkitAudioContext)();if(actx.state==='suspended')actx.resume();mg=actx.createGain();mg.gain.value=.065;mg.connect(actx.destination);
   // Low sub + warm harmonics
   [[0,0.008,'sine'],[7,0.007,'sawtooth'],[14,0.005,'triangle']].forEach(function(s,i){
     var o=actx.createOscillator(),g=actx.createGain(),f=actx.createBiquadFilter();
