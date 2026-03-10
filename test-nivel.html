@@ -384,14 +384,14 @@ function saveTestResultToFirestore(level, startWorld, score, correctCount) {
     if (!user) return;
     try {
         var db = firebase.firestore();
-        db.collection('users').doc(user.uid).update({
+        db.collection('users').doc(user.uid).set({
             ip_level_test_done: true,
             ip_user_level: level,
             ip_start_world: startWorld,
             ip_test_score: score,
             ip_test_correct: correctCount,
             ip_test_date: firebase.firestore.FieldValue.serverTimestamp()
-        }).catch(function(e) { console.warn('Firestore no disponible:', e.message); });
+        }, { merge: true }).catch(function(e) { console.warn('Firestore no disponible:', e.message); });
     } catch(e) { console.warn('Firestore no disponible:', e.message); }
 }
 

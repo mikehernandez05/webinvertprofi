@@ -15,12 +15,18 @@
   document.documentElement.style.opacity = '0';
   document.documentElement.style.transition = 'opacity 0.3s';
 
-  // Esperar a que Firebase esté listo
+  // Esperar a que Firebase esté listo (máximo 10 segundos)
+  var _fbRetries = 0;
   function waitForFirebase(callback) {
     if (typeof firebase !== 'undefined' && firebase.auth) {
       callback();
-    } else {
+    } else if (_fbRetries < 200) {
+      _fbRetries++;
       setTimeout(function () { waitForFirebase(callback); }, 50);
+    } else {
+      // Firebase no cargó — redirigir a Login como fallback
+      console.error('Firebase SDK no disponible después de 10s');
+      document.documentElement.style.opacity = '1';
     }
   }
 

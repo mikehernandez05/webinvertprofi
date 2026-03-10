@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport"/>
-<title>InvertProfit — Mundo 7: Legado</title>
+<title>InvertProfit — Mundo 7: La Cúspide del Legado</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%23010812' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23FFD060'>IP</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -286,7 +286,7 @@ header{border-image:linear-gradient(90deg,transparent,rgba(255,208,96,.28),trans
 
 <main class="relative z-10 pb-24">
   <div class="world-hero">
-    <div class="hero-badge"><span class="badge-dot"></span>MUNDO 07 — LEGADO FINAL</div>
+    <div class="hero-badge"><span class="badge-dot"></span>MUNDO 07 — LA CÚSPIDE DEL LEGADO</div>
     <div class="summit-panel">
       <div class="sp-icon">🐂</div>
       <div class="sp-title">ASCENSIÓN AL LEGADO</div>
@@ -294,8 +294,8 @@ header{border-image:linear-gradient(90deg,transparent,rgba(255,208,96,.28),trans
       <div class="sp-bar"><div id="cert-fill" style="width:0%"></div></div>
     </div>
     <div class="hero-icon">🏆</div>
-    <h1 class="hero-title">LEGADO</h1>
-    <p class="hero-sub">// TRASCIENDE · CONQUISTA · ASCIENDE</p>
+    <h1 class="hero-title">LA CÚSPIDE DEL LEGADO</h1>
+    <p class="hero-sub">// RANGO: MAESTRO DE CAPITAL — MAESTRÍA FINAL</p>
   </div>
   <div class="map-wrap" id="mapWrap" style="position:relative">
     <svg id="pathSvg" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -332,7 +332,18 @@ header{border-image:linear-gradient(90deg,transparent,rgba(255,208,96,.28),trans
 // ALL LOGIC — PRESERVED EXACTLY
 // ══════════════════════════════════════════════
 var A='#FFD060',AR='255,208,96',WN=7;
-var levels=window._wL=[{"n": 91, "t": "Estadística", "d": "Esperanza matemática.", "xp": 250}, {"n": 92, "t": "Teoría de Juegos", "d": "Nash y más.", "xp": 250}, {"n": 93, "t": "Ingeniería Riesgo", "d": "Gestión de drawdown.", "xp": 300}, {"n": 94, "t": "Bots & Algos", "d": "Automatiza tu trading.", "xp": 300}, {"n": 95, "t": "Portafolios Quant", "d": "Sharpe, Sortino.", "xp": 300}, {"n": 96, "t": "Correlación Beta", "d": "Intermercado.", "xp": 250}, {"n": 97, "t": "Plan Retiro", "d": "Libertad financiera.", "xp": 250}, {"n": 98, "t": "100 Operaciones", "d": "Historial real.", "xp": 500}, {"n": 99, "t": "Ética & Legado", "d": "Filosofía de vida.", "xp": 250}, {"n": 100, "t": "🏆 GRADUACIÓN", "d": "Certificación Grand Master.", "xp": 1000, "boss": "FINAL"}];
+var levels=window._wL=[
+  {"n":91,"t":"Estadística Aplicada","d":"Esperanza matemática aplicada al trading.","xp":250},
+  {"n":92,"t":"Teoría de Juegos","d":"Estrategias competitivas en el mercado.","xp":250},
+  {"n":93,"t":"Ingeniería de Riesgo","d":"Drawdown y Recuperación: protección de capital.","xp":300},
+  {"n":94,"t":"Bots y Algoritmos","d":"Introducción a bots y lógica de programación.","xp":300},
+  {"n":95,"t":"Portafolios Cuantitativos","d":"Ratios de Sharpe y optimización.","xp":300},
+  {"n":96,"t":"Correlación Beta","d":"Coeficiente Beta y flujos de capital.","xp":250},
+  {"n":97,"t":"Plan Maestro de Retiro","d":"Libertad financiera sistemática.","xp":250},
+  {"n":98,"t":"100 Operaciones Reales","d":"Auditoría Final: historial real.","xp":500},
+  {"n":99,"t":"Ética del Inversor","d":"Ética y Legado del Inversor Élite.","xp":250},
+  {"n":100,"t":"🏆 GRADUACIÓN","d":"Certificación Grand Master — SOCIO AMIGOTRADE.","xp":1000,"boss":"FINAL"}
+];
 var icons=["📐","♟️","🛡️","🤖","📊","🌐","🏖️","📋","⭐","🏆"];
 levels.forEach(function(l){l.s=CURRICULUM.getLevelStatus(l.n)});
 var cc=levels.filter(function(l){return l.s==='completed'}).length;

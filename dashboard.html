@@ -282,19 +282,43 @@
             <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="index.html">INICIO</a>
             <a class="font-black border-b-2 border-primary pb-1 text-sm tracking-widest uppercase" style="color:#D4AF37;" href="dashboard.html">ACADEMIA</a>
             <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="mercado.html">MERCADOS</a>
-            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="#">PORTAFOLIO</a>
+            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="portadanivelesacademia.html">LECCIONES</a>
         </nav>
         <div class="flex items-center gap-2 md:gap-4">
-            <button class="shrink-0 bg-primary text-bg-dark font-bold h-10 px-6 rounded-full inline-flex items-center gap-2 whitespace-nowrap hover:bg-primary/90 transition text-xs sm:text-sm tracking-wide leading-none">
+            <a href="mercado.html" class="shrink-0 bg-primary text-bg-dark font-bold h-10 px-6 rounded-full inline-flex items-center gap-2 whitespace-nowrap hover:bg-primary/90 transition text-xs sm:text-sm tracking-wide leading-none no-underline">
                 <span class="leading-none">⚡</span>
-                <span class="leading-none" style="color:#0a0f1a;">CONECTAR BROKER</span>
-            </button>
+                <span class="leading-none hidden sm:inline" style="color:#0a0f1a;">MERCADOS</span>
+                <span class="leading-none sm:hidden" style="color:#0a0f1a;">📈</span>
+            </a>
             <div class="hidden md:flex items-center gap-3">
-                <button class="w-9 h-9 rounded-full bg-card border border-card-border flex items-center justify-center text-gray-400 hover:text-primary transition relative">
+                <button class="w-9 h-9 rounded-full bg-card border border-card-border flex items-center justify-center text-gray-400 hover:text-primary transition relative" title="Notificaciones">
                     <span class="material-symbols-outlined text-[20px]">notifications</span>
-                    <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border border-bg-dark"></span>
                 </button>
-                <div id="header-avatar" class="w-9 h-9 bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 rounded-full flex items-center justify-center text-xs font-black text-primary">--</div>
+                <!-- Avatar con dropdown -->
+                <div class="relative">
+                    <button id="header-avatar" onclick="toggleUserMenu()" class="w-9 h-9 bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 rounded-full flex items-center justify-center text-xs font-black text-primary cursor-pointer hover:border-primary/60 hover:shadow-[0_0_15px_rgba(212,175,55,0.3)] transition">--</button>
+                    <div id="user-dropdown" class="absolute right-0 top-full mt-2 w-64 bg-gray-900 border border-card-border rounded-xl shadow-2xl opacity-0 pointer-events-none transition-all duration-200 transform translate-y-1 scale-95 z-[70]" style="backdrop-filter:blur(12px);">
+                        <div class="p-4 border-b border-card-border">
+                            <p id="dropdown-name" class="text-sm font-bold text-white truncate">Cargando...</p>
+                            <p id="dropdown-email" class="text-xs text-gray-400 truncate mt-0.5"></p>
+                        </div>
+                        <div class="p-2">
+                            <a href="dashboard.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-white/5 hover:text-white transition">
+                                <span class="material-symbols-outlined text-[18px]">grid_view</span>
+                                Dashboard
+                            </a>
+                            <a href="portadanivelesacademia.html" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-gray-300 hover:bg-white/5 hover:text-white transition">
+                                <span class="material-symbols-outlined text-[18px]">school</span>
+                                Academia
+                            </a>
+                            <div class="h-px bg-card-border my-1"></div>
+                            <a href="#" onclick="AUTH.logout(); return false;" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition">
+                                <span class="material-symbols-outlined text-[18px]">logout</span>
+                                Cerrar Sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
             </div>
             <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="lg:hidden text-gray-400 hover:text-white p-2">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
@@ -302,10 +326,19 @@
         </div>
     </div>
     <nav id="mobile-menu" class="hidden lg:hidden border-t border-card-border bg-card px-4 py-3 space-y-2">
+        <!-- Info de usuario en móvil -->
+        <div class="flex items-center gap-3 py-3 px-3 mb-2 bg-white/[0.02] rounded-xl border border-card-border">
+            <div id="mobile-avatar" class="w-8 h-8 bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 rounded-full flex items-center justify-center text-xs font-black text-primary">--</div>
+            <div class="flex-1 min-w-0">
+                <p id="mobile-username" class="text-sm font-bold text-white truncate">Usuario</p>
+            </div>
+        </div>
         <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="index.html">INICIO</a>
         <a class="block font-bold py-2 border-l-2 border-primary pl-3 text-sm" style="color:#D4AF37;" href="dashboard.html">ACADEMIA</a>
         <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="mercado.html">MERCADOS</a>
-        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="#">PORTAFOLIO</a>
+        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="portadanivelesacademia.html">LECCIONES</a>
+        <div class="h-px bg-card-border my-2"></div>
+        <a class="block text-red-400 hover:text-red-300 py-2 pl-3 text-sm font-bold" href="#" onclick="AUTH.logout(); return false;">⏻ CERRAR SESIÓN</a>
     </nav>
 </header>
 
@@ -322,7 +355,7 @@
         <a href="portadanivelesacademia.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
             <span class="material-symbols-outlined text-[22px]">school</span> Academia
         </a>
-        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
+        <a href="portadanivelesacademia.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
             <span class="material-symbols-outlined text-[22px]">emoji_events</span> Logros
         </a>
         <a href="mercado.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400">
@@ -816,6 +849,32 @@ function handleCardClick(card) {
     }, 1000);
 }
 
+// ===== USER DROPDOWN =====
+function toggleUserMenu() {
+    var dd = document.getElementById('user-dropdown');
+    if (!dd) return;
+    var isOpen = dd.classList.contains('dropdown-open');
+    if (isOpen) {
+        dd.classList.remove('dropdown-open');
+        dd.style.opacity = '0';
+        dd.style.pointerEvents = 'none';
+        dd.style.transform = 'translateY(4px) scale(0.95)';
+    } else {
+        dd.classList.add('dropdown-open');
+        dd.style.opacity = '1';
+        dd.style.pointerEvents = 'auto';
+        dd.style.transform = 'translateY(0) scale(1)';
+    }
+}
+// Cerrar dropdown al hacer click fuera
+document.addEventListener('click', function(e) {
+    var dd = document.getElementById('user-dropdown');
+    var avatar = document.getElementById('header-avatar');
+    if (dd && dd.classList.contains('dropdown-open') && !dd.contains(e.target) && e.target !== avatar) {
+        toggleUserMenu();
+    }
+});
+
 // ===== SIDEBAR TOGGLE =====
 function toggleSideMenu() {
     const menu = document.getElementById('side-menu');
@@ -909,10 +968,18 @@ function toggleSideMenu() {
         var headerAvatar = document.getElementById('header-avatar');
         var sidebarAvatar = document.getElementById('sidebar-avatar');
         var sidebarUsername = document.getElementById('sidebar-username');
+        var dropdownName = document.getElementById('dropdown-name');
+        var dropdownEmail = document.getElementById('dropdown-email');
+        var mobileAvatar = document.getElementById('mobile-avatar');
+        var mobileUsername = document.getElementById('mobile-username');
 
         if (headerAvatar) headerAvatar.textContent = initials;
         if (sidebarAvatar) sidebarAvatar.textContent = initials;
         if (sidebarUsername) sidebarUsername.textContent = displayName;
+        if (dropdownName) dropdownName.textContent = displayName;
+        if (dropdownEmail) dropdownEmail.textContent = email || '';
+        if (mobileAvatar) mobileAvatar.textContent = initials;
+        if (mobileUsername) mobileUsername.textContent = displayName;
     }
 
     // Leer de Firebase Auth primero (rápido, sin red)

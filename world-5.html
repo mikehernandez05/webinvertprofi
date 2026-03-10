@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport"/>
-<title>InvertProfit — Mundo 5: Estrategia</title>
+<title>InvertProfit — Mundo 5: El Tablero del Poder Global</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%2303060d' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -235,10 +235,10 @@ header{position:sticky;top:0;z-index:60;border-bottom:1px solid rgba(var(--gr),.
 
 <main class="relative z-10 pb-28">
   <div class="hero-wrap">
-    <div class="world-badge"><span class="wbd"></span>MUNDO 05 — SALA DE GUERRA</div>
-    <span class="hero-icon">♟️</span>
-    <h1 class="hero-title">ESTRATEGIA</h1>
-    <p class="hero-sub">// PLANIFICA · DECIDE · EJECUTA</p>
+    <div class="world-badge"><span class="wbd"></span>MUNDO 05 — EL TABLERO DEL PODER GLOBAL</div>
+    <span class="hero-icon">🌐</span>
+    <h1 class="hero-title">EL TABLERO DEL PODER</h1>
+    <p class="hero-sub">// RANGO: GLOBAL MACRO MASTER — MACRO Y MENTE</p>
   </div>
   <div class="map-wrap" id="mapWrap" style="position:relative">
     <svg id="pathSvg" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -275,21 +275,21 @@ header{position:sticky;top:0;z-index:60;border-bottom:1px solid rgba(var(--gr),.
 // ══════════════════════════════════════════════
 var icons=["🌞","🔄","🏛️","📊","💵","🌍","📜","🎲","📈","🧠","🪞","🧬","📋","🏠","🏆"];
 var levels=window._wL=[
-  {"n":61,"t":"Macroeconomía","d":"El sol del sistema.","xp":200},
-  {"n":62,"t":"Ciclo de Deuda","d":"Ray Dalio decodificado.","xp":250},
-  {"n":63,"t":"FED y Tasas","d":"La herramienta más poderosa.","xp":200},
-  {"n":64,"t":"Inflación","d":"IPC y deflación.","xp":200},
-  {"n":65,"t":"DXY","d":"El rey de las divisas.","xp":200},
-  {"n":66,"t":"Geopolítica","d":"Guerras y commodities.","xp":250},
-  {"n":67,"t":"Bonos","d":"Renta fija.","xp":200},
-  {"n":68,"t":"Opciones I","d":"Calls, Puts, primas.","xp":250},
-  {"n":69,"t":"Futuros","d":"Contratos billonarios.","xp":250},
-  {"n":70,"t":"Psicología 1%","d":"Dominio del ego.","xp":200},
-  {"n":71,"t":"Sesgos Cognitivos","d":"El enemigo interno.","xp":200},
-  {"n":72,"t":"Bio-Hacking","d":"El cuerpo del trader.","xp":200},
-  {"n":73,"t":"Fiscal","d":"Planificación fiscal.","xp":200},
-  {"n":74,"t":"Real Estate","d":"Diversificación real.","xp":200},
-  {"n":75,"t":"⚡ BOSS: Tesis Macro","d":"Tesis macroeconómica.","xp":500,"boss":"BOSS"}
+  {"n":61,"t":"Macroeconomía Global","d":"El Sol del Sistema.","xp":200},
+  {"n":62,"t":"Ciclo de Deuda","d":"Ciclos de deuda y Bancos Centrales.","xp":250},
+  {"n":63,"t":"Tipos de Interés y FED","d":"Tasas de interés, QE y QT.","xp":200},
+  {"n":64,"t":"Inflación y Deflación","d":"Impacto Real del IPC.","xp":200},
+  {"n":65,"t":"Índice Dólar (DXY)","d":"Correlación del DXY.","xp":200},
+  {"n":66,"t":"Geopolítica y Commodities","d":"Oro, WTI y refugio de valor.","xp":250},
+  {"n":67,"t":"Mercado de Bonos","d":"Renta fija, deuda gubernamental y privada.","xp":200},
+  {"n":68,"t":"Opciones Financieras","d":"Derivados I: Introducción a Opciones.","xp":250},
+  {"n":69,"t":"Futuros Financieros","d":"Derivados II: Futuros Financieros.","xp":250},
+  {"n":70,"t":"Psicología del 1%","d":"Dominio del Ego.","xp":200},
+  {"n":71,"t":"Sesgos Cognitivos","d":"El Enemigo Interno.","xp":200},
+  {"n":72,"t":"Bio-Hacking Trader","d":"Manejo de dopamina, cortisol y alto rendimiento.","xp":200},
+  {"n":73,"t":"Planificación Fiscal","d":"Fiscalidad Internacional para inversores.","xp":200},
+  {"n":74,"t":"Real Estate","d":"Diversificación en activos físicos.","xp":200},
+  {"n":75,"t":"🏆 BOSS: Tesis Global Macro","d":"Examen Macro y Defensa de Tesis Patrimonial.","xp":500,"boss":"FINAL"}
 ];
 levels.forEach(function(l){l.s=CURRICULUM.getLevelStatus(l.n)});
 var cc=levels.filter(function(l){return l.s==='completed'}).length;

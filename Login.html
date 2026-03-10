@@ -384,9 +384,10 @@
 
         function showError(msg, elementId) {
             const el = document.getElementById(elementId || 'auth-error');
+            if (!el) return;
             el.textContent = msg;
             el.classList.remove('hidden');
-            setTimeout(() => el.classList.add('hidden'), 6000);
+            setTimeout(() => { if (el) el.classList.add('hidden'); }, 6000);
         }
 
         function hideError(elementId) {
@@ -520,7 +521,8 @@
                 await onAuthSuccess(result.user, 'email');
             } catch (error) {
                 resetButton();
-                showError(translateFirebaseError(error.code));
+                console.error('Email login error:', error.code, error.message);
+                showError(translateFirebaseError(error.code) + ' [' + (error.code || 'unknown') + ']');
             }
         }
 
@@ -543,7 +545,8 @@
                 }
             } catch (error) {
                 resetButton();
-                showError(translateFirebaseError(error.code));
+                console.error('Social login error:', error.code, error.message);
+                showError(translateFirebaseError(error.code) + ' [' + (error.code || 'unknown') + ']');
             }
         }
 

@@ -573,12 +573,12 @@ function drawNodes(rW, rH){
   }
 }
 
-// Layout with retry — image may not have dimensions yet
+// Layout with retry — image may not have dimensions yet (max 15 reintentos = 3s)
+var _layoutRetries=0;
 function tryLayout(){
   var img=document.getElementById('bg');
   if(img.clientWidth>0 && img.clientHeight>0){layout();return;}
-  // Retry until image loads
-  setTimeout(tryLayout,200);
+  if(_layoutRetries<15){_layoutRetries++;setTimeout(tryLayout,200);}
 }
 var bgImg=document.getElementById('bg');
 bgImg.addEventListener('load',function(){layout()});

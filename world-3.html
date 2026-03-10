@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport"/>
-<title>InvertProfit — Mundo 3: Anatomía del Mercado</title>
+<title>InvertProfit — Mundo 3: El ADN de la Riqueza</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%2300050f' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%2300e5ff'>IP</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -208,10 +208,10 @@ header{position:sticky;top:0;z-index:60;border-bottom:1px solid rgba(var(--cr),.
 
 <main class="relative z-10 pb-28">
   <div class="hero-wrap">
-    <div class="world-badge"><span class="wbd"></span>MUNDO 03 — LABORATORIO</div>
-    <span class="hero-icon">🧠</span>
-    <h1 class="hero-title">ANATOMÍA DEL MERCADO</h1>
-    <p class="hero-sub">// DISECCIÓN · ANÁLISIS · INTELIGENCIA</p>
+    <div class="world-badge"><span class="wbd"></span>MUNDO 03 — EL ADN DE LA RIQUEZA</div>
+    <span class="hero-icon">🧬</span>
+    <h1 class="hero-title">EL ADN DE LA RIQUEZA</h1>
+    <p class="hero-sub">// RANGO: EVALUADOR DE ACTIVOS — FUNDAMENTAL</p>
   </div>
 
   <div class="map-wrap" id="mapWrap" style="position:relative">
@@ -248,20 +248,28 @@ header{position:sticky;top:0;z-index:60;border-bottom:1px solid rgba(var(--cr),.
 // ════════════════════════════════════════════
 // DATA
 // ════════════════════════════════════════════
-var icons=["🧠","🔮","🏛️","💎","📡","⚡","🌀","🎯","🛡️","📊","💰","🏆"];
+var icons=["💰","📋","📊","💵","🔢","📈","📉","🎁","🏷️","🏰","🏭","📄","⚠️","📐","📊","🎯","🔬","🔄","🔍","🏆"];
 var levels=window._wL=[
-  {"n":23,"t":"Smart Money","d":"El dinero inteligente.","xp":300},
-  {"n":24,"t":"ICT Power of 3","d":"Acumulación, manipulación, distribución.","xp":300},
-  {"n":25,"t":"Order Flow","d":"El flujo real de órdenes.","xp":300},
-  {"n":26,"t":"Wyckoff Method","d":"El método de los institucionales.","xp":300},
-  {"n":27,"t":"Breaker Blocks","d":"Zonas de reversión institucional.","xp":300},
-  {"n":28,"t":"⚡ BOSS: Lectura","d":"Lee el mercado como institucional.","xp":500,"boss":"BOSS"},
-  {"n":29,"t":"Algo Trading Intro","d":"Automatiza tu operativa.","xp":300},
-  {"n":30,"t":"Correlaciones Macro","d":"Conexión entre mercados.","xp":300},
-  {"n":31,"t":"Portafolio Pro","d":"Diversificación avanzada.","xp":300},
-  {"n":32,"t":"Psicología","d":"Domina tu mente.","xp":300},
-  {"n":33,"t":"Plan Institucional","d":"Tu plan como hedge fund.","xp":300},
-  {"n":34,"t":"🏆 FINAL","d":"El Gran Examen.","xp":800,"boss":"FINAL"}
+  {"n":26,"t":"Valor vs. Precio","d":"La base del negocio.","xp":250},
+  {"n":27,"t":"Balance General","d":"Activos, Pasivos, Patrimonio.","xp":250},
+  {"n":28,"t":"Estado de Resultados","d":"P&L: Pérdidas y Ganancias.","xp":250},
+  {"n":29,"t":"Flujo de Caja Libre","d":"Free Cash Flow.","xp":250},
+  {"n":30,"t":"Ratios de Liquidez","d":"Current y Quick Ratio.","xp":250},
+  {"n":31,"t":"ROE y ROA","d":"Ratios de Eficiencia y Rentabilidad.","xp":250},
+  {"n":32,"t":"Margen y EBITDA","d":"El Margen Operativo y EBITDA.","xp":250},
+  {"n":33,"t":"Dividendos","d":"Introducción a los Dividendos y Recompras.","xp":250},
+  {"n":34,"t":"PER y EPS","d":"Valoración por PER y Ganancia por Acción.","xp":250},
+  {"n":35,"t":"El Moat Financiero","d":"Ventajas Competitivas.","xp":250},
+  {"n":36,"t":"Análisis Sectorial","d":"Análisis del Sector y la Industria.","xp":250},
+  {"n":37,"t":"Reporte 10-K","d":"Cómo leer un Reporte Anual.","xp":300},
+  {"n":38,"t":"Deuda y Solvencia","d":"El peligro del apalancamiento.","xp":250},
+  {"n":39,"t":"Crecimiento Proyectado","d":"Modelado de Crecimiento.","xp":250},
+  {"n":40,"t":"Valoración DCF","d":"Flujo de Caja Descontado.","xp":300},
+  {"n":41,"t":"Stock Picking","d":"Selección de Acciones.","xp":250},
+  {"n":42,"t":"Análisis Cuantitativo","d":"Análisis Cuantitativo de Estados Financieros.","xp":250},
+  {"n":43,"t":"Ciclo de Empresa","d":"El ciclo de vida de una empresa pública.","xp":250},
+  {"n":44,"t":"Auditoría de Datos","d":"Verdad tras los números.","xp":250},
+  {"n":45,"t":"🏆 BOSS: Valuación Big Tech","d":"Valuación Real de una Big Tech.","xp":700,"boss":"FINAL"}
 ];
 levels.forEach(function(l){l.s=CURRICULUM.getLevelStatus(l.n)});
 var cc=levels.filter(function(l){return l.s==='completed'}).length;

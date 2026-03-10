@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport"/>
-<title>InvertProfit — Mundo 4: Sincronía del Mercado</title>
+<title>InvertProfit — Mundo 4: Sincronía — El Motor del Oráculo</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%2308001a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23d946ef'>IP</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -249,10 +249,10 @@ header{position:sticky;top:0;z-index:60;border-bottom:1px solid rgba(var(--mr),.
 
 <main class="relative z-10 pb-28">
   <div class="hero-wrap">
-    <div class="world-badge"><span class="wbd"></span>MUNDO 04 — CÁMARA DE SINCRONÍA</div>
+    <div class="world-badge"><span class="wbd"></span>MUNDO 04 — MOTOR DEL ORÁCULO</div>
     <span class="hero-icon">⚡</span>
-    <h1 class="hero-title">SINCRONÍA DEL MERCADO</h1>
-    <p class="hero-sub">// CONEXIÓN · FLUJO · COHERENCIA TOTAL</p>
+    <h1 class="hero-title">EL MOTOR DEL ORÁCULO</h1>
+    <p class="hero-sub">// RANGO: ESTRATEGA ALGORÍTMICO — INDICADORES</p>
   </div>
   <div class="map-wrap" id="mapWrap" style="position:relative">
     <svg id="pathSvg" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -287,23 +287,23 @@ header{position:sticky;top:0;z-index:60;border-bottom:1px solid rgba(var(--mr),.
 // ══════════════════════════════════════════════════
 // DATA
 // ══════════════════════════════════════════════════
-var icons=["⚙️","📈","🔮","🔭","🎯","⚡","⚡","🌊","☀️","🏔️","📓","🤖","🔧","📊","🏆"];
+var icons=["📈","📊","📉","📐","🔢","🎯","📖","📜","✅","⚡","☀️","🌊","🏔️","🛡️","🏆"];
 var levels=window._wL=[
-  {"n":35,"t":"Sistemas de Trading","d":"Reglas claras = resultados.","xp":250},
-  {"n":36,"t":"Price Action","d":"El precio lo dice todo.","xp":250},
-  {"n":37,"t":"ICT Concepts","d":"Inner Circle Trader.","xp":300},
-  {"n":38,"t":"Multi-Timeframe","d":"De HTF a LTF.","xp":250},
-  {"n":39,"t":"Confluencias","d":"Señales alineadas.","xp":250},
-  {"n":40,"t":"⚡ BOSS: Sistema","d":"Crea tu sistema completo.","xp":500,"boss":"BOSS"},
-  {"n":41,"t":"Scalping","d":"Operaciones relámpago.","xp":250},
-  {"n":42,"t":"Swing Trading","d":"Captura movimientos grandes.","xp":250},
-  {"n":43,"t":"Day Trading","d":"Intradía profesional.","xp":250},
-  {"n":44,"t":"Position Trading","d":"Semanas y meses.","xp":250},
-  {"n":45,"t":"Journal Pro","d":"Tu diario avanzado.","xp":200},
-  {"n":46,"t":"Automatización","d":"Reglas → código.","xp":300},
-  {"n":47,"t":"Optimización","d":"Ajusta sin sobreoptimizar.","xp":250},
-  {"n":48,"t":"Métricas","d":"Sharpe, drawdown, esperanza.","xp":250},
-  {"n":49,"t":"🏆 FINAL","d":"Examen Estrategia.","xp":600,"boss":"FINAL"}
+  {"n":46,"t":"Medias Móviles","d":"El promedio de la masa.","xp":250},
+  {"n":47,"t":"RSI y Estocástico","d":"Detectando el agotamiento.","xp":250},
+  {"n":48,"t":"Bandas de Bollinger","d":"Desviación Estándar.","xp":250},
+  {"n":49,"t":"El MACD","d":"El pulso de la tendencia.","xp":250},
+  {"n":50,"t":"Fibonacci Retroceso","d":"El Retroceso Maestro.","xp":250},
+  {"n":51,"t":"Fibonacci Extensiones","d":"Extensiones para Targets.","xp":250},
+  {"n":52,"t":"Libro de Órdenes","d":"Microestructura del mercado.","xp":300},
+  {"n":53,"t":"Tape Reading","d":"Lectura de la Cinta.","xp":300},
+  {"n":54,"t":"Filtro de Señales","d":"Filtro con 94% de Confianza.","xp":250},
+  {"n":55,"t":"Scalping","d":"Estrategia de Scalping (Minutos).","xp":250},
+  {"n":56,"t":"Day Trading","d":"Estrategia Intradía (Horas).","xp":250},
+  {"n":57,"t":"Swing Trading","d":"Estrategia de Swing (Días/Semanas).","xp":250},
+  {"n":58,"t":"Position Trading","d":"Estrategia de Posición (Meses/Años).","xp":250},
+  {"n":59,"t":"Trail Stop Inteligente","d":"Gestión de la Salida.","xp":250},
+  {"n":60,"t":"🏆 BOSS: Operativa IA","d":"Operativa Sincronizada 100% IA.","xp":600,"boss":"FINAL"}
 ];
 levels.forEach(function(l){l.s=CURRICULUM.getLevelStatus(l.n)});
 var cc=levels.filter(function(l){return l.s==='completed'}).length;

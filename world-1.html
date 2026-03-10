@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport"/>
-<title>InvertProfit — Mundo 1: Engranajes del Mercado</title>
+<title>InvertProfit — Mundo 1: La Génesis del Capital</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -212,10 +212,10 @@ header{border-image:linear-gradient(90deg,transparent,rgba(var(--ar),.2),transpa
 
 <main class="relative z-10 pb-24">
   <div class="world-hero">
-    <div class="hero-badge"><span class="bdot"></span>MUNDO 01 — ENGRANAJES DEL MERCADO</div>
-    <div class="hero-icon">⚙️</div>
-    <h1 class="hero-title">MOTOR DEL MERCADO</h1>
-    <p class="hero-sub">// SISTEMA OPERATIVO — INICIALIZANDO</p>
+    <div class="hero-badge"><span class="bdot"></span>MUNDO 01 — LA GÉNESIS DEL CAPITAL</div>
+    <div class="hero-icon">🔥</div>
+    <h1 class="hero-title">LA FORJA DEL INVERSOR</h1>
+    <p class="hero-sub">// RANGO: NOVATO — FUNDAMENTOS</p>
   </div>
   <div class="map-wrap" id="mapWrap" style="position:relative">
     <svg id="pathSvg" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -249,8 +249,19 @@ header{border-image:linear-gradient(90deg,transparent,rgba(var(--ar),.2),transpa
 
 <script>
 var A='#ff6a00',AR='255,106,0',WN=1;
-var levels=window._wL=[{"n":1,"t":"¿Qué es Invertir?","d":"Tu primer paso hacia tu libertad financiera.","xp":150},{"n":2,"t":"Tipos de Activos","d":"Acciones, forex, crypto, commodities.","xp":150},{"n":3,"t":"Tu Primera Cuenta","d":"Crea tu cuenta de broker paso a paso.","xp":150},{"n":4,"t":"Leer un Gráfico","d":"Entiende los ejes, el tiempo y el precio.","xp":150},{"n":5,"t":"Velas Japonesas","d":"El lenguaje visual del mercado.","xp":200},{"n":6,"t":"⚡ BOSS: Primera Op","d":"Ejecuta tu primera operación real.","xp":350,"boss":"BOSS"},{"n":7,"t":"Soportes y Resistencias","d":"Los muros invisibles del precio.","xp":150},{"n":8,"t":"Tendencias","d":"Alcista, bajista, lateral.","xp":150},{"n":9,"t":"Gestión de Riesgo","d":"Protege tu capital desde el día 1.","xp":150},{"n":10,"t":"🏆 FINAL","d":"Examen Principiante.","xp":500,"boss":"FINAL"}];
-var icons=["⚙️","📦","🏦","📈","🕯️","⚡","🔩","📊","🛡️","🏆"];
+var levels=window._wL=[
+  {"n":1,"t":"Filosofía InvertProfit","d":"Filosofía InvertProfit y AmigoTrade.","xp":150},
+  {"n":2,"t":"Historia del Dinero","d":"Historia del Dinero y los Mercados.","xp":150},
+  {"n":3,"t":"¿Qué es una Acción?","d":"El origen del Equity.","xp":150},
+  {"n":4,"t":"Participantes del Mercado","d":"Retail vs Institucional.","xp":150},
+  {"n":5,"t":"Divisas, Metales e Índices","d":"Tipos de Activos financieros.","xp":150},
+  {"n":6,"t":"Commodities y Cripto","d":"Tipos de Activos: commodities y criptomonedas.","xp":150},
+  {"n":7,"t":"Anatomía de una Orden","d":"Market, Limit y Stop.","xp":150},
+  {"n":8,"t":"Pips, Lotes y Spread","d":"El lenguaje del precio.","xp":150},
+  {"n":9,"t":"Sesiones del Mercado","d":"Horarios y Sesiones: El reloj del dinero.","xp":150},
+  {"n":10,"t":"🏆 Primer Trade Simulado","d":"Examen de Entrada: El Primer Trade Simulado.","xp":500,"boss":"FINAL"}
+];
+var icons=["🎯","📦","🏦","👥","💱","⛏️","📋","📊","🕐","🏆"];
 levels.forEach(function(l){l.s=CURRICULUM.getLevelStatus(l.n)});
 
 var cc=levels.filter(function(l){return l.s==='completed'}).length;

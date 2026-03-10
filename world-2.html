@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport"/>
-<title>InvertProfit — Mundo 2: Cámara del Precio</title>
+<title>InvertProfit — Mundo 2: El Laberinto de la Acción del Precio</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%23000d18' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%2300ffaa'>IP</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
@@ -163,10 +163,10 @@ header{position:sticky;top:0;z-index:60;border-bottom:1px solid rgba(var(--gr),.
 
 <main class="relative z-10 pb-28">
   <div class="hero-wrap">
-    <div class="world-badge"><span class="wbd"></span>MUNDO 02 — CÁMARA DEL PRECIO</div>
-    <span class="hero-icon">🕯️</span>
-    <h1 class="hero-title">PRICE ACTION</h1>
-    <p class="hero-sub">// EL PRECIO COBRA VIDA</p>
+    <div class="world-badge"><span class="wbd"></span>MUNDO 02 — EL LABERINTO DEL PRECIO</div>
+    <span class="hero-icon">📊</span>
+    <h1 class="hero-title">ACCIÓN DEL PRECIO</h1>
+    <p class="hero-sub">// RANGO: ANALISTA JUNIOR — ANÁLISIS TÉCNICO</p>
   </div>
   <div class="map-wrap" id="mapWrap" style="position:relative">
     <svg id="pathSvg" xmlns="http://www.w3.org/2000/svg"></svg>
@@ -200,20 +200,23 @@ header{position:sticky;top:0;z-index:60;border-bottom:1px solid rgba(var(--gr),.
 <script>
 // ══ DATA ══
 var A='#00ffaa',AR='0,255,170',WN=2;
-var icons=["🕯️","📐","📡","📊","🛡️","⚡","📈","🔮","💼","🧠","📝","🏆"];
+var icons=["🕯️","🔄","📊","📏","📈","👤","🚩","🔍","📊","💥","📐","📈","🔺","⬜","🏆"];
 var levels=window._wL=[
-  {"n":11,"t":"Patrones de Velas","d":"Doji, martillo, estrella fugaz.","xp":200},
-  {"n":12,"t":"Fibonacci","d":"Retrocesos y niveles áureos.","xp":200},
-  {"n":13,"t":"RSI & MACD","d":"Divergencias y señales.","xp":200},
-  {"n":14,"t":"Oferta y Demanda","d":"Las zonas de los grandes players.","xp":200},
-  {"n":15,"t":"Stop Loss Pro","d":"El arte del stop loss estratégico.","xp":200},
-  {"n":16,"t":"⚡ BOSS: Multi-TF","d":"Analiza en 4 timeframes.","xp":400,"boss":"BOSS"},
-  {"n":17,"t":"Estructura de Mercado","d":"BOS, CHoCH. Lenguaje institucional.","xp":200},
-  {"n":18,"t":"Order Blocks","d":"Órdenes masivas institucionales.","xp":200},
-  {"n":19,"t":"Liquidez","d":"Dónde está el dinero.","xp":200},
-  {"n":20,"t":"Riesgo Avanzado","d":"R:R, position sizing, correlación.","xp":200},
-  {"n":21,"t":"Backtesting","d":"Tu diario de trading.","xp":200},
-  {"n":22,"t":"🏆 FINAL","d":"Examen Intermedio.","xp":600,"boss":"FINAL"}
+  {"n":11,"t":"Velas Japonesas","d":"Introducción a las Velas Japonesas.","xp":200},
+  {"n":12,"t":"Patrones de Reversión","d":"Patrones de Reversión Individuales.","xp":200},
+  {"n":13,"t":"Patrones de Continuidad","d":"Patrones de Continuidad y Grupos de Velas.","xp":200},
+  {"n":14,"t":"Soportes y Resistencias","d":"Zonas de Oferta y Demanda.","xp":200},
+  {"n":15,"t":"Tendencias y Canales","d":"Líneas de Tendencia y Canales Dinámicos.","xp":200},
+  {"n":16,"t":"HCH y Figuras","d":"Figuras Chartistas: Hombro-Cabeza-Hombro.","xp":200},
+  {"n":17,"t":"Banderines y Cuñas","d":"Figuras de Continuación.","xp":200},
+  {"n":18,"t":"Fractalidad Temporal","d":"El Concepto de Fractalidad en el Tiempo.","xp":200},
+  {"n":19,"t":"Análisis de Volumen","d":"El motor de la vela.","xp":200},
+  {"n":20,"t":"Rompimientos","d":"Rompimientos vs. Falsos Rompimientos.","xp":200},
+  {"n":21,"t":"Teoría de Dow","d":"La Teoría de Dow y los Ciclos.","xp":200},
+  {"n":22,"t":"Price Action Puro","d":"Acción del Precio Pura (Raw Price Action).","xp":250},
+  {"n":23,"t":"Triángulos y Diamantes","d":"Triángulos y Diamantes Técnicos.","xp":200},
+  {"n":24,"t":"Gaps de Mercado","d":"Gaps de Apertura y de Escape.","xp":200},
+  {"n":25,"t":"🏆 BOSS: Gráfico en Blanco","d":"Lectura de Gráfico en Blanco.","xp":600,"boss":"FINAL"}
 ];
 levels.forEach(function(l){l.s=CURRICULUM.getLevelStatus(l.n)});
 var cc=levels.filter(function(l){return l.s==='completed'}).length;
