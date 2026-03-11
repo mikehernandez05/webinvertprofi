@@ -381,5 +381,97 @@
 41. Volumetric clouds: múltiples radial gradients superpuestos con scale(1, ry/rx) crean formas elípticas realistas
 42. Matrix rain: columnas de dots simples (sin texto) es performante y visualmente efectivo a baja opacidad
 
+### Sesión 12 — 2026-03-11 (nuevo mapa de niveles — tower canvas + hex neon)
+**Trabajo realizado:**
+- Creación de `world-levels-template.html`: template maestro para el mapa de niveles interno de cada mundo
+- **Arquitectura nueva del mapa de niveles**:
+  - Canvas fixed de fondo con torre piramidal de 7 secciones (parallax con scroll)
+  - Estrellas animadas (200), nebulosas, god rays, nubes volumétricas
+  - Torre con secciones iluminadas según piso actual (current floor = glow, below = tenue, above = oscuro)
+  - Beacon luminoso en la cúspide con pulso
+  - Espina de energía central con pulso ascendente
+  - Láseres diagonales, circuit traces laterales (desktop), matrix rain
+  - Partículas: sparks, embers, dust
+  - Base industrial con forge glow
+- **Sistema hexagonal mejorado**:
+  - Hex nodes con clip-path flat-top, 3 estados claros (done/active/locked)
+  - Active: scan ring animado (conic-gradient rotando), outer glow ring pulsante, triple drop-shadow
+  - Done: glow naranja sutil, checkmark
+  - Locked: desaturado, brightness 32%, candado Material Symbols
+  - Boss nodes 20% más grandes con tag "FINAL"
+- **Zigzag layout**: nodos alternando izq/der con Math.sin wave
+- **Energy paths SVG**: bezier curves con bulge diagonal, dash animation en activos, energy dot con animateMotion
+- **Tower entry overlay**: segmentos SVG iluminándose progresivamente, zoom 5x, flash
+- **Modal completo**: badge estado, icon, título, descripción, estrellas, XP, botones INICIAR/REPASAR/SIGUIENTE
+- **Quest box**: módulo activo con botón INICIAR
+- **HUD panels**: energía + progreso (desktop only)
+- **Tower indicator**: 7 segmentos fijos, clickeables para navegar entre pisos
+- **Audio**: sfx tones (open, locked, confirm), mute toggle, iOS silent buffer unlock
+- **Script generador** (`generate-worlds.js`): genera los 7 mundos desde el template con datos específicos
+- **7 mundos generados y verificados**:
+  - W1: naranja #ff6a00, 10 niveles (1-10), Novato
+  - W2: ámbar #ff8c00, 15 niveles (11-25), Analista Junior
+  - W3: cyan #00e5ff, 20 niveles (26-45), Evaluador de Activos
+  - W4: púrpura #a855f7, 15 niveles (46-60), Estratega Algorítmico
+  - W5: teal #14b8a6, 15 niveles (61-75), Global Macro Master
+  - W6: azul #2563eb, 15 niveles (76-90), Operador Institucional
+  - W7: dorado #FFD060, 10 niveles (91-100), Maestro de Capital
+- 0 errores de consola en todos los mundos verificados en preview
+
+**Errores encontrados y corregidos:**
+1. Canvas layers con position:fixed tapaban los nodos scrolleables → cambiado a un solo canvas fixed + mainScroll container sobre él
+2. Agentes sub-agentes NO copian templates fielmente — reescriben el código por su cuenta → usar script generador (sed/node) para garantizar consistencia
+3. Multi-canvas (cvSky+cvTower+cvEnergy+cvFx) causaba complejidad innecesaria → consolidado en un solo canvas #bgCanvas
+4. Nodos no visibles en primer render → ajustado PAD_TOP y NODE_H para que el primer nodo aparezca justo debajo del hero
+
+**Habilidades adquiridas:**
+43. Para templates que se replican en múltiples archivos, usar un script generador (Node.js) con string replacements es más confiable que sub-agentes
+44. Un solo canvas fixed con draw() monolítico es más simple y suficiente que multi-layer canvas para fondos de parallax
+45. position:fixed canvas + position:absolute scroll container = parallax natural sin JavaScript extra
+46. Los agentes tienden a "reinventar" el código en vez de copiar — nunca confiar en que un agente copiará un template al pie de la letra
+
+### Sesión 13 — 2026-03-11 (mejora visual mapa de niveles v2)
+**Trabajo realizado:**
+- Reescritura del `world-levels-template.html` con mejoras visuales significativas basadas en imagen de referencia
+- **Torre más masiva**: base aumentada de 65% a 78% del ancho de pantalla (wB=0.78)
+- **Hexágonos mejorados**:
+  - Nuevo elemento `.hex-border` — borde neón hexagonal separado del face, con animación borderPulse en activos
+  - Nuevo `.hex-ripple` — efecto de onda de energía al hacer click (rippleOut animation)
+  - Hover mejorado: scale(1.08) + brightness(1.3) para sensación interactiva
+  - Boss nodes 25% más grandes con border/scan/glow escalados
+- **Energy paths mejorados**:
+  - Glow activo más ancho (14px) con animación pathGlowPulse
+  - Doble energy dot en paths activos (r=4 principal + r=2.5 secundario desfasado)
+  - Energy dot en paths completados (r=2, sutil)
+  - Dash animation más rápida (1.2s vs 1.5s)
+- **Torre canvas mejorada**:
+  - 7 secciones con paneles verticales, bandas divisorias decorativas, cross-bracing estructural
+  - Ventanas con top highlight en pisos activos/completados
+  - Edge glow lines en piso actual
+  - Espina de energía con doble capa (2px core + 8px outer glow)
+  - Beacon con haz vertical hacia arriba
+- **Nuevos elementos canvas**:
+  - Alas/antenas en nivel W6 con puntas luminosas (wing tips glow)
+  - Base industrial detallada: hornos con glow animado, chimeneas con humo, tuberías, piscinas de metal fundido
+  - 4 vehículos voladores triangulares con engine glow
+  - Láseres diagonales púrpura + cyan con shadowBlur
+  - 8 circuit traces laterales (desktop) con segmentos extra
+  - Nebulosa secundaria violeta
+  - 220 estrellas (vs 180), 75 partículas (vs 60)
+  - 6 nubes volumétricas doradas
+- Regeneración de 7 mundos con `generate-worlds.js`
+- Verificación: W3 (20 nodos, cyan), W6 (15 nodos, azul), template (10 nodos) — 0 errores consola
+- Copiado al repo principal y verificado con diff
+
+**Errores encontrados y corregidos:**
+1. Write tool requiere Read previo — siempre leer antes de escribir
+2. launch.json del worktree tiene nombre diferente ("dev-server") al del repo principal ("node-server") — usar el nombre correcto del worktree
+
+**Habilidades adquiridas:**
+47. Separar hex-border como elemento independiente del hex-node permite animar el borde sin afectar el contenido
+48. Doble energy dot desfasado (begin="-.9s") crea sensación de flujo continuo más convincente
+49. Wing structures: líneas simples con radialGradient en las puntas dan efecto de antena sci-fi con poco código
+50. Vehículos voladores: triángulos simples con engine glow radial son suficientes a baja opacidad para dar vida a la escena
+
 ---
 *Este archivo se actualiza al final de cada sesión y durante la misma si hay descubrimientos importantes.*

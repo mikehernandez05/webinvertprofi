@@ -1,873 +1,388 @@
-<!-- FILE: world-1.html -->
 <!DOCTYPE html>
 <html class="dark" lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport"/>
-<title>InvertProfit — Mundo 1: La Génesis del Capital</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
-<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-<script src="https://cdn.tailwindcss.com"></script>
-<!-- Firebase v9+ compat -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script>
-    firebase.initializeApp({
-        apiKey: "AIzaSyCrgbks3ifIIN7RJzSlzH5hgQMw4ogA1CY",
-        authDomain: "invertprofitweb.firebaseapp.com",
-        projectId: "invertprofitweb",
-        storageBucket: "invertprofitweb.firebasestorage.app",
-        messagingSenderId: "696411646211",
-        appId: "1:696411646211:web:037c2a6fb8752f8b2d6136"
-    });
-</script>
-<script src="auth.js"></script>
-<script src="curriculum.js"></script>
-<script>tailwind.config={darkMode:"class",theme:{extend:{fontFamily:{"sans":["Rajdhani","sans-serif"]}}}}</script>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>InvertProfit — Mundo Experto</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="auth.js"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#D4AF37",
+                        "bg-dark": "#0a0f1a",
+                        "card": "#111827",
+                        "card-border": "#1f2937",
+                        "positive": "#22c55e",
+                        "negative": "#ef4444"
+                    },
+                    fontFamily: { "sans": ["Inter", "sans-serif"] }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #374151; border-radius: 2px; }
+        ::-webkit-scrollbar-thumb:hover { background: #818cf8; }
 
-<style>
-:root{--a:#ff6a00;--ad:#cc4400;--ar:255,106,0;--gold:#CBA052;--goldr:203,160,82}
-*{box-sizing:border-box}
-::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#1a0800;border-radius:2px}
-body{background:#0c0400;margin:0;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+        .logo-glow { filter: drop-shadow(0 0 10px rgba(212,175,55,0.3)); }
 
-/* BASE ATMOSPHERE */
-.world-base{position:fixed;inset:0;z-index:0;pointer-events:none;
-  background:
-    radial-gradient(ellipse 55% 45% at 88% 90%,rgba(0,50,110,.2),transparent 65%),
-    radial-gradient(ellipse 45% 40% at 12% 15%,rgba(60,45,0,.22),transparent 60%),
-    radial-gradient(ellipse 80% 80% at 50% 50%,#130800,#0c0400 75%)}
+        /* World background: purple/space theme */
+        .world-bg {
+            background:
+                radial-gradient(ellipse at 20% 40%, rgba(99,102,241,0.1) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 70%, rgba(129,140,248,0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 20%, rgba(168,85,247,0.05) 0%, transparent 40%),
+                #0a0f1a;
+        }
 
-/* THE WORLD SCENE SVG */
-#worldScene{position:fixed;top:0;left:0;width:100%;height:100%;z-index:2;pointer-events:none}
+        /* Level node */
+        .level-node {
+            position: relative;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .level-node:hover .node-btn { transform: scale(1.15); }
+        .level-node.locked { cursor: not-allowed; opacity: 0.45; }
 
-/* FX CANVAS */
-#fxC{position:fixed;inset:0;z-index:3;pointer-events:none}
-.scan{position:fixed;inset:0;z-index:80;pointer-events:none;
-  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.015) 2px,rgba(0,0,0,.015) 3px)}
+        .node-btn {
+            width: 72px; height: 72px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; font-weight: 900;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .node-btn.active {
+            background: radial-gradient(circle at 35% 35%, #a78bfa 0%, #818cf8 40%, #3730a3 100%);
+            box-shadow: 0 0 30px rgba(129,140,248,0.8), 0 4px 15px rgba(0,0,0,0.5);
+            border: 3px solid #818cf8;
+            animation: active-pulse 2s ease-in-out infinite;
+        }
+        .node-btn.locked-node {
+            background: radial-gradient(circle at 35% 35%, #374151 0%, #1f2937 60%, #111827 100%);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            border: 3px solid rgba(75,85,99,0.4);
+        }
 
-/* HUD PANELS */
-.hud-panel{position:fixed;z-index:6;pointer-events:none;padding:8px 10px;border-radius:10px;
-  background:rgba(4,8,16,.9);backdrop-filter:blur(6px)}
-.hud-psi{top:20%;right:10px;border:1px solid rgba(var(--ar),.18)}
-.hud-rpm{bottom:28%;left:10px;border:1px solid rgba(var(--goldr),.14)}
-.hud-label{font-family:'Share Tech Mono',monospace;font-size:7px;letter-spacing:2px;text-transform:uppercase;opacity:.45}
-.hud-val{font-family:'Orbitron',sans-serif;font-size:13px;font-weight:900;line-height:1.3}
-.hud-bar{width:38px;height:2px;border-radius:1px;background:rgba(255,255,255,.06);margin-top:4px;overflow:hidden}
-.hud-fill{height:100%;border-radius:1px;animation:hFill 4s ease-in-out infinite}
-@keyframes hFill{0%,100%{width:52%}50%{width:90%}}
+        @keyframes active-pulse {
+            0%,100% { box-shadow: 0 0 30px rgba(129,140,248,0.8), 0 4px 15px rgba(0,0,0,0.5); transform: scale(1); }
+            50% { box-shadow: 0 0 50px rgba(129,140,248,1), 0 0 80px rgba(129,140,248,0.4), 0 4px 15px rgba(0,0,0,0.5); transform: scale(1.07); }
+        }
 
-/* HERO */
-.world-hero{position:relative;z-index:10;text-align:center;padding:24px 16px 16px}
-.hero-badge{display:inline-flex;align-items:center;gap:6px;padding:4px 16px;border-radius:999px;
-  font-family:'Orbitron',sans-serif;font-size:9px;font-weight:900;letter-spacing:3px;text-transform:uppercase;
-  background:rgba(var(--ar),.06);border:1px solid rgba(var(--ar),.16);color:var(--a);margin-bottom:12px;
-  box-shadow:0 0 24px rgba(var(--ar),.07),inset 0 0 12px rgba(var(--ar),.04)}
-.hero-badge .bdot{width:6px;height:6px;border-radius:50%;background:var(--a);animation:bpulse 2s ease-in-out infinite}
-@keyframes bpulse{0%,100%{opacity:.4;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
-.hero-icon{font-size:3.8rem;margin-bottom:8px;filter:drop-shadow(0 0 20px rgba(var(--ar),.5));animation:hfloat 4s ease-in-out infinite}
-@keyframes hfloat{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-7px) rotate(10deg)}}
-.hero-title{font-family:'Orbitron',sans-serif;font-size:1.55rem;font-weight:900;text-transform:uppercase;letter-spacing:1px;
-  color:#fff;margin:4px 0;text-shadow:0 0 40px rgba(var(--ar),.4),0 2px 4px rgba(0,0,0,.7)}
-.hero-sub{color:#2a4055;font-size:12px;font-family:'Share Tech Mono',monospace;letter-spacing:2px}
+        @keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+        .float-anim { animation: float 3s ease-in-out infinite; }
 
-/* CANDY CRUSH PATH */
-.map-wrap{max-width:440px;margin:0 auto;padding:0 12px;position:relative;z-index:10}
-#pathSvg{position:absolute;top:0;left:0;width:100%;pointer-events:none;z-index:5}
-.path-done{stroke:var(--a);stroke-width:4;fill:none;filter:drop-shadow(0 0 6px rgba(var(--ar),.5));stroke-linecap:round}
-.path-active{stroke:var(--a);stroke-width:4;fill:none;filter:drop-shadow(0 0 10px rgba(var(--ar),.65));stroke-linecap:round;stroke-dasharray:10 6;animation:dashAnim 1s linear infinite}
-.path-locked{stroke:rgba(255,255,255,.04);stroke-width:3;fill:none;stroke-linecap:round}
-@keyframes dashAnim{to{stroke-dashoffset:-32}}
+        /* Stars rating on nodes */
+        .star-row { font-size: 0.75rem; line-height: 1; }
 
-/* NODE — MECHANICAL STATIONS */
-.node{position:absolute;z-index:15;cursor:pointer;transition:transform .25s cubic-bezier(.175,.885,.32,1.275);-webkit-tap-highlight-color:transparent}
-.node:active{transform:translate(-50%,-50%) scale(.88)!important}
-.node.locked{cursor:not-allowed;filter:saturate(.1) brightness(.3)}
-.node.locked:active{transform:translate(-50%,-50%) scale(1)!important}
+        /* Path dot animation */
+        @keyframes path-dot { 0%,100%{opacity:0.3} 50%{opacity:1} }
+        .path-dot { animation: path-dot 1.5s ease-in-out infinite; }
+        .path-dot:nth-child(2) { animation-delay: 0.3s; }
+        .path-dot:nth-child(3) { animation-delay: 0.6s; }
+        .path-dot:nth-child(4) { animation-delay: 0.9s; }
 
-/* Station mounting brackets */
-.node-mount{position:relative;display:inline-flex;align-items:center;justify-content:center}
-.nb{position:absolute;width:13px;height:13px;border-color:rgba(var(--ar),.38);border-style:solid;transition:border-color .3s}
-.nb-tl{top:-5px;left:-5px;border-width:2px 0 0 2px;border-radius:3px 0 0 0}
-.nb-tr{top:-5px;right:-5px;border-width:2px 2px 0 0;border-radius:0 3px 0 0}
-.nb-bl{bottom:-5px;left:-5px;border-width:0 0 2px 2px;border-radius:0 0 0 3px}
-.nb-br{bottom:-5px;right:-5px;border-width:0 2px 2px 0;border-radius:0 0 3px 0}
-.node-boss .nb{width:17px;height:17px;border-width:2.5px}
-.node-boss .nb-tl{top:-7px;left:-7px}.node-boss .nb-tr{top:-7px;right:-7px}
-.node-boss .nb-bl{bottom:-7px;left:-7px}.node-boss .nb-br{bottom:-7px;right:-7px}
-.nc-active~.nb,.node.nc-active .nb{border-color:rgba(var(--ar),.65)!important}
+        /* Sidebar */
+        .sidebar-link { transition: all 0.2s ease; }
+        .sidebar-link:hover { background: rgba(255,255,255,0.04); color: #fff; }
+        .sidebar-link.active { background: rgba(212,175,55,0.15); color: #D4AF37; border: 1px solid rgba(212,175,55,0.2); }
+        .hamburger-open .hamburger-line-1 { transform: rotate(45deg) translateY(8px); }
+        .hamburger-open .hamburger-line-2 { opacity: 0; }
+        .hamburger-open .hamburger-line-3 { transform: rotate(-45deg) translateY(-8px); }
 
-.node-circle{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5rem;position:relative;transition:all .3s;box-shadow:0 4px 20px rgba(0,0,0,.65)}
+        /* Level modal */
+        .modal-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:200; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px); }
+        .modal-box { background:#111827; border:1px solid rgba(212,175,55,0.3); border-radius:24px; padding:32px; max-width:420px; width:calc(100% - 2rem); box-shadow: 0 0 60px rgba(212,175,55,0.15); }
 
-/* Done — gunmetal steel + gold accent */
-.nc-done{
-  background:radial-gradient(circle at 35% 30%,#1e3548,#0d1e2e 55%,#071018);
-  border:2.5px solid rgba(var(--goldr),.5);
-  box-shadow:0 0 18px rgba(var(--goldr),.18),0 4px 20px rgba(0,0,0,.65),inset 0 -2px 6px rgba(0,0,0,.5),inset 0 2px 5px rgba(var(--goldr),.1)}
-.nc-done::after{content:'';position:absolute;inset:3px;border-radius:50%;background:radial-gradient(circle at 28% 22%,rgba(255,255,255,.22),transparent 55%);pointer-events:none}
+        /* Floating decorations */
+        @keyframes nebula-float { 0%{transform:translateY(0) rotate(-2deg)} 50%{transform:translateY(-15px) rotate(2deg)} 100%{transform:translateY(0) rotate(-2deg)} }
+        .nebula { position:absolute; animation: nebula-float 7s ease-in-out infinite; font-size:1.5rem; pointer-events:none; opacity:0.4; }
 
-/* Active — electric core */
-.nc-active{
-  background:radial-gradient(circle at 35% 30%,#4a1800,rgba(130,40,0,.38) 50%,#020c16);
-  border:2.5px solid var(--a);
-  animation:aPulse 2s ease-in-out infinite;
-  box-shadow:0 0 32px rgba(var(--ar),.55),0 0 70px rgba(var(--ar),.12),0 4px 20px rgba(0,0,0,.65),inset 0 -2px 6px rgba(0,0,0,.4)}
-.nc-active::after{content:'';position:absolute;inset:3px;border-radius:50%;background:radial-gradient(circle at 28% 22%,rgba(255,255,255,.32),transparent 55%);pointer-events:none}
-@keyframes aPulse{0%,100%{box-shadow:0 0 28px rgba(var(--ar),.45),0 4px 20px rgba(0,0,0,.65);transform:scale(1)}50%{box-shadow:0 0 55px rgba(var(--ar),.65),0 0 100px rgba(var(--ar),.14);transform:scale(1.07)}}
-
-/* Locked — dark steel */
-.nc-locked{
-  background:radial-gradient(circle at 35% 30%,#0c1520,#080f18 55%,#0a0400);
-  border:2.5px solid #201000;
-  box-shadow:0 4px 20px rgba(0,0,0,.85),inset 0 -2px 6px rgba(0,0,0,.5)}
-
-.node-boss .node-circle{width:80px;height:80px;font-size:1.85rem}
-.boss-tag{position:absolute;top:-8px;right:-8px;font-size:8px;font-weight:900;font-family:'Orbitron',sans-serif;
-  border-radius:999px;padding:2px 8px;z-index:20;letter-spacing:.5px;
-  background:linear-gradient(135deg,#8a6015,var(--gold));color:#0c0400;
-  box-shadow:0 0 14px rgba(var(--goldr),.4)}
-.boss-tag.locked{background:#0d1a28;color:#1e2d3e;box-shadow:none}
-
-/* Station platform */
-.node-platform{width:100%;margin-top:4px}
-.node-platform::before{content:'';display:block;height:2px;background:linear-gradient(90deg,transparent,rgba(var(--ar),.38),transparent);border-radius:1px}
-.node-platform::after{content:'';display:block;margin-top:3px;height:1px;background:linear-gradient(90deg,transparent,rgba(var(--ar),.14),transparent);border-radius:1px}
-.node.locked .node-platform::before,.node.locked .node-platform::after{background:linear-gradient(90deg,transparent,rgba(255,255,255,.05),transparent)}
-
-.node-lbl{text-align:center;margin-top:5px;font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;white-space:nowrap}
-.node-lbl.lbl-done{color:rgba(var(--goldr),.6)}.node-lbl.lbl-active{color:var(--a)}.node-lbl.lbl-locked{color:#1a2d40}
-.node-stars{text-align:center;font-size:10px;margin-top:2px}
-.star-on{color:var(--gold)}.star-off{color:#1a2d40}
-
-/* QUEST BOX */
-.quest-box{border-radius:14px;padding:14px;display:flex;align-items:center;gap:12px;
-  background:linear-gradient(135deg,rgba(var(--ar),.04),rgba(var(--ar),.01));
-  border:1px solid rgba(var(--ar),.11);
-  box-shadow:0 0 30px rgba(var(--ar),.03),inset 0 1px 0 rgba(var(--ar),.06);
-  backdrop-filter:blur(8px)}
-.quest-icon{flex-shrink:0;font-size:1.4rem;width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;
-  background:rgba(var(--ar),.05);border:1px solid rgba(var(--ar),.11);animation:aPulse 2s ease-in-out infinite}
-.quest-label{font-family:'Share Tech Mono',monospace;font-size:7px;color:rgba(var(--ar),.4);text-transform:uppercase;letter-spacing:3px}
-.quest-title{font-size:13px;color:#bbc;font-weight:700}
-.quest-btn{flex-shrink:0;padding:8px 14px;border-radius:10px;font-family:'Orbitron',sans-serif;font-weight:900;text-transform:uppercase;letter-spacing:2px;font-size:9px;cursor:pointer;border:none;
-  background:linear-gradient(135deg,var(--ad),var(--a));color:#0c0400;
-  box-shadow:0 0 16px rgba(var(--ar),.28);transition:all .2s}
-.quest-btn:hover{transform:scale(1.05);box-shadow:0 0 28px rgba(var(--ar),.5)}
-
-/* MODAL */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.9);z-index:200;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(10px)}
-.modal-box{background:linear-gradient(135deg,#160800,#0d0500,#160800);
-  border:1px solid rgba(var(--ar),.16);border-radius:22px;padding:26px;max-width:400px;width:calc(100% - 2rem);
-  box-shadow:0 0 80px rgba(var(--ar),.05),0 30px 60px rgba(0,0,0,.75),inset 0 1px 0 rgba(var(--ar),.07)}
-.mu-btn{position:fixed;bottom:16px;right:16px;z-index:110;width:44px;height:44px;border-radius:50%;
-  border:1px solid rgba(var(--ar),.16);background:rgba(4,8,16,.92);color:var(--a);font-size:16px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s}
-.mu-btn:hover{box-shadow:0 0 20px rgba(var(--ar),.3)}
-.mu-btn.off{color:#1a2d40;border-color:#0d1e30}
-header{border-image:linear-gradient(90deg,transparent,rgba(var(--ar),.2),transparent) 1}
-
-@media(max-width:374px){.node-circle{width:52px;height:52px;font-size:1.1rem}.node-boss .node-circle{width:66px;height:66px}.node-lbl{font-size:8px}.map-wrap{max-width:340px}.hero-title{font-size:1.25rem}}
-@media(min-width:375px) and (max-width:480px){.node-circle{width:58px;height:58px;font-size:1.3rem}.node-boss .node-circle{width:72px;height:72px}}
-@media(min-width:769px){.map-wrap{max-width:500px}.node-circle{width:70px;height:70px;font-size:1.6rem}.node-boss .node-circle{width:88px;height:88px;font-size:2rem}.hero-title{font-size:2rem}}
-@media(hover:none){.node:active{transform:translate(-50%,-50%) scale(.9)!important}}
-</style>
+        /* World header */
+        @keyframes title-in { from{opacity:0; transform:translateY(-20px)} to{opacity:1; transform:translateY(0)} }
+        .title-in { animation: title-in 0.6s ease-out forwards; }
+    </style>
 </head>
-
-<body class="text-white min-h-screen">
-<div class="world-base"></div>
-<svg id="worldScene" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"></svg>
-<canvas id="fxC"></canvas>
-<div class="scan"></div>
-
-<!-- HUD PANELS -->
-<div class="hud-panel hud-psi">
-  <div class="hud-label" style="color:rgba(var(--ar),.5)">Presión</div>
-  <div class="hud-val" style="color:var(--a)">847 <span style="font-size:9px;opacity:.5">PSI</span></div>
-  <div class="hud-bar"><div class="hud-fill" style="background:linear-gradient(90deg,var(--ad),var(--a))"></div></div>
-</div>
-<div class="hud-panel hud-rpm">
-  <div class="hud-label" style="color:rgba(var(--goldr),.5)">RPM Núcleo</div>
-  <div class="hud-val" style="color:var(--gold)">2,340</div>
-  <div class="hud-bar"><div class="hud-fill" style="background:linear-gradient(90deg,#8a6015,var(--gold));animation-delay:.8s"></div></div>
-</div>
+<body class="world-bg text-white font-sans min-h-screen flex flex-col overflow-x-hidden">
 
 <!-- HEADER -->
-<header class="border-b border-white/5 bg-black/75 backdrop-blur-xl sticky top-0 z-[60]">
-<div class="flex items-center justify-between px-4 md:px-8 py-3">
-  <div class="flex items-center gap-3">
-    <a href="dashboard.html" class="flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition hover:scale-105" style="background:rgba(var(--ar),.06);border:1px solid rgba(var(--ar),.16);color:var(--a)">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="15 18 9 12 15 6"/></svg>
-      <span class="hidden sm:inline">Mundos</span></a>
-    <img src="images/logo_azul.png" alt="IP" class="h-9 w-auto shrink-0" style="filter:drop-shadow(0 0 8px rgba(var(--ar),.3))" onerror="this.outerHTML='<span style=\'color:var(--a);font-weight:900;font-size:1.1rem;font-family:Orbitron\'>IP</span>'">
-  </div>
-  <div class="flex items-center gap-3">
-    <span class="text-sm font-black" style="color:var(--a)" id="xp-ct">0 XP</span>
-    <span class="text-sm font-bold text-gray-500" id="comp-ct">0/10</span>
-  </div>
-</div>
-<div class="h-1.5 w-full" style="background:rgba(255,255,255,.04)"><div class="h-full transition-all duration-700" id="prog-bar" style="width:0%;background:linear-gradient(90deg,var(--ad),var(--a))"></div></div>
+<header class="border-b border-card-border bg-bg-dark/95 backdrop-blur sticky top-0 z-[60] shrink-0">
+    <div class="flex items-center justify-between px-4 md:px-8 py-3 md:py-4">
+        <div class="flex items-center gap-3">
+            <a href="portadanivelesacademia.html"
+               class="flex items-center gap-2 px-3 py-2 rounded-xl font-black text-xs uppercase tracking-widest transition-all hover:scale-105 active:scale-95 shrink-0"
+               style="background:rgba(212,175,55,0.1); border:1px solid rgba(212,175,55,0.35); color:#D4AF37;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                <span class="hidden sm:inline">Volver</span>
+            </a>
+            <div class="flex items-center gap-2.5">
+                <img src="images/logo_azul.png" alt="InvertProfit" id="logo-img"
+                     class="h-10 w-auto object-contain shrink-0"
+                     style="filter:drop-shadow(0 0 10px rgba(212,175,55,0.4));"
+                     onerror="this.style.display='none'; document.getElementById('logo-badge').style.display='flex';">
+                <div id="logo-badge" class="w-11 h-11 rounded-xl items-center justify-center font-black text-lg shrink-0" style="display:none; background:linear-gradient(135deg,#D4AF37,#b8860b); color:#0a0f1a; box-shadow:0 0 30px rgba(212,175,55,0.4);">IP</div>
+            </div>
+        </div>
+        <nav class="hidden lg:flex items-center gap-10">
+            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="index.html">INICIO</a>
+            <a class="font-black border-b-2 border-primary pb-1 text-sm tracking-widest uppercase" style="color:#D4AF37;" href="portadanivelesacademia.html">ACADEMIA</a>
+            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="mercado.html">MERCADOS</a>
+            <a class="text-gray-400 hover:text-white transition text-sm font-semibold tracking-widest uppercase" href="#">PORTAFOLIO</a>
+        </nav>
+        <div class="flex items-center gap-2 md:gap-4">
+            <button class="shrink-0 bg-primary font-bold h-10 px-6 rounded-full inline-flex items-center gap-2 whitespace-nowrap hover:bg-primary/90 transition text-xs tracking-wide" style="color:#0a0f1a;">⚡ CONECTAR BROKER</button>
+            <div class="hidden md:flex items-center gap-3">
+                <div class="w-9 h-9 bg-gradient-to-br from-primary/30 to-primary/10 border border-primary/30 rounded-full flex items-center justify-center text-xs font-black text-primary">AT</div>
+            </div>
+            <button id="hamburger-btn-inline" onclick="toggleSideMenu()" class="lg:hidden text-gray-400 hover:text-white p-2 flex flex-col gap-1.5 transition-all">
+                <span class="hamburger-line-1 block w-6 h-0.5 bg-current transition-all duration-300"></span>
+                <span class="hamburger-line-2 block w-6 h-0.5 bg-current transition-all duration-300"></span>
+                <span class="hamburger-line-3 block w-6 h-0.5 bg-current transition-all duration-300"></span> 
+            </button>
+        </div>
+    </div>
+    <nav id="mobile-menu" class="hidden lg:hidden border-t border-card-border bg-card px-4 py-3 space-y-2">
+        <a class="block font-bold py-2 border-l-2 border-primary pl-3 text-sm" style="color:#D4AF37;" href="portadanivelesacademia.html">ACADEMIA</a>
+        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="mercado.html">MERCADOS</a>
+        <a class="block text-gray-400 hover:text-white py-2 pl-3 text-sm" href="#">PORTAFOLIO</a>
+    </nav>
 </header>
 
-<main class="relative z-10 pb-24">
-  <div class="world-hero">
-    <div class="hero-badge"><span class="bdot"></span>MUNDO 01 — LA GÉNESIS DEL CAPITAL</div>
-    <div class="hero-icon">🔥</div>
-    <h1 class="hero-title">LA FORJA DEL INVERSOR</h1>
-    <p class="hero-sub">// RANGO: NOVATO — FUNDAMENTOS</p>
-  </div>
-  <div class="map-wrap" id="mapWrap" style="position:relative">
-    <svg id="pathSvg" xmlns="http://www.w3.org/2000/svg"></svg>
-    <div id="nodesLayer" style="position:relative"></div>
-  </div>
-  <div class="max-w-md mx-auto px-4 mt-6" id="quest"></div>
+<!-- SIDE MENU -->
+<aside id="side-menu" class="fixed top-0 left-0 h-full w-80 bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 border-r border-gray-700 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out z-[65] flex flex-col">
+    <nav class="flex-1 p-6 space-y-2 pt-24">
+        <div class="mb-8 px-3">
+            <p class="text-[10px] font-black text-primary/80 uppercase tracking-[4px] leading-none mb-2">Menú</p>
+            <div class="h-[2px] w-10 bg-gradient-to-r from-primary/60 to-transparent rounded-full"></div>
+        </div>
+        <a href="portadanivelesacademia.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400"><span class="material-symbols-outlined text-[22px]">grid_view</span> Mundos</a>
+        <a href="portadanivelesacademia.html" class="sidebar-link active flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold"><span class="material-symbols-outlined text-[22px]">school</span> Academia</a>
+        <a href="#" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400"><span class="material-symbols-outlined text-[22px]">emoji_events</span> Logros</a>
+        <a href="mercado.html" class="sidebar-link flex items-center gap-3 px-5 py-4 rounded-xl text-sm font-bold text-gray-400"><span class="material-symbols-outlined text-[22px]">monitoring</span> Mercados</a>
+    </nav>
+    <div class="p-6 border-t border-gray-700">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center font-extrabold text-primary text-sm">AT</div>
+            <div class="flex-1 min-w-0"><p class="text-sm font-bold truncate">Alex Trader</p><p class="text-[10px] text-primary font-bold uppercase tracking-wider">Pro Member</p></div>
+            <a href="Login.html" class="text-gray-500 hover:text-red-400 transition"><span class="material-symbols-outlined text-[22px]">logout</span></a>
+        </div>
+    </div>
+</aside>
+<div id="menu-overlay" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] opacity-0 pointer-events-none transition-opacity duration-300" onclick="toggleSideMenu()"></div>
+
+<!-- MAIN -->
+<main class="flex-1 overflow-y-auto">
+
+    <!-- World banner — Purple/Space theme -->
+    <div class="relative overflow-hidden" style="background:linear-gradient(180deg, rgba(99,102,241,0.12) 0%, rgba(10,15,26,0) 100%); border-bottom:1px solid rgba(129,140,248,0.2);">
+        <!-- Decorative floating icons -->
+        <div class="nebula" style="top:20px; left:5%; animation-delay:0s;">🧠</div>
+        <div class="nebula" style="top:10px; left:15%; animation-delay:1s; font-size:1rem;">🔮</div>
+        <div class="nebula" style="top:30px; right:10%; animation-delay:2s;">🏛️</div>
+        <div class="nebula" style="top:15px; right:25%; animation-delay:0.5s; font-size:1rem;">💎</div>
+        <div class="nebula" style="top:5px; left:45%; animation-delay:1.5s; font-size:0.8rem;">⚡</div>
+
+        <div class="max-w-5xl mx-auto px-6 py-8">
+            <div class="flex items-center gap-3 mb-3">
+                <a href="portadanivelesacademia.html" class="flex items-center gap-1.5 text-gray-500 hover:text-indigo-400 transition text-sm font-semibold">
+                    <span class="material-symbols-outlined text-[18px]">arrow_back</span> Mundos
+                </a>
+                <span class="text-gray-700">/</span>
+                <span class="text-sm font-semibold" style="color:#818cf8;">Mundo 03 — Experto</span>
+            </div>
+            <div class="flex items-center justify-between flex-wrap gap-4 title-in">
+                <div class="flex items-center gap-5">
+                    <div class="text-5xl float-anim">🌌</div>
+                    <div>
+                        <p class="text-[10px] font-black tracking-[5px] uppercase" style="color:rgba(129,140,248,0.7);">MUNDO 03</p>
+                        <h1 class="text-3xl md:text-4xl font-black uppercase tracking-tight text-white">EXPERTO</h1>
+                        <p class="text-gray-400 text-sm">Estrategias institucionales & psicología de trading</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-center">
+                        <div class="text-2xl font-black" style="color:#818cf8;">0/12</div>
+                        <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Completados</div>
+                    </div>
+                    <div class="w-px h-10 bg-card-border"></div>
+                    <div class="text-center">
+                        <div class="flex gap-1"><span class="text-gray-600">⭐⭐⭐</span></div>
+                        <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Estrellas</div>
+                    </div>
+                    <div class="w-px h-10 bg-card-border"></div>
+                    <div class="text-center">
+                        <div class="text-2xl font-black" style="color:#818cf8;">0</div>
+                        <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">XP ganada</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Global progress bar -->
+            <div class="mt-4 h-3 w-full rounded-full overflow-hidden bg-gray-800">
+                <div class="h-full rounded-full" style="width:0%; background:linear-gradient(90deg, #4f46e5, #818cf8, #a78bfa);"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- LEVEL MAP - Candy Crush Long Winding Path -->
+    <div class="max-w-xl mx-auto px-4 py-10 pb-20">
+        <p class="text-center text-[11px] font-black tracking-[5px] text-gray-600 uppercase mb-10">— MAPA DE NIVELES —</p>
+        <div id="level-map" class="relative flex flex-col items-start gap-0"></div>
+
+        <!-- Current quest indicator -->
+        <div class="mt-10">
+            <div class="mx-4 rounded-2xl p-5 flex items-center gap-4" style="background:linear-gradient(135deg, rgba(129,140,248,0.12) 0%, rgba(99,102,241,0.06) 100%); border:1px solid rgba(129,140,248,0.3);">
+                <div class="text-3xl float-anim">🧠</div>
+                <div class="flex-1">
+                    <p class="text-[10px] font-black tracking-[4px] uppercase mb-1" style="color:rgba(129,140,248,0.8);">NIVEL ACTUAL</p>
+                    <p class="font-black text-white text-sm">Completa "Smart Money Concepts" para desbloquear los siguientes niveles.</p>
+                    <p class="text-gray-500 text-xs mt-1">Completa el Mundo Intermedio para acceder a este mundo.</p>
+                </div>
+                <button onclick="openModal(1,'Smart Money Concepts','Comprende cómo operan las instituciones: order blocks, liquidity pools y market structure.','active',300)" class="shrink-0 px-5 py-2.5 rounded-xl font-black uppercase tracking-wider text-xs transition hover:scale-105 whitespace-nowrap" style="background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;">
+                    ▶ JUGAR
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    (function(){
+        var levels=[
+            {n:1,t:'Smart Money Concepts',d:'Comprende cómo operan las instituciones: order blocks, liquidity pools y market structure.',s:'active',xp:300},
+            {n:2,t:'ICT Power of 3',d:'Acumulación, manipulación, distribución. El ciclo que mueve todos los mercados.',s:'locked',xp:300},
+            {n:3,t:'Order Flow & Volume Profile',d:'Lee el flujo de órdenes como un profesional. Delta, POC, Value Area.',s:'locked',xp:300},
+            {n:4,t:'Wyckoff Method',d:'El método legendario. Fases de acumulación y distribución de Wyckoff.',s:'locked',xp:300},
+            {n:5,t:'Breaker Blocks & Mitigation',d:'Cuando los order blocks fallan. Aprende a identificar breakers y mitigation blocks.',s:'locked',xp:300},
+            {n:6,t:'⚡ BOSS: Lectura Institucional',d:'Analiza un gráfico real usando SMC, ICT y Wyckoff. Demuestra tu visión institucional.',s:'locked',xp:500,boss:'BOSS'},
+            {n:7,t:'Trading Algorítmico Intro',d:'Automatiza tus estrategias. Introducción a bots, APIs y ejecución algorítmica.',s:'locked',xp:300},
+            {n:8,t:'Correlaciones Macro',d:'DXY, bonos, commodities. Cómo se conectan los mercados globales.',s:'locked',xp:300},
+            {n:9,t:'Gestión de Portafolio Pro',d:'Diversificación avanzada, hedging, y optimización de portafolio.',s:'locked',xp:300},
+            {n:10,t:'Psicología Avanzada',d:'Peak performance, estado de flujo, manejo del drawdown. La mente del trader elite.',s:'locked',xp:300},
+            {n:11,t:'Plan de Trading Institucional',d:'Crea tu edge definitivo. Un plan de trading de nivel hedge fund.',s:'locked',xp:300},
+            {n:12,t:'🏆 FINAL: El Gran Examen',d:'El desafío supremo. Demuestra dominio total del trading profesional. ¡Conviértete en Master Trader!',s:'locked',xp:800,boss:'FINAL'}
+        ];
+        var pos=[44,62,74,62,44,24,14,24,44,62,74,44];
+        var dpos=[[48,53,58],[65,69,72],[72,69,65],[58,53,48],[39,33,28],[21,18,15],[15,18,21],[28,33,39],[48,53,58],[65,69,72],[68,58,48]];
+        var ic=['🧠','🔮','🏛️','💎','📡','⚡','🌀','🎯','🛡️','📊','💰','🏆'];
+        var activeDot='background:#818cf8;box-shadow:0 0 8px rgba(129,140,248,0.9);';
+        var lockedDot='background:#374151;';
+
+        var h='';
+        levels.forEach(function(lv,i){
+            var isBoss=!!lv.boss;
+            var sz=lv.boss==='FINAL'?'width:88px;height:88px;font-size:2rem;':'width:84px;height:84px;font-size:1.75rem;';
+            var tEsc=lv.t.replace(/'/g,"\\'");
+            var dEsc=lv.d.replace(/'/g,"\\'");
+            var nodeClass,nodeContent,nodeStyleExtra='',bossTag='';
+
+            if(lv.s==='active'){
+                nodeClass='node-btn active'+(isBoss?' relative':'');
+                if(isBoss){nodeStyleExtra=sz;bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:#818cf8;color:#0a0f1a;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
+                nodeContent=bossTag+ic[i];
+            } else {
+                nodeClass='node-btn locked-node'+(isBoss?' relative':'');
+                if(isBoss){nodeStyleExtra=sz+'opacity:0.5;';bossTag='<span style="position:absolute;top:-8px;right:-8px;font-size:0.65rem;background:#374151;color:#9ca3af;border-radius:999px;padding:2px 7px;font-weight:900;">'+lv.boss+'</span>';}
+                nodeContent=bossTag+'<span class="material-symbols-outlined text-gray-500 text-2xl">lock</span>';
+            }
+
+            var starClass=lv.s==='active'?'star-row text-gray-600':'star-row text-gray-700';
+            var labelClass=lv.s==='locked'?'text-[10px] font-black text-gray-600 uppercase tracking-wider':'text-[10px] font-black uppercase tracking-wider';
+            var labelStyle=lv.s!=='locked'?'style="color:#818cf8;"':'';
+            var clickAttr=lv.s==='locked'?'':'onclick="openModal('+lv.n+',\''+tEsc+'\',\''+dEsc+'\',\''+lv.s+'\','+lv.xp+')"';
+            var wrapClass=lv.s==='locked'?'level-node locked text-center inline-block':'level-node text-center inline-block';
+
+            h+='<div class="w-full" style="padding-left:'+pos[i]+'%">';
+            h+='<div class="'+wrapClass+'" '+clickAttr+'>';
+            h+='<div class="flex flex-col items-center gap-2">';
+            h+='<div class="'+nodeClass+'" style="'+nodeStyleExtra+'">'+nodeContent+'</div>';
+            h+='<div class="'+starClass+'">⭐⭐⭐</div>';
+            h+='<div class="'+labelClass+'" '+labelStyle+'>NIV '+lv.n+'</div>';
+            h+='</div></div></div>';
+
+            if(i<levels.length-1){
+                var dc=(lv.s==='active')?activeDot:lockedDot;
+                h+='<div class="w-full flex flex-col gap-2.5 py-3">';
+                dpos[i].forEach(function(dp){h+='<div class="w-2.5 h-2.5 rounded-full" style="margin-left:'+dp+'%;'+dc+'"></div>';});
+                h+='</div>';
+            }
+        });
+        document.getElementById('level-map').innerHTML=h;
+    })();
+    </script>
 </main>
 
-<!-- MODAL -->
-<div id="modal" class="modal-bg hidden" onclick="if(event.target===this)closeM()">
-<div class="modal-box">
-  <div class="flex items-center justify-between mb-4">
-    <span id="m-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider"></span>
-    <button onclick="closeM()" class="text-gray-500 hover:text-white transition"><span class="material-symbols-outlined">close</span></button>
-  </div>
-  <div class="text-5xl text-center mb-3" id="m-icon"></div>
-  <h3 class="text-lg font-black text-center uppercase tracking-tight mb-2" style="font-family:Orbitron;color:var(--a)" id="m-title"></h3>
-  <p class="text-gray-400 text-sm text-center mb-4" id="m-desc"></p>
-  <div class="flex justify-center gap-1 mb-4 text-sm" id="m-stars">⭐⭐⭐</div>
-  <div class="flex items-center justify-between mb-4 rounded-xl px-4 py-3" style="background:rgba(var(--ar),.04);border:1px solid rgba(var(--ar),.08)">
-    <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">XP</span>
-    <span class="font-black" style="color:var(--a)" id="m-xp"></span>
-  </div>
-  <div class="flex flex-col gap-2">
-    <button id="m-cta" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105"></button>
-    <button id="m-next" class="hidden w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105"></button>
-  </div>
-</div></div>
-
-<button class="mu-btn" id="muBtn" onclick="toggleMu()">🔊</button>
+<!-- LEVEL MODAL -->
+<div id="level-modal" class="modal-overlay hidden" onclick="if(event.target===this)closeModal()">
+    <div class="modal-box">
+        <div class="flex items-center justify-between mb-5">
+            <span id="modal-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider" style="background:rgba(129,140,248,0.15); color:#818cf8; border:1px solid rgba(129,140,248,0.4);">▶ En Progreso</span>
+            <button onclick="closeModal()" class="text-gray-500 hover:text-white transition"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="text-5xl text-center mb-4" id="modal-icon">📚</div>
+        <h3 class="text-xl font-black text-center uppercase tracking-tight mb-2" id="modal-title">Título</h3>
+        <p class="text-gray-400 text-sm text-center mb-5 leading-relaxed" id="modal-desc">Descripción</p>
+        <div class="flex justify-center gap-1 mb-5" id="modal-stars">⭐⭐⭐</div>
+        <div class="flex items-center justify-between mb-5 bg-card rounded-xl px-4 py-3" style="border:1px solid rgba(212,175,55,0.15);">
+            <span class="text-[11px] font-bold text-gray-500 uppercase tracking-wider">XP a ganar</span>
+            <span class="font-black text-primary" id="modal-xp">+300 XP</span>
+        </div>
+        <button id="modal-cta" onclick="window.location.href='leccion.html'" class="w-full py-3 rounded-2xl font-black uppercase tracking-wider text-sm transition hover:scale-105" style="background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;">
+            ▶ JUGAR NIVEL
+        </button>
+    </div>
+</div>
 
 <script>
-var A='#ff6a00',AR='255,106,0',WN=1;
-var levels=window._wL=[
-  {"n":1,"t":"Filosofía InvertProfit","d":"Filosofía InvertProfit y AmigoTrade.","xp":150},
-  {"n":2,"t":"Historia del Dinero","d":"Historia del Dinero y los Mercados.","xp":150},
-  {"n":3,"t":"¿Qué es una Acción?","d":"El origen del Equity.","xp":150},
-  {"n":4,"t":"Participantes del Mercado","d":"Retail vs Institucional.","xp":150},
-  {"n":5,"t":"Divisas, Metales e Índices","d":"Tipos de Activos financieros.","xp":150},
-  {"n":6,"t":"Commodities y Cripto","d":"Tipos de Activos: commodities y criptomonedas.","xp":150},
-  {"n":7,"t":"Anatomía de una Orden","d":"Market, Limit y Stop.","xp":150},
-  {"n":8,"t":"Pips, Lotes y Spread","d":"El lenguaje del precio.","xp":150},
-  {"n":9,"t":"Sesiones del Mercado","d":"Horarios y Sesiones: El reloj del dinero.","xp":150},
-  {"n":10,"t":"🏆 Primer Trade Simulado","d":"Examen de Entrada: El Primer Trade Simulado.","xp":500,"boss":"FINAL"}
-];
-var icons=["🎯","📦","🏦","👥","💱","⛏️","📋","📊","🕐","🏆"];
-levels.forEach(function(l){l.s=CURRICULUM.getLevelStatus(l.n)});
-
-var cc=levels.filter(function(l){return l.s==='completed'}).length;
-var totalXP=levels.reduce(function(a,l){return a+(l.s==='completed'?l.xp:0)},0);
-document.getElementById('comp-ct').textContent=cc+'/'+levels.length;
-document.getElementById('xp-ct').textContent=totalXP.toLocaleString()+' XP';
-document.getElementById('prog-bar').style.width=Math.round(cc/levels.length*100)+'%';
-
-var N=levels.length,MAP_W,NODE_H=110,PAD_TOP=40,nodePos=[];
-function calcPositions(){
-  MAP_W=document.getElementById('mapWrap').offsetWidth;nodePos=[];
-  var margin=50,usable=MAP_W-margin*2;
-  for(var i=0;i<N;i++){
-    var row=Math.floor(i/3),col=i%3,goingRight=row%2===0;
-    var xNorm=goingRight?col/2:(2-col)/2;
-    var rawX=margin+xNorm*usable,wave=Math.sin(i*0.8)*usable*0.12;
-    nodePos.push({x:Math.max(margin,Math.min(MAP_W-margin,rawX+wave)),y:PAD_TOP+(N-1-i)*NODE_H})}}
-calcPositions();
-var totalH=PAD_TOP+N*NODE_H+60;
-document.getElementById('nodesLayer').style.height=totalH+'px';
-document.getElementById('pathSvg').setAttribute('height',totalH);
-document.getElementById('pathSvg').style.height=totalH+'px';
-
-function drawPaths(){
-  calcPositions();var svg=document.getElementById('pathSvg');svg.innerHTML='';
-  for(var i=0;i<N-1;i++){
-    var a_=nodePos[i],b_=nodePos[i+1],sA=levels[i].s,sB=levels[i+1].s;
-    var cls=(sA==='completed'&&sB==='completed')?'path-done':(sA==='completed'&&sB==='active')?'path-active':'path-locked';
-    var path=document.createElementNS('http://www.w3.org/2000/svg','path');
-    var midY=(a_.y+b_.y)/2;
-    path.setAttribute('d','M '+a_.x+' '+a_.y+' C '+a_.x+' '+midY+', '+b_.x+' '+midY+', '+b_.x+' '+b_.y);
-    path.setAttribute('class',cls);svg.appendChild(path)}}
-drawPaths();
-window.addEventListener('resize',function(){drawPaths();placeNodes();buildScene()});
-
-function placeNodes(){
-  calcPositions();var layer=document.getElementById('nodesLayer');layer.innerHTML='';
-  for(var i=0;i<N;i++){
-    var lv=levels[i],p=nodePos[i],isBoss=!!lv.boss;
-    var nd=document.createElement('div');
-    nd.className='node'+(isBoss?' node-boss':'')+(lv.s==='locked'?' locked':'');
-    nd.style.cssText='position:absolute;left:'+p.x+'px;top:'+p.y+'px;transform:translate(-50%,-50%)';
-    var circCls=lv.s==='completed'?'nc-done':(lv.s==='active'?'nc-active':'nc-locked');
-    var content=lv.s==='completed'?'✓':(lv.s==='active'?(icons[i]||'⚙️'):'<span class="material-symbols-outlined text-gray-600" style="font-size:1.2em">lock</span>');
-    var bossTag='';if(isBoss){bossTag='<span class="'+(lv.s==='locked'?'boss-tag locked':'boss-tag')+'">'+lv.boss+'</span>'}
-    var starHtml=lv.s==='completed'?'<span class="star-on">⭐</span><span class="star-on">⭐</span><span class="star-on">⭐</span>':'<span class="star-off">☆</span><span class="star-off">☆</span><span class="star-off">☆</span>';
-    var lblCls=lv.s==='completed'?'lbl-done':(lv.s==='active'?'lbl-active':'lbl-locked');
-    var tE=lv.t.replace(/'/g,"\\'"),dE=lv.d.replace(/'/g,"\\'");
-    if(lv.s!=='locked')nd.setAttribute('onclick',"openM("+lv.n+",'"+tE+"','"+dE+"','"+lv.s+"',"+lv.xp+")");
-    else nd.setAttribute('onclick','sfxL()');
-    nd.innerHTML=
-      '<div style="position:relative;display:flex;flex-direction:column;align-items:center">'+
-        '<div class="node-mount">'+
-          '<span class="nb nb-tl"></span><span class="nb nb-tr"></span>'+
-          '<span class="nb nb-bl"></span><span class="nb nb-br"></span>'+
-          '<div class="node-circle '+circCls+'" style="position:relative">'+content+bossTag+'</div>'+
-        '</div>'+
-        '<div class="node-platform"></div>'+
-        '<div class="node-stars">'+starHtml+'</div>'+
-        '<div class="node-lbl '+lblCls+'">'+lv.n+'</div>'+
-      '</div>';
-    layer.appendChild(nd)}}
-placeNodes();
-
-var actLv=levels.find(function(l){return l.s==='active'});
-if(actLv){
-  var tE2=actLv.t.replace(/'/g,"\\'"),dE2=actLv.d.replace(/'/g,"\\'");
-  document.getElementById('quest').innerHTML='<div class="quest-box"><div class="quest-icon">⚡</div><div class="flex-1"><div class="quest-label">MÓDULO ACTIVO</div><div class="quest-title">'+actLv.t+'</div></div><button onclick="openM('+actLv.n+',\''+tE2+'\',\''+dE2+'\',\'active\','+actLv.xp+')" class="quest-btn">▶ INICIAR</button></div>'}
-
-// ═══════════════════════════════════════════════
-// MECHANICAL WORLD SCENE BUILDER
-// ═══════════════════════════════════════════════
-var sceneGears=[];
-var pistonRod=null,pistonBaseY=0,pistonOffset=0,pistonDir=1,pistonAmp=38,pistonSpd=0.55;
-var conduitLines=[];
-
-function nsv(tag){return document.createElementNS('http://www.w3.org/2000/svg',tag)}
-function rnd(n){return Math.round(n*10)/10}
-
-// True toothed gear outline path
-function gearPath(cx,cy,R,r,hR,teeth){
-  var s=Math.PI*2/teeth,tw=s*0.42,d='';
-  for(var i=0;i<teeth;i++){
-    var a=i*s,a0=a-tw/2,a1=a+tw/2,a2=(i+1)*s-tw/2;
-    if(i===0)d+='M'+rnd(cx+r*Math.cos(a0))+','+rnd(cy+r*Math.sin(a0));
-    else d+='L'+rnd(cx+r*Math.cos(a0))+','+rnd(cy+r*Math.sin(a0));
-    d+='L'+rnd(cx+R*Math.cos(a0))+','+rnd(cy+R*Math.sin(a0));
-    d+='A'+R+','+R+',0,0,1,'+rnd(cx+R*Math.cos(a1))+','+rnd(cy+R*Math.sin(a1));
-    d+='L'+rnd(cx+r*Math.cos(a1))+','+rnd(cy+r*Math.sin(a1));
-    if(i<teeth-1)d+='A'+r+','+r+',0,0,1,'+rnd(cx+r*Math.cos(a2))+','+rnd(cy+r*Math.sin(a2))}
-  d+='Z';
-  if(hR>0){
-    d+=' M'+rnd(cx+hR)+','+rnd(cy);
-    d+='A'+hR+','+hR+',0,1,0,'+rnd(cx-hR)+','+rnd(cy);
-    d+='A'+hR+','+hR+',0,1,0,'+rnd(cx+hR)+','+rnd(cy)+'Z'}
-  return d}
-
-function makeGear(svg,cx,cy,R,r,hR,teeth,strokeCol,fillCol,opacity,rpm,dir){
-  var g=nsv('g');
-  var p=nsv('path');
-  p.setAttribute('d',gearPath(cx,cy,R,r,hR,teeth));
-  p.setAttribute('fill',fillCol);p.setAttribute('stroke',strokeCol);
-  p.setAttribute('stroke-width','1.2');p.setAttribute('fill-rule','evenodd');
-  p.setAttribute('opacity',opacity);g.appendChild(p);
-  // Spokes
-  var ns2=6;
-  for(var i=0;i<ns2;i++){
-    var a=(i/ns2)*Math.PI*2;
-    var sp=nsv('line');
-    sp.setAttribute('x1',rnd(cx+(hR+5)*Math.cos(a)));sp.setAttribute('y1',rnd(cy+(hR+5)*Math.sin(a)));
-    sp.setAttribute('x2',rnd(cx+(r-10)*Math.cos(a)));sp.setAttribute('y2',rnd(cy+(r-10)*Math.sin(a)));
-    sp.setAttribute('stroke',strokeCol);sp.setAttribute('stroke-width','1.5');
-    sp.setAttribute('opacity',opacity);g.appendChild(sp)}
-  // Hub ring
-  var hub=nsv('circle');hub.setAttribute('cx',cx);hub.setAttribute('cy',cy);hub.setAttribute('r',hR);
-  hub.setAttribute('fill',fillCol);hub.setAttribute('stroke',strokeCol);hub.setAttribute('stroke-width','1.8');
-  hub.setAttribute('opacity',opacity);g.appendChild(hub);
-  // Hub dot
-  var hdot=nsv('circle');hdot.setAttribute('cx',cx);hdot.setAttribute('cy',cy);hdot.setAttribute('r',5);
-  hdot.setAttribute('fill',strokeCol);hdot.setAttribute('opacity',String(parseFloat(opacity)*0.7));
-  g.appendChild(hdot);
-  svg.appendChild(g);
-  sceneGears.push({g:g,cx:cx,cy:cy,rpm:rpm,dir:dir,angle:Math.random()*360});
-  return g}
-
-function makePipe(svg,x1,y1,x2,y2,thick,col,op){
-  var dx=x2-x1,dy=y2-y1,len=Math.sqrt(dx*dx+dy*dy);
-  if(len<1)return;
-  var nx=-dy/len*thick/2,ny=dx/len*thick/2;
-  var body=nsv('path');
-  body.setAttribute('d','M'+(x1+nx)+','+(y1+ny)+' L'+(x2+nx)+','+(y2+ny)+' L'+(x2-nx)+','+(y2-ny)+' L'+(x1-nx)+','+(y1-ny)+'Z');
-  body.setAttribute('fill','#110600');body.setAttribute('stroke',col);body.setAttribute('stroke-width','1');
-  body.setAttribute('opacity',op);svg.appendChild(body);
-  // Inner glow line
-  var gl=nsv('line');gl.setAttribute('x1',x1);gl.setAttribute('y1',y1);gl.setAttribute('x2',x2);gl.setAttribute('y2',y2);
-  gl.setAttribute('stroke',col);gl.setAttribute('stroke-width','1.2');gl.setAttribute('opacity',String(parseFloat(op)*0.35));
-  svg.appendChild(gl);
-  // End flanges
-  [0,1].forEach(function(e){
-    var bx=e?x2:x1,by=e?y2:y1;
-    var fl=nsv('path');
-    fl.setAttribute('d','M'+(bx+nx*1.4)+','+(by+ny*1.4)+' L'+(bx-nx*1.4)+','+(by-ny*1.4));
-    fl.setAttribute('stroke',col);fl.setAttribute('stroke-width','3');
-    fl.setAttribute('stroke-linecap','round');fl.setAttribute('opacity',op);
-    svg.appendChild(fl)})}
-
-function makeJoint(svg,cx,cy,r,col,op){
-  var c=nsv('circle');c.setAttribute('cx',cx);c.setAttribute('cy',cy);c.setAttribute('r',r);
-  c.setAttribute('fill','#110600');c.setAttribute('stroke',col);c.setAttribute('stroke-width','2');
-  c.setAttribute('opacity',op);svg.appendChild(c);
-  var d=nsv('circle');d.setAttribute('cx',cx);d.setAttribute('cy',cy);d.setAttribute('r',r*0.35);
-  d.setAttribute('fill',col);d.setAttribute('opacity',String(parseFloat(op)*0.55));
-  svg.appendChild(d)}
-
-function makeBeam(svg,x1,y1,x2,y2,h,col,op){
-  var dx=x2-x1,dy=y2-y1,len=Math.sqrt(dx*dx+dy*dy);
-  if(len<1)return;
-  var nx=-dy/len,ny=dx/len;
-  var hh=h/2;
-  // Top flange
-  var t1=nsv('line');t1.setAttribute('x1',x1+nx*hh);t1.setAttribute('y1',y1+ny*hh);
-  t1.setAttribute('x2',x2+nx*hh);t1.setAttribute('y2',y2+ny*hh);
-  t1.setAttribute('stroke',col);t1.setAttribute('stroke-width','3');t1.setAttribute('opacity',op);svg.appendChild(t1);
-  // Bottom flange
-  var t2=nsv('line');t2.setAttribute('x1',x1-nx*hh);t2.setAttribute('y1',y1-ny*hh);
-  t2.setAttribute('x2',x2-nx*hh);t2.setAttribute('y2',y2-ny*hh);
-  t2.setAttribute('stroke',col);t2.setAttribute('stroke-width','3');t2.setAttribute('opacity',op);svg.appendChild(t2);
-  // Web
-  var w=nsv('line');w.setAttribute('x1',x1);w.setAttribute('y1',y1);w.setAttribute('x2',x2);w.setAttribute('y2',y2);
-  w.setAttribute('stroke',col);w.setAttribute('stroke-width','1.5');w.setAttribute('opacity',String(parseFloat(op)*0.4));
-  svg.appendChild(w)}
-
-function makeRivet(svg,cx,cy,col,op){
-  var c=nsv('circle');c.setAttribute('cx',cx);c.setAttribute('cy',cy);c.setAttribute('r',4);
-  c.setAttribute('fill','#110600');c.setAttribute('stroke',col);c.setAttribute('stroke-width','1.5');
-  c.setAttribute('opacity',op);svg.appendChild(c);
-  var i=nsv('circle');i.setAttribute('cx',cx);i.setAttribute('cy',cy);i.setAttribute('r',1.5);
-  i.setAttribute('fill',col);i.setAttribute('opacity',String(parseFloat(op)*0.65));
-  svg.appendChild(i)}
-
-function makeGauge(svg,cx,cy,r,col,op){
-  var bg=nsv('circle');bg.setAttribute('cx',cx);bg.setAttribute('cy',cy);bg.setAttribute('r',r);
-  bg.setAttribute('fill','#0e0500');bg.setAttribute('stroke',col);bg.setAttribute('stroke-width','2');
-  bg.setAttribute('opacity',op);svg.appendChild(bg);
-  for(var i=0;i<12;i++){
-    var a=-Math.PI*0.75+(i/11)*Math.PI*1.5,isM=i%3===0;
-    var t=nsv('line');
-    t.setAttribute('x1',rnd(cx+(isM?r*0.55:r*0.7)*Math.cos(a)));t.setAttribute('y1',rnd(cy+(isM?r*0.55:r*0.7)*Math.sin(a)));
-    t.setAttribute('x2',rnd(cx+(r-3)*Math.cos(a)));t.setAttribute('y2',rnd(cy+(r-3)*Math.sin(a)));
-    t.setAttribute('stroke',col);t.setAttribute('stroke-width',isM?'1.5':'0.7');
-    t.setAttribute('opacity',String(parseFloat(op)*0.65));svg.appendChild(t)}
-  var na=-Math.PI*0.75+Math.PI*1.5*0.65;
-  var nd2=nsv('line');nd2.setAttribute('x1',cx);nd2.setAttribute('y1',cy);
-  nd2.setAttribute('x2',rnd(cx+(r-5)*Math.cos(na)));nd2.setAttribute('y2',rnd(cy+(r-5)*Math.sin(na)));
-  nd2.setAttribute('stroke',col);nd2.setAttribute('stroke-width','2');nd2.setAttribute('opacity',op);
-  nd2.setAttribute('stroke-linecap','round');svg.appendChild(nd2);
-  var c2=nsv('circle');c2.setAttribute('cx',cx);c2.setAttribute('cy',cy);c2.setAttribute('r',3);
-  c2.setAttribute('fill',col);c2.setAttribute('opacity',op);svg.appendChild(c2)}
-
-function makeConduit(svg,pts,col,thick,op){
-  var ptStr=pts.map(function(p){return p[0]+','+p[1]}).join(' ');
-  // Outer glow
-  var glow=nsv('polyline');glow.setAttribute('points',ptStr);
-  glow.setAttribute('stroke',col);glow.setAttribute('stroke-width',thick*5);
-  glow.setAttribute('fill','none');glow.setAttribute('opacity',String(parseFloat(op)*0.06));
-  glow.setAttribute('stroke-linecap','round');glow.setAttribute('stroke-linejoin','round');
-  svg.appendChild(glow);
-  // Main flow line
-  var line=nsv('polyline');line.setAttribute('points',ptStr);
-  line.setAttribute('stroke',col);line.setAttribute('stroke-width',thick);
-  line.setAttribute('fill','none');line.setAttribute('opacity',op);
-  line.setAttribute('stroke-linecap','round');line.setAttribute('stroke-linejoin','round');
-  line.setAttribute('stroke-dasharray','22 14');
-  conduitLines.push(line);svg.appendChild(line);
-  return line}
-
-function buildScene(){
-  var svg=document.getElementById('worldScene');
-  svg.innerHTML='';sceneGears=[];conduitLines=[];pistonRod=null;
-  var W=window.innerWidth,H=window.innerHeight;
-  svg.setAttribute('viewBox','0 0 '+W+' '+H);
-  svg.setAttribute('width',W);svg.setAttribute('height',H);
-
-  // DEFS
-  var defs=nsv('defs');
-  var pat=nsv('pattern');pat.setAttribute('id','mGrid');pat.setAttribute('width','50');pat.setAttribute('height','50');
-  pat.setAttribute('patternUnits','userSpaceOnUse');
-  var pl=nsv('path');pl.setAttribute('d','M50,0 L0,0 L0,50');
-  pl.setAttribute('fill','none');pl.setAttribute('stroke','rgba(255,106,0,0.022)');pl.setAttribute('stroke-width','1');
-  pat.appendChild(pl);defs.appendChild(pat);
-  svg.appendChild(defs);
-
-  // Metal grid base
-  var gr=nsv('rect');gr.setAttribute('width',W);gr.setAttribute('height',H);
-  gr.setAttribute('fill','url(#mGrid)');svg.appendChild(gr);
-
-  // ── STRUCTURAL FRAME ──
-  var cyan='rgba(255,106,0,0.32)',gold='rgba(203,160,82,0.25)';
-  var cyanFaint='rgba(255,106,0,0.07)',goldFaint='rgba(203,160,82,0.06)';
-
-  // Vertical side beams (full height)
-  makeBeam(svg,W*0.045,0,W*0.045,H,16,cyan,'0.55');
-  makeBeam(svg,W*0.955,0,W*0.955,H,16,gold,'0.45');
-
-  // Diagonal corner braces
-  makeBeam(svg,0,0,W*0.2,H*0.28,8,'rgba(255,106,0,0.08)','0.6');
-  makeBeam(svg,W,0,W*0.8,H*0.28,8,'rgba(255,106,0,0.08)','0.6');
-  makeBeam(svg,0,H,W*0.18,H*0.72,8,'rgba(203,160,82,0.07)','0.55');
-  makeBeam(svg,W,H,W*0.82,H*0.72,8,'rgba(203,160,82,0.07)','0.55');
-
-  // Horizontal cross-beams
-  makeBeam(svg,0,H*0.28,W,H*0.28,10,'rgba(255,106,0,0.09)','0.55');
-  makeBeam(svg,0,H*0.63,W,H*0.63,10,'rgba(203,160,82,0.08)','0.5');
-
-  // ── PIPE NETWORK ──
-  // Left vertical pipe
-  makePipe(svg,W*0.075,0,W*0.075,H*0.65,14,cyan,'0.55');
-  makePipe(svg,W*0.055,H*0.38,W*0.055,H,10,gold,'0.35');
-  // Right vertical pipe
-  makePipe(svg,W*0.925,H*0.18,W*0.925,H,14,cyan,'0.52');
-  makePipe(svg,W*0.945,0,W*0.945,H*0.52,10,gold,'0.32');
-  // Horizontal main pipe
-  makePipe(svg,0,H*0.28,W,H*0.28,16,cyan,'0.58');
-  makeJoint(svg,W*0.075,H*0.28,11,cyan,'0.72');
-  makeJoint(svg,W*0.925,H*0.28,11,cyan,'0.72');
-  makeJoint(svg,W*0.38,H*0.28,8,'rgba(255,106,0,0.5)','0.55');
-  makeJoint(svg,W*0.62,H*0.28,8,'rgba(255,106,0,0.5)','0.55');
-  // Secondary horizontal pipe
-  makePipe(svg,0,H*0.64,W,H*0.64,13,gold,'0.48');
-  makeJoint(svg,W*0.055,H*0.64,9,gold,'0.65');
-  makeJoint(svg,W*0.925,H*0.64,9,gold,'0.65');
-  // Branch pipes connecting main to secondary
-  makePipe(svg,W*0.075,H*0.28,W*0.22,H*0.64,9,'rgba(255,106,0,0.22)','0.45');
-  makePipe(svg,W*0.925,H*0.28,W*0.78,H*0.64,9,'rgba(255,106,0,0.22)','0.45');
-  makeJoint(svg,W*0.22,H*0.64,7,'rgba(255,106,0,0.48)','0.58');
-  makeJoint(svg,W*0.78,H*0.64,7,'rgba(255,106,0,0.48)','0.58');
-
-  // Rivets at key structural intersections
-  [[W*0.075,H*0.28],[W*0.925,H*0.28],[W*0.055,H*0.64],[W*0.925,H*0.64]].forEach(function(rp){
-    for(var ri=0;ri<4;ri++){
-      var a=ri*Math.PI/2+Math.PI/4;
-      makeRivet(svg,rp[0]+18*Math.cos(a),rp[1]+18*Math.sin(a),cyan,'0.5')}});
-
-  // ── ENERGY CONDUITS ──
-  // Main vertical energy spine
-  makeConduit(svg,[[W*0.5,H*0.04],[W*0.5,H*0.27],[W*0.44,H*0.30],[W*0.44,H*0.63],[W*0.5,H*0.66],[W*0.5,H*0.96]],
-    'rgba(255,106,0,1)','2.5','0.6');
-  // Right diagonal conduit
-  makeConduit(svg,[[W*0.9,H*0.1],[W*0.78,H*0.28],[W*0.82,H*0.64],[W*0.9,H*0.82]],
-    'rgba(203,160,82,0.9)','2','0.42');
-  // Left diagonal conduit
-  makeConduit(svg,[[W*0.1,H*0.82],[W*0.18,H*0.64],[W*0.14,H*0.28]],
-    'rgba(230,80,0,0.85)','1.5','0.35');
-
-  // ── PRESSURE GAUGES ──
-  makeGauge(svg,W*0.085,H*0.2,22,'rgba(255,106,0,0.55)','0.62');
-  makeGauge(svg,W*0.915,H*0.46,19,'rgba(203,160,82,0.5)','0.55');
-  makeGauge(svg,W*0.065,H*0.72,16,'rgba(255,106,0,0.4)','0.48');
-  makeGauge(svg,W*0.935,H*0.18,14,'rgba(203,160,82,0.38)','0.42');
-
-  // ── GIANT GEARS ──
-  var gMin=Math.min(W,H);
-
-  // ALPHA — massive bottom-right (mostly off-screen, dominant presence)
-  var Ra=gMin*0.75;
-  makeGear(svg,W*1.08,H*1.18,Ra,Ra*0.87,Ra*0.2,30,
-    'rgba(255,106,0,0.22)','rgba(5,12,25,0.72)','1',18,'cw');
-
-  // BETA — large top-left (partially off-screen)
-  var Rb=gMin*0.62;
-  makeGear(svg,W*-0.1,H*0.12,Rb,Rb*0.87,Rb*0.2,24,
-    'rgba(203,160,82,0.18)','rgba(8,14,6,0.68)','1',28,'ccw');
-
-  // GAMMA — medium right, meshing with Alpha
-  var Rg=Ra*0.40;
-  makeGear(svg,W*0.9,H*0.48,Rg,Rg*0.86,Rg*0.2,15,
-    'rgba(255,106,0,0.32)','rgba(5,12,22,0.76)','1',12,'ccw');
-
-  // DELTA — medium left, meshing with Beta
-  var Rd=Rb*0.35;
-  makeGear(svg,W*0.1,H*0.55,Rd,Rd*0.85,Rd*0.22,12,
-    'rgba(255,90,0,0.3)','rgba(5,12,22,0.72)','1',10,'cw');
-
-  // EPSILON — accent top right
-  var Re=gMin*0.13;
-  makeGear(svg,W*0.83,H*0.16,Re,Re*0.83,Re*0.26,10,
-    'rgba(203,160,82,0.38)','rgba(8,14,8,0.72)','1',7,'cw');
-
-  // ZETA — accent lower left
-  var Rz=gMin*0.11;
-  makeGear(svg,W*0.15,H*0.82,Rz,Rz*0.83,Rz*0.26,9,
-    'rgba(255,106,0,0.3)','rgba(5,12,22,0.7)','1',8,'ccw');
-
-  // ETA — tiny cluster center-left of map  
-  var Rh=gMin*0.07;
-  makeGear(svg,W*0.15,H*0.43,Rh,Rh*0.82,Rh*0.28,8,
-    'rgba(255,106,0,0.28)','rgba(5,12,22,0.68)','1',15,'cw');
-
-  // ── PISTON ASSEMBLY ──
-  var pisX=W*0.91,pisTopY=H*0.3,pisCylH=90;
-  // Cylinder body
-  var cyl=nsv('rect');cyl.setAttribute('x',pisX-10);cyl.setAttribute('y',pisTopY);
-  cyl.setAttribute('width','20');cyl.setAttribute('height',pisCylH);
-  cyl.setAttribute('rx','4');cyl.setAttribute('fill','#120600');
-  cyl.setAttribute('stroke','rgba(255,106,0,0.45)');cyl.setAttribute('stroke-width','1.5');
-  svg.appendChild(cyl);
-  // Cylinder caps
-  [0,1].forEach(function(e){
-    var capY=e?pisTopY+pisCylH:pisTopY;
-    var cap=nsv('rect');cap.setAttribute('x',pisX-15);cap.setAttribute('y',capY-5);
-    cap.setAttribute('width','30');cap.setAttribute('height','10');cap.setAttribute('rx','3');
-    cap.setAttribute('fill','#1a0800');cap.setAttribute('stroke','rgba(255,106,0,0.55)');
-    cap.setAttribute('stroke-width','1.5');svg.appendChild(cap)});
-  // Connecting rod (animated)
-  var rod=nsv('rect');rod.setAttribute('x',pisX-6);rod.setAttribute('y',pisTopY+18);
-  rod.setAttribute('width','12');rod.setAttribute('height',pisCylH*0.5);
-  rod.setAttribute('rx','3');rod.setAttribute('fill','rgba(255,106,0,0.22)');
-  rod.setAttribute('stroke','rgba(255,106,0,0.5)');rod.setAttribute('stroke-width','1.5');
-  svg.appendChild(rod);
-  pistonRod=rod;pistonBaseY=pisTopY+18;pistonOffset=0;
-
-  // Piston axle connector line to gear
-  var axle=nsv('line');axle.setAttribute('x1',pisX);axle.setAttribute('y1',pisTopY+pisCylH+8);
-  axle.setAttribute('x2',W*0.9);axle.setAttribute('y2',H*0.48);
-  axle.setAttribute('stroke','rgba(255,106,0,0.18)');axle.setAttribute('stroke-width','2.5');
-  axle.setAttribute('stroke-dasharray','8 5');svg.appendChild(axle);
-
-  // ── AXLE SHAFTS connecting gears ──
-  var shaftAlpha=nsv('line');
-  shaftAlpha.setAttribute('x1',W*1.08-Ra*0.9);shaftAlpha.setAttribute('y1',H*1.18-Ra*0.9);
-  shaftAlpha.setAttribute('x2',W*0.9);shaftAlpha.setAttribute('y2',H*0.48);
-  shaftAlpha.setAttribute('stroke','rgba(255,106,0,0.1)');shaftAlpha.setAttribute('stroke-width','3');
-  shaftAlpha.setAttribute('stroke-dasharray','12 8');svg.appendChild(shaftAlpha);
-
-  // ── STEAM VENT CAPS ──
-  [[W*0.075,H*0.28],[W*0.925,H*0.28],[W*0.075,H*0.64]].forEach(function(v){
-    var vc=nsv('rect');vc.setAttribute('x',v[0]-7);vc.setAttribute('y',v[1]-5);
-    vc.setAttribute('width','14');vc.setAttribute('height','10');vc.setAttribute('rx','3');
-    vc.setAttribute('fill','#120600');vc.setAttribute('stroke','rgba(255,106,0,0.5)');
-    vc.setAttribute('stroke-width','1.5');svg.appendChild(vc)});
+function toggleSideMenu() {
+    const menu = document.getElementById('side-menu');
+    const overlay = document.getElementById('menu-overlay');
+    const hamburger = document.getElementById('hamburger-btn-inline');
+    if (menu.classList.contains('-translate-x-full')) {
+        menu.classList.remove('-translate-x-full');
+        overlay.classList.remove('opacity-0', 'pointer-events-none');
+        if (hamburger) hamburger.classList.add('hamburger-open');
+    } else {
+        menu.classList.add('-translate-x-full');
+        overlay.classList.add('opacity-0', 'pointer-events-none');
+        if (hamburger) hamburger.classList.remove('hamburger-open');
+    }
 }
 
-buildScene();
-
-// ── UNIFIED ANIMATION LOOP ──
-var conduitOff=0,lastT=performance.now();
-(function tick(now){
-  var dt=(now-lastT)/1000;lastT=now;
-
-  // Rotate all gears
-  sceneGears.forEach(function(g){
-    var spd=(g.dir==='cw'?1:-1)*g.rpm/60;
-    g.angle+=spd*dt*360;
-    g.g.setAttribute('transform','rotate('+rnd(g.angle)+','+g.cx+','+g.cy+')')});
-
-  // Piston stroke
-  if(pistonRod){
-    pistonOffset+=pistonDir*pistonSpd*dt*100;
-    if(pistonOffset>=pistonAmp){pistonOffset=pistonAmp;pistonDir=-1}
-    if(pistonOffset<=0){pistonOffset=0;pistonDir=1}
-    pistonRod.setAttribute('y',rnd(pistonBaseY+pistonOffset))}
-
-  // Conduit flow
-  conduitOff-=35*dt;
-  conduitLines.forEach(function(c){c.setAttribute('stroke-dashoffset',conduitOff)});
-
-  requestAnimationFrame(tick)})(performance.now());
-
-// ── CANVAS PARTICLES: sparks + steam ──
-(function(){
-  var cv=document.getElementById('fxC'),ctx=cv.getContext('2d'),W,H,dpr=devicePixelRatio||1;
-  function rs(){W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
-  addEventListener('resize',rs);rs();
-
-  var P=[];
-  for(var i=0;i<75;i++)P.push({x:0,y:0,vx:0,vy:0,life:0,maxLife:1,sz:0,type:0,r:0,g:0,b:0,delay:Math.random()*300});
-
-  function reset(p){
-    var rng=Math.random();
-    if(rng<0.45){
-      // Cyan electric sparks
-      p.type=0;p.x=Math.random()*W;p.y=Math.random()*H;
-      p.vx=(Math.random()-.5)*2.8;p.vy=-1.2-Math.random()*2.8;
-      p.sz=0.7+Math.random()*1.8;p.maxLife=35+Math.random()*110;
-      p.r=0;p.g=190+Math.random()*65|0;p.b=245
-    }else if(rng<0.7){
-      // Gold sparks
-      p.type=1;p.x=Math.random()*W;p.y=H*0.28+Math.random()*H*0.65;
-      p.vx=(Math.random()-.5)*3.5;p.vy=-1.5-Math.random()*2.5;
-      p.sz=0.7+Math.random()*1.4;p.maxLife=25+Math.random()*75;
-      p.r=230+Math.random()*25|0;p.g=155+Math.random()*55|0;p.b=25
-    }else{
-      // Steam wisps at pipe vents
-      p.type=2;
-      var vx2=[W*0.075,W*0.925];
-      p.x=vx2[Math.random()<0.5?0:1]+(Math.random()-.5)*12;
-      p.y=H*0.27;
-      p.vx=(Math.random()-.5)*0.7;p.vy=-(0.35+Math.random()*0.7);
-      p.sz=4+Math.random()*6;p.maxLife=90+Math.random()*140;
-      p.r=160;p.g=200;p.b=220}
-    p.life=0}
-
-  P.forEach(reset);
-  var t=0;
-  function draw(){
-    t++;ctx.clearRect(0,0,W,H);
-    P.forEach(function(p){
-      if(t<p.delay)return;
-      p.life++;if(p.life>p.maxLife){reset(p);p.delay=0;return}
-      var prog=p.life/p.maxLife;
-      p.x+=p.vx+(p.type<2?Math.sin(p.life*.09)*.4:0);
-      p.y+=p.vy;
-      var alpha=(1-prog)*(prog<0.1?prog/0.1:1);
-      if(p.type===2){
-        ctx.beginPath();ctx.arc(p.x,p.y,p.sz*(1+prog*5),0,6.28);
-        ctx.fillStyle='rgba('+p.r+','+p.g+','+p.b+','+(alpha*0.16)+')';ctx.fill()
-      }else{
-        var a2=alpha*0.88;
-        ctx.beginPath();ctx.arc(p.x,p.y,p.sz,0,6.28);
-        ctx.fillStyle='rgba('+p.r+','+p.g+','+p.b+','+a2+')';ctx.fill();
-        ctx.beginPath();ctx.arc(p.x,p.y,p.sz*5.5,0,6.28);
-        ctx.fillStyle='rgba('+p.r+','+p.g+','+p.b+','+(a2*.06)+')';ctx.fill()}});
-
-    // Random electric arc flashes
-    if(t%20===0){
-      var ax=W*0.08+Math.random()*W*0.84,ay=H*0.08+Math.random()*H*0.84;
-      var al=12+Math.random()*55,aa=Math.random()*Math.PI*2;
-      ctx.beginPath();ctx.moveTo(ax,ay);ctx.lineTo(ax+Math.cos(aa)*al,ay+Math.sin(aa)*al);
-      ctx.strokeStyle='rgba(255,106,0,0.2)';ctx.lineWidth=0.6;ctx.stroke();
-      ctx.beginPath();ctx.arc(ax,ay,1.8,0,6.28);ctx.fillStyle='rgba(255,140,0,0.65)';ctx.fill()}
-
-    // Pulse rings (energy discharge)
-    if(t%55===0){
-      var px=W*0.15+Math.random()*W*0.7,py=H*0.2+Math.random()*H*0.6;
-      ctx.beginPath();ctx.arc(px,py,14,0,6.28);
-      ctx.strokeStyle='rgba(255,106,0,0.12)';ctx.lineWidth=1;ctx.stroke()}
-
-    requestAnimationFrame(draw)}draw()})();
-
-// ═══ AUDIO ═══
-var actx,mg,sOn=true;
-// iOS/Android audio unlock
-(function(){function u(){if(actx&&actx.state==='suspended')actx.resume();var c=new(AudioContext||webkitAudioContext)();var b=c.createBuffer(1,1,22050);var s=c.createBufferSource();s.buffer=b;s.connect(c.destination);s.start(0);if(c.state==='suspended')c.resume();document.removeEventListener('touchstart',u,true);document.removeEventListener('touchend',u,true);document.removeEventListener('click',u,true)}document.addEventListener('touchstart',u,true);document.addEventListener('touchend',u,true);document.addEventListener('click',u,true)})();
-function initA(){if(actx){if(actx.state==='suspended')actx.resume();return;}actx=new(AudioContext||webkitAudioContext)();if(actx.state==='suspended')actx.resume();mg=actx.createGain();mg.gain.value=.08;mg.connect(actx.destination);
-  [0,7,12].forEach(function(s,i){var o=actx.createOscillator(),g=actx.createGain(),f=actx.createBiquadFilter();
-    o.type=i<2?'sine':'triangle';o.frequency.value=55*Math.pow(2,s/12);f.type='lowpass';f.frequency.value=180+i*50;f.Q.value=.7;g.gain.value=.012;
-    o.connect(f);f.connect(g);g.connect(mg);o.start();var l=actx.createOscillator(),lg=actx.createGain();l.type='sine';l.frequency.value=.06+i*.02;lg.gain.value=1.5;l.connect(lg);lg.connect(o.frequency);l.start()});
-  var sc=[0,3,5,7,10],ni=0;(function play(){if(!sOn){setTimeout(play,2000);return}var semi=sc[ni%sc.length]+12*Math.floor(ni/sc.length);var fr=55*2*Math.pow(2,semi/12);var o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=fr;g.gain.setValueAtTime(.015,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+2.5);o.connect(g);g.connect(mg);o.start();o.stop(actx.currentTime+2.5);ni++;setTimeout(play,2500+Math.random()*1500)})()}
-function sfx(fr,d){if(!actx||!sOn)return;var o=actx.createOscillator(),g=actx.createGain();o.type='sine';o.frequency.value=fr;g.gain.setValueAtTime(.08,actx.currentTime);g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+d);o.connect(g);g.connect(mg);o.start();o.stop(actx.currentTime+d)}
-function sfxC(){sfx(880,.1);setTimeout(function(){sfx(660,.07)},35)}
-function sfxL(){sfx(150,.15)}
-function sfxO(){[660,880,1100].forEach(function(f,i){setTimeout(function(){sfx(f,.15)},i*50)})}
-function toggleMu(){initA();sOn=!sOn;mg.gain.value=sOn?.08:0;document.getElementById('muBtn').className='mu-btn'+(sOn?'':' off');document.getElementById('muBtn').textContent=sOn?'🔊':'🔇'}
-document.addEventListener('click',function(){initA();startAmb();},{once:true});
-
-// ═══ AMBIENT — ENGRANAJES DEL MERCADO ═══
-// Sonido ambiental del fondo: fábrica industrial en marcha.
-// Capas: sub-rumble de planta + hum de engranaje giratorio +
-//        shimmer metálico (2 bandpass resonantes) + click de pistón rítmico.
-// Todo conectado a mg → el botón 🔊 lo silencia como el resto.
-var _ambOk=false;
-function startAmb(){
-  if(_ambOk||!actx)return;_ambOk=true;
-
-  var ambG=actx.createGain();ambG.gain.value=0;ambG.connect(mg);
-  ambG.gain.linearRampToValueAtTime(0.88,actx.currentTime+2.0);
-
-  // ── 1. PISTÓN — sube/baja cada ~1.4s (pistonAmp=38, spd=0.55) ──
-  // Golpe grave al tocar fondo del cilindro + ring metálico
-  (function pistonLoop(){
-    if(actx.state==='closed')return;
-    if(sOn){
-      var o=actx.createOscillator(),g=actx.createGain();
-      o.type='sine';
-      o.frequency.setValueAtTime(190,actx.currentTime);
-      o.frequency.exponentialRampToValueAtTime(48,actx.currentTime+.14);
-      g.gain.setValueAtTime(.78,actx.currentTime);
-      g.gain.exponentialRampToValueAtTime(.001,actx.currentTime+.20);
-      o.connect(g);g.connect(ambG);o.start();o.stop(actx.currentTime+.20);
-      var r=actx.createOscillator(),rg=actx.createGain(),rf=actx.createBiquadFilter();
-      r.type='sine';r.frequency.value=640;
-      rf.type='bandpass';rf.frequency.value=640;rf.Q.value=11;
-      rg.gain.setValueAtTime(.32,actx.currentTime+.02);
-      rg.gain.exponentialRampToValueAtTime(.001,actx.currentTime+.28);
-      r.connect(rf);rf.connect(rg);rg.connect(ambG);r.start();r.stop(actx.currentTime+.28);
+const icons = ['🧠','🔮','🏛️','💎','📡','⚡','🌀','🎯','🛡️','📊','💰','🏆'];
+function openModal(num, title, desc, status, xp) {
+    const badge = document.getElementById('modal-badge');
+    const cta = document.getElementById('modal-cta');
+    if (status === 'completed') {
+        badge.textContent = '✓ Completado';
+        badge.style.cssText = 'background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;';
+        document.getElementById('modal-stars').textContent = '⭐⭐⭐';
+        cta.style.cssText = 'background:linear-gradient(135deg,#16a34a,#4ade80);color:#0a0f1a;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;transition:all 0.2s;cursor:pointer;border:none;';
+        cta.textContent = 'REPASAR NIVEL';
+    } else {
+        badge.innerHTML = '<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#818cf8;animation:path-dot 1s ease-in-out infinite;"></span> En Progreso';
+        badge.style.cssText = 'background:rgba(129,140,248,0.15);color:#818cf8;border:1px solid rgba(129,140,248,0.4);display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:999px;font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:0.05em;';
+        document.getElementById('modal-stars').textContent = '⭐⭐⭐ (por ganar)';
+        cta.style.cssText = 'background:linear-gradient(135deg,#4f46e5,#818cf8);color:#fff;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:0.1em;font-size:14px;transition:all 0.2s;cursor:pointer;border:none;';
+        cta.textContent = '▶ JUGAR NIVEL';
     }
-    setTimeout(pistonLoop,1400+Math.random()*80);
-  })();
-
-  // ── 2. ENGRANAJES — hum de rotación de los 7 gears de la escena ─
-  // Alpha=18rpm, Beta=28rpm, Gamma=12rpm, Delta=10rpm, Epsilon=7rpm,
-  // Zeta=8rpm, Eta=15rpm. Cada rpm → frecuencia audible vía armónico.
-  [18,28,12,10,7,8,15].forEach(function(rpm,i){
-    var hz=rpm/60;
-    var o=actx.createOscillator(),g=actx.createGain(),bp=actx.createBiquadFilter();
-    o.type='sawtooth';
-    o.frequency.value=hz*(8+i*3);
-    bp.type='bandpass';bp.frequency.value=120+i*60;bp.Q.value=6+i;
-    g.gain.value=[.28,.22,.18,.15,.12,.12,.16][i];
-    o.connect(bp);bp.connect(g);g.connect(ambG);o.start();
-    var lfo=actx.createOscillator(),lg=actx.createGain();
-    lfo.type='sine';lfo.frequency.value=.04+i*.015;lg.gain.value=hz*2.5;
-    lfo.connect(lg);lg.connect(o.frequency);lfo.start();
-  });
-
-  // ── 3. ARCOS ELÉCTRICOS — crackle sincronizado con las chispas ──
-  // Canvas lanza un arc flash cada 20 frames (~333ms a 60fps)
-  // Burst de ruido blanco corto filtrado en banda alta
-  (function spark(){
-    if(actx.state==='closed')return;
-    if(sOn){
-      var sbuf=actx.createBuffer(1,Math.floor(actx.sampleRate*.022),actx.sampleRate);
-      var sd=sbuf.getChannelData(0);
-      for(var i=0;i<sd.length;i++)sd[i]=(Math.random()*2-1)*Math.pow(1-i/sd.length,2);
-      var src=actx.createBufferSource(),sg=actx.createGain(),sf=actx.createBiquadFilter();
-      sf.type='bandpass';sf.frequency.value=2400+Math.random()*1200;sf.Q.value=2;
-      sg.gain.value=.55;
-      src.buffer=sbuf;src.connect(sf);sf.connect(sg);sg.connect(ambG);src.start();
-    }
-    setTimeout(spark,320+Math.random()*80);
-  })();
-
-  // ── 4. VAPOR — ruido blanco filtrado de los steam vents ─────────
-  // Los vents están en las tuberías principales (W*0.075 y W*0.925)
-  var vbuf=actx.createBuffer(1,actx.sampleRate*2,actx.sampleRate);
-  var vd=vbuf.getChannelData(0);for(var i=0;i<vd.length;i++)vd[i]=(Math.random()*2-1);
-  var vs=actx.createBufferSource();vs.buffer=vbuf;vs.loop=true;
-  var vhp=actx.createBiquadFilter(),vlp=actx.createBiquadFilter(),vg=actx.createGain();
-  vhp.type='highpass';vhp.frequency.value=1600;
-  vlp.type='lowpass';vlp.frequency.value=6000;
-  vg.gain.value=.24;
-  vs.connect(vhp);vhp.connect(vlp);vlp.connect(vg);vg.connect(ambG);vs.start();
-  var vplfo=actx.createOscillator(),vplg=actx.createGain();
-  vplfo.type='sine';vplfo.frequency.value=.08;vplg.gain.value=.16;
-  vplfo.connect(vplg);vplg.connect(vg.gain);vplfo.start();
-
-  // ── 5. CONDUCTOS DE ENERGÍA — buzz eléctrico 60/120/180 Hz ─────
-  // Las líneas de energía naranja que fluyen por el canvas
-  // generan el zumbido eléctrico característico de alto voltaje
-  [60,120,180].forEach(function(f,i){
-    var o=actx.createOscillator(),g=actx.createGain(),bp=actx.createBiquadFilter();
-    o.type='sawtooth';o.frequency.value=f;
-    bp.type='bandpass';bp.frequency.value=f;bp.Q.value=18;
-    g.gain.value=[.18,.10,.06][i];
-    o.connect(bp);bp.connect(g);g.connect(ambG);o.start();
-  });
+    document.getElementById('modal-title').textContent = 'Nivel ' + num + ': ' + title;
+    document.getElementById('modal-desc').textContent = desc;
+    document.getElementById('modal-xp').textContent = '+' + xp + ' XP';
+    document.getElementById('modal-icon').textContent = icons[num - 1] || '📚';
+    document.getElementById('level-modal').classList.remove('hidden');
 }
-
-// ═══ MODAL ═══
-function openM(n,t,d,s,xp){sfxO();var ic=icons[levels.findIndex(function(l){return l.n===n})]||'⚙️';
-  document.getElementById('m-icon').textContent=ic;var b=document.getElementById('m-badge'),c=document.getElementById('m-cta'),nx=document.getElementById('m-next');
-  var nxt=levels.find(function(l){return l.n===n+1});
-  if(s==='completed'){b.textContent='✓ COMPLETADO';b.style.cssText='background:rgba(34,197,94,.1);color:#22c55e;border:1px solid rgba(34,197,94,.25)';
-    document.getElementById('m-stars').textContent='⭐⭐⭐';c.textContent='🔄 REPASAR';c.style.cssText='background:rgba(34,197,94,.08);color:#22c55e;border:1px solid rgba(34,197,94,.2);width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer';
-    c.onclick=function(){location.href='leccion.html?world=1&level='+n};
-    if(nxt){nx.classList.remove('hidden');nx.textContent='▶ SIGUIENTE';nx.style.cssText='background:linear-gradient(135deg,var(--ad),var(--a));color:#0c0400;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer';nx.onclick=function(){location.href='leccion.html?world=1&level='+nxt.n}}
-    else nx.classList.add('hidden');
-  }else if(s==='active'){b.innerHTML='<span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--a);animation:aPulse 1s infinite;margin-right:4px"></span> EN PROGRESO';
-    b.style.cssText='background:rgba(var(--ar),.08);color:var(--a);border:1px solid rgba(var(--ar),.2)';document.getElementById('m-stars').textContent='⭐⭐⭐';
-    c.textContent='▶ INICIAR';c.style.cssText='background:linear-gradient(135deg,var(--ad),var(--a));color:#0c0400;width:100%;padding:12px;border-radius:16px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;font-size:14px;cursor:pointer';
-    c.onclick=function(){location.href='leccion.html?world=1&level='+n};nx.classList.add('hidden');
-  }else{b.textContent='🔒 BLOQUEADO';b.style.cssText='background:rgba(107,114,128,.08);color:#6b7280;border:1px solid rgba(107,114,128,.15)';
-    document.getElementById('m-stars').textContent='☆☆☆';c.style.display='none';nx.classList.add('hidden')}
-  document.getElementById('m-title').textContent='Nivel '+n+': '+t;document.getElementById('m-desc').textContent=d;document.getElementById('m-xp').textContent='+'+xp+' XP';
-  document.getElementById('modal').classList.remove('hidden')}
-function closeM(){document.getElementById('modal').classList.add('hidden');document.getElementById('m-cta').style.display=''}
+function closeModal() {
+    document.getElementById('level-modal').classList.add('hidden');
+}
 </script>
 </body>
 </html>

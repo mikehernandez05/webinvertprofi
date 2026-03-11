@@ -3,33 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>InvertProfit — Mundo 7: La Cúspide del Legado</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect fill='%230a0f1a' width='32' height='32' rx='6'/><text x='50%25' y='55%25' dominant-baseline='central' text-anchor='middle' font-size='18' fill='%23D4AF37'>IP</text></svg>"><text y='28' font-size='28'>🔥</text></svg>">
+<title>Mundo 01 — La Génesis del Capital</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><text y='28' font-size='28'>🔥</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL@20..48,100..700,0..1" rel="stylesheet">
 <script src="https://cdn.tailwindcss.com"></script>
-<!-- Firebase v9+ compat -->
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script>
-    firebase.initializeApp({
-        apiKey: "AIzaSyCrgbks3ifIIN7RJzSlzH5hgQMw4ogA1CY",
-        authDomain: "invertprofitweb.firebaseapp.com",
-        projectId: "invertprofitweb",
-        storageBucket: "invertprofitweb.firebasestorage.app",
-        messagingSenderId: "696411646211",
-        appId: "1:696411646211:web:037c2a6fb8752f8b2d6136"
-    });
-</script>
-<script src="auth.js"></script>
-<script src="curriculum.js"></script>
-<script>tailwind.config={darkMode:"class",theme:{extend:{fontFamily:{"sans":["Rajdhani","sans-serif"]}}}}</script>
 <style>
 :root{
-  --a:#FFD060;--ad:#CBA052;--ar:255,208,96;
+  --a:#ff6a00;--ad:#cc4400;--ar:255,106,0;
   --gold:#CBA052;--goldr:203,160,82;
-  --bg:#010812;
+  --bg:#0a0f1a;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{height:100%;background:var(--bg);color:#e2e8f0;font-family:'Rajdhani',sans-serif;overflow:hidden}
@@ -323,9 +306,9 @@ body.exiting #mainScroll{transition:all .45s;opacity:0;transform:scale(.97);filt
 
 <!-- HERO -->
 <div class="hero-wrap">
-<div class="hero-badge" id="hero-badge">MUNDO 07 — LA CÚSPIDE DEL LEGADO</div>
-<h1 class="hero-title" id="hero-title">✨ La Cúspide del Legado</h1>
-<p class="hero-sub" id="hero-sub">// RANGO: MAESTRO DE CAPITAL — MAESTRÍA FINAL</p>
+<div class="hero-badge" id="hero-badge">MUNDO 01 — LA GÉNESIS DEL CAPITAL</div>
+<h1 class="hero-title" id="hero-title">🔥 La Génesis del Capital</h1>
+<p class="hero-sub" id="hero-sub">// RANGO: NOVATO — FUNDAMENTOS</p>
 </div>
 
 <!-- QUEST -->
@@ -382,23 +365,24 @@ body.exiting #mainScroll{transition:all .45s;opacity:0;transform:scale(.97);filt
 
 <script>
 /* ====== CONFIG ====== */
-var WORLD_NUM=7, WORLD_FLOOR=7, TOTAL_FLOORS=7;
+var WORLD_NUM=1, WORLD_FLOOR=1, TOTAL_FLOORS=7;
 
 /* ====== LEVELS ====== */
 var levels=window._wL=[
-  {"n":91,"t":"Estadística Aplicada","d":"Esperanza matemática aplicada al trading.","xp":250,"icon":"📊"},
-  {"n":92,"t":"Teoría de Juegos","d":"Estrategias competitivas en el mercado.","xp":250,"icon":"♟️"},
-  {"n":93,"t":"Ingeniería de Riesgo","d":"Drawdown y Recuperación: protección de capital.","xp":300,"icon":"🛡️"},
-  {"n":94,"t":"Bots y Algoritmos","d":"Introducción a bots y lógica de programación.","xp":300,"icon":"🤖"},
-  {"n":95,"t":"Portafolios Cuantitativos","d":"Ratios de Sharpe y optimización.","xp":300,"icon":"📐"},
-  {"n":96,"t":"Correlación Beta","d":"Coeficiente Beta y flujos de capital.","xp":250,"icon":"🔗"},
-  {"n":97,"t":"Plan Maestro de Retiro","d":"Libertad financiera sistemática.","xp":250,"icon":"🏖️"},
-  {"n":98,"t":"100 Operaciones Reales","d":"Auditoría Final: historial real.","xp":500,"icon":"📋"},
-  {"n":99,"t":"Ética del Inversor","d":"Ética y Legado del Inversor Élite.","xp":250,"icon":"⚖️"},
-  {"n":100,"t":"🏆 GRADUACIÓN","d":"Certificación Grand Master — SOCIO AMIGOTRADE.","xp":1000,"boss":"FINAL","icon":"🏆"}
+  {n:1,t:"Filosofía del Inversor",d:"Descubre la mentalidad que separa a los inversores exitosos.",xp:150,icon:"🧠"},
+  {n:2,t:"Mercados Financieros",d:"Explora los diferentes tipos de mercados y sus características.",xp:150,icon:"📊"},
+  {n:3,t:"Activos de Inversión",d:"Conoce los instrumentos financieros disponibles.",xp:150,icon:"💎"},
+  {n:4,t:"Riesgo y Rendimiento",d:"Aprende la relación fundamental entre riesgo y retorno.",xp:150,icon:"⚖️"},
+  {n:5,t:"Psicología del Trading",d:"Domina las emociones que afectan tus decisiones.",xp:150,icon:"🧬"},
+  {n:6,t:"Lectura de Gráficos",d:"Aprende a interpretar los gráficos de precios.",xp:150,icon:"📈"},
+  {n:7,t:"Órdenes de Mercado",d:"Domina los tipos de órdenes y cuándo usar cada una.",xp:150,icon:"📦"},
+  {n:8,t:"Gestión de Capital",d:"Protege tu capital con reglas de gestión de riesgo.",xp:150,icon:"🛡️"},
+  {n:9,t:"Plan de Trading",d:"Construye tu primer plan de trading estructurado.",xp:150,icon:"📋"},
+  {n:10,t:"Evaluación Final",d:"Demuestra todo lo aprendido en la evaluación final.",xp:500,boss:"FINAL",icon:"🏆"}
 ];
 
-// Uses curriculum.js (loaded externally)
+/* Mock curriculum for template */
+var CURRICULUM=window.CURRICULUM||{getLevelStatus:function(n){if(n<=3)return'completed';if(n===4)return'active';return'locked'}};
 levels.forEach(function(l){l.s=CURRICULUM.getLevelStatus(l.n)});
 
 /* Counters */

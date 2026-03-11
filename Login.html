@@ -521,8 +521,7 @@
                 await onAuthSuccess(result.user, 'email');
             } catch (error) {
                 resetButton();
-                console.error('Email login error:', error.code, error.message);
-                showError(translateFirebaseError(error.code) + ' [' + (error.code || 'unknown') + ']');
+                showError(translateFirebaseError(error.code));
             }
         }
 
@@ -545,8 +544,7 @@
                 }
             } catch (error) {
                 resetButton();
-                console.error('Social login error:', error.code, error.message);
-                showError(translateFirebaseError(error.code) + ' [' + (error.code || 'unknown') + ']');
+                showError(translateFirebaseError(error.code));
             }
         }
 
