@@ -227,5 +227,159 @@
 19. Los badges, hero-title y hero-sub deben verificarse TODOS juntos — es fácil actualizar uno y olvidar otro
 20. Verificar con grep que TODOS los archivos tienen textos consistentes después de un cambio masivo
 
+### Sesión 8 — 2026-03-10 (rediseño visual "Torre del Trading")
+**Trabajo realizado:**
+- Rediseño visual completo de los 7 mundos + hub como "pisos de una mega torre futurista"
+- **Sistema hexagonal** implementado en los 7 mundos (world-1 a world-7):
+  - Nodos hexagonales flat-top con clip-path polygon
+  - 3 estados: hex-done (completado con checkmark), hex-active (glow intenso + scan ring), hex-locked (apagado)
+  - Paths SVG con glow dual-layer + dot animado con `<animateMotion>`
+  - Filter drop-shadow para glow neón (box-shadow no funciona con clip-path)
+  - CSS custom properties (--a, --ar, --ad) como interfaz de color estandarizada
+- **Tower indicator** en los 7 mundos: badge fijo "PISO X/7" con 7 segmentos coloreados
+- **Animación de entrada** (materialización) en los 7 mundos: flash + fade-in progresivo
+- **Animación de salida** (zoom-out) en los 7 mundos: escala 0.95 + fade al volver al hub
+- **Hub mejorado** (portadanivelesacademia.html):
+  - Camera zoom: al clickear un mundo, la torre se escala 2.5x hacia la zona clickeada
+  - Tower indicator con 7 segmentos clickeables
+  - Animación de entrada con revelación staggered de zonas
+- **W5 corregido**: de pointy-top a flat-top para consistencia con los demás mundos
+- Verificación completa: 0 errores de consola en los 8 archivos
+
+**Errores encontrados y corregidos:**
+1. Mock curriculum solo cubría W1 → expandido para cubrir los 7 mundos (3 completed + 1 active cada uno)
+2. W2 no tenía variables --a/--ar/--ad → agregados aliases
+3. W5 usaba pointy-top hex (polygon 50% 0%) → corregido a flat-top (polygon 25% 0%)
+4. W5 hex-scan usaba border-radius:50% → corregido a clip-path hexagonal
+5. W5 dimensiones 64x72 (pointy-top) → corregido a 70x64 (flat-top)
+6. W3 @keyframes nap eliminado accidentalmente → restaurado
+
+**Habilidades adquiridas:**
+21. box-shadow NO funciona con clip-path — usar filter:drop-shadow() para glow en elementos clipped
+22. Al usar sub-agentes en paralelo, verificar que el estilo sea CONSISTENTE (W5 usó pointy-top porque el agente decidió diferente)
+23. CSS custom properties (--a, --ar, --ad) son excelentes para estandarizar un sistema de colores entre archivos diferentes
+24. Camera zoom en el hub: calcular transform-origin desde getBoundingClientRect() del elemento clickeado relativo al contenedor
+25. Animaciones de entrada: usar doble requestAnimationFrame para asegurar que el browser haya pintado el estado "entering" antes de removerlo
+
+### Sesión 9 — 2026-03-10 (rediseño visual masivo — canvas + zoom cinematográfico)
+**Trabajo realizado:**
+- **FASE 1 — Reescritura completa de 4 mundos** (canvas backgrounds):
+  - W2 ENGINE: Turbinas giratorias, conductos de energía, motor central con pistones, chispas, vapor. Colores: ámbar #ff8c00 + azul eléctrico #3399ff
+  - W4 MARKET: Centro de mando holográfico con 5 pantallas (velas japonesas, EKG, volumen, ticker), consola semicircular, rayos de proyección, data streams. Colores: violeta #a855f7 + cyan #22d3ee
+  - W5 ALGORITHM: Geometría sagrada (5 círculos concéntricos), módulos de cálculo con ondas sinusoidales, matrix de datos descendentes, procesadores. Colores: teal #14b8a6 + violeta #8b5cf6
+  - W6 NEXUS: Plataforma central circular, 6 puentes de luz (bezier), pilares de energía turquesa, aurora boreal, niebla azulada, arcos eléctricos. Colores: azul eléctrico #2563eb + turquesa #06b6d4
+- **FASE 2 — Adaptación de 2 mundos**:
+  - W3 NETWORK: Wall panels → circuit boards (PCB con trazas, vías, chips IC), data packets viajando, binary rain, scan bars
+  - W7 SUMMIT: Toro 30% más grande, haz de luz vertical, 7 pisos descendentes visibles, pilares 20% más altos, partículas violetas 20%, estrellas fugaces, anillos de energía
+- **FASE 3 — Zoom cinematográfico**:
+  - Hub: Silueta SVG de torre en transition screen con segmentos que se iluminan progresivamente hasta el piso destino, línea de energía animada
+  - 7 mundos: Tower entry overlay (SVG torre con 7 pisos, iluminación progresiva, zoom 4x hacia el piso, fade out)
+  - Flujo completo: Hub → camera zoom → vortex + speed lines → transition screen con torre → navigate → tower entry overlay → zoom in → reveal mundo
+- **FASE 4 — Colores hex system**:
+  - W2: --a de verde #00ffaa → ámbar #ff8c00, HUD, favicon, body background actualizados
+  - W5: --a de dorado #D4AF37 → teal #14b8a6, agregado --v:#8b5cf6, HUD texto de guerra → algoritmo
+  - W6: --a de dorado #D4AF37 → azul #2563eb, TODOS los colores HUD/hero/quest/modal de dorado → azul
+  - W7: Agregado --vl:#a78bfa (violeta sutil como acento), colores base dorados sin cambio
+- Verificación completa: 0 errores de consola en los 8 archivos (hub + 7 mundos)
+- ~2,400 líneas nuevas de canvas, ~1,900 líneas eliminadas
+
+**Errores encontrados y corregidos:**
+1. W5 tenía estructura diferente (sin exitOv, eFlash, entering) — tower entry overlay insertado manualmente
+2. Agentes con isolation:worktree generan worktrees anidados — copiar archivos manualmente al directorio principal
+3. W6 tenía 30+ propiedades CSS con colores dorados hardcodeados — todas actualizadas a azul eléctrico
+
+**Habilidades adquiridas:**
+26. Al reescribir canvas, copiar el código original como referencia ANTES de eliminarlo (W2→W4 reutilización)
+27. Agentes con isolation:worktree crean worktrees anidados — verificar ruta de salida y copiar archivos
+28. Cuando se cambia la paleta de colores de un mundo, verificar TODAS las propiedades CSS (no solo :root vars) — muchos valores están hardcodeados como rgba()
+29. SVG animado con transition en atributos (y2, etc.) NO funciona directamente — usar JS para cambiar atributos + CSS transition en el estilo
+30. Tower entry overlay: usar transform-origin calculado desde getBoundingClientRect del segmento SVG target para zoom preciso
+
+### Sesión 10 — 2026-03-11 (hub cinematográfico — Torre Central Canvas)
+**Trabajo realizado:**
+- Reescritura COMPLETA de `portadanivelesacademia.html` (de 877 → 1207 líneas)
+- Eliminada la dependencia de imagen estática `images/Torre.jpg`
+- Implementación de escena cinematográfica 100% canvas con 4 capas:
+  - **cvSky**: Cielo estrellado (300 estrellas, nebulosas, god rays, nubes)
+  - **cvTower**: Torre monolítica escalonada con 7 secciones arquitectónicas
+  - **cvEnergy**: Líneas de energía bezier entre nodos con pulsos viajeros
+  - **cvFx**: Partículas (embers de fuego, sparks eléctricos, polvo ambiental)
+- Torre con estructura piramidal que se estrecha: base 76% → cima 12% del ancho
+- Plataforma base industrial con fuego/forge glow y tuberías
+- Spire dorado con beacon luminoso en la cúspide
+- Espina de energía central con pulso animado ascendente
+- Contrafuertes (flying buttresses) en la base
+- Ventanas iluminadas con flicker en secciones desbloqueadas
+- Bandas horizontales, paneles verticales y cross-bracing estructural
+- Halo atmosférico detrás de la torre para separar del fondo
+- 7 nodos hexagonales HTML con clip-path, glow neón, animaciones
+- Nodos con 3 estados: active (glow intenso + scan), completed (check verde), locked (dimmed)
+- Tooltips en hover con nombre, descripción y acción
+- Rotating ring arcs en nodos activos (dibujados en canvas)
+- Halos radiales y outer atmospheric glow en cada nodo
+- Sistema de zoom cinematográfico: click → scale(3.5) del scene
+- Transición completa: zoom + vortex + speed lines + portal wipe + transition screen
+- Layout 100vh sin scroll — composición épica vertical
+- Responsive: mobile (60px hex), tablet (70px), desktop (100px)
+- Colores actualizados para coincidir con mundos rediseñados
+- worldLastLevel corregido a [10,25,45,60,75,90,100]
+- 0 errores de consola en todos los viewports
+
+**Errores encontrados y corregidos:**
+1. Torre invisible: relleno de secciones era casi negro (rgba 4,8,16) igual que el fondo → aumentado a rgba 22,34,58 para contraste
+2. Secciones bloqueadas desaparecían: opacity 0.12 → aumentado a 0.4 para que la estructura siempre sea visible
+3. Nodos locked eran invisibles: opacity .25 → .45 para que se vean como parte de la torre
+4. Worktree vs repo principal: archivos editados en repo principal pero preview server corre en worktree → copiar después de cada cambio
+5. Nebulosas y god rays eran imperceptibles → aumentados de .04/.06 a .07/.10
+6. Hex nodes necesitaban más glow → triple drop-shadow + keyframe más intenso
+
+**Habilidades adquiridas:**
+31. Para canvas sobre fondo oscuro, los rellenos no pueden ser nearly-black — necesitan al menos rgba(20+,30+,50+) para tener contraste
+32. Secciones bloqueadas deben seguir mostrando la ESTRUCTURA (silueta, bordes) aunque sin el color/glow — nunca hacerlas totalmente invisibles
+33. Multi-canvas layer (cvSky+cvTower+cvEnergy+cvFx) da mejor rendimiento y separación que un solo canvas
+34. Atmospheric halo (radial gradient grande detrás de la torre) es esencial para separar el sujeto principal del fondo
+35. overflow:hidden en body + height:100vh crea la composición "scene-like" que NO se siente como web page
+36. filter:drop-shadow() con triple capa (near/mid/far) crea glow holográfico convincente en clip-path hex
+
+### Sesión 11 — 2026-03-11 (hub cinematográfico v2 — imagen de referencia ~99%)
+**Trabajo realizado:**
+- Reescritura COMPLETA de `portadanivelesacademia.html` para coincidir con imagen de referencia al ~99%
+- **Hexágonos en ZIGZAG**: nodos alternando izquierda/derecha a lo largo de la torre (estilo Candy Crush)
+  - W1: x=0.36, W2: x=0.62, W3: x=0.38, W4: x=0.58, W5: x=0.42, W6: x=0.58, W7: x=0.50
+- **Torre MASIVA**: base 88% del ancho de pantalla (wB=0.44), corona 10% (wT=0.05)
+  - 7 secciones escalonadas mucho más anchas que versión anterior
+- **Base industrial**: plataforma ancha, brazos de grúa, hornos con glow naranja, piscinas de metal fundido, chimeneas de vapor
+- **Nubes doradas volumétricas**: 7 masas de nubes en la parte superior con tintes dorados/ámbar, más prominentes (opacity 0.15-0.30)
+- **Estructuras de alas/antenas**: extensiones laterales en nivel W6 (y≈0.24) con puntas luminosas
+- **Láseres diagonales**: 4 haces desde el centro de la torre (púrpura + cyan) apuntando a las esquinas
+- **Trazados de circuito**: patrones de placa base en los laterales (solo desktop)
+- **Lluvia de matriz**: columnas de puntos cayendo sutilmente por toda la pantalla
+- **Vehículos voladores**: siluetas triangulares moviéndose lentamente cerca del tope
+- **Líneas de energía zigzag**: bezier curves siguiendo el camino diagonal entre nodos (no vertical recto)
+- **God rays mejorados**: 7 haces dorados desde arriba con mayor opacidad (.10)
+- Verificado en desktop (1280x800) y mobile (375x812): 7/7 nodos visibles ✅
+- Verificado: click W1 → zoom → transition → world-1.html funciona perfectamente ✅
+- 0 errores de consola ✅
+
+**Cambios clave respecto a versión anterior (Sesión 10):**
+1. HP array: de `{y:solo}` → `{x:valor, y:valor}` para zigzag
+2. TSEC: torre mucho más ancha (base de wB=0.38 → 0.44, top de wT=0.06 → 0.05)
+3. positionHexNodes(): usa `HP[i].x*100%` en vez de `50%` fijo
+4. getHexPixels(): usa `HP[i].x*W` en vez de `W/2`
+5. drawEnergy(): control points de bezier calculan bulge diagonal para zigzag
+6. Sparks: posicionados cerca de cada hex node (`HP[w].x`) en vez de centro fijo
+
+**Errores encontrados y corregidos:**
+1. Energía recta no coincidía con zigzag — bezier control points recalculados con bulge proporcional al desplazamiento diagonal
+2. Sparks aparecían todos en el centro — cambiado a usar HP[w].x para posición relativa al nodo
+
+**Habilidades adquiridas:**
+37. Para zigzag hex placement, usar {x,y} en vez de solo {y} — y actualizar TODAS las funciones que leen posiciones (positionHexNodes, getHexPixels, mkS sparks)
+38. Bezier energy lines entre zigzag nodes necesitan control points con "bulge" opuesto a la dirección del movimiento para curvas suaves
+39. Base industrial: furnace openings con glow radial + rectangles animados con Math.sin dan apariencia de fuego real
+40. Diagonal laser beams con shadowBlur dan efecto de haz de luz convincente con poco código
+41. Volumetric clouds: múltiples radial gradients superpuestos con scale(1, ry/rx) crean formas elípticas realistas
+42. Matrix rain: columnas de dots simples (sin texto) es performante y visualmente efectivo a baja opacidad
+
 ---
 *Este archivo se actualiza al final de cada sesión y durante la misma si hay descubrimientos importantes.*

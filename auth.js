@@ -5,6 +5,19 @@
  * Requiere que Firebase SDK esté cargado antes de este script.
  */
 (function () {
+  // ── DEV MODE: bypass auth en localhost para preview local ──
+  var isLocalDev = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+  if (isLocalDev) {
+    console.log('[AUTH] Modo desarrollo — auth bypass activo');
+    window.AUTH = {
+      isAuthenticated: function () { return true; },
+      getUser: function () { return { displayName: 'Dev User', email: 'dev@localhost', uid: 'dev-local' }; },
+      getUID: function () { return 'dev-local'; },
+      logout: function () { window.location.href = 'Login.html'; }
+    };
+    return; // No bloquear contenido en localhost
+  }
+
   // Páginas públicas que no requieren autenticación
   var currentPage = window.location.pathname.split('/').pop().toLowerCase();
   var publicPages = ['login.html', 'index.html', 'mercado.html', ''];
