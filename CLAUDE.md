@@ -473,5 +473,43 @@
 49. Wing structures: líneas simples con radialGradient en las puntas dan efecto de antena sci-fi con poco código
 50. Vehículos voladores: triángulos simples con engine glow radial son suficientes a baja opacidad para dar vida a la escena
 
+### Sesión 14 — 2026-03-12 (SFX, NPC, efectos especiales, flujo Salir)
+**Trabajo realizado:**
+- **Botón "Salir" corregido**: `portadanivelesacademia.html` ahora redirige a `dashboard.html` en vez de `index.html`, texto cambiado a "DASHBOARD"
+- **Sistema de audio completo** — 9 funciones de sonido diferenciadas:
+  - `sfxO()`: arpegio ascendente épico al abrir nivel activo (4 tonos)
+  - `sfxDone()`: acorde satisfactorio al clickear nivel completado (triángulo)
+  - `sfxL()`: grave metálico al intentar nivel bloqueado (sawtooth+square)
+  - `sfxHover()`: tono sutil al pasar mouse sobre nodo desbloqueado
+  - `sfxModal()`: whoosh al abrir modal (5 tonos rápidos ascendentes)
+  - `sfxConfirm()`: confirmación al iniciar nivel (4 tonos con delay)
+  - `sfxWorldTransition()`: energía creciente al cambiar de mundo (8 tonos)
+  - `sfxNPC()`: misterioso al aparecer el NPC (3 tonos lentos)
+  - Hover SFX en nodos via `mouseenter` event
+- **NPC/Mentor holográfico** — personaje que espera en el nivel activo:
+  - Figura humanoide CSS pura (cabeza, torso, piernas) con colores del mundo
+  - Efecto holográfico: scanlines, flicker animation, glow radial
+  - Anillo holográfico rotando en la base (`npcRing` animation)
+  - Burbuja de diálogo con mensajes aleatorios ("¡AQUÍ ESTÁS!", "CONTINÚA →", etc.)
+  - Animación de aparición con delay (npcAppear 1.2s)
+  - Sonido sfxNPC al materializarse
+- **Nuevos efectos especiales canvas**:
+  - **Relámpagos eléctricos**: descargas aleatorias con segmentos zigzag + flash glow (probabilidad 0.8%)
+  - **Estrellas fugaces**: trazos luminosos diagonales con degradado (probabilidad 0.4%)
+  - **Anillos de energía**: 3 elipses orbitando el piso actual con glow pulsante
+- **Regeneración completa**: 7 mundos regenerados con generate-worlds.js
+- Verificación: 0 errores de consola en W1, W3 y portada
+
+**Errores encontrados y corregidos:**
+1. Botón "SALIR" en portada iba a index.html en vez de dashboard.html
+2. Solo había 2 sonidos (sfxO y sfxL) — expandido a 9 funciones diferenciadas
+3. No había NPC/personaje en ninguna parte del flujo
+
+**Habilidades adquiridas:**
+51. Web Audio API: usar diferentes waveforms (sine, triangle, sawtooth, square) crea identidad sonora única para cada acción
+52. NPC holográfico: scanlines CSS (repeating-linear-gradient) + flicker animation dan apariencia de holograma convincente
+53. Canvas lightning: segmentos aleatorios con shadowBlur alto crean relámpagos realistas con poco código
+54. ctx.ellipse() es ideal para anillos de energía orbitales — variar radiusY crea efecto de perspectiva 3D
+
 ---
 *Este archivo se actualiza al final de cada sesión y durante la misma si hay descubrimientos importantes.*

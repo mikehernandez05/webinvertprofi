@@ -73,6 +73,62 @@ body.exiting #mainScroll{transition:all .45s;opacity:0;transform:scale(.97);filt
 #pathSvg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
 #nodesLayer{position:relative;z-index:5}
 
+/* === NPC GUIDE — holographic mentor === */
+.npc-guide{
+  position:absolute;transform:translate(-50%,-100%);z-index:6;
+  pointer-events:none;opacity:0;animation:npcAppear 1.2s ease-out .8s forwards;
+}
+@keyframes npcAppear{from{opacity:0;transform:translate(-50%,-80%) scale(.7)}to{opacity:1;transform:translate(-50%,-100%) scale(1)}}
+.npc-body{position:relative;width:48px;height:72px;display:flex;flex-direction:column;align-items:center}
+.npc-head{
+  width:28px;height:28px;border-radius:50%;
+  background:radial-gradient(circle at 40% 35%,rgba(var(--ar),.7),rgba(var(--ar),.3));
+  border:2px solid rgba(var(--ar),.6);box-shadow:0 0 15px rgba(var(--ar),.4),0 0 30px rgba(var(--ar),.15);
+  position:relative;z-index:2;
+}
+.npc-head::before{content:'';position:absolute;top:6px;left:7px;width:5px;height:5px;background:rgba(255,255,255,.8);border-radius:50%;box-shadow:9px 0 0 rgba(255,255,255,.8)}
+.npc-head::after{content:'';position:absolute;bottom:5px;left:50%;transform:translateX(-50%);width:8px;height:3px;border-bottom:1.5px solid rgba(255,255,255,.5);border-radius:0 0 4px 4px}
+.npc-torso{
+  width:22px;height:28px;margin-top:-4px;
+  background:linear-gradient(180deg,rgba(var(--ar),.5),rgba(var(--ar),.2));
+  clip-path:polygon(10% 0%,90% 0%,100% 100%,0% 100%);
+  border:1px solid rgba(var(--ar),.3);
+}
+.npc-legs{display:flex;gap:4px;margin-top:-2px}
+.npc-leg{width:8px;height:18px;background:linear-gradient(180deg,rgba(var(--ar),.3),rgba(var(--ar),.1));border-radius:0 0 3px 3px}
+.npc-glow{
+  position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);
+  width:56px;height:18px;border-radius:50%;
+  background:radial-gradient(ellipse,rgba(var(--ar),.35),transparent 70%);
+  animation:npcFloat 2.5s ease-in-out infinite;
+}
+.npc-holo-ring{
+  position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);
+  width:44px;height:12px;border:1.5px solid rgba(var(--ar),.3);border-radius:50%;
+  animation:npcRing 3s linear infinite;
+}
+@keyframes npcFloat{0%,100%{transform:translateX(-50%) scaleX(1)}50%{transform:translateX(-50%) scaleX(.8)}}
+@keyframes npcRing{from{transform:translateX(-50%) rotateX(60deg) rotateZ(0deg)}to{transform:translateX(-50%) rotateX(60deg) rotateZ(360deg)}}
+.npc-bubble{
+  position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);
+  background:rgba(var(--ar),.1);border:1px solid rgba(var(--ar),.25);
+  padding:4px 10px;border-radius:8px;white-space:nowrap;
+  font-family:'Share Tech Mono',monospace;font-size:.55rem;color:rgba(var(--ar),.8);
+  letter-spacing:1px;animation:npcBubble 2s ease-in-out infinite;
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+}
+.npc-bubble::after{
+  content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:5px solid transparent;border-top-color:rgba(var(--ar),.25);
+}
+@keyframes npcBubble{0%,100%{opacity:.8;transform:translateX(-50%) translateY(0)}50%{opacity:1;transform:translateX(-50%) translateY(-3px)}}
+.npc-scanlines{
+  position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);
+  pointer-events:none;opacity:.5;mix-blend-mode:multiply;
+}
+.npc-flicker{animation:npcFlicker 4s ease-in-out infinite}
+@keyframes npcFlicker{0%,100%{opacity:1}48%{opacity:1}50%{opacity:.4}52%{opacity:1}78%{opacity:1}80%{opacity:.6}82%{opacity:1}}
+
 /* ============================
    HEX NODES — PREMIUM SCI-FI
    ============================ */
@@ -885,6 +941,55 @@ function draw(){
   for(var i=0;i<matrixCols.length;i++){var mc=matrixCols[i];mc.y+=mc.sp;if(mc.y>H*2+60)mc.y=-40;for(var j=0;j<mc.chars.length;j++){var cy4=mc.y+j*14-scrollY*.25;if(cy4<-10||cy4>H+10)continue;ctx.fillStyle='rgba('+ar+','+(mc.chars[j].o*.2)+')';ctx.fillText(mc.chars[j].c,mc.x,cy4);}}
   ctx.restore();
 
+  /* LIGHTNING BOLTS — random electrical discharges */
+  if(Math.random()<.008){
+    ctx.save();
+    var lx=cx2+(Math.random()-.5)*wB*.6;
+    var ly=tY+Math.random()*tH*.6;
+    var lSegs=4+Math.floor(Math.random()*4);
+    ctx.strokeStyle='rgba('+ar+',.8)';ctx.lineWidth=2.5;ctx.shadowColor='rgba('+ar+',1)';ctx.shadowBlur=30;
+    ctx.beginPath();ctx.moveTo(lx,ly);
+    for(var ls=0;ls<lSegs;ls++){lx+=(Math.random()-.5)*35;ly+=15+Math.random()*20;ctx.lineTo(lx,ly);}
+    ctx.stroke();
+    /* Lightning glow flash */
+    ctx.globalAlpha=.15;var lgr=ctx.createRadialGradient(lx,ly-30,0,lx,ly-30,80);
+    lgr.addColorStop(0,'rgba('+ar+',.5)');lgr.addColorStop(1,'transparent');
+    ctx.fillStyle=lgr;ctx.fillRect(lx-80,ly-110,160,160);
+    ctx.shadowBlur=0;ctx.restore();
+  }
+
+  /* SHOOTING STARS — estrellas fugaces atravesando la escena */
+  if(Math.random()<.004){
+    ctx.save();
+    var ssX=Math.random()*W;var ssY=Math.random()*H*.3;
+    var ssLen=60+Math.random()*100;var ssAng=.3+Math.random()*.4;
+    var ssG=ctx.createLinearGradient(ssX,ssY,ssX+Math.cos(ssAng)*ssLen,ssY+Math.sin(ssAng)*ssLen);
+    ssG.addColorStop(0,'rgba(255,255,255,.7)');ssG.addColorStop(.3,'rgba('+ar+',.4)');ssG.addColorStop(1,'transparent');
+    ctx.strokeStyle=ssG;ctx.lineWidth=2;ctx.shadowColor='rgba(255,255,255,.8)';ctx.shadowBlur=8;
+    ctx.beginPath();ctx.moveTo(ssX,ssY);ctx.lineTo(ssX+Math.cos(ssAng)*ssLen,ssY+Math.sin(ssAng)*ssLen);ctx.stroke();
+    ctx.shadowBlur=0;ctx.restore();
+  }
+
+  /* ENERGY RINGS — anillos de energía alrededor de la torre (piso actual) */
+  var ringFloor=WORLD_FLOOR-1;
+  var ringFrac=ringFloor/7,ringNFrac=(ringFloor+1)/7;
+  var ringYT=tY+tH*(1-ringNFrac),ringYB=tY+tH*(1-ringFrac);
+  var ringMidY=(ringYT+ringYB)/2;
+  var ringW=wT+(wB-wT)*Math.pow(1-(ringFloor+.5)/7,.6);
+  ctx.save();
+  for(var er=0;er<3;er++){
+    var erY=ringMidY+Math.sin(t*1.2+er*2.1)*((ringYB-ringYT)*.3);
+    var erW=ringW*.55+ringW*.05*Math.sin(t*.8+er);
+    var erH=8+2*Math.sin(t+er*1.5);
+    ctx.globalAlpha=.12+.06*Math.sin(t*1.5+er*2);
+    ctx.strokeStyle='rgba('+ar+',.6)';ctx.lineWidth=1.5;
+    ctx.beginPath();ctx.ellipse(cx2,erY,erW,erH,0,0,6.28);ctx.stroke();
+    /* Inner ring glow */
+    ctx.strokeStyle='rgba('+ar+',.15)';ctx.lineWidth=6;
+    ctx.beginPath();ctx.ellipse(cx2,erY,erW,erH,0,0,6.28);ctx.stroke();
+  }
+  ctx.restore();
+
   /* FOG LAYERS — atmospheric depth like a video game */
   /* Lower fog — warm industrial haze */
   var fogLow=ctx.createLinearGradient(0,baseY-40,0,baseY+20);
@@ -995,7 +1100,15 @@ function placeNodes(){
     var starsDiv=document.createElement('div');starsDiv.className='node-stars';starsDiv.textContent=lv.s==='completed'?'⭐⭐⭐':'☆☆☆';if(lv.s!=='completed')starsDiv.style.opacity='.2';wrap.appendChild(starsDiv);
     var lbl=document.createElement('div');lbl.className='node-lbl '+(lv.s==='completed'?'lbl-done':lv.s==='active'?'lbl-active':'lbl-locked');lbl.textContent='NIVEL '+lv.n;wrap.appendChild(lbl);
     nd.appendChild(wrap);
-    (function(lv2,rip,rip2){nd.addEventListener('click',function(){if(lv2.s==='locked'){sfxL();return;}rip.classList.remove('go');rip2.classList.remove('go');void rip.offsetWidth;rip.classList.add('go');rip2.classList.add('go');sfxO();openM(lv2.n,lv2.t,lv2.d,lv2.s,lv2.xp,lv2.icon,lv2.boss);})})(lv,ripple,ripple2);
+    (function(lv2,rip,rip2,nd2){
+      nd2.addEventListener('click',function(){
+        if(lv2.s==='locked'){sfxL();return;}
+        rip.classList.remove('go');rip2.classList.remove('go');void rip.offsetWidth;rip.classList.add('go');rip2.classList.add('go');
+        if(lv2.s==='completed')sfxDone();else sfxO();
+        sfxModal();openM(lv2.n,lv2.t,lv2.d,lv2.s,lv2.xp,lv2.icon,lv2.boss);
+      });
+      nd2.addEventListener('mouseenter',function(){if(lv2.s!=='locked')sfxHover()});
+    })(lv,ripple,ripple2,nd);
     layer.appendChild(nd);
   }
 }
@@ -1032,14 +1145,28 @@ function openM(n,t,d,s,xp,icon,boss){
   m.classList.add('show');
 }
 function closeM(){document.getElementById('modal').classList.remove('show')}
-function goLevel(n){closeM();window.location.href='leccion.html?world='+WORLD_NUM+'&level='+n}
+function goLevel(n){sfxConfirm();closeM();setTimeout(function(){window.location.href='leccion.html?world='+WORLD_NUM+'&level='+n},250)}
 
-/* ====== AUDIO ====== */
+/* ====== AUDIO SYSTEM — RICH SFX PER LEVEL ====== */
 var audioCtx,muted=false;
 function initA(){if(audioCtx)return;try{audioCtx=new(window.AudioContext||window.webkitAudioContext)();var b=audioCtx.createBuffer(1,1,22050),s=audioCtx.createBufferSource();s.buffer=b;s.connect(audioCtx.destination);s.start(0)}catch(e){}}
-function sfx(f,dur){if(muted||!audioCtx)return;try{if(audioCtx.state==='suspended')audioCtx.resume();var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=f;g.gain.value=.07;g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+dur)}catch(e){}}
-function sfxO(){initA();sfx(440,.1);setTimeout(function(){sfx(660,.1)},80);setTimeout(function(){sfx(880,.12)},160)}
-function sfxL(){initA();sfx(150,.25)}
+function sfx(f,dur,type,vol){if(muted||!audioCtx)return;try{if(audioCtx.state==='suspended')audioCtx.resume();var o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type||'sine';o.frequency.value=f;g.gain.value=vol||.07;g.gain.exponentialRampToValueAtTime(.001,audioCtx.currentTime+dur);o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+dur)}catch(e){}}
+/* Sonido al abrir nivel activo — arpegio ascendente épico */
+function sfxO(){initA();sfx(440,.12,'sine',.06);setTimeout(function(){sfx(554,.12,'sine',.07)},70);setTimeout(function(){sfx(659,.12,'sine',.08)},140);setTimeout(function(){sfx(880,.18,'sine',.09)},210)}
+/* Sonido al clickear nivel completado — acorde satisfactorio */
+function sfxDone(){initA();sfx(523,.15,'triangle',.05);sfx(659,.15,'triangle',.05);sfx(784,.2,'triangle',.06)}
+/* Sonido nivel bloqueado — grave metálico */
+function sfxL(){initA();sfx(110,.3,'sawtooth',.04);setTimeout(function(){sfx(90,.2,'square',.03)},100)}
+/* Sonido hover en nodo — tono sutil */
+function sfxHover(){initA();sfx(1200,.06,'sine',.02)}
+/* Sonido al abrir modal — whoosh */
+function sfxModal(){initA();var f=300;for(var i=0;i<5;i++){(function(i2){setTimeout(function(){sfx(f+i2*150,.05,'sine',.03-i2*.004)},i2*25)})(i)}}
+/* Sonido de confirmación — nivel iniciado */
+function sfxConfirm(){initA();sfx(523,.08,'sine',.06);setTimeout(function(){sfx(659,.08,'sine',.07)},60);setTimeout(function(){sfx(784,.08,'sine',.08)},120);setTimeout(function(){sfx(1047,.2,'sine',.09)},180)}
+/* Sonido de transición entre mundos — energía creciente */
+function sfxWorldTransition(){initA();for(var i=0;i<8;i++){(function(i2){setTimeout(function(){sfx(200+i2*80,.12,'sine',.04+i2*.005)},i2*60)})(i)}}
+/* Sonido al revelar NPC — misterioso */
+function sfxNPC(){initA();sfx(392,.3,'sine',.05);setTimeout(function(){sfx(466,.25,'sine',.05)},150);setTimeout(function(){sfx(523,.35,'sine',.06)},300)}
 function toggleMu(){initA();muted=!muted;document.getElementById('muteBtn').textContent=muted?'🔇':'🔊'}
 document.addEventListener('touchstart',initA,{once:true});
 document.addEventListener('click',initA,{once:true});
@@ -1061,6 +1188,22 @@ function startScene(){
   setTimeout(function(){var idx=-1;for(var i=0;i<levels.length;i++){if(levels[i].s==='active'){idx=i;break;}}if(idx>=0&&positions[idx]){var ms=document.getElementById('mainScroll');ms.scrollTo({top:Math.max(0,positions[idx].y-ms.offsetHeight/2+100),behavior:'smooth'});}},600);
 }
 
+/* ====== NPC GUIDE — Mentor holográfico ====== */
+var npcMessages=['¡AQUÍ ESTÁS!','CONTINÚA →','ADELANTE','TU TURNO','¡VAMOS!','AVANZA','SIGUIENTE','SÍGUEME'];
+function placeNPC(){
+  var old=document.getElementById('npc-el');if(old)old.remove();
+  var actIdx=-1;
+  for(var i=0;i<levels.length;i++){if(levels[i].s==='active'){actIdx=i;break;}}
+  if(actIdx<0||!positions[actIdx])return;
+  var pos=positions[actIdx];
+  var npc=document.createElement('div');npc.id='npc-el';npc.className='npc-guide npc-flicker';
+  npc.style.cssText='left:'+pos.x+'px;top:'+(pos.y-42)+'px';
+  var msg=npcMessages[Math.floor(Math.random()*npcMessages.length)];
+  npc.innerHTML='<div class="npc-bubble">'+msg+'</div><div class="npc-body"><div class="npc-head"></div><div class="npc-scanlines"></div><div class="npc-torso"></div><div class="npc-legs"><div class="npc-leg"></div><div class="npc-leg"></div></div></div><div class="npc-glow"></div><div class="npc-holo-ring"></div>';
+  document.getElementById('nodesLayer').appendChild(npc);
+  setTimeout(sfxNPC,1200);
+}
+
 /* Quest */
 function buildQuest(){
   var qEl=document.getElementById('quest'),act=levels.find(function(l){return l.s==='active'});
@@ -1073,7 +1216,7 @@ function buildQuest(){
 document.getElementById('backBtn').addEventListener('click',function(e){e.preventDefault();document.body.classList.add('exiting');document.getElementById('exitOv').classList.add('show');setTimeout(function(){window.location.href='portadanivelesacademia.html'},450);});
 
 /* ====== INIT ====== */
-function init(){initCanvas();calcPositions();placeNodes();drawPaths();buildQuest();try{draw()}catch(e){console.warn('draw err:',e)}playEntry();}
+function init(){initCanvas();calcPositions();placeNodes();drawPaths();buildQuest();placeNPC();try{draw()}catch(e){console.warn('draw err:',e)}playEntry();}
 window.addEventListener('resize',function(){resizeCanvas();calcPositions();placeNodes();drawPaths()});
 if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',init);else init();
 </script>
